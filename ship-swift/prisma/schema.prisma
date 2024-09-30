@@ -1,9 +1,49 @@
-datasource db {
-  provider  = "postgresql"
-  url       = env("DIRECT_URL")
-  directUrl = env("DIRECT_URL")
-}
 
 generator client {
   provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Users {
+  Id               String           @id @default(uuid())
+  email            String           @unique
+  phoneNumber      String
+  firstName        String
+  lastName         String
+  dateCreated      DateTime         @default(now()) // Tracks when the user account was created
+  dateUpdated      DateTime         @updatedAt // Automatically updates when modified
+
+  // Relations
+  courierJobs CourierJobs[]
+}
+
+
+model Drivers {
+  Id               String           @id @default(uuid())
+  email            String           @unique
+  phoneNumber      String
+  firstName        String
+  lastName         String
+  photoUrl         String
+  idPhotoUrl       String
+  vehicleType      String
+  vehicleDetails   String[]
+  dateCreated      DateTime         @default(now()) // Tracks when the user account was created
+  dateUpdated      DateTime         @updatedAt // Automatically updates when modified
+}
+
+model CourierJobs {
+  Id               String           @id @default(uuid())
+  Title            String
+  Description      String
+  Budget           Int
+
+  // Foreign Keys and Relations
+  user   Users  @relation(fields: [userId], references: [Id])
+  userId String // Foreign key for Users
 }
