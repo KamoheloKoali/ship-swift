@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export const createDriver = async (userData: {
+export const createDriver = async (driverData: {
   email: string;
   phoneNumber: string;
   firstName: string;
@@ -14,34 +14,34 @@ export const createDriver = async (userData: {
 }) => {
   return await prisma.drivers.create({
     data: {
-      email: userData.email,
-      phoneNumber: userData.phoneNumber,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      photoUrl: userData.photoUrl,
-      idPhotoUrl: userData.idPhotoUrl,
-      vehicleType: userData.vehicleType,
-      vehicleDetails: userData.vehicleDetails,
+      email: driverData.email,
+      phoneNumber: driverData.phoneNumber,
+      firstName: driverData.firstName,
+      lastName: driverData.lastName,
+      photoUrl: driverData.photoUrl,
+      idPhotoUrl: driverData.idPhotoUrl,
+      vehicleType: driverData.vehicleType,
+      vehicleDetails: driverData.vehicleDetails,
     },
   });
 };
 
 
-export const getUserById = async (userId: string) => {
+export const getdriverById = async (driverId: string) => {
   return await prisma.drivers.findUnique({
-    where: { Id: userId },
+    where: { Id: driverId },
   });
 };
 
-export const updateUser = async (userId: string, userData: Partial<any>) => {
+export const updatedriver = async (driverId: string, driverData: Partial<any>) => {
   return await prisma.drivers.update({
-    where: { Id: userId },
-    data: userData,
+    where: { Id: driverId },
+    data: driverData,
   });
 };
 
-export const deleteUser = async (userId: string) => {
+export const deletedriver = async (driverId: string) => {
   return await prisma.drivers.delete({
-    where: { Id: userId },
+    where: { Id: driverId },
   });
 };

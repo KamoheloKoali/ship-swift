@@ -22,6 +22,8 @@ model Users {
 
   // Relations
   courierJobs CourierJobs[]
+  userRequests UserRequests[]
+  driverRequests DriverRequests[]
 }
 
 
@@ -37,6 +39,10 @@ model Drivers {
   vehicleDetails   String[]
   dateCreated      DateTime         @default(now()) // Tracks when the user account was created
   dateUpdated      DateTime         @updatedAt // Automatically updates when modified
+
+  // relations
+  driveRequests DriverRequests[]
+  userRequests UserRequests[]
 }
 
 model CourierJobs {
@@ -48,4 +54,28 @@ model CourierJobs {
   // Foreign Keys and Relations
   user   Users  @relation(fields: [userId], references: [Id])
   userId String // Foreign key for Users
+}
+
+model DriverRequests {
+  Id            String            @id @default(uuid())
+  message       String
+
+  // Foreign Keys and Relations
+  sender   Drivers  @relation(fields: [senderId], references: [Id])
+  senderId String // Foreign key for Driver (driver)
+
+  receiver   Users  @relation(fields: [receiverId], references: [Id])
+  receiverId String // Foreign key for Users (user)
+}
+
+model UserRequests {
+  Id            String            @id @default(uuid())
+  message       String
+
+  sender   Users  @relation(fields: [senderId], references: [Id])
+  senderId String // Foreign key for Users (user)
+
+  // Foreign Keys and Relations
+  receiver   Drivers  @relation(fields: [receiverId], references: [Id])
+  receiverId String // Foreign key for Driver (driver)
 }
