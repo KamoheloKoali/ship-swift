@@ -1,4 +1,4 @@
-import { HouseIcon, MessageCircle } from "lucide-react";
+import { HouseIcon, MessageCircle, UsersIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 
@@ -9,7 +9,7 @@ export const useNavigation = () => {
     () => [
       {
         name: "Home",
-        href: "/",
+        href: "/conversations",
         icon: <HouseIcon />,
       },
       {
@@ -17,6 +17,12 @@ export const useNavigation = () => {
         href: "/conversations",
         icon: <MessageCircle />,
         active: pathname.startsWith("/conversations"),
+      },
+      {
+        name: "Requests",
+        href: "/contacts",
+        icon: <UsersIcon />,
+        active: pathname == "/contacts",
       },
     ],
     [pathname]

@@ -1,4 +1,5 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
+import SideBarWrapper from "@/screens/chat/sidebar/SideBarWrapper";
 import { Metadata } from "next";
 import React from "react";
 
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 const Layout = ({ children }: Props) => {
-  return <TooltipProvider>{children}</TooltipProvider>;
+  return <TooltipProvider><SideBarWrapper>{children}</SideBarWrapper></TooltipProvider>;
 };
 
 export default Layout;
