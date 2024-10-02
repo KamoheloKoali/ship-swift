@@ -1,9 +1,9 @@
 import { createClient, getClientById } from "@/actions/clientActions"
-import { currentUser } from "@clerk/nextjs/server"
+import getCurrentUserClerkDetails from "@/actions/getCurrentUserDetails"
 import { redirect } from "next/navigation"
 
 export default async function Home() {
-  const client = await currentUser()
+  const client = await getCurrentUserClerkDetails()
   const dbClient = await getClientById(client?.id || "")
 
   if (!dbClient) {

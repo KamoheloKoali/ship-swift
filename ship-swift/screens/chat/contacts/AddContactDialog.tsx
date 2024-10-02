@@ -31,7 +31,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { createClientRequest, getClientRequest } from "@/actions/clientRequest";
 import { getClientByEmail } from "@/actions/clientActions";
-import { useAuth } from "@clerk/nextjs";
+import getCurrentUserClerkDetails from "@/actions/getCurrentUserDetails";
 
 type Props = {};
 
@@ -45,7 +45,7 @@ const AddContactDialog = (props: Props) => {
 
   const onSubmit = async (values: z.infer<typeof AddContactSchema>) => {
     try {
-      const sender =  useAuth();
+      const sender = await getCurrentUserClerkDetails();
       const receiver = await getClientByEmail(values.email);
   
       if (!sender || !receiver?.data?.Id) {
@@ -53,14 +53,14 @@ const AddContactDialog = (props: Props) => {
         return;
       }
   
-      const result = await getClientRequest(sender?.userId || "", receiver.data.Id);
+      const result = await getClientRequest(sender.id, receiver.data.Id);
   
       if (result.success) {
         console.log("Request already sent");
       } else {
         const requestData = {
           receiverId: receiver?.data?.Id,
-          senderId: sender?.userId || "",
+          senderId: sender?.id,
           message: "Just sent a friend request",
         };
   
