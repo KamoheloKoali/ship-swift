@@ -2,38 +2,61 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export const createUser = async (jobData: {
+export const createJob = async (jobData: {
   title: string;
   description: string;
   budget: string;
-  userId: string;
+  clientId: string;
 }) => {
-  return await prisma.courierJobs.create({
-    data: {
-      Title: jobData.title,
-      Description: jobData.description,
-      Budget: jobData.budget,
-      userId: jobData.userId,
-    },
-  });
+  try {
+    const newJob = await prisma.courierJobs.create({
+      data: {
+        Title: jobData.title,
+        Description: jobData.description,
+        Budget: jobData.budget,
+        clientId: jobData.clientId,
+      },
+    });
+    return { success: true, data: newJob };
+  } catch (error) {
+    return { success: false, error: "Error creating job" };
+  }
 };
 
-
-export const getjobById = async (jobId: string) => {
-  return await prisma.courierJobs.findUnique({
-    where: { Id: jobId },
-  });
+export const getJobById = async (jobId: string) => {
+  try {
+    const job = await prisma.courierJobs.findUnique({
+      where: { Id: jobId },
+    });
+    if (job) {
+      return { success: true, data: job };
+    } else {
+      return { success: false, error: 'Job not found' };
+    }
+  } catch (error) {
+    return { success: false, error: "Error retrieving job" };
+  }
 };
 
-export const updatejob = async (jobId: string, jobData: Partial<any>) => {
-  return await prisma.courierJobs.update({
-    where: { Id: jobId },
-    data: jobData,
-  });
+export const updateJob = async (jobId: string, jobData: Partial<any>) => {
+  try {
+    const updatedJob = await prisma.courierJobs.update({
+      where: { Id: jobId },
+      data: jobData,
+    });
+    return { success: true, data: updatedJob };
+  } catch (error) {
+    return { success: false, error: "Error updating job" };
+  }
 };
 
-export const deletejob = async (jobId: string) => {
-  return await prisma.courierJobs.delete({
-    where: { Id: jobId },
-  });
+export const deleteJob = async (jobId: string) => {
+  try {
+    const deletedJob = await prisma.courierJobs.delete({
+      where: { Id: jobId },
+    });
+    return { success: true, data: deletedJob };
+  } catch (error) {
+    return { success: false, error: "Error deleting job" };
+  }
 };

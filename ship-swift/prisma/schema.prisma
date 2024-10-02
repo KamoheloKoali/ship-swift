@@ -10,7 +10,7 @@ datasource db {
 }
 
 model clients {
-  Id               String           @id @default(uuid())
+  Id               String           @id
   email            String           @unique
   phoneNumber      String
   firstName        String
@@ -28,7 +28,7 @@ model clients {
 
 
 model Drivers {
-  Id               String           @id @default(uuid())
+  Id               String           @id
   email            String           @unique
   phoneNumber      String
   firstName        String
@@ -59,6 +59,8 @@ model CourierJobs {
 model DriverRequests {
   Id            String            @id @default(uuid())
   message       String
+  isPending     Boolean           @default(false)
+  isAccepted     Boolean           @default(false)
 
   // Foreign Keys and Relations
   sender   Drivers  @relation(fields: [senderId], references: [Id])
@@ -71,6 +73,8 @@ model DriverRequests {
 model clientRequests {
   Id            String            @id @default(uuid())
   message       String
+  isPending     Boolean           @default(false)
+  isAccepted     Boolean           @default(false)
 
   sender   clients  @relation(fields: [senderId], references: [Id])
   senderId String // Foreign key for clients (client)
