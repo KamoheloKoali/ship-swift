@@ -6,7 +6,7 @@ export default async function Home() {
   const client = await getCurrentUserClerkDetails()
   const dbClient = await getClientById(client?.id || "")
 
-  if (!dbClient) {
+  if (!dbClient.success) {
 
   const clientData = {
     clerkId: client?.id || "",
