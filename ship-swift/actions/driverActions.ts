@@ -1,3 +1,4 @@
+"use server"
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -45,6 +46,15 @@ export const getDriverById = async (driverId: string) => {
     }
   } catch (error) {
     return { success: false, error: "Error retrieving driver" };
+  }
+};
+
+export const getAllDrivers = async () => {
+  const drivers = await prisma.drivers.findMany(); // Remove where clause to get all clients
+  if (drivers.length > 0) {
+    return { success: true, data: drivers };
+  } else {
+    return { success: false, error: "No clients found" };
   }
 };
 

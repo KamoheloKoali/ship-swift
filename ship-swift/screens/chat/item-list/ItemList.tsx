@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { useConversation } from "@/hooks/useConversation";
 import { cn } from "@/lib/utils";
 import React from "react";
+import ListOfContacts from "../contacts/ListOfContacts";
 
 type Props = React.PropsWithChildren<{
   title: string;
@@ -22,8 +23,8 @@ const ItemList = ({ children, title, action: Action }: Props) => {
         <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
         {Action ? Action : null}
       </div>
-      <div className="w-full h-full flex flex-col items-center justify-start">
-        {children}
+      <div className="w-full h-full flex flex-col items-center">
+       {children}
       </div>
     </Card>
   );

@@ -83,3 +83,9 @@ model clientRequests {
   receiver   Drivers  @relation(fields: [receiverId], references: [Id])
   receiverId String // Foreign key for Driver (driver)
 }
+
+model UserRole {
+  userId                String          @id @default(uuid())
+  driver            Boolean         @default(false)
+  client            Boolean         @default(false)
+}
