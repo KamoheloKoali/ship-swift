@@ -81,12 +81,6 @@ model UserRole {
   client Boolean @default(false)
 }
 
-model UserRole {
-  userId                String          @id @default(uuid())
-  driver            Boolean         @default(false)
-  client            Boolean         @default(false)
-}
-
 
 model Contacts {
   Id            String            @id @default(uuid())

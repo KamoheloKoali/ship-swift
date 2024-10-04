@@ -132,66 +132,135 @@ const ListContacts = ({
     };
   }, [supabase, userId, role]);
 
+//   console.log(outgoingRequestsWithNames)
+
+  let contacts: any = [];
+
+  incomingRequests.map((request) => {
+    request.isAccepted && contacts.push(request);
+  });
+  outgoingRequestsWithNames?.map((request: any) => {
+    request.isAccepted && contacts.push(request);
+  });
+
   return (
-    <div>
-      {incomingRequests ? (
-        incomingRequests.length === 0 ? (
-          <p className="h-full w-full flex items-center justify-center">
-            No Contacts
-          </p>
-        ) : (
-          <div>
-            <p className="text-base font-semibold">Incoming requests</p>
-            {Array.isArray(incomingRequests) &&
-              incomingRequests.map((request: any) =>
-                request.isAccepted ? (
-                  <div key={request.Id} className="border-b py-2"> <p className="font-semibold">
-                  {`${request.fullName}`}
-                </p></div>
-                ) : (
+    <div className="h-full flex flex-col gap-6 overflow-y-auto">
+      <div>
+        <p className="text-base font-semibold text-underline">Contacts</p>
+        {contacts ? (
+          contacts.length === 0 ? (
+            <p className="h-full w-full flex items-center justify-center">
+              No contacts
+            </p>
+          ) : (
+            <div>
+              {Array.isArray(contacts) &&
+                contacts.map((request: any) => (
                   <div key={request.Id} className="border-b py-2">
-                    (
                     <p className="font-semibold">
-                      {`Request from: ${request.fullName}`}
+                      {`${request.fullName}`}
                     </p>
-                    <p>{request.message}</p>
-                    <p>
-                      Status:{" "}
-                      {request.isAccepted
-                        ? "Accepted"
-                        : request.isPending
-                        ? "Pending"
-                        : "Rejected"}
-                    </p>
-                    <div className="flex gap-2">
-                      {isSubmitting ? (
-                        <Button>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        </Button>
-                      ) : (
+                  </div>
+                ))}
+            </div>
+          )
+        ) : (
+          <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+        )}
+      </div>
+      <div>
+        <p className="text-base font-semibold">Incoming requests</p>
+        {incomingRequests ? (
+          incomingRequests.length === 0 ? (
+            <p className="h-full w-full flex items-center justify-center">
+              No incoming requests
+            </p>
+          ) : (
+            <div>
+              {Array.isArray(incomingRequests) &&
+                incomingRequests.map((request: any) =>
+                  request.isAccepted ? null : (
+                    <div key={request.Id} className="border-b py-2">
+                      <p className="font-semibold">
+                        {`Request from: ${request.fullName}`}
+                      </p>
+                      <p>{request.message}</p>
+                      <div>
+                        Status:{" "}
+                        {request.isPending ? (
+                          "Pending"
+                        ) : (
+                          <div className="flex gap-2">
+                            <p>Rejected</p>
+                            <Button size="sm">Delete</Button>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex gap-2">
+                        {isSubmitting ? (
+                          <Button>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {" "} please wait
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            onClick={() => handleAccept(request.Id)}
+                          >
+                            Accept
+                          </Button>
+                        )}
                         <Button
                           size="sm"
-                          onClick={() => handleAccept(request.Id)}
+                          onClick={() => handleReject(request.Id)}
                         >
-                          Accept
+                          Reject
                         </Button>
-                      )}
-                      <Button
-                        size="sm"
-                        onClick={() => handleReject(request.Id)}
-                      >
-                        Reject
-                      </Button>
-                      )
+                      </div>
                     </div>
-                  </div>
-                )
-              )}
-          </div>
-        )
-      ) : (
-        <Loader2 className="mr-2 h-8 w-8 animate-spin" />
-      )}
+                  )
+                )}
+            </div>
+          )
+        ) : (
+          <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+        )}
+      </div>
+      <div>
+        <p className="text-base font-semibold">Outgoing requests</p>
+        {outgoingRequestsWithNames && outgoingRequestsWithNames.length === 0?  (
+            <p className="h-full w-full flex items-center justify-center">
+              No outgoing requests
+            </p>
+          ) : (
+            <div>
+              {Array.isArray(outgoingRequestsWithNames) &&
+                outgoingRequestsWithNames.map((request: any) => (
+                  request.isAccepted ? null : (<div key={request.Id} className="border-b py-2">
+                    <p className="font-semibold">
+                      {`Request to: ${request.fullName}`}
+                    </p>
+                    <p>{request.message}</p>
+                    <div>
+                      Status:{request.isPending ? " Pending" : ""}
+                      {request.isPending ? (
+                        <>
+                        
+                        <div className="flex gap-2">
+                        <Button size="sm">Delete</Button>
+                      </div>
+                      </>
+                      ) : (
+                        <div className="flex flex-row gap-2">
+                          <p>Rejected</p>
+                          <Button size="sm">Delete</Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>)
+                ))}
+            </div>
+          )}
+      </div>
     </div>
   );
 };

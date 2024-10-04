@@ -17,6 +17,7 @@ const Page = async (props: Props) => {
   const incomingRequests = listOfContacts.incomingRequests;
   const outgoingRequests = listOfContacts.outgoingRequests;
   let incomingRequestsWithNames;
+  let outgoingRequestsWithNames
 
   // Fetch the driver's full name for each incoming request
   if (userRole.data?.client) {
@@ -24,6 +25,20 @@ const Page = async (props: Props) => {
       incomingRequestsWithNames = await Promise.all(
         incomingRequests.map(async (request: any) => {
           const driverData = await getDriverById(request.senderId); // Fetch driver by senderId
+          const fullName = driverData.success
+            ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
+            : "Unknown Driver";
+          return {
+            ...request,
+            fullName, // Add fullName to the request
+          };
+        })
+      );
+    } 
+    if (outgoingRequests.length > 0) {
+      outgoingRequestsWithNames = await Promise.all(
+        outgoingRequests.map(async (request: any) => {
+          const driverData = await getDriverById(request.receiverId); // Fetch driver by senderId
           const fullName = driverData.success
             ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
             : "Unknown Driver";
@@ -50,6 +65,21 @@ const Page = async (props: Props) => {
           
         })
       );
+    } if (outgoingRequests.length > 0) {
+      outgoingRequestsWithNames = await Promise.all(
+        outgoingRequests.map(async (request: any) => {
+          const clientData = await getClientById(request.receiverId); // Fetch driver by senderId
+          const fullName = clientData.success
+            ? `${clientData.data?.firstName} ${clientData.data?.lastName}`
+            : "Unknown  Client";
+            
+          return {
+            ...request,
+            fullName, // Add fullName to the request
+          };
+          
+        })
+      );
     }
   }
   // console.log(incomingRequestsWithNames) 
@@ -63,15 +93,12 @@ const Page = async (props: Props) => {
           userRole.data?.client ? <ClientAddDriver /> : <DriverAddClient />
         }
       >
-        <div>
-          <div>
-            <p>Contacts</p>
+        <div className="h-full">
             <ListContacts
               incomingRequestsWithNames={incomingRequestsWithNames}
-              outgoingRequestsWithNames={null}
+              outgoingRequestsWithNames={outgoingRequestsWithNames}
               role={userRole.data?.client ?? false}
             />
-          </div>
         </div>
       </ItemList>
       <ConversationFallback />
