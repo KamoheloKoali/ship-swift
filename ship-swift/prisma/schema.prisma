@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,76 +9,92 @@ datasource db {
 }
 
 model clients {
-  Id               String           @id
-  email            String           @unique
-  phoneNumber      String
-  firstName        String
-  lastName         String
-  photoUrl         String
-  idPhotoUrl       String
-  dateCreated      DateTime         @default(now()) // Tracks when the client account was created
-  dateUpdated      DateTime         @updatedAt // Automatically updates when modified
-
-  // Relations
-  courierJobs CourierJobs[]
-  clientRequests clientRequests[]
+  Id             String           @id
+  email          String           @unique
+  phoneNumber    String
+  firstName      String
+  lastName       String
+  photoUrl       String
+  idPhotoUrl     String
+  dateCreated    DateTime         @default(now())
+  dateUpdated    DateTime         @updatedAt
+  courierJobs    CourierJobs[]
   driverRequests DriverRequests[]
+  clientRequests clientRequests[]
+  Contacts Contacts[]
 }
 
-
 model Drivers {
-  Id               String           @id
-  email            String           @unique
-  phoneNumber      String
-  firstName        String
-  lastName         String
-  photoUrl         String
-  idPhotoUrl       String
-  vehicleType      String
-  vehicleDetails   String[]
-  dateCreated      DateTime         @default(now()) // Tracks when the client account was created
-  dateUpdated      DateTime         @updatedAt // Automatically updates when modified
-
-  // relations
-  driveRequests DriverRequests[]
+  Id             String           @id
+  email          String           @unique
+  phoneNumber    String
+  firstName      String
+  lastName       String
+  photoUrl       String
+  idPhotoUrl     String
+  vehicleType    String
+  vehicleDetails String[]
+  dateCreated    DateTime         @default(now())
+  dateUpdated    DateTime         @updatedAt
+  driveRequests  DriverRequests[]
   clientRequests clientRequests[]
+  Contacts Contacts[]
 }
 
 model CourierJobs {
-  Id               String           @id @default(uuid())
-  Title            String
-  Description      String
-  Budget           String
-
-  // Foreign Keys and Relations
-  client   clients  @relation(fields: [clientId], references: [Id])
-  clientId String // Foreign key for clients
+  Id          String  @id @default(uuid())
+  Title       String
+  Description String
+  Budget      String
+  clientId    String
+  PickUp      String
+  DropOff     String
+  dateCreated DateTime @default(now())
+  client      clients @relation(fields: [clientId], references: [Id])
 }
 
 model DriverRequests {
-  Id            String            @id @default(uuid())
-  message       String
-  isPending     Boolean           @default(false)
-  isAccepted     Boolean           @default(false)
-
-  // Foreign Keys and Relations
-  sender   Drivers  @relation(fields: [senderId], references: [Id])
-  senderId String // Foreign key for Driver (driver)
-
-  receiver   clients  @relation(fields: [receiverId], references: [Id])
-  receiverId String // Foreign key for clients (client)
+  Id         String  @id @default(uuid())
+  receiverId String
+  senderId   String
+  message    String
+  isAccepted Boolean @default(false)
+  isPending  Boolean @default(false)
+  receiver   clients @relation(fields: [receiverId], references: [Id])
+  sender     Drivers @relation(fields: [senderId], references: [Id])
 }
 
 model clientRequests {
-  Id            String            @id @default(uuid())
-  message       String
-  isPending     Boolean           @default(false)
-  isAccepted     Boolean           @default(false)
+  Id         String  @id @default(uuid())
+  message    String
+  senderId   String
+  receiverId String
+  isAccepted Boolean @default(false)
+  isPending  Boolean @default(false)
+  receiver   Drivers @relation(fields: [receiverId], references: [Id])
+  sender     clients @relation(fields: [senderId], references: [Id])
+}
 
-  sender   clients  @relation(fields: [senderId], references: [Id])
-  senderId String // Foreign key for clients (client)
+model UserRole {
+  userId String  @id
+  driver Boolean @default(false)
+  client Boolean @default(false)
+}
+
+model UserRole {
+  userId                String          @id @default(uuid())
+  driver            Boolean         @default(false)
+  client            Boolean         @default(false)
+}
+
+
+model Contacts {
+  Id            String            @id @default(uuid())
 
   // Foreign Keys and Relations
-  receiver   Drivers  @relation(fields: [receiverId], references: [Id])
-  receiverId String // Foreign key for Driver (driver)
+  driver   Drivers  @relation(fields: [driverId], references: [Id])
+  driverId String // Foreign key for Driver (driver)
+
+  client   clients  @relation(fields: [clientId], references: [Id])
+  clientId String // Foreign key for clients (client)
 }

@@ -1,4 +1,4 @@
-import MyJobs from "@/screens/courier/dashboard/components/myjobs";
+import MyJobs from "@/screens/courier/dashboard/components/MyJobs";
 
 export default async function DriverJobs() {
     // const user = await currentUser();

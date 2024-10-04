@@ -1,14 +1,79 @@
-import AddContactDialog from "@/screens/chat/contacts/AddContactDialog";
+import { getClientById } from "@/actions/clientActions";
+import { getDriverById } from "@/actions/driverActions";
+import { getUserRoleById } from "@/app/utils/getUserRole";
+import ClientAddDriver from "@/screens/chat/contacts/ClientAddDriverDialog";
+import DriverAddClient from "@/screens/chat/contacts/DriverAddClientDialog";
+import ListContacts from "@/screens/chat/contacts/ListContacts";
+import ListOfContacts from "@/screens/chat/contacts/ListOfContacts";
 import ConversationFallback from "@/screens/chat/conversation/ConversationFallback";
 import ItemList from "@/screens/chat/item-list/ItemList";
 import React from "react";
 
 type Props = {};
 
-const Page = (props: Props) => {
+const Page = async (props: Props) => {
+  const userRole = await getUserRoleById();
+  const listOfContacts = await ListOfContacts();
+  const incomingRequests = listOfContacts.incomingRequests;
+  const outgoingRequests = listOfContacts.outgoingRequests;
+  let incomingRequestsWithNames;
+
+  // Fetch the driver's full name for each incoming request
+  if (userRole.data?.client) {
+    if (incomingRequests.length > 0) {
+      incomingRequestsWithNames = await Promise.all(
+        incomingRequests.map(async (request: any) => {
+          const driverData = await getDriverById(request.senderId); // Fetch driver by senderId
+          const fullName = driverData.success
+            ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
+            : "Unknown Driver";
+          return {
+            ...request,
+            fullName, // Add fullName to the request
+          };
+        })
+      );
+    }
+  } else {
+    if (incomingRequests.length > 0) {
+      incomingRequestsWithNames = await Promise.all(
+        incomingRequests.map(async (request: any) => {
+          const clientData = await getClientById(request.senderId); // Fetch driver by senderId
+          const fullName = clientData.success
+            ? `${clientData.data?.firstName} ${clientData.data?.lastName}`
+            : "Unknown  Client";
+            
+          return {
+            ...request,
+            fullName, // Add fullName to the request
+          };
+          
+        })
+      );
+    }
+  }
+  // console.log(incomingRequestsWithNames) 
+
+
   return (
     <>
-      <ItemList title="Contacts" action={<AddContactDialog />}>Contacts</ItemList>
+      <ItemList
+        title="Contacts"
+        action={
+          userRole.data?.client ? <ClientAddDriver /> : <DriverAddClient />
+        }
+      >
+        <div>
+          <div>
+            <p>Contacts</p>
+            <ListContacts
+              incomingRequestsWithNames={incomingRequestsWithNames}
+              outgoingRequestsWithNames={null}
+              role={userRole.data?.client ?? false}
+            />
+          </div>
+        </div>
+      </ItemList>
       <ConversationFallback />
     </>
   );

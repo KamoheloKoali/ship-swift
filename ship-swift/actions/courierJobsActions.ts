@@ -1,3 +1,4 @@
+"use server"
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -7,6 +8,8 @@ export const createJob = async (jobData: {
   description: string;
   budget: string;
   clientId: string;
+  DropOff: string;
+  PickUp: string;
 }) => {
   try {
     const newJob = await prisma.courierJobs.create({
@@ -15,6 +18,8 @@ export const createJob = async (jobData: {
         Description: jobData.description,
         Budget: jobData.budget,
         clientId: jobData.clientId,
+        DropOff: jobData.DropOff,
+        PickUp: jobData.PickUp,
       },
     });
     return { success: true, data: newJob };
