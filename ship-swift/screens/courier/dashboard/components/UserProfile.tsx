@@ -10,10 +10,10 @@ import { useUser } from "@clerk/clerk-react";
 export default function UserProfile() {
   const { user, isLoaded, isSignedIn } = useUser();
   return (
-    <Card className="flex flex-row p-4 border border-gray-200 rounded-lg">
+    <Card className="flex flex-row p-4 border border-gray-200 rounded-lg mb-12">
       {/* Left Side: Avatar and Details */}
       <div className="flex flex-col items-center mr-4">
-        <Avatar className="h-48 w-48 rounded-full border-2 border-gray-300">
+        <Avatar className="hidden md:block  md:h-36 md:w-36 lg:h-48 lg:w-48 rounded-full border-2 border-gray-300">
           <img
             src="/path-to-your-avatar.jpg" // Replace with your avatar source
             alt="Khiba Koenane"
