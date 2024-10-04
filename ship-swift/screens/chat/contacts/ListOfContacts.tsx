@@ -12,14 +12,16 @@ const ListOfContacts = async () => {
   let requests;
 
   if (userRole.data?.client) {
+    // console.log("client")
     requests = await getDriverRequests("", user?.id);
-    incomingRequests = requests.data;
+    incomingRequests = requests?.data;
     requests = await getClientRequests(user?.id, "");
     outgoingRequests = requests?.data;
   } else {
-    requests = await getDriverRequests("", user?.id);
-    outgoingRequests = requests.data;
-    requests = await getClientRequests(user?.id, "");
+    // console.log("not client")
+    requests = await getDriverRequests(user?.id, "");
+    outgoingRequests = requests?.data;
+    requests = await getClientRequests("", user?.id);
     incomingRequests = requests?.data;
   }
 

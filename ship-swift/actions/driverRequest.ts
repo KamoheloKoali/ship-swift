@@ -13,6 +13,7 @@ export const createDriverRequest = async (requestData: {
       receiverId: requestData.receiverId,
       senderId: requestData.senderId,
       message: requestData.message,
+      isPending: true,
     },
   });
   if (newRequest.Id) return { success: true, data: newRequest };
