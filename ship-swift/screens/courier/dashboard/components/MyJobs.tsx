@@ -2,6 +2,7 @@
 
 import Details from "./JobDetails";
 import { createJob } from "@/actions/courierJobsActions";
+import { useEffect, useState } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +27,29 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const getDeliveries = () => {
+    const [jobs, setJobs] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
   
+    useEffect(() => {
+      const fetchJobs = async () => {
+        try {
+          const res = await fetch('/api/jobs');
+          const data = await res.json();
+          setJobs(data);
+        } catch (err) {
+          setError('Error fetching jobs');
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchJobs();
+    }, []);
+  
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
+   
 }
 
 export default function MyJobs() {
