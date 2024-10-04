@@ -4,16 +4,15 @@ import {
   NavigationMenu,
   NavigationMenuList,
   NavigationMenuItem,
-  NavigationMenuTrigger,
-  NavigationMenuContent,
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 
 interface JobsMenuProps {
-  onSortChange: (sortType: string) => void; // Define the type for onSortChange
+  onSortChange: (sortType: string) => void;
 }
 
 const JobsMenu: React.FC<JobsMenuProps> = ({ onSortChange }) => {
+  console.log("Rendering JobsMenu");
   const [activeTab, setActiveTab] = useState<string>("mostRecent");
   const [showSearchBar, setShowSearchBar] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");

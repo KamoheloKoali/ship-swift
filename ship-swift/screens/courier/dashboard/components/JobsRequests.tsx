@@ -1,14 +1,5 @@
 import { Avatar } from "@/components/ui/avatar";
-import { Card } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 
 interface JobRequestProps {
   profilePhoto: string;
@@ -18,6 +9,9 @@ interface JobRequestProps {
   jobDate: string;
   amount: string;
   postDate: string;
+  parcelSize?: string;
+  description?: string;
+  additionalDetails?: string;
 }
 
 const JobsRequests: React.FC<JobRequestProps> = ({
