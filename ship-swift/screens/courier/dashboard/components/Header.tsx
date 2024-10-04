@@ -41,7 +41,7 @@ export default function Header() {
         { label: "Reports", href: "/finances/reports" },
       ],
     },
-    { label: "Chats", href: "/chats" },
+    { label: "Chats", href: "/conversations" },
   ];
 
   return (
