@@ -27,11 +27,7 @@ export default function Header() {
       ],
     },
     {
-      label: "My Jobs",
-      dropdownItems: [
-        { label: "Applied Jobs", href: "/my-jobs/applied" },
-        { label: "Saved Jobs", href: "/my-jobs/saved" },
-      ],
+      label: "My Jobs", href: "/driver/dashboard/myjobs" 
     },
     {
       label: "Manage Finances",
