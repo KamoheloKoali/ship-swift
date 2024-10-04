@@ -11,7 +11,11 @@ export const metadata: Metadata = {
 };
 
 const Layout = ({ children }: Props) => {
-  return <TooltipProvider><SideBarWrapper>{children}</SideBarWrapper></TooltipProvider>;
+  return (
+    <TooltipProvider>
+      <SideBarWrapper>{children}</SideBarWrapper>
+    </TooltipProvider>
+  );
 };
 
 export default Layout;

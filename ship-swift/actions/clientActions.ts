@@ -1,4 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+"use server";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -23,7 +24,8 @@ export const createClient = async (clientData: {
         idPhotoUrl: clientData.idPhotoUrl,
       },
     });
-    return { success: true, data: newClient };
+    if (newClient.Id) return { success: true, data: newClient };
+    else return { success: false };
   } catch (error) {
     return { success: false, error: "Error creating client" };
   }
@@ -37,29 +39,26 @@ export const getClientById = async (clientId: string) => {
     if (client) {
       return { success: true, data: client };
     } else {
-      return { success: false, error: 'Client not found' };
+      return { success: false, error: "Client not found" };
     }
   } catch (error) {
     return { success: false, error: "Error retrieving client by ID" };
   }
 };
 
-export const getClientByEmail = async (clientEmail: string) => {
-  try {
-    const client = await prisma.clients.findUnique({
-      where: { email: clientEmail },
-    });
-    if (client) {
-      return { success: true, data: client };
-    } else {
-      return { success: false, error: 'Client not found' };
-    }
-  } catch (error) {
-    return { success: false, error: "Error retrieving client by email" };
+export const getAllClients = async () => {
+  const clients = await prisma.clients.findMany(); // Remove where clause to get all clients
+  if (clients.length > 0) {
+    return { success: true, data: clients };
+  } else {
+    return { success: false, error: "No clients found" };
   }
 };
 
-export const updateClient = async (clientId: string, clientData: Partial<any>) => {
+export const updateClient = async (
+  clientId: string,
+  clientData: Partial<any>
+) => {
   try {
     const updatedClient = await prisma.clients.update({
       where: { Id: clientId },

@@ -21,6 +21,7 @@ model clients {
   courierJobs    CourierJobs[]
   driverRequests DriverRequests[]
   clientRequests clientRequests[]
+  Contacts Contacts[]
 }
 
 model Drivers {
@@ -37,6 +38,7 @@ model Drivers {
   dateUpdated    DateTime         @updatedAt
   driveRequests  DriverRequests[]
   clientRequests clientRequests[]
+  Contacts Contacts[]
 }
 
 model CourierJobs {
@@ -77,4 +79,22 @@ model UserRole {
   userId String  @id
   driver Boolean @default(false)
   client Boolean @default(false)
+}
+
+model UserRole {
+  userId                String          @id @default(uuid())
+  driver            Boolean         @default(false)
+  client            Boolean         @default(false)
+}
+
+
+model Contacts {
+  Id            String            @id @default(uuid())
+
+  // Foreign Keys and Relations
+  driver   Drivers  @relation(fields: [driverId], references: [Id])
+  driverId String // Foreign key for Driver (driver)
+
+  client   clients  @relation(fields: [clientId], references: [Id])
+  clientId String // Foreign key for clients (client)
 }
