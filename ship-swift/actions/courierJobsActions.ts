@@ -7,6 +7,8 @@ export const createJob = async (jobData: {
   description: string;
   budget: string;
   clientId: string;
+  DropOff: string;
+  PickUP: string;
 }) => {
   try {
     const newJob = await prisma.courierJobs.create({
@@ -15,6 +17,8 @@ export const createJob = async (jobData: {
         Description: jobData.description,
         Budget: jobData.budget,
         clientId: jobData.clientId,
+        DropOff: jobData.DropOff,
+        PickUp: jobData.PickUP,
       },
     });
     return { success: true, data: newJob };
