@@ -29,9 +29,11 @@ const Page = async (props: Props) => {
           const fullName = driverData.success
             ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
             : "Unknown Driver";
+          const photoUrl = driverData.data?.photoUrl;
           return {
             ...request,
             fullName, // Add fullName to the request
+            photoUrl,
           };
         })
       );
@@ -43,9 +45,11 @@ const Page = async (props: Props) => {
           const fullName = driverData.success
             ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
             : "Unknown Driver";
+          const photoUrl = driverData.data?.photoUrl;
           return {
             ...request,
             fullName, // Add fullName to the request
+            photoUrl,
           };
         })
       );
@@ -58,10 +62,12 @@ const Page = async (props: Props) => {
           const fullName = clientData.success
             ? `${clientData.data?.firstName} ${clientData.data?.lastName}`
             : "Unknown  Client";
+          const photoUrl = clientData.data?.photoUrl;
 
           return {
             ...request,
             fullName, // Add fullName to the request
+            photoUrl,
           };
         })
       );
@@ -73,10 +79,12 @@ const Page = async (props: Props) => {
           const fullName = clientData.success
             ? `${clientData.data?.firstName} ${clientData.data?.lastName}`
             : "Unknown  Client";
+          const photoUrl = clientData.data?.photoUrl;
 
           return {
             ...request,
             fullName, // Add fullName to the request
+            photoUrl,
           };
         })
       );

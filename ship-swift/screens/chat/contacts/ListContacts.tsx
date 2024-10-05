@@ -6,7 +6,12 @@ import React, { useEffect, useState } from "react";
 import { getDriverById } from "@/actions/driverActions";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { deleteDriverRequest } from "@/actions/driverRequest";
+import { deleteClientRequest } from "@/actions/clientRequest";
+import { createcontact, getcontact } from "@/actions/contactsActions";
+import { getUserRoleById } from "@/app/utils/getUserRole";
+import { useRouter } from "next/navigation";
 
 type Props = {
   incomingRequestsWithNames: any;
@@ -19,11 +24,13 @@ const ListContacts = ({
   outgoingRequestsWithNames,
   role,
 }: Props) => {
+  const router = useRouter();
   const { userId } = useAuth();
   const [incomingRequests, setIncomingRequests] = useState(
     Array.isArray(incomingRequestsWithNames) ? incomingRequestsWithNames : []
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [IsDeleting, setIsDeleting] = useState(false);
 
   // Handler functions moved outside of useEffect
   const handleAccept = async (requestId: string) => {
@@ -96,6 +103,50 @@ const ListContacts = ({
     setIsSubmitting(false);
   };
 
+  const handleDelete = async (requestId: string) => {
+    setIsDeleting(true);
+    if (role) {
+      const response = await deleteClientRequest(requestId);
+
+      if (response.success) {
+        toast.success("Request deleted successfully");
+      } else {
+        toast.error(response.error);
+      }
+    } else {
+      const response = await deleteDriverRequest(requestId);
+
+      if (response.success) {
+        toast.success("Request deleted successfully");
+      } else {
+        toast.error(response.error);
+      }
+    }
+    setIsDeleting(false);
+  };
+
+  const createConversation = async (clientId: string, driverId: string) => {
+    const getConversationsResponse = await getcontact(clientId, driverId);
+    console.log(getConversationsResponse);
+    if (getConversationsResponse.success) {
+      router.push(`/conversations/${getConversationsResponse.data[0].Id}`);
+    } else if (getConversationsResponse.error === "contact not found") {
+      const createContactResponse = await createcontact({
+        clientId,
+        driverId,
+        isConversating: true,
+      });
+      if (!createContactResponse.success) {
+        toast.error("An unexpected error occured");
+        return;
+      } else {
+        router.push(`/conversations/${createContactResponse.data?.Id}`);
+      }
+    } else {
+      toast.error("An unexpected error occured");
+    }
+  };
+
   useEffect(() => {
     const handleNewRequest = async (payload: any) => {
       const newRequest = payload.new;
@@ -134,6 +185,7 @@ const ListContacts = ({
   }, [supabase, userId, role]);
 
   //   console.log(outgoingRequestsWithNames)
+  // console.log(incomingRequests);
 
   let contacts: any = [];
 
@@ -154,10 +206,51 @@ const ListContacts = ({
               contacts.map((request: any) => (
                 <div
                   key={request.Id}
-                  className="border-b py-2 flex flex-col gap-2 w-full"
+                  className="border-b py-2  w-full cursor-pointer"
+                  onClick={async () => {
+                    const user = await getUserRoleById();
+                    if (user.success) {
+                      if (user.data?.client) {
+                        if (user.data?.userId === request.senderId) {
+                          createConversation(
+                            user.data?.userId,
+                            request.receiverId
+                          );
+                        } else {
+                          createConversation(
+                            user.data?.userId,
+                            request.senderId
+                          );
+                        }
+                      } else {
+                        if (user.data?.userId === request.senderId) {
+                          createConversation(
+                            request.receiverId,
+                            user.data?.userId
+                          );
+                        } else {
+                          createConversation(
+                            request.senderId,
+                            user.data?.userId
+                          );
+                        }
+                      }
+                    }
+                  }}
                 >
-                  <Avatar>LAXNSKL</Avatar>
-                  <p className="font-semibold">{`${request.fullName}`}</p>
+                  <div className="flex gap-2">
+                    <div>
+                      <Avatar>
+                        <AvatarImage src={request.photoUrl} alt="user photo" />
+                      </Avatar>
+                    </div>
+                    <div className="flex flex-col">
+                      <p className="font-semibold">{`${request.fullName}`}</p>
+                      <p className="text-foreground-muted">
+                        Click to start a conversation
+                      </p>
+                    </div>
+                  </div>
                 </div>
               ))}
           </div>
@@ -173,41 +266,53 @@ const ListContacts = ({
               incomingRequests.map((request: any) =>
                 request.isAccepted ? null : (
                   <div key={request.Id} className="border-b py-2">
-                    <p className="font-semibold">
-                      {`Request from: ${request.fullName}`}
-                    </p>
-                    <p>{request.message}</p>
-                    <div>
-                      Status:{" "}
-                      {request.isPending ? (
-                        "Pending"
-                      ) : (
-                        <div className="flex gap-2">
-                          <p>Rejected</p>
-                          <Button size="sm">Delete</Button>
-                        </div>
-                      )}
-                    </div>
                     <div className="flex gap-2">
-                      {isSubmitting ? (
-                        <Button>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
-                          please wait
-                        </Button>
-                      ) : (
+                      <div>
+                        <Avatar>
+                          <AvatarImage
+                            src={request.photoUrl}
+                            alt="user photo"
+                          />
+                        </Avatar>
+                      </div>
+                      <div>
+                        <p className="font-semibold">
+                          {`Request from: ${request.fullName}`}
+                        </p>
+                      </div>
+                      <p>{request.message}</p>
+                      <div>
+                        Status:{" "}
+                        {request.isPending ? (
+                          "Pending"
+                        ) : (
+                          <div className="flex gap-2">
+                            <p>Rejected</p>
+                            <Button size="sm">Delete</Button>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex gap-2">
+                        {isSubmitting ? (
+                          <Button>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                            please wait
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            onClick={() => handleAccept(request.Id)}
+                          >
+                            Accept
+                          </Button>
+                        )}
                         <Button
                           size="sm"
-                          onClick={() => handleAccept(request.Id)}
+                          onClick={() => handleReject(request.Id)}
                         >
-                          Accept
+                          Reject
                         </Button>
-                      )}
-                      <Button
-                        size="sm"
-                        onClick={() => handleReject(request.Id)}
-                      >
-                        Reject
-                      </Button>
+                      </div>
                     </div>
                   </div>
                 )
@@ -227,24 +332,64 @@ const ListContacts = ({
               outgoingRequestsWithNames.map((request: any) =>
                 request.isAccepted ? null : (
                   <div key={request.Id} className="border-b py-2">
-                    <p className="font-semibold">
-                      {`Request to: ${request.fullName}`}
-                    </p>
-                    <p>{request.message}</p>
-                    <div>
-                      Status:{request.isPending ? " Pending" : ""}
-                      {request.isPending ? (
-                        <>
-                          <div className="flex gap-2">
-                            <Button size="sm">Delete</Button>
-                          </div>
-                        </>
-                      ) : (
-                        <div className="flex flex-row gap-2">
-                          <p>Rejected</p>
-                          <Button size="sm">Delete</Button>
+                    <div className="flex gap-2">
+                      <div>
+                        <Avatar>
+                          <AvatarImage
+                            src={request.photoUrl}
+                            alt="user photo"
+                          />
+                        </Avatar>
+                      </div>
+                      <div>
+                        <p className="font-semibold">
+                          {`Request to: ${request.fullName}`}
+                        </p>
+                        <p>{request.message}</p>
+                        Status:{request.isPending ? " Pending" : ""}
+                        <div>
+                          {request.isPending ? (
+                            <>
+                              <div className="flex gap-2">
+                                {IsDeleting ? (
+                                  <Button>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                                    Please wait
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    size="sm"
+                                    onClick={() => {
+                                      handleDelete(request.Id);
+                                    }}
+                                  >
+                                    Delete
+                                  </Button>
+                                )}
+                              </div>
+                            </>
+                          ) : (
+                            <div className="flex flex-row gap-2">
+                              <p>Rejected</p>
+                              {IsDeleting ? (
+                                <Button>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                                  Please wait
+                                </Button>
+                              ) : (
+                                <Button
+                                  size="sm"
+                                  onClick={() => {
+                                    handleDelete(request.Id);
+                                  }}
+                                >
+                                  Delete
+                                </Button>
+                              )}
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
                     </div>
                   </div>
                 )

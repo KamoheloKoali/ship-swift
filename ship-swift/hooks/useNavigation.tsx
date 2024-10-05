@@ -19,7 +19,7 @@ export const useNavigation = () => {
         active: pathname.startsWith("/conversations"),
       },
       {
-        name: "Requests",
+        name: "Contacts",
         href: "/contacts",
         icon: <UsersIcon />,
         active: pathname == "/contacts",
