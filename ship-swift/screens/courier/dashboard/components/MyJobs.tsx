@@ -1,9 +1,7 @@
 "use client";
 
 import Details from "./JobDetails";
-import { createJob } from "@/actions/courierJobsActions";
 import { useEffect, useState } from 'react';
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,18 +11,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import JobsTable from "./JobsTable";
 
 import { Progress } from "@/components/ui/progress";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const getDeliveries = () => {
     const [jobs, setJobs] = useState<any[]>([]);
@@ -99,64 +88,8 @@ export default function MyJobs() {
                 </CardFooter>
               </Card>
             </div>
-            <Tabs defaultValue="scheduled">
-              <div className="flex items-center">
-                <TabsList>
-                  <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
-                  <TabsTrigger value="delivered">Delivered</TabsTrigger>
-                  <TabsTrigger value="current">Current</TabsTrigger>
-                </TabsList>
-              </div>
-              <TabsContent value="scheduled">
-                <Card x-chunk="dashboard-05-chunk-3">
-                  <CardHeader className="px-7">
-                    <CardTitle>Deliveries</CardTitle>
-                    <CardDescription>All sceduled deliveries.</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Customer</TableHead>
-                          <TableHead className="hidden sm:table-cell">
-                            Type
-                          </TableHead>
-                          <TableHead className="hidden sm:table-cell">
-                            Status
-                          </TableHead>
-                          <TableHead className="hidden md:table-cell">
-                            Date
-                          </TableHead>
-                          <TableHead className="text-right">Amount</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <TableRow className="bg-accent">
-                          <TableCell>
-                            <div className="font-medium">Liam Johnson</div>
-                            <div className="hidden text-sm text-muted-foreground md:inline">
-                              liam@example.com
-                            </div>
-                          </TableCell>
-                          <TableCell className="hidden sm:table-cell">
-                            Local
-                          </TableCell>
-                          <TableCell className="hidden sm:table-cell">
-                            <Badge className="text-xs" variant="secondary">
-                              Delivered
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            2023-06-23
-                          </TableCell>
-                          <TableCell className="text-right">$250.00</TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+            <JobsTable/>
+            
           </div>
           <Details />
         </main>

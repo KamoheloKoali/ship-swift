@@ -43,6 +43,18 @@ export const createJob = async (jobData: FormData) => {
   }
 };
 
+// Add this function to your server actions
+export const getAllJobs = async () => {
+  try {
+    const jobs = await prisma.courierJobs.findMany({
+      include: { client: true }, // Include client data if needed
+    });
+    return { success: true, data: jobs };
+  } catch (error) {
+    console.error("Error retrieving jobs:", error);
+    return { success: false, error: "Error retrieving jobs." };
+  }
+};
 
 
 export const getJobById = async (jobId: string) => {
