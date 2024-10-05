@@ -24,10 +24,10 @@ const Jobs = () => {
 
   return (
     <div className="flex flex-row justify-center lg:justify-start">
-      <div className="hidden lg:w-[10%] lg:block"></div>
+      <div className="hidden mylg:w-[2.5%] 2xl:w-[10%] lg:block"></div>
 
-      <div className="flex flex-row w-full lg:w-[80%] justify-center">
-        <div className="w-[80%] lg:w-[72%]">
+      <div className="flex flex-row w-full mylg:w-[95%] 2xl:w-[80%] justify-center">
+        <div className="w-[80%] mylg:w-[72%]">
           <UserProfile />
           <h1 className="font-semibold text-lg py-8">Job Requests</h1>
           <JobsMenu onSortChange={handleSortChange} />
@@ -36,13 +36,13 @@ const Jobs = () => {
             onJobSelect={handleJobSelect}
           />
         </div>
-        <div className="hidden lg:block w-[28%]">
+        <div className="hidden mylg:block w-[28%] bg-muted/80 h-[100vh]">
           <CardStatus />
           <CardJobsInfo job={selectedJob} isOpen={isModalOpen} />
         </div>
       </div>
 
-      <div className="hidden lg:w-[10%] lg:block"></div>
+      <div className="hidden mylg:w-[2.5%] 2xl:w-[10%] lg:block"></div>
     </div>
   );
 };

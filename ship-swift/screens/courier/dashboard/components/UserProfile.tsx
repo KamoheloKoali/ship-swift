@@ -15,7 +15,7 @@ export default function UserProfile() {
       <div className="flex flex-col items-center mr-4">
         <Avatar className="hidden md:block  md:h-36 md:w-36 lg:h-48 lg:w-48 rounded-full border-2 border-gray-300">
           <img
-            src="/path-to-your-avatar.jpg" // Replace with your avatar source
+            src="https://media.licdn.com/dms/image/D4D03AQFK7cYf3VHK3A/profile-displayphoto-shrink_200_200/0/1723036619652?e=2147483647&v=beta&t=xTRVy-JtkBzHRU2WBBNDxX757ziL4x4G_PeCxM4GH80" // Replace with your avatar source
             alt="Khiba Koenane"
             className="h-full w-full rounded-full object-cover"
           />

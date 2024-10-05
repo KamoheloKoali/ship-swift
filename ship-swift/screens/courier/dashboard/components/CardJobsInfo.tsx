@@ -1,7 +1,7 @@
 import React from "react";
 import { JobRequest } from "./JobsRequestsTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Calendar, Package, DollarSign, Clock } from "lucide-react";
 import { UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,32 +16,23 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
   if (!job) return null;
 
   return (
-    <div className="p-4">
-      <Card className="w-full max-w-md mx-auto border-none bg-muted/80 rounded-lg overflow-hidden shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-gray-100 to-gray-200 pb-2 mb-6">
-          <CardTitle className="text-xl font-bold text-gray-800">
-            {job.name}
-          </CardTitle>
-          <div className="flex items-center text-sm text-gray-500">
-            <Clock className="w-4 h-4 mr-1" />
-            Posted on {job.postDate}
-          </div>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4 p-4">
-          <div className="flex flex-row items-center justify-between mb-6">
-            <div className="flex items-center">
-              <Avatar className="h-16 w-16 border-2 border-white shadow-md rounded-full mr-4 flex-shrink-0">
-                <img
-                  src={job.profilePhoto}
+    <div className="p-4 min-h-screen flex items-center justify-center">
+      <Card className="w-full max-w-lg bg-white shadow-xl rounded-xl overflow-hidden">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <Avatar className="h-12 w-12 border-2 border-gray-200">
+                <AvatarImage
+                  src="https://cdn.prod.website-files.com/5fd2ba952bcd68835f2c8254/654553fedbede7976b97eaf5_Professional-5.remini-enhanced.webp"
                   alt={job.name}
-                  className="h-full w-full rounded-full object-cover"
                 />
+                <AvatarFallback>{job.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <div>
-                <div className="font-semibold text-lg text-gray-800">
+                <h3 className="font-semibold text-lg text-gray-800">
                   {job.name}
-                </div>
-                <div className="text-sm text-gray-600">Sender</div>
+                </h3>
+                <p className="text-sm text-gray-500">Sender</p>
               </div>
             </div>
             <Button
@@ -53,72 +44,53 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
             </Button>
           </div>
 
-          <Divider />
+          <div className="mb-4">
+            <h2 className="text-xl font-bold text-gray-800 mb-2">{job.name}</h2>
+            <p className="text-gray-600 text-sm">{job.description}</p>
+          </div>
 
-          <div className="flex items-center">
-            <MapPin className="w-5 h-5 mr-2 text-gray-600" />
-            <div>
-              <div className="text-sm font-medium text-gray-500">Pick Up</div>
-              <div className="text-md font-semibold text-gray-700 truncate">
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="flex items-center space-x-2 text-gray-600">
+              <MapPin className="w-4 h-4" />
+              <span className="text-sm">
+                <div className="font-medium">Pick Up</div>
                 {job.pickUpLocation}
-              </div>
+              </span>
             </div>
-          </div>
-          <div className="flex items-center">
-            <MapPin className="w-5 h-5 mr-2 text-gray-600" />
-            <div>
-              <div className="text-sm font-medium text-gray-500">Drop Off</div>
-              <div className="text-md font-semibold text-gray-700 truncate">
+            <div className="flex items-center space-x-2 text-gray-600">
+              <MapPin className="w-4 h-4" />
+              <span className="text-sm">
+                <div className="font-medium">Drop Off</div>
                 {job.dropOffLocation}
-              </div>
+              </span>
             </div>
-          </div>
-
-          <Divider />
-
-          <div className="flex justify-between items-center bg-gray-100 p-3 rounded-lg">
-            <div className="flex items-center">
-              <Calendar className="w-5 h-5 mr-2 text-gray-600" />
-              <div>
-                <div className="text-sm font-medium text-gray-500">
-                  Job Date
-                </div>
-                <div className="text-md font-semibold text-gray-700">
-                  {job.jobDate}
-                </div>
-              </div>
+            <div className="flex items-center space-x-2 text-gray-600">
+              <Calendar className="w-4 h-4" />
+              <span className="text-sm">
+                <div className="font-medium">Job Date</div>
+                {job.jobDate}
+              </span>
             </div>
-            <div className="flex items-center">
-              <DollarSign className="w-5 h-5 mr-1 text-gray-600" />
-              <div className="text-lg font-bold text-gray-800">
-                {job.amount}
-              </div>
-            </div>
-          </div>
-
-          <Divider />
-
-          <div className="flex items-center">
-            <Package className="w-5 h-5 mr-2 text-gray-600" />
-            <div>
-              <div className="text-sm font-medium text-gray-500">
-                Parcel Size
-              </div>
-              <div className="text-md font-semibold text-gray-700">
+            <div className="flex items-center space-x-2 text-gray-600">
+              <Package className="w-4 h-4" />
+              <span className="text-sm">
+                <div className="font-medium">Parcel Size</div>
                 {job.parcelSize}
-              </div>
+              </span>
             </div>
           </div>
 
-          <Divider />
-
-          <div>
-            <div className="text-sm font-medium text-gray-500 mb-1">
-              Description
+          <div className="flex items-center justify-between bg-gray-100 p-3 rounded-lg">
+            <div className="flex items-center space-x-2">
+              <Clock className="w-4 h-4 text-gray-500" />
+              <span className="text-sm text-gray-600">
+                Posted {job.postDate}
+              </span>
             </div>
-            <p className="text-gray-700 text-sm leading-relaxed">
-              {job.description}
-            </p>
+            <div className="flex items-center space-x-1">
+              <DollarSign className="w-4 h-4 text-green-600" />
+              <span className="font-bold text-gray-800">{job.amount}</span>
+            </div>
           </div>
         </CardContent>
       </Card>

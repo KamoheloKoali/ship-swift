@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 
 const CardStatus = () => {
   return (
-    <div className="px-4">
-      <Card className="w-full max-w-sm mx-auto border-none bg-muted/80">
+    <div className="p-4">
+      <Card className="w-full max-w-md mx-auto border-none bg-white">
         <CardHeader>
           <CardTitle className="text-lg font-bold">Status</CardTitle>
         </CardHeader>
