@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { getDriverById } from "@/actions/driverActions";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Avatar } from "@/components/ui/avatar";
 
 type Props = {
   incomingRequestsWithNames: any;
@@ -132,7 +133,7 @@ const ListContacts = ({
     };
   }, [supabase, userId, role]);
 
-//   console.log(outgoingRequestsWithNames)
+  //   console.log(outgoingRequestsWithNames)
 
   let contacts: any = [];
 
@@ -144,98 +145,88 @@ const ListContacts = ({
   });
 
   return (
-    <div className="h-full flex flex-col gap-6 overflow-y-auto">
+    <div className="h-full flex flex-col gap-6 overflow-y-auto w-full">
       <div>
         <p className="text-base font-semibold text-underline">Contacts</p>
-        {contacts ? (
-          contacts.length === 0 ? (
-            <p className="h-full w-full flex items-center justify-center">
-              No contacts
-            </p>
-          ) : (
-            <div>
-              {Array.isArray(contacts) &&
-                contacts.map((request: any) => (
-                  <div key={request.Id} className="border-b py-2">
-                    <p className="font-semibold">
-                      {`${request.fullName}`}
-                    </p>
-                  </div>
-                ))}
-            </div>
-          )
+        {contacts.length > 0 ? (
+          <div>
+            {Array.isArray(contacts) &&
+              contacts.map((request: any) => (
+                <div
+                  key={request.Id}
+                  className="border-b py-2 flex flex-col gap-2 w-full"
+                >
+                  <Avatar>LAXNSKL</Avatar>
+                  <p className="font-semibold">{`${request.fullName}`}</p>
+                </div>
+              ))}
+          </div>
         ) : (
-          <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+          <p className="h-full w-full flex items-center">No contacts</p>
         )}
       </div>
       <div>
         <p className="text-base font-semibold">Incoming requests</p>
-        {incomingRequests ? (
-          incomingRequests.length === 0 ? (
-            <p className="h-full w-full flex items-center justify-center">
-              No incoming requests
-            </p>
-          ) : (
-            <div>
-              {Array.isArray(incomingRequests) &&
-                incomingRequests.map((request: any) =>
-                  request.isAccepted ? null : (
-                    <div key={request.Id} className="border-b py-2">
-                      <p className="font-semibold">
-                        {`Request from: ${request.fullName}`}
-                      </p>
-                      <p>{request.message}</p>
-                      <div>
-                        Status:{" "}
-                        {request.isPending ? (
-                          "Pending"
-                        ) : (
-                          <div className="flex gap-2">
-                            <p>Rejected</p>
-                            <Button size="sm">Delete</Button>
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex gap-2">
-                        {isSubmitting ? (
-                          <Button>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {" "} please wait
-                          </Button>
-                        ) : (
-                          <Button
-                            size="sm"
-                            onClick={() => handleAccept(request.Id)}
-                          >
-                            Accept
-                          </Button>
-                        )}
+        {incomingRequests.length > 0 ? (
+          <div>
+            {Array.isArray(incomingRequests) &&
+              incomingRequests.map((request: any) =>
+                request.isAccepted ? null : (
+                  <div key={request.Id} className="border-b py-2">
+                    <p className="font-semibold">
+                      {`Request from: ${request.fullName}`}
+                    </p>
+                    <p>{request.message}</p>
+                    <div>
+                      Status:{" "}
+                      {request.isPending ? (
+                        "Pending"
+                      ) : (
+                        <div className="flex gap-2">
+                          <p>Rejected</p>
+                          <Button size="sm">Delete</Button>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      {isSubmitting ? (
+                        <Button>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                          please wait
+                        </Button>
+                      ) : (
                         <Button
                           size="sm"
-                          onClick={() => handleReject(request.Id)}
+                          onClick={() => handleAccept(request.Id)}
                         >
-                          Reject
+                          Accept
                         </Button>
-                      </div>
+                      )}
+                      <Button
+                        size="sm"
+                        onClick={() => handleReject(request.Id)}
+                      >
+                        Reject
+                      </Button>
                     </div>
-                  )
-                )}
-            </div>
-          )
+                  </div>
+                )
+              )}
+          </div>
         ) : (
-          <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+          <p className="h-full w-full flex items-center justify-center">
+            No incoming requests
+          </p>
         )}
       </div>
       <div>
         <p className="text-base font-semibold">Outgoing requests</p>
-        {outgoingRequestsWithNames && outgoingRequestsWithNames.length === 0?  (
-            <p className="h-full w-full flex items-center justify-center">
-              No outgoing requests
-            </p>
-          ) : (
-            <div>
-              {Array.isArray(outgoingRequestsWithNames) &&
-                outgoingRequestsWithNames.map((request: any) => (
-                  request.isAccepted ? null : (<div key={request.Id} className="border-b py-2">
+        {outgoingRequestsWithNames?.length > 0 ? (
+          <div>
+            {Array.isArray(outgoingRequestsWithNames) &&
+              outgoingRequestsWithNames.map((request: any) =>
+                request.isAccepted ? null : (
+                  <div key={request.Id} className="border-b py-2">
                     <p className="font-semibold">
                       {`Request to: ${request.fullName}`}
                     </p>
@@ -244,11 +235,10 @@ const ListContacts = ({
                       Status:{request.isPending ? " Pending" : ""}
                       {request.isPending ? (
                         <>
-                        
-                        <div className="flex gap-2">
-                        <Button size="sm">Delete</Button>
-                      </div>
-                      </>
+                          <div className="flex gap-2">
+                            <Button size="sm">Delete</Button>
+                          </div>
+                        </>
                       ) : (
                         <div className="flex flex-row gap-2">
                           <p>Rejected</p>
@@ -256,13 +246,21 @@ const ListContacts = ({
                         </div>
                       )}
                     </div>
-                  </div>)
-                ))}
-            </div>
-          )}
+                  </div>
+                )
+              )}
+          </div>
+        ) : (
+          <p className="h-full w-full flex items-center justify-center">
+            No outgoing requests
+          </p>
+        )}
       </div>
     </div>
   );
 };
 
 export default ListContacts;
+{
+  /* <Loader2 className="mr-2 h-8 w-8 animate-spin" /> */
+}
