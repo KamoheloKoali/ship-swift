@@ -24,9 +24,9 @@ const Jobs = () => {
 
   return (
     <div className="flex flex-row justify-center lg:justify-start">
-      <div className="hidden lg:w-[16%] lg:block"></div>
+      <div className="hidden lg:w-[10%] lg:block"></div>
 
-      <div className="flex flex-row w-full lg:w-[68%] justify-center">
+      <div className="flex flex-row w-full lg:w-[80%] justify-center">
         <div className="w-[80%] lg:w-[72%]">
           <UserProfile />
           <h1 className="font-semibold text-lg py-8">Job Requests</h1>
@@ -42,7 +42,7 @@ const Jobs = () => {
         </div>
       </div>
 
-      <div className="hidden lg:w-[16%] lg:block"></div>
+      <div className="hidden lg:w-[10%] lg:block"></div>
     </div>
   );
 };
