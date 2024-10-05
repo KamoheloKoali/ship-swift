@@ -1,17 +1,25 @@
-// "use client"; // Make sure this is a client component if you're using React hooks
 "use client"
 import React, { useState } from 'react';
 import { createJob } from '@/actions/courierJobsActions';
-// import { currentUser } from '@clerk/nextjs/server';
+import { useUser } from "@clerk/nextjs";
 
-// Adjust the import path accordingly
 const JobForm: React.FC = () => {
+  const { user, isLoaded } = useUser(); // Use the useUser hook to get the user object
   const [error, setError] = useState<string | null | undefined>(null);
   const [success, setSuccess] = useState<string | null>(null);
-
+  
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    
     const formData = new FormData(event.currentTarget);
+
+    // Ensure the user object is loaded and available
+    if (isLoaded && user) {
+      formData.append("clientId", "user_2mvL0iKwI7Eu3cEJOuz7jNsRiLO"); // Append clientId from useUser to FormData
+    } else {
+      setError("User is not authenticated.");
+      return;
+    }
 
     const response = await createJob(formData);
 
@@ -41,10 +49,6 @@ const JobForm: React.FC = () => {
         <div>
           <label>Budget:</label>
           <input type="text" name="budget" required />
-        </div>
-        <div>
-          <label>Client ID:</label>
-          <input type="text" name="clientId" required />
         </div>
         <div>
           <label>Drop Off:</label>
