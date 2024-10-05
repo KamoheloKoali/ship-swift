@@ -24,7 +24,8 @@ const jobRequestsData: JobRequest[] = [
     amount: "M50",
     postDate: "Wed, 02-10-2024",
     parcelSize: "Medium",
-    description: "Deliver a medium-sized package to the given address. Recipient will be available after 3 PM.",
+    description:
+      "Deliver a medium-sized package to the given address. Recipient will be available after 3 PM.",
   },
   {
     profilePhoto: "/path-to-profile-photo2.jpg",
@@ -35,7 +36,8 @@ const jobRequestsData: JobRequest[] = [
     amount: "M75",
     postDate: "Tue, 01-10-2024",
     parcelSize: "Large",
-    description: "Transport large furniture items carefully. Lift assistance required for heavy items.",
+    description:
+      "Transport large furniture items carefully. Lift assistance required for heavy items.",
   },
   {
     profilePhoto: "/path-to-profile-photo3.jpg",
@@ -46,7 +48,8 @@ const jobRequestsData: JobRequest[] = [
     amount: "M60",
     postDate: "Wed, 04-10-2024",
     parcelSize: "Small",
-    description: "Deliver important documents to the specified address. Documents should not be bent or damaged.",
+    description:
+      "Deliver important documents to the specified address. Documents should not be bent or damaged.",
   },
 ];
 
@@ -59,7 +62,8 @@ const JobsRequestsTable: React.FC<JobsRequestsTableProps> = ({
   sortType,
   onJobSelect,
 }) => {
-  console.log("Rendering JobsRequestsTable with sortType:", sortType);
+  const [selectedJob, setSelectedJob] = useState<JobRequest | null>(null);
+
   const sortedData = [...jobRequestsData].sort((a, b) => {
     if (sortType === "mostRecent") {
       return new Date(b.postDate).getTime() - new Date(a.postDate).getTime();
@@ -69,14 +73,21 @@ const JobsRequestsTable: React.FC<JobsRequestsTableProps> = ({
     return 0;
   });
 
+  const handleJobClick = (job: JobRequest) => {
+    setSelectedJob(job);
+    onJobSelect(job);
+  };
+
   return (
     <div className="py-4">
       <div className="flex flex-col">
         {sortedData.map((request, index) => (
           <div
             key={index}
-            onClick={() => onJobSelect(request)}
-            className="cursor-pointer"
+            onClick={() => handleJobClick(request)}
+            className={`cursor-pointer px-4 transition-colors ${
+              selectedJob === request ? "bg-muted/80" : "bg-white"
+            }`}
           >
             <JobsRequests
               profilePhoto={request.profilePhoto}

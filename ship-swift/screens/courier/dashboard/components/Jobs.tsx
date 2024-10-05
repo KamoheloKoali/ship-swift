@@ -29,6 +29,9 @@ const Jobs = () => {
       <div className="flex flex-row w-full mylg:w-[95%] 2xl:w-[80%] justify-center">
         <div className="w-[80%] mylg:w-[72%]">
           <UserProfile />
+          <div className="flex md:hidden justify-start w-full">
+            <CardStatus/>
+          </div>
           <h1 className="font-semibold text-lg py-8">Job Requests</h1>
           <JobsMenu onSortChange={handleSortChange} />
           <JobsRequestsTable
@@ -36,7 +39,7 @@ const Jobs = () => {
             onJobSelect={handleJobSelect}
           />
         </div>
-        <div className="hidden mylg:block w-[28%] bg-muted/80 h-[100vh]">
+        <div className="hidden mylg:block w-[28%] bg-muted/80">
           <CardStatus />
           <CardJobsInfo job={selectedJob} isOpen={isModalOpen} />
         </div>

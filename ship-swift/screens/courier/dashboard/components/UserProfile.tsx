@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import { useUser } from "@clerk/clerk-react";
+import CardStatus from "@/screens/courier/dashboard/components/CardStatus";
 
 export default function UserProfile() {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -30,7 +31,10 @@ export default function UserProfile() {
       </div>
 
       {/* Right Side: View Full Profile Button */}
-      <div className="flex items-center ml-auto">
+      <div className="flex flex-col items-end mylg:justify-center j ml-auto">
+        <div className="hidden md:block mylg:hidden justify-start">
+          <CardStatus />
+        </div>
         <Button className="bg-blue-600 text-white hover:bg-blue-700 transition duration-200">
           View Full Profile
         </Button>

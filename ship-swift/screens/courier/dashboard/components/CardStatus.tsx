@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 
 const CardStatus = () => {
   return (
-    <div className="p-4">
-      <Card className="w-full max-w-md mx-auto border-none bg-white">
+    <div className="w-full py-4 mylg:p-4">
+      <Card className="w-full md:w-full md:max-w-md md:mx-auto border-none bg-muted/80 mylg:bg-white">
         <CardHeader>
           <CardTitle className="text-lg font-bold">Status</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col gap-4 items-start">
+        <CardContent className="flex flex-col mylg:flex-row mylg:items-center mylg:justify-between gap-4">
           {/* Switch with Label */}
           <div className="flex items-center gap-2">
             <Switch id="availability" />
@@ -18,9 +18,10 @@ const CardStatus = () => {
               Available
             </label>
           </div>
-
           {/* Button for Trip Announcement */}
-          <Button variant="default">Announce Scheduled Trip</Button>
+          <Button variant="default" className="w-full">
+            Announce Scheduled Trip
+          </Button>
         </CardContent>
       </Card>
     </div>
