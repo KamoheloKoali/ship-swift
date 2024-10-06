@@ -186,9 +186,9 @@ const ListContacts = ({
       if (request.isAccepted) numberOfContactsThoughtAsIncoming++;
     });
     // if (outgoingRequestsWithNames.length > 0) {
-      outgoingRequestsWithNames?.map((request: any) => {
-        if (request.isAccepted) numberOfContactsThoughtAsOutgoing++;
-      });
+    outgoingRequestsWithNames?.map((request: any) => {
+      if (request.isAccepted) numberOfContactsThoughtAsOutgoing++;
+    });
     // }
 
     if (numberOfContactsThoughtAsIncoming === incomingRequests.length)
@@ -230,7 +230,7 @@ const ListContacts = ({
   });
 
   return (
-    <div className="h-full flex flex-col gap-6 overflow-y-auto w-full">
+    <div className="h-full flex flex-col gap-6 overflow-y-auto w-full no-scrollbar">
       <div>
         <p className="text-base font-semibold text-underline">Contacts</p>
         {contacts.length > 0 ? (

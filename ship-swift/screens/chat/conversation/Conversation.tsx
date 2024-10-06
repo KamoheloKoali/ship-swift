@@ -97,9 +97,6 @@ const Conversation = ({
       driverId: driverDetails.Id,
     };
 
-    // Add the new message object to the state so it's rendered in the UI
-    setNewMessage((prevMessages) => [...prevMessages, newMessage]);
-
     // You can replace this with your actual submission logic (e.g., send to Supabase or another backend)
     const response = await createMessage(newMessage);
 
@@ -113,10 +110,11 @@ const Conversation = ({
     // Clear the textarea after successful submission
     textarea.value = "";
     textarea.style.height = "auto"; // Reset the height
+    setNewMessage((prevMessages) => [...prevMessages, newMessage]);
   };
   return (
     <div className="w-full h-full flex flex-col justify-between flex-1 overflow-y-auto gap-2 p-3 no-scrollbar">
-      <div className="w-full h-[95%] overflow-y-auto">
+      <div className="w-full h-[95%] overflow-y-auto no-scrollbar">
         <div className="flex flex-col gap-4">
           {messages.map((message: any, index: number) => (
             <div key={index} className="flex flex-col gap-4">
@@ -137,7 +135,8 @@ const Conversation = ({
           ))}
         </div>
       </div>
-      <div className="w-full h-[5%] flex flex-row gap-2 items-center">
+      <div className="h-[3%]"></div>
+      <div className="w-full h-[2%] flex flex-row gap-2 items-center">
         <Paperclip />
         <Textarea
           ref={textareaRef}

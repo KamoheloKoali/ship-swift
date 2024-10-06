@@ -67,7 +67,9 @@ const ChatWrapper = async ({ children, conversationId }: Props) => {
           </div>
         )}
       </div>
-      <div className="w-full  h-[92%] overflow-y-auto">{children}</div>
+      <div className="w-full  h-[92%] overflow-y-auto no-scrollbar">
+        {children}
+      </div>
     </div>
   );
 };
