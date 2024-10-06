@@ -53,7 +53,7 @@ const Conversation = ({
   useEffect(() => {
     const handleNewMessage = async (payload: any) => {
       const newMessage = payload.new;
-      if (newMessage.clientId === userId || newMessage.driverId === userId) {
+      if (newMessage.senderId !== userId) {
         setNewMessage((prevMessages) => [...prevMessages, { ...newMessage }]);
       }
     };
@@ -81,7 +81,6 @@ const Conversation = ({
 
     if (!textarea) return;
 
-    const message = textarea.value;
     const messageText = textarea.value.trim(); // Get value and trim leading/trailing whitespace
 
     // Validation to prevent empty or whitespace-only messages
@@ -89,20 +88,25 @@ const Conversation = ({
       toast.error("Please enter a message before submitting.");
       return;
     }
-    // Add the new message to the state so it's rendered in the UI
-    setNewMessage((prevMessages) => [...prevMessages, message]);
+
+    // Create the structured message object before adding it to the state
+    const newMessage = {
+      senderId: userId || "",
+      message: messageText, // Use trimmed message
+      clientId: clientDetails.Id,
+      driverId: driverDetails.Id,
+    };
+
+    // Add the new message object to the state so it's rendered in the UI
+    setNewMessage((prevMessages) => [...prevMessages, newMessage]);
 
     // You can replace this with your actual submission logic (e.g., send to Supabase or another backend)
-    const response = await createMessage({
-      driverId: driverDetails.Id,
-      clientId: clientDetails.Id,
-      senderId: userId || "",
-      message: message,
-    });
+    const response = await createMessage(newMessage);
 
     if (!response.success) {
       toast.error("Error sending message. Please try again");
-      messages.pop();
+      // Roll back the message from the state in case of error
+      setNewMessage((prevMessages) => prevMessages.slice(0, -1));
       return;
     }
 
@@ -110,27 +114,28 @@ const Conversation = ({
     textarea.value = "";
     textarea.style.height = "auto"; // Reset the height
   };
-
   return (
     <div className="w-full h-full flex flex-col justify-between flex-1 overflow-y-auto gap-2 p-3 no-scrollbar">
       <div className="w-full h-[95%] overflow-y-auto">
-        {messages.map((message: any, index: number) => (
-          <div key={index} className="flex flex-col gap-4">
-            {userId === message.senderId ? (
-              <div className="flex justify-end border">
-                <div className="max-w-[80%] rounded-2xl bg-gray-900 px-4 py-3 text-white shadow-lg dark:bg-gray-800">
-                  <p className="text-sm font-medium">{message.message}</p>
+        <div className="flex flex-col gap-4">
+          {messages.map((message: any, index: number) => (
+            <div key={index} className="flex flex-col gap-4">
+              {userId === message.senderId ? (
+                <div className="flex justify-end">
+                  <div className="max-w-[80%] rounded-2xl bg-gray-900 px-4 py-3 text-white shadow-lg dark:bg-gray-800">
+                    <p className="text-sm font-medium">{message.message}</p>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="flex justify-start border">
-                <div className="max-w-[80%] rounded-2xl bg-gray-100 px-4 py-3 text-gray-900 shadow-lg dark:bg-gray-950 dark:text-gray-50">
-                  <p className="text-sm font-medium">{message.message}</p>
+              ) : (
+                <div className="flex justify-start">
+                  <div className="max-w-[80%] rounded-2xl bg-gray-100 px-4 py-3 text-gray-900 shadow-lg dark:bg-gray-950 dark:text-gray-50">
+                    <p className="text-sm font-medium">{message.message}</p>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        ))}
+              )}
+            </div>
+          ))}
+        </div>
       </div>
       <div className="w-full h-[5%] flex flex-row gap-2 items-center">
         <Paperclip />
