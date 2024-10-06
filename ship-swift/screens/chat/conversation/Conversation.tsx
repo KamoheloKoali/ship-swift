@@ -114,31 +114,23 @@ const Conversation = ({
   return (
     <div className="w-full h-full flex flex-col justify-between flex-1 overflow-y-auto gap-2 p-3 no-scrollbar">
       <div className="w-full h-[95%] overflow-y-auto">
-        <div className="flex flex-col gap-4">
-          {messages.map((message: any, index: number) => (
-            <div key={index} className="flex flex-col gap-4">
-              {userId === message.senderId ? (
-                <>
-                  <div className="flex justify-end">
-                    <div className="max-w-[80%] rounded-2xl bg-gray-900 px-4 py-3 text-white shadow-lg dark:bg-gray-800">
-                      <p className="text-sm font-medium">{message.message}</p>
-                    </div>
-                  </div>
-                  <div className="flex justify-start"></div>
-                </>
-              ) : (
-                <>
-                  <div className="flex justify-end"></div>
-                  <div className="flex justify-start">
-                    <div className="max-w-[80%] rounded-2xl bg-gray-100 px-4 py-3 text-gray-900 shadow-lg dark:bg-gray-950 dark:text-gray-50">
-                      <p className="text-sm font-medium">{message.message}</p>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          ))}
-        </div>
+        {messages.map((message: any, index: number) => (
+          <div key={index} className="flex flex-col gap-4">
+            {userId === message.senderId ? (
+              <div className="flex justify-end border">
+                <div className="max-w-[80%] rounded-2xl bg-gray-900 px-4 py-3 text-white shadow-lg dark:bg-gray-800">
+                  <p className="text-sm font-medium">{message.message}</p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex justify-start border">
+                <div className="max-w-[80%] rounded-2xl bg-gray-100 px-4 py-3 text-gray-900 shadow-lg dark:bg-gray-950 dark:text-gray-50">
+                  <p className="text-sm font-medium">{message.message}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
       <div className="w-full h-[5%] flex flex-row gap-2 items-center">
         <Paperclip />
