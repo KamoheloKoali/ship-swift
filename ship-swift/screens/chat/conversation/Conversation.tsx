@@ -53,7 +53,7 @@ const Conversation = ({
   useEffect(() => {
     const handleNewMessage = async (payload: any) => {
       const newMessage = payload.new;
-      if (newMessage.receiverId === userId || newMessage.senderId === userId) {
+      if (newMessage.clientId === userId || newMessage.driverId === userId) {
         setNewMessage((prevMessages) => [...prevMessages, { ...newMessage }]);
       }
     };
