@@ -185,7 +185,7 @@ const ListContacts = ({
     incomingRequests.map((request: any) => {
       if (request.isAccepted) numberOfContactsThoughtAsIncoming++;
     });
-    outgoingRequestsWithNames.map((request: any) => {
+    outgoingRequestsWithNames?.map((request: any) => {
       if (request.isAccepted) numberOfContactsThoughtAsOutgoing++;
     });
 
