@@ -1,7 +1,9 @@
 import { Avatar } from "@/components/ui/avatar";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { MapPin, Calendar, Clock } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface JobRequestProps {
+
+interface JobsRequestsProps {
   profilePhoto: string;
   name: string;
   pickUpLocation: string;
@@ -9,12 +11,10 @@ interface JobRequestProps {
   jobDate: string;
   amount: string;
   postDate: string;
-  parcelSize?: string;
-  description?: string;
-  additionalDetails?: string;
+  isSelected: boolean;
 }
 
-const JobsRequests: React.FC<JobRequestProps> = ({
+const JobsRequests: React.FC<JobsRequestsProps> = ({
   profilePhoto,
   name,
   pickUpLocation,
@@ -22,63 +22,60 @@ const JobsRequests: React.FC<JobRequestProps> = ({
   jobDate,
   amount,
   postDate,
+  isSelected,
 }) => {
   return (
-    <div className="w-full border-t border-gray-200">
-      <Table>
-        <TableBody>
-          <TableRow>
-            <TableCell>
-              <div className="flex flex-col lg:flex-row justify-between items-start w-full">
-                {/* Left Section */}
-                <div className="flex flex-col lg:flex-row gap-4 items-center w-full">
-                  {/* Avatar and Name */}
-                  <div className="flex items-center w-full lg:w-[30%]">
-                    <Avatar className="h-16 w-16 border border-black rounded-full mr-4 flex-shrink-0">
-                      <img
-                        src={profilePhoto}
-                        alt={name}
-                        className="h-full w-full rounded-full object-cover"
-                      />
-                    </Avatar>
-                    <div className="font-bold text-lg truncate">{name}</div>
-                  </div>
+    <Card className={`w-full rounded-none border-none shadow-none ${isSelected ? 'bg-muted/80' : ''}`}>
+      <CardContent className="p-6 border-b">
+        <div className="flex flex-col lg:flex-row justify-between items-start w-full gap-6">
+          {/* Left Section */}
+          <div className="flex flex-col lg:flex-row gap-6 items-start w-full lg:w-3/4">
+            {/* Avatar and Name */}
+            <div className="flex items-center w-full lg:w-1/3">
+              <Avatar className="h-16 w-16 border-2 border-gray-200 rounded-full mr-4 flex-shrink-0">
+                <img
+                  src={profilePhoto}
+                  alt={name}
+                  className="h-full w-full rounded-full object-cover"
+                />
+              </Avatar>
+              <div className="font-bold text-lg truncate">{name}</div>
+            </div>
 
-                  {/* Locations */}
-                  <div className="lg:col-span-2 flex flex-col w-full lg:w-[50%]">
-                    <div className="text-md font-semibold text-gray-600 truncate">
-                      Pick Up: {pickUpLocation}
-                    </div>
-                    <div className="text-md font-semibold text-gray-600 truncate">
-                      Drop Off: {dropOffLocation}
-                    </div>
-                  </div>
+            {/* Locations */}
+            <div className="flex flex-col w-full lg:w-2/3 space-y-2">
+              <div className="flex items-center text-sm text-gray-600">
+                <MapPin className="mr-2 h-4 w-4 text-gray-400 flex-shrink-0" />
+                <span className="font-semibold w-20 flex-shrink-0">Pick Up:</span>
+                <span className="truncate">{pickUpLocation}</span>
+              </div>
+              <div className="flex items-center text-sm text-gray-600">
+                <MapPin className="mr-2 h-4 w-4 text-gray-400 flex-shrink-0" />
+                <span className="font-semibold w-20 flex-shrink-0">Drop Off:</span>
+                <span className="truncate">{dropOffLocation}</span>
+              </div>
+            </div>
+          </div>
 
-                  {/* Amount Offered */}
-                  <div className="text-sm font-semibold text-gray-900 lg:text-right w-full lg:w-auto">
-                    Offer: {amount}
-                  </div>
-                </div>
+          {/* Right Section */}
+          <div className="flex flex-row lg:flex-col items-start lg:items-end justify-between h-full w-full lg:w-1/4">
+            <div className="text-lg font-bold text-gray-900 bg-gray-100 px-4 py-2 rounded-full">
+              {amount}
+            </div>
+            <div className="flex flex-col items-end">
+              <div className="flex items-center text-sm text-gray-600 mb-1">
+                <Calendar className="mr-2 h-4 w-4 text-gray-400" />
+                <span>{jobDate}</span>
               </div>
-              <div className="flex flex-col lg:flex-row w-full justify-between mt-4 lg:mt-0">
-                <div className="lg:mt-4">
-                  {/* Job Date */}
-                  <div className="text-md font-medium text-gray-600">
-                    Job Date: {jobDate}
-                  </div>
-                </div>
-                <div className="mt-2 lg:mt-4">
-                  {/* Job Posting Date */}
-                  <div className="text-sm text-gray-500">
-                    Posted On {postDate}
-                  </div>
-                </div>
+              <div className="flex items-center text-xs text-gray-500">
+                <Clock className="mr-2 h-4 w-4 text-gray-400" />
+                <span>Posted {postDate}</span>
               </div>
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
