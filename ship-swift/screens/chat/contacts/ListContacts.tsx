@@ -12,6 +12,7 @@ import { deleteClientRequest } from "@/actions/clientRequest";
 import { createcontact, getcontact } from "@/actions/contactsActions";
 import { getUserRoleById } from "@/app/utils/getUserRole";
 import { useRouter } from "next/navigation";
+import { getClientById } from "@/actions/clientActions";
 
 type Props = {
   incomingRequestsWithNames: any;
@@ -31,6 +32,10 @@ const ListContacts = ({
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [IsDeleting, setIsDeleting] = useState(false);
+  const [isAllIncomingRequestsContacts, setIsAllIncomingRequestsContacts] =
+    useState(false);
+  const [isAllOutgoingRequestsContacts, setIsAllOutgoingRequestsContacts] =
+    useState(false);
 
   // Handler functions moved outside of useEffect
   const handleAccept = async (requestId: string) => {
@@ -127,34 +132,48 @@ const ListContacts = ({
 
   const createConversation = async (clientId: string, driverId: string) => {
     const getConversationsResponse = await getcontact(clientId, driverId);
-    console.log(getConversationsResponse);
-    if (getConversationsResponse.success) {
+
+    if (
+      getConversationsResponse.success &&
+      getConversationsResponse.data &&
+      getConversationsResponse.data.length > 0
+    ) {
+      // Ensure data is defined and non-empty before accessing it
       router.push(`/conversations/${getConversationsResponse.data[0].Id}`);
     } else if (getConversationsResponse.error === "contact not found") {
       const createContactResponse = await createcontact({
         clientId,
         driverId,
-        isConversating: true,
       });
       if (!createContactResponse.success) {
-        toast.error("An unexpected error occured");
+        toast.error("An unexpected error occurred");
         return;
       } else {
         router.push(`/conversations/${createContactResponse.data?.Id}`);
       }
     } else {
-      toast.error("An unexpected error occured");
+      toast.error("An unexpected error occurred");
     }
   };
 
   useEffect(() => {
+    let numberOfContactsThoughtAsIncoming: number = 0;
+    let numberOfContactsThoughtAsOutgoing: number = 0;
     const handleNewRequest = async (payload: any) => {
       const newRequest = payload.new;
       if (newRequest.receiverId === userId) {
-        const driverData = await getDriverById(newRequest.senderId); // Fetch driver by senderId
-        const fullName = driverData.success
-          ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
-          : "Unknown Driver";
+        let fullName: string;
+        if (role) {
+          const driverData = await getDriverById(newRequest.senderId); // Fetch driver by senderId
+          fullName = driverData.success
+            ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
+            : "Unknown Driver";
+        } else {
+          const clientData = await getClientById(newRequest.senderId); // Fetch client by senderId
+          fullName = clientData.success
+            ? `${clientData.data?.firstName} ${clientData.data?.lastName}`
+            : "Unknown Client";
+        }
 
         setIncomingRequests((prevRequests) => [
           ...prevRequests,
@@ -162,6 +181,18 @@ const ListContacts = ({
         ]);
       }
     };
+
+    incomingRequests.map((request: any) => {
+      if (request.isAccepted) numberOfContactsThoughtAsIncoming++;
+    });
+    outgoingRequestsWithNames.map((request: any) => {
+      if (request.isAccepted) numberOfContactsThoughtAsOutgoing++;
+    });
+
+    if (numberOfContactsThoughtAsIncoming === incomingRequests.length)
+      setIsAllIncomingRequestsContacts(true);
+    if (numberOfContactsThoughtAsOutgoing === outgoingRequestsWithNames?.length)
+      setIsAllOutgoingRequestsContacts(true);
 
     const channelName = role ? "Driver requests - insert" : "driver requests";
     const tableName = role ? "DriverRequests" : "clientRequests";
@@ -226,12 +257,12 @@ const ListContacts = ({
                         if (user.data?.userId === request.senderId) {
                           createConversation(
                             request.receiverId,
-                            user.data?.userId
+                            user.data?.userId || ""
                           );
                         } else {
                           createConversation(
                             request.senderId,
-                            user.data?.userId
+                            user.data?.userId || ""
                           );
                         }
                       }
@@ -260,7 +291,7 @@ const ListContacts = ({
       </div>
       <div>
         <p className="text-base font-semibold">Incoming requests</p>
-        {incomingRequests.length > 0 ? (
+        {incomingRequests.length > 0 || !isAllIncomingRequestsContacts ? (
           <div>
             {Array.isArray(incomingRequests) &&
               incomingRequests.map((request: any) =>
@@ -326,7 +357,8 @@ const ListContacts = ({
       </div>
       <div>
         <p className="text-base font-semibold">Outgoing requests</p>
-        {outgoingRequestsWithNames?.length > 0 ? (
+        {outgoingRequestsWithNames?.length > 0 ||
+        !isAllOutgoingRequestsContacts ? (
           <div>
             {Array.isArray(outgoingRequestsWithNames) &&
               outgoingRequestsWithNames.map((request: any) =>

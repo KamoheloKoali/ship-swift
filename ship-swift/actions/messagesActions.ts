@@ -1,52 +1,45 @@
-"use server"
+"use server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export const createMessage = async (messageData: {
-  receiverId: string;
-  senderId: string;
+  driverId: string;
+  clientId: string;
   message: string;
+  senderId: string;
 }) => {
-    const newmessage = await prisma.messages.create({
-      data: {
-        receiverId: messageData.receiverId,
-        senderId: messageData.senderId,
-        message: messageData.message,
-        isPending: true,
-      },
-    });
-    if (newmessage.Id)
-      return { success: true, data: newmessage };
-    else return { success: false };
+  const newmessage = await prisma.messages.create({
+    data: {
+      driverId: messageData.driverId,
+      clientId: messageData.clientId,
+      senderId: messageData.senderId,
+      message: messageData.message,
+    },
+  });
+  if (newmessage.Id) return { success: true, data: newmessage };
+  else return { success: false };
 };
 
-export const getMessages = async (
-  senderId: string,
-  receiverId: string
-) => {
+export const getMessages = async (clientId: string, driverId: string) => {
   try {
     const messages = await prisma.messages.findMany({
-      where: { senderId: senderId, receiverId: receiverId },
+      where: { clientId: clientId, driverId: driverId },
     });
-    if (messages.length > 0)
-      return { success: true, data: messages };
+    if (messages.length > 0) return { success: true, data: messages };
   } catch (error) {
     return { success: false, error: "Error retrieving client message" };
   }
 };
 
-export const getMessageById = async (
-  messageId: string,
-) => {
+export const getMessageById = async (messageId: string) => {
   try {
-    if (messageId.length > 0){
-    const messages = await prisma.messages.findMany({
-      where: { Id: messageId},
-    });
-    if (messages.length > 0)
-      return { success: true, data: messages };
-  }
+    if (messageId.length > 0) {
+      const messages = await prisma.messages.findMany({
+        where: { Id: messageId },
+      });
+      if (messages.length > 0) return { success: true, data: messages };
+    }
   } catch (error) {
     return { success: false, error: "Error retrieving client messages" };
   }

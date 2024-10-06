@@ -99,6 +99,7 @@ model Contacts {
 model Messages {
   Id            String            @id @default(uuid())
   message       String
+  senderId      String
 
   // Foreign Keys and Relations
   driver   Drivers  @relation(fields: [driverId], references: [Id])

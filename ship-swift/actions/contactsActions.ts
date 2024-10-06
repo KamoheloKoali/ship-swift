@@ -6,14 +6,13 @@ const prisma = new PrismaClient();
 export const createcontact = async (contactData: {
   clientId: string;
   driverId: string;
-  isConversating: Boolean;
 }) => {
   try {
     const newcontact = await prisma.contacts.create({
       data: {
         clientId: contactData.clientId,
         driverId: contactData.driverId,
-        isConversating: contactData.isConversating,
+        isConversating: true,
       },
     });
     if (newcontact.Id) return { success: true, data: newcontact };

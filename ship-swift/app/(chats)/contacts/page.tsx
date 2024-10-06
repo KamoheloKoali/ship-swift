@@ -22,7 +22,7 @@ const Page = async (props: Props) => {
 
   // Fetch the driver's full name for each incoming request
   if (userRole.data?.client) {
-    if (incomingRequests.length > 0) {
+    if (Array.isArray(incomingRequests) && incomingRequests.length > 0) {
       incomingRequestsWithNames = await Promise.all(
         incomingRequests.map(async (request: any) => {
           const driverData = await getDriverById(request.senderId); // Fetch driver by senderId
@@ -38,10 +38,10 @@ const Page = async (props: Props) => {
         })
       );
     }
-    if (outgoingRequests.length > 0) {
+    if (Array.isArray(outgoingRequests) && outgoingRequests.length > 0) {
       outgoingRequestsWithNames = await Promise.all(
         outgoingRequests.map(async (request: any) => {
-          const driverData = await getDriverById(request.receiverId); // Fetch driver by senderId
+          const driverData = await getDriverById(request.receiverId); // Fetch driver by receiverId
           const fullName = driverData.success
             ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
             : "Unknown Driver";
@@ -55,15 +55,14 @@ const Page = async (props: Props) => {
       );
     }
   } else {
-    if (incomingRequests.length > 0) {
+    if (Array.isArray(incomingRequests) && incomingRequests.length > 0) {
       incomingRequestsWithNames = await Promise.all(
         incomingRequests.map(async (request: any) => {
-          const clientData = await getClientById(request.senderId); // Fetch driver by senderId
+          const clientData = await getClientById(request.senderId); // Fetch client by senderId
           const fullName = clientData.success
             ? `${clientData.data?.firstName} ${clientData.data?.lastName}`
-            : "Unknown  Client";
+            : "Unknown Client";
           const photoUrl = clientData.data?.photoUrl;
-
           return {
             ...request,
             fullName, // Add fullName to the request
@@ -72,15 +71,14 @@ const Page = async (props: Props) => {
         })
       );
     }
-    if (outgoingRequests.length > 0) {
+    if (Array.isArray(outgoingRequests) && outgoingRequests.length > 0) {
       outgoingRequestsWithNames = await Promise.all(
         outgoingRequests.map(async (request: any) => {
-          const clientData = await getClientById(request.receiverId); // Fetch driver by senderId
+          const clientData = await getClientById(request.receiverId); // Fetch client by receiverId
           const fullName = clientData.success
             ? `${clientData.data?.firstName} ${clientData.data?.lastName}`
-            : "Unknown  Client";
+            : "Unknown Client";
           const photoUrl = clientData.data?.photoUrl;
-
           return {
             ...request,
             fullName, // Add fullName to the request
@@ -90,7 +88,6 @@ const Page = async (props: Props) => {
       );
     }
   }
-  // console.log(incomingRequestsWithNames)
 
   return (
     <>
@@ -101,7 +98,7 @@ const Page = async (props: Props) => {
         }
       >
         <div className="h-full w-full">
-          {listOfContacts ? (
+          {listOfContacts !== null ? (
             <ListContacts
               incomingRequestsWithNames={incomingRequestsWithNames}
               outgoingRequestsWithNames={outgoingRequestsWithNames}

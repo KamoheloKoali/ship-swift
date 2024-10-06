@@ -2,14 +2,14 @@ import { HouseIcon, MessageCircle, UsersIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 
-export const useNavigation = () => {
+export const useNavigation = (userRole: Boolean) => {
   const pathname = usePathname();
 
   const paths = useMemo(
     () => [
       {
-        name: "Home",
-        href: "/conversations",
+        name: "Dashboard",
+        href: userRole ? "/client/dashboard" : "/driver/dashboard",
         icon: <HouseIcon />,
       },
       {
