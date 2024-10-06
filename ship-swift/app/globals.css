@@ -77,3 +77,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes truckAnimation {
+  0% { transform: translateX(-10px); }
+  50% { transform: translateX(10px); }
+  100% { transform: translateX(-10px); }
+}
+
+.animate-truck {
+  animation: truckAnimation 1s infinite;
+}
