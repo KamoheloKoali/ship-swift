@@ -185,9 +185,11 @@ const ListContacts = ({
     incomingRequests.map((request: any) => {
       if (request.isAccepted) numberOfContactsThoughtAsIncoming++;
     });
-    outgoingRequestsWithNames?.map((request: any) => {
-      if (request.isAccepted) numberOfContactsThoughtAsOutgoing++;
-    });
+    if (outgoingRequestsWithNames.length > 0) {
+      outgoingRequestsWithNames?.map((request: any) => {
+        if (request.isAccepted) numberOfContactsThoughtAsOutgoing++;
+      });
+    }
 
     if (numberOfContactsThoughtAsIncoming === incomingRequests.length)
       setIsAllIncomingRequestsContacts(true);
