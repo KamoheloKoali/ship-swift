@@ -1,7 +1,4 @@
 "use client";
-
-import { useState, useEffect } from "react";
-import { getAllJobs } from "@/actions/courierJobsActions";
 import {
   ChevronLeft,
   ChevronRight,
@@ -34,43 +31,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function Details() {
-  const [jobs, setJobs] = useState<any[] | undefined>([]); // Adjust the type as needed
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null | undefined>(null);
-
-  useEffect(() => {
-    const fetchJobs = async () => {
-      setLoading(true);
-      try {
-        const response = await getAllJobs();
-
-        if (response.success) {
-          setJobs(response.data);
-          console.log(response.data);
-        } else {
-          setError(response.error);
-        }
-      } catch (err) {
-        setError("error fetching data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchJobs();
-  }, []);
-
-  if (loading) {
-    return (
-      <div></div>
-    );
-  }
-
+interface SideCardProps {
+  job: any;
+}
+export default function Details({ job }: SideCardProps) {
   return (
     <>
-      {jobs.map((job) => (
-        <div>
+        <div className="">
           <Card className="overflow-hidden" x-chunk="dashboard-05-chunk-4">
             <CardHeader className="flex flex-row items-start bg-muted/50">
               <div className="grid gap-0.5">
@@ -96,7 +63,7 @@ export default function Details() {
                 <Button size="sm" variant="outline" className="h-8 gap-1">
                   <Truck className="h-3.5 w-3.5" />
                   <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                    Track Order
+                    View Map
                   </span>
                 </Button>
                 <DropdownMenu>
@@ -233,7 +200,6 @@ export default function Details() {
             </CardFooter>
           </Card>
         </div>
-      ))}
     </>
   );
 }

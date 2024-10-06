@@ -1,6 +1,6 @@
 "use client";
-import { getAllJobs } from "@/actions/courierJobsActions";
-import { useEffect, useState } from "react";
+
+import React, { FC } from "react";
 
 import {
   Card,
@@ -20,23 +20,12 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const JobsTable: React.FC = () => {
-  const [jobs, setJobs] = useState<any[] | undefined>([]); // Adjust the type as needed
-  const [error, setError] = useState<string | null | undefined>(null);
+interface TableProps {
+  jobs: any[] | undefined;
+  onRowClick: (job: any) => void;
+}
 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      const response = await getAllJobs();
-      if (response.success) {
-        setJobs(response.data);
-      } else {
-        setError(response.error);
-      }
-    };
-
-    fetchJobs();
-  }, []);
-
+const JobsTable: FC<TableProps> = ({ jobs, onRowClick }: TableProps) => {
   return (
     <Tabs defaultValue="scheduled">
       <div className="flex items-center">
@@ -69,7 +58,11 @@ const JobsTable: React.FC = () => {
               </TableHeader>
               <TableBody>
                 {jobs.map((job) => (
-                  <TableRow key={job.Id} className="bg-accent">
+                  <TableRow
+                    key={job.Id}
+                    className="bg-accent cursor-pointer"
+                    onClick={() => onRowClick(job)}
+                  >
                     <TableCell>
                       <div className="font-medium">{job.Title}</div>
                       <div className="hidden text-sm text-muted-foreground md:inline">
