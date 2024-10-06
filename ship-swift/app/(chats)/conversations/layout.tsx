@@ -20,10 +20,8 @@ const ConversationsLayout = async ({ children }: Props) => {
     let contactsWithNames;
     const allContacts = await getAllcontacts();
     allContacts.data?.map((contact) => {
-      if (role) {
-        if (contact.clientId === user?.id || contact.driverId === user?.id) {
-          contacts.push(contact);
-        }
+      if (contact.clientId === user?.id || contact.driverId === user?.id) {
+        contacts.push(contact);
       }
     });
 
