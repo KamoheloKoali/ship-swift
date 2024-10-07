@@ -21,6 +21,7 @@ model clients {
   Contacts       Contacts[]
   courierJobs    CourierJobs[]
   driverRequests DriverRequests[]
+  Messages       Messages[]
   clientRequests clientRequests[]
 }
 
@@ -38,17 +39,18 @@ model Drivers {
   dateUpdated    DateTime         @updatedAt
   Contacts       Contacts[]
   driveRequests  DriverRequests[]
+  Messages       Messages[]
   clientRequests clientRequests[]
 }
 
 model CourierJobs {
   Id          String   @id @default(uuid())
-  Title       String?
-  Description String?
-  Budget      String?
+  Title       String
+  Description String
+  Budget      String
   clientId    String
-  DropOff     String?
-  PickUp      String?
+  DropOff     String
+  PickUp      String
   dateCreated DateTime @default(now())
   client      clients  @relation(fields: [clientId], references: [Id])
 }
@@ -82,9 +84,20 @@ model UserRole {
 }
 
 model Contacts {
-  Id       String  @id @default(uuid())
+  Id             String  @id @default(uuid())
+  driverId       String
+  clientId       String
+  isConversating Boolean @default(false)
+  client         clients @relation(fields: [clientId], references: [Id])
+  driver         Drivers @relation(fields: [driverId], references: [Id])
+}
+
+model Messages {
+  Id       String  @id
+  message  String
   driverId String
   clientId String
-  client   clients @relation(fields: [clientId], references: [Id])
-  driver   Drivers @relation(fields: [driverId], references: [Id])
+  senderId String
+  clients  clients @relation(fields: [clientId], references: [Id])
+  Drivers  Drivers @relation(fields: [driverId], references: [Id])
 }
