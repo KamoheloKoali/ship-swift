@@ -7,18 +7,20 @@ export const createcontact = async (contactData: {
   clientId: string;
   driverId: string;
 }) => {
-  try {
-    const newcontact = await prisma.contacts.create({
-      data: {
-        clientId: contactData.clientId,
-        driverId: contactData.driverId,
-      },
-    });
-    if (newcontact.Id) return { success: true, data: newcontact };
-    else return { success: false };
-  } catch (error) {
-    return { success: false, error: "Error creating contact" };
-  }
+  // try {
+  const newcontact = await prisma.contacts.create({
+    data: {
+      clientId: contactData.clientId,
+      driverId: contactData.driverId,
+      isConversating: true,
+    },
+  });
+  console.log(newcontact);
+  if (newcontact.Id) return { success: true, data: newcontact };
+  else return { success: false };
+  // } catch (error) {
+  //   return { success: false, error: "Error creating contact" };
+  // }
 };
 
 export const getcontactById = async (contactId: string) => {
@@ -33,6 +35,21 @@ export const getcontactById = async (contactId: string) => {
     }
   } catch (error) {
     return { success: false, error: "Error retrieving contact by ID" };
+  }
+};
+
+export const getcontact = async (clientId: string, driverId: string) => {
+  try {
+    const contact = await prisma.contacts.findMany({
+      where: { clientId: clientId, driverId: driverId },
+    });
+    if (contact) {
+      return { success: true, data: contact };
+    } else {
+      return { success: false, error: "contact not found" };
+    }
+  } catch (error) {
+    return { success: false, error: "Error retrieving contact" };
   }
 };
 

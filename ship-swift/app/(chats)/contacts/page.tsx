@@ -7,6 +7,7 @@ import ListContacts from "@/screens/chat/contacts/ListContacts";
 import ListOfContacts from "@/screens/chat/contacts/ListOfContacts";
 import ConversationFallback from "@/screens/chat/conversation/ConversationFallback";
 import ItemList from "@/screens/chat/item-list/ItemList";
+import { Loader2 } from "lucide-react";
 import React from "react";
 
 type Props = {};
@@ -17,43 +18,76 @@ const Page = async (props: Props) => {
   const incomingRequests = listOfContacts.incomingRequests;
   const outgoingRequests = listOfContacts.outgoingRequests;
   let incomingRequestsWithNames;
+  let outgoingRequestsWithNames;
 
   // Fetch the driver's full name for each incoming request
   if (userRole.data?.client) {
-    if (incomingRequests.length > 0) {
+    if (Array.isArray(incomingRequests) && incomingRequests.length > 0) {
       incomingRequestsWithNames = await Promise.all(
         incomingRequests.map(async (request: any) => {
           const driverData = await getDriverById(request.senderId); // Fetch driver by senderId
           const fullName = driverData.success
             ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
             : "Unknown Driver";
+          const photoUrl = driverData.data?.photoUrl;
           return {
             ...request,
             fullName, // Add fullName to the request
+            photoUrl,
+          };
+        })
+      );
+    }
+    if (Array.isArray(outgoingRequests) && outgoingRequests.length > 0) {
+      outgoingRequestsWithNames = await Promise.all(
+        outgoingRequests.map(async (request: any) => {
+          const driverData = await getDriverById(request.receiverId); // Fetch driver by receiverId
+          const fullName = driverData.success
+            ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
+            : "Unknown Driver";
+          const photoUrl = driverData.data?.photoUrl;
+          return {
+            ...request,
+            fullName, // Add fullName to the request
+            photoUrl,
           };
         })
       );
     }
   } else {
-    if (incomingRequests.length > 0) {
+    if (Array.isArray(incomingRequests) && incomingRequests.length > 0) {
       incomingRequestsWithNames = await Promise.all(
         incomingRequests.map(async (request: any) => {
-          const clientData = await getClientById(request.senderId); // Fetch driver by senderId
+          const clientData = await getClientById(request.senderId); // Fetch client by senderId
           const fullName = clientData.success
             ? `${clientData.data?.firstName} ${clientData.data?.lastName}`
-            : "Unknown  Client";
-            
+            : "Unknown Client";
+          const photoUrl = clientData.data?.photoUrl;
           return {
             ...request,
             fullName, // Add fullName to the request
+            photoUrl,
           };
-          
+        })
+      );
+    }
+    if (Array.isArray(outgoingRequests) && outgoingRequests.length > 0) {
+      outgoingRequestsWithNames = await Promise.all(
+        outgoingRequests.map(async (request: any) => {
+          const clientData = await getClientById(request.receiverId); // Fetch client by receiverId
+          const fullName = clientData.success
+            ? `${clientData.data?.firstName} ${clientData.data?.lastName}`
+            : "Unknown Client";
+          const photoUrl = clientData.data?.photoUrl;
+          return {
+            ...request,
+            fullName, // Add fullName to the request
+            photoUrl,
+          };
         })
       );
     }
   }
-  // console.log(incomingRequestsWithNames) 
-
 
   return (
     <>
@@ -63,15 +97,16 @@ const Page = async (props: Props) => {
           userRole.data?.client ? <ClientAddDriver /> : <DriverAddClient />
         }
       >
-        <div>
-          <div>
-            <p>Contacts</p>
+        <div className="h-full w-full">
+          {listOfContacts !== null ? (
             <ListContacts
               incomingRequestsWithNames={incomingRequestsWithNames}
-              outgoingRequestsWithNames={null}
+              outgoingRequestsWithNames={outgoingRequestsWithNames}
               role={userRole.data?.client ?? false}
             />
-          </div>
+          ) : (
+            <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+          )}
         </div>
       </ItemList>
       <ConversationFallback />
