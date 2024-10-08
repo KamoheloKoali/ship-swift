@@ -33,10 +33,15 @@ model Drivers {
   lastName       String
   photoUrl       String
   idPhotoUrl     String
-  vehicleType    String
-  vehicleDetails String[]
+  vehicleType    String           @default("")
   dateCreated    DateTime         @default(now())
   dateUpdated    DateTime         @updatedAt
+  VIN            String           @default("")
+  diskExpiry     String           @default("")
+  idNumber       String           @default("")
+  licenseExpiry  String           @default("")
+  licenseNumber  String           @default("")
+  plateNumber    String            
   Contacts       Contacts[]
   driveRequests  DriverRequests[]
   Messages       Messages[]
@@ -44,15 +49,23 @@ model Drivers {
 }
 
 model CourierJobs {
-  Id          String   @id @default(uuid())
-  Title       String
-  Description String
-  Budget      String
-  clientId    String
-  DropOff     String
-  PickUp      String
-  dateCreated DateTime @default(now())
-  client      clients  @relation(fields: [clientId], references: [Id])
+  Id                 String   @id @default(uuid())
+  Title              String?  @default("")
+  Description        String?  @default("")
+  Budget             String?  @default("0")
+  clientId           String
+  DropOff            String?  @default("")
+  districtDropOff    String?  @default("")
+  PickUp             String?  @default("")
+  districtPickUp     String?  @default("")
+  parcelSize         String?  @default("")
+  pickupPhoneNumber  String?  @default("")
+  dropoffPhoneNumber String?  @default("")
+  dropOffEmail       String?  @default("")
+  collectionDate     DateTime @default(now())
+  dateCreated        DateTime @default(now())
+  
+  client             clients  @relation(fields: [clientId], references: [Id])
 }
 
 model DriverRequests {

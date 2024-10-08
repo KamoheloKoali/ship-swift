@@ -34,7 +34,6 @@ export async function createCourierJob(data: any) {
         clientId: validatedData.clientId,
         DropOff: validatedData.DropOff,
         districtDropOff: validatedData.districtDropOff,
-        districtDroppoff: validatedData.districtDroppoff,
         PickUp: validatedData.PickUp,
         districtPickUp: validatedData.districtPickUp,
         parcelSize: validatedData.parcelSize,

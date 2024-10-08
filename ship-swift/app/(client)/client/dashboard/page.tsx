@@ -42,6 +42,7 @@ export default function ModernJobForm() {
   })
 
   const onSubmit = async (data) => {
+    console.log('Hello')
     if (!isLoaded || !user) {
       alert("User information is not loaded")
       return
