@@ -8,12 +8,14 @@ import JobsRequestsTable, {
   JobRequest,
 } from "@/screens/courier/dashboard/components/JobsRequestsTable";
 import JobsInfoSheet from "@/screens/courier/dashboard/components/JobsInfoSheet";
+import Profile from "@/screens/courier/profile/components/Profile";
 
 const Jobs = () => {
   const [sortType, setSortType] = useState("mostRecent");
-  const [selectedJob, setSelectedJob] = useState<JobRequest | null>(null); // State for selected job
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const [selectedJob, setSelectedJob] = useState<JobRequest | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(true);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const handleSortChange = (newSortType: string) => {
     setSortType(newSortType);
@@ -24,22 +26,23 @@ const Jobs = () => {
     setIsModalOpen(!!job);
   };
 
+  const handleProfileClick = () => {
+    setIsProfileOpen((prev) => !prev);
+  };
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1441) {
-        setIsSheetOpen(false); // Hide the sheet
+        setIsSheetOpen(false);
       } else {
-        setIsSheetOpen(true); // Show the sheet for smaller screens
+        setIsSheetOpen(true);
       }
     };
 
-    // Check screen size on component mount
     handleResize();
 
-    // Add event listener for window resize
     window.addEventListener("resize", handleResize);
 
-    // Clean up the event listener on component unmount
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -51,7 +54,19 @@ const Jobs = () => {
 
       <div className="flex flex-row w-full mylg:w-[95%] 2xl:w-[80%] justify-center">
         <div className="w-[98%] md:w-[80%] mylg:w-[72%]">
-          <UserProfile />
+          {/* Render UserProfile or Profile based on isProfileOpen */}
+          {isProfileOpen ? (
+            <Profile
+              onProfileClick={handleProfileClick}
+              isProfileOpen={isProfileOpen}
+            />
+          ) : (
+            <UserProfile
+              onProfileClick={handleProfileClick}
+              isProfileOpen={isProfileOpen}
+            />
+          )}
+
           <div className="flex md:hidden justify-start w-full">
             <CardStatus />
           </div>
@@ -62,6 +77,7 @@ const Jobs = () => {
             onJobSelect={handleJobSelect}
           />
         </div>
+
         <div className="relative hidden mylg:block w-[28%] bg-muted/80">
           <CardStatus />
           <CardJobsInfo job={selectedJob} isOpen={isModalOpen} />

@@ -11,8 +11,13 @@ export const createDriver = async (driverData: {
   lastName: string;
   photoUrl: string;
   idPhotoUrl: string;
+  idNumber: string;
+  licenseNumber: string;
+  licenseExpiry: string;
   vehicleType: string;
-  vehicleDetails: string[];
+  plateNumber: string;
+  VIN: string;
+  diskExpiry: string;
 }) => {
   try {
     const newDriver = await prisma.drivers.create({
@@ -24,8 +29,14 @@ export const createDriver = async (driverData: {
         lastName: driverData.lastName,
         photoUrl: driverData.photoUrl,
         idPhotoUrl: driverData.idPhotoUrl,
+        idNumber: driverData.idNumber,
+        licenseNumber: driverData.licenseNumber,
+        licenseExpiry: driverData.licenseExpiry,
         vehicleType: driverData.vehicleType,
-        vehicleDetails: driverData.vehicleDetails,
+        plateNumber: driverData.plateNumber,
+        VIN: driverData.VIN,
+        diskExpiry: driverData.diskExpiry,
+        
       },
     });
     return { success: true, data: newDriver };
