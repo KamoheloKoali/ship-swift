@@ -16,7 +16,7 @@ export interface JobRequest {
 // Sample job requests data
 const jobRequestsData: JobRequest[] = [
   {
-    profilePhoto: "/path-to-profile-photo1.jpg",
+    profilePhoto: "https://cdn.prod.website-files.com/5fd2ba952bcd68835f2c8254/654553fedbede7976b97eaf5_Professional-5.remini-enhanced.webp",
     name: "John Doe",
     pickUpLocation: "123 Main St",
     dropOffLocation: "456 Elm St",
@@ -28,7 +28,7 @@ const jobRequestsData: JobRequest[] = [
       "Deliver a medium-sized package to the given address. Recipient will be available after 3 PM.",
   },
   {
-    profilePhoto: "/path-to-profile-photo2.jpg",
+    profilePhoto: "https://cdn.prod.website-files.com/5fd2ba952bcd68835f2c8254/654553fedbede7976b97eaf5_Professional-5.remini-enhanced.webp",
     name: "Jane Smith",
     pickUpLocation: "789 Maple Ave",
     dropOffLocation: "101 Pine Rd",
@@ -40,7 +40,7 @@ const jobRequestsData: JobRequest[] = [
       "Transport large furniture items carefully. Lift assistance required for heavy items.",
   },
   {
-    profilePhoto: "/path-to-profile-photo3.jpg",
+    profilePhoto: "https://cdn.prod.website-files.com/5fd2ba952bcd68835f2c8254/654553fedbede7976b97eaf5_Professional-5.remini-enhanced.webp",
     name: "Sasuke Uchiha",
     pickUpLocation: "Main North 1 Rd Maseru Lesotho",
     dropOffLocation: "456 Elm St",
@@ -85,18 +85,13 @@ const JobsRequestsTable: React.FC<JobsRequestsTableProps> = ({
           <div
             key={index}
             onClick={() => handleJobClick(request)}
-            className={`cursor-pointer px-4 transition-colors ${
-              selectedJob === request ? "bg-muted/80" : "bg-white"
+            className={`cursor-pointer transition-colors ${
+              selectedJob === request ? "bg-muted/80" : ""
             }`}
           >
             <JobsRequests
-              profilePhoto={request.profilePhoto}
-              name={request.name}
-              pickUpLocation={request.pickUpLocation}
-              dropOffLocation={request.dropOffLocation}
-              jobDate={request.jobDate}
-              amount={request.amount}
-              postDate={request.postDate}
+              {...request}
+              isSelected={selectedJob === request}
             />
           </div>
         ))}

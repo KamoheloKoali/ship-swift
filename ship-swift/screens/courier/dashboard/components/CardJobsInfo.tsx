@@ -5,7 +5,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Calendar, Package, DollarSign, Clock } from "lucide-react";
 import { UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Divider from "@mui/material/Divider";
 
 interface JobsInfoProps {
   job: JobRequest | null;
@@ -16,7 +15,7 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
   if (!job) return null;
 
   return (
-    <div className="p-4 min-h-screen flex items-center justify-center">
+    <div className="p-4 min-h-screen flex items-center justify-center w-full h-full z-50">
       <Card className="w-full max-w-lg bg-white shadow-xl rounded-xl overflow-hidden">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
@@ -40,7 +39,7 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
               variant="outline"
             >
               <UserPlus className="w-4 h-4 text-black" />
-              <span className="text-black">Connect</span>
+              <span className="text-black">Contact</span>
             </Button>
           </div>
 

@@ -6,6 +6,17 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
+import { Button } from "@/components/ui/button";
+import { Search, X, Menu } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ChevronDown } from 'lucide-react';
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface JobsMenuProps {
   onSortChange: (sortType: string) => void;
@@ -16,6 +27,7 @@ const JobsMenu: React.FC<JobsMenuProps> = ({ onSortChange }) => {
   const [activeTab, setActiveTab] = useState<string>("mostRecent");
   const [showSearchBar, setShowSearchBar] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
 
   const handleSortChange = (sortType: string) => {
     setActiveTab(sortType);
@@ -43,60 +55,84 @@ const JobsMenu: React.FC<JobsMenuProps> = ({ onSortChange }) => {
     </NavigationMenuItem>
   );
 
+  const renderMobileMenuItem = (label: string, sortType: string) => (
+    <DropdownMenuItem onSelect={() => handleSortChange(sortType)}>
+      {label}
+    </DropdownMenuItem>
+  );
+
   return (
     <div className="mb-8">
-      <NavigationMenu className="w-full">
-        <NavigationMenuList className="flex items-center justify-start space-x-6 whitespace-nowrap">
-          {renderNavItem("Most Recent", "mostRecent")}
-          {renderNavItem("Highest Paying", "highestPaying")}
-
-          <NavigationMenuItem className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center">
-              {renderNavItem("Search Location", "searchLocation")}
-              {/* <div className="md:hidden ml-2">
-                <Search
-                  className="cursor-pointer text-gray-500 hover:text-black"
-                  onClick={() => setShowSearchBar(!showSearchBar)}
-                />
-              </div> */}
-            </div>
+      {/* Desktop Navigation */}
+      <div className="hidden md:block">
+        <NavigationMenu className="w-full">
+          <NavigationMenuList className="flex flex-wrap items-center justify-start space-x-4 space-y-2 sm:space-y-0">
+            {renderNavItem("Most Recent", "mostRecent")}
+            {renderNavItem("Highest Paying", "highestPaying")}
+            {renderNavItem("Search Location", "searchLocation")}
 
             {activeTab === "searchLocation" && (
-              <div className="hidden md:flex items-center ml-4">
-                <input
+              <NavigationMenuItem className="flex items-center ml-2 flex-grow">
+                <Input
                   type="text"
                   placeholder="Search..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="border rounded px-2 py-1 w-48"
+                  className="max-w-sm"
                 />
-              </div>
+              </NavigationMenuItem>
             )}
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
 
-      {/* Search bar for smaller screens */}
-      {showSearchBar && activeTab === "searchLocation" && (
-        <div className="relative block md:hidden mt-4 w-full">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="border rounded px-2 py-1 w-full"
-          />
-          <button
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
-            onClick={() => {
-              setSearchTerm("");
-              setShowSearchBar(false);
-            }}
+      {/* Mobile Navigation */}
+      <div className="md:hidden">
+        <div className="flex items-center justify-between">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost">
+                <ChevronDown className="h-5 w-5" /> <p>Filter</p>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {renderMobileMenuItem("Most Recent", "mostRecent")}
+              {renderMobileMenuItem("Highest Paying", "highestPaying")}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowMobileSearch(!showMobileSearch)}
           >
-            &times;
-          </button>
+            <Search className="h-5 w-5" />
+          </Button>
         </div>
-      )}
+
+        {/* Mobile Search Bar */}
+        {showMobileSearch && (
+          <div className="relative mt-4">
+            <Input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pr-8"
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2"
+              onClick={() => {
+                setSearchTerm("");
+                setShowMobileSearch(false);
+              }}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
