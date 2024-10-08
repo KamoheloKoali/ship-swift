@@ -18,11 +18,11 @@ model clients {
   idPhotoUrl     String
   dateCreated    DateTime         @default(now())
   dateUpdated    DateTime         @updatedAt
+  Contacts       Contacts[]
   courierJobs    CourierJobs[]
   driverRequests DriverRequests[]
-  clientRequests clientRequests[]
-  Contacts       Contacts[]
   Messages       Messages[]
+  clientRequests clientRequests[]
 }
 
 model Drivers {
@@ -33,19 +33,19 @@ model Drivers {
   lastName       String
   photoUrl       String
   idPhotoUrl     String
-  idNumber       String?
-  licenseNumber  String?
-  licenseExpiry  String?
   vehicleType    String?
-  plateNumber    String?
-  VIN            String?
-  diskExpiry     String?
   dateCreated    DateTime         @default(now())
   dateUpdated    DateTime         @updatedAt
-  driveRequests  DriverRequests[]
-  clientRequests clientRequests[]
+  VIN            String?
+  diskExpiry     String?
+  idNumber       String?
+  licenseExpiry  String?
+  licenseNumber  String?
+  plateNumber    String?
   Contacts       Contacts[]
+  driveRequests  DriverRequests[]
   Messages       Messages[]
+  clientRequests clientRequests[]
 }
 
 model CourierJobs {
@@ -90,25 +90,19 @@ model UserRole {
 
 model Contacts {
   Id             String  @id @default(uuid())
+  driverId       String
+  clientId       String
   isConversating Boolean @default(false)
-
-  // Foreign Keys and Relations
-  driver   Drivers @relation(fields: [driverId], references: [Id])
-  driverId String // Foreign key for Driver (driver)
-
-  client   clients @relation(fields: [clientId], references: [Id])
-  clientId String // Foreign key for clients (client)
+  client         clients @relation(fields: [clientId], references: [Id])
+  driver         Drivers @relation(fields: [driverId], references: [Id])
 }
 
 model Messages {
-  Id       String @id @default(uuid())
+  Id       String  @id @default(uuid())
   message  String
+  driverId String
+  clientId String
   senderId String
-
-  // Foreign Keys and Relations
-  driver   Drivers @relation(fields: [driverId], references: [Id])
-  driverId String // Foreign key for Driver (driver)
-
   client   clients @relation(fields: [clientId], references: [Id])
-  clientId String // Foreign key for clients (client)
+  driver   Drivers @relation(fields: [driverId], references: [Id])
 }
