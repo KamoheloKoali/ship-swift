@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import DriverDetailsForm from "@/screens/courier/registration/Components/DriverDetailsForm";
+import DriverDetailsForm from "@/screens/courier/registration/components/DriverDetailsForm";
 import { createDriver } from "@/actions/driverActions";
 import { z } from "zod";
 import { toast } from "react-hot-toast";

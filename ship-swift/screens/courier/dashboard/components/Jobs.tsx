@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import JobsMenu from "./JobsMenu";
 import CardJobsInfo from "@/screens/courier/dashboard/components/CardJobsInfo";
 import CardStatus from "@/screens/courier/dashboard/components/CardStatus";
-import UserProfile from "@/screens/courier/dashboard/components/UserProfile";
+import UserProfile from "@/screens/courier/profile/components/UserProfile";
 import JobsRequestsTable, {
   JobRequest,
 } from "@/screens/courier/dashboard/components/JobsRequestsTable";

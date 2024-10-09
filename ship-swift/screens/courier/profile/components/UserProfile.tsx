@@ -5,7 +5,7 @@ import { Avatar } from "@/components/ui/avatar";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import { useUser } from "@clerk/clerk-react";
 import CardStatus from "@/screens/courier/dashboard/components/CardStatus";
-import ProfileButton from "../../profile/components/ProfileButton";
+import ProfileButton from "./ProfileButton";
 
 interface UserProfileProps {
   onProfileClick: () => void;

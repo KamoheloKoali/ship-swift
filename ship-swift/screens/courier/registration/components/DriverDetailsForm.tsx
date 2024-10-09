@@ -60,6 +60,13 @@ export default function DriverDetailsForm({
       lastName: "", // Initialize with empty string
       photoUrl: user?.imageUrl || "", // Set default photo URL
       idPhotoUrl: user?.imageUrl || "", // Set default ID photo URL
+      idNumber: "", // Initialize with empty string
+      licenseNumber: "", // Initialize with empty string
+      licenseExpiry: "", // Initialize with empty string
+      vehicleType: "", // Initialize with empty string
+      plateNumber: "", // Initialize with empty string
+      VIN: "", // Initialize with empty string
+      diskExpiry: "", // Initialize with empty string
     },
   });
 
@@ -155,11 +162,75 @@ export default function DriverDetailsForm({
             )}
           </div>
 
-          {/* Add more fields as needed */}
+          <div className="space-y-2">
+            <Label htmlFor="idNumber">ID Number</Label>
+            <Input id="idNumber" {...register("idNumber")} />
+            {errors.idNumber && (
+              <p className="text-sm text-red-500">{errors.idNumber.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="licenseNumber">License Number</Label>
+            <Input id="licenseNumber" {...register("licenseNumber")} />
+            {errors.licenseNumber && (
+              <p className="text-sm text-red-500">
+                {errors.licenseNumber.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="licenseExpiry">License Expiry</Label>
+            <Input id="licenseExpiry" {...register("licenseExpiry")} />
+            {errors.licenseExpiry && (
+              <p className="text-sm text-red-500">
+                {errors.licenseExpiry.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="vehicleType">Vehicle Type</Label>
+            <Input id="vehicleType" {...register("vehicleType")} />
+            {errors.vehicleType && (
+              <p className="text-sm text-red-500">
+                {errors.vehicleType.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="plateNumber">Plate Number</Label>
+            <Input id="plateNumber" {...register("plateNumber")} />
+            {errors.plateNumber && (
+              <p className="text-sm text-red-500">
+                {errors.plateNumber.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="VIN">VIN</Label>
+            <Input id="VIN" {...register("VIN")} />
+            {errors.VIN && (
+              <p className="text-sm text-red-500">{errors.VIN.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="diskExpiry">Disk Expiry</Label>
+            <Input id="diskExpiry" {...register("diskExpiry")} />
+            {errors.diskExpiry && (
+              <p className="text-sm text-red-500">
+                {errors.diskExpiry.message}
+              </p>
+            )}
+          </div>
         </CardContent>
         <CardFooter>
           <Button type="submit" className="w-full">
-            Create Driver
+            Confirm
           </Button>
         </CardFooter>
       </form>
