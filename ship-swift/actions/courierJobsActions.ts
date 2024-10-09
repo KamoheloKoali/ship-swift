@@ -1,6 +1,7 @@
 "use server"
 import { PrismaClient } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
+import { getAuth } from '@clerk/nextjs/server'
 
 const prisma = new PrismaClient();
 
@@ -13,6 +14,7 @@ export const createJob = async (jobData: FormData) => {
     const clientId = jobData.get("clientId") as string | null;
     const dropOff = jobData.get("DropOff") as string | null;
     const pickUp = jobData.get("PickUp") as string | null;
+    const districtdropoff = jobData.get("") as string | null;
 
     // Ensure none of the required fields are null or undefined
     if (!clientId) {
@@ -31,6 +33,7 @@ export const createJob = async (jobData: FormData) => {
         clientId: clientId,
         DropOff: dropOff,
         PickUp: pickUp,
+        districtDropOff: districtdropoff,
       },
     });
 
