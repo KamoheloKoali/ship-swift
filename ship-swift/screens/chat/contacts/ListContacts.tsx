@@ -147,17 +147,12 @@ const ListContacts = ({
         driverId,
       });
       if (!createContactResponse.success) {
-        console.log(createContactResponse.data);
         toast.error("An unexpected error occurred");
         return;
       } else {
         router.push(`/conversations/${createContactResponse.data?.Id}`);
       }
     } else {
-      console.log(
-        "get converstations response: " + getConversationsResponse.success
-      );
-
       toast.error("An unexpected error occurred");
     }
   };
