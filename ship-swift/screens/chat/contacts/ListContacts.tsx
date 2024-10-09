@@ -141,17 +141,23 @@ const ListContacts = ({
       // Ensure data is defined and non-empty before accessing it
       router.push(`/conversations/${getConversationsResponse.data[0].Id}`);
     } else if (getConversationsResponse.error === "contact not found") {
+      console.log("creating contact");
       const createContactResponse = await createcontact({
         clientId,
         driverId,
       });
       if (!createContactResponse.success) {
+        console.log(createContactResponse.data);
         toast.error("An unexpected error occurred");
         return;
       } else {
         router.push(`/conversations/${createContactResponse.data?.Id}`);
       }
     } else {
+      console.log(
+        "get converstations response: " + getConversationsResponse.success
+      );
+
       toast.error("An unexpected error occurred");
     }
   };
