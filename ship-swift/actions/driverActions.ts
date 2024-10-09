@@ -1,5 +1,5 @@
-"use server"
-import { PrismaClient } from '@prisma/client';
+"use server";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -11,8 +11,13 @@ export const createDriver = async (driverData: {
   lastName: string;
   photoUrl: string;
   idPhotoUrl: string;
-  vehicleType: string;
-  vehicleDetails: string[];
+  idNumber?: string;
+  licenseNumber?: string;
+  licenseExpiry?: string;
+  vehicleType?: string;
+  plateNumber?: string;
+  VIN?: string;
+  diskExpiry?: string;
 }) => {
   try {
     const newDriver = await prisma.drivers.create({
@@ -24,13 +29,24 @@ export const createDriver = async (driverData: {
         lastName: driverData.lastName,
         photoUrl: driverData.photoUrl,
         idPhotoUrl: driverData.idPhotoUrl,
+        idNumber: driverData.idNumber,
+        licenseNumber: driverData.licenseNumber,
+        licenseExpiry: driverData.licenseExpiry,
         vehicleType: driverData.vehicleType,
-        vehicleDetails: driverData.vehicleDetails,
+        plateNumber: driverData.plateNumber,
+        VIN: driverData.VIN,
+        diskExpiry: driverData.diskExpiry,
       },
     });
     return { success: true, data: newDriver };
   } catch (error) {
-    return { success: false, error: "Error creating driver" };
+    console.error("Prisma error:", error);
+    if (error instanceof Error) {
+      return { success: false, error: error.message };
+    }
+    return { success: false, error: "Unknown error occurred" };
+  } finally {
+    await prisma.$disconnect();
   }
 };
 
@@ -42,7 +58,7 @@ export const getDriverById = async (driverId: string) => {
     if (driver) {
       return { success: true, data: driver };
     } else {
-      return { success: false, error: 'Driver not found' };
+      return { success: false, error: "Driver not found" };
     }
   } catch (error) {
     return { success: false, error: "Error retrieving driver" };
@@ -58,7 +74,10 @@ export const getAllDrivers = async () => {
   }
 };
 
-export const updateDriver = async (driverId: string, driverData: Partial<any>) => {
+export const updateDriver = async (
+  driverId: string,
+  driverData: Partial<any>
+) => {
   try {
     const updatedDriver = await prisma.drivers.update({
       where: { Id: driverId },

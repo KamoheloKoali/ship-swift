@@ -11,7 +11,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import NavMenu from "./NavMenu";
+import NavMenu from "./HeaderMenu";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 
 export default function Header() {
@@ -19,12 +19,9 @@ export default function Header() {
 
   const menuItems = [
     {
-      label: "Find Jobs",
-      dropdownItems: [
-        { label: "Full-Time", href: "/jobs/full-time" },
-        { label: "Part-Time", href: "/jobs/part-time" },
-        { label: "Freelance", href: "/jobs/freelance" },
-      ],
+      label: "Find Jobs", 
+      href: "/driver/dashboard/find-jobs",
+
     },
     {
       label: "My Jobs", href: "/driver/dashboard/myjobs" 

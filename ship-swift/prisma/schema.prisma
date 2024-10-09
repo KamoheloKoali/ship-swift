@@ -18,11 +18,11 @@ model clients {
   idPhotoUrl     String
   dateCreated    DateTime         @default(now())
   dateUpdated    DateTime         @updatedAt
+  Contacts       Contacts[]
   courierJobs    CourierJobs[]
   driverRequests DriverRequests[]
+  Messages       Messages[]
   clientRequests clientRequests[]
-  Contacts Contacts[]
-  Messages Messages[]
 }
 
 model Drivers {
@@ -33,26 +33,31 @@ model Drivers {
   lastName       String
   photoUrl       String
   idPhotoUrl     String
-  vehicleType    String
-  vehicleDetails String[]
+  vehicleType    String?
   dateCreated    DateTime         @default(now())
   dateUpdated    DateTime         @updatedAt
+  VIN            String?
+  diskExpiry     String?
+  idNumber       String?
+  licenseExpiry  String?
+  licenseNumber  String?
+  plateNumber    String?
+  Contacts       Contacts[]
   driveRequests  DriverRequests[]
+  Messages       Messages[]
   clientRequests clientRequests[]
-  Contacts Contacts[]
-  Messages Messages[]
 }
 
 model CourierJobs {
-  Id          String  @id @default(uuid())
-  Title       String
-  Description String
-  Budget      String
+  Id          String   @id @default(uuid())
+  Title       String?
+  Description String?
+  Budget      String?
   clientId    String
-  PickUp      String
-  DropOff     String
+  DropOff     String?
+  PickUp      String?
   dateCreated DateTime @default(now())
-  client      clients @relation(fields: [clientId], references: [Id])
+  client      clients  @relation(fields: [clientId], references: [Id])
 }
 
 model DriverRequests {
@@ -83,28 +88,21 @@ model UserRole {
   client Boolean @default(false)
 }
 
-
 model Contacts {
-  Id            String            @id @default(uuid())
-  isConversating Boolean          @default(false)
-
-  // Foreign Keys and Relations
-  driver   Drivers  @relation(fields: [driverId], references: [Id])
-  driverId String // Foreign key for Driver (driver)
-
-  client   clients  @relation(fields: [clientId], references: [Id])
-  clientId String // Foreign key for clients (client)
+  Id             String  @id @default(uuid())
+  driverId       String
+  clientId       String
+  isConversating Boolean @default(false)
+  client         clients @relation(fields: [clientId], references: [Id])
+  driver         Drivers @relation(fields: [driverId], references: [Id])
 }
 
 model Messages {
-  Id            String            @id @default(uuid())
-  message       String
-  senderId      String
-
-  // Foreign Keys and Relations
-  driver   Drivers  @relation(fields: [driverId], references: [Id])
-  driverId String // Foreign key for Driver (driver)
-
-  client   clients  @relation(fields: [clientId], references: [Id])
-  clientId String // Foreign key for clients (client)
+  Id       String  @id @default(uuid())
+  message  String
+  driverId String
+  clientId String
+  senderId String
+  client   clients @relation(fields: [clientId], references: [Id])
+  driver   Drivers @relation(fields: [driverId], references: [Id])
 }
