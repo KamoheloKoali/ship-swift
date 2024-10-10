@@ -11,11 +11,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Truck } from "lucide-react";
 import JobsTable from "./JobsTable";
 
 import { Progress } from "@/components/ui/progress";
 import { getAllJobs } from "@/actions/courierJobsActions";
-import { Truck } from "lucide-react";
+
 
 export default function MyJobs() {
   const [jobs, setJobs] = useState<any[] | undefined>([]);
