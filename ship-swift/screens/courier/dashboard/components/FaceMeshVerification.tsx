@@ -17,16 +17,11 @@ const FaceMeshVerification = () => {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true, // Request video input from the camera
       });
-  
-      // If successful, set the webcam stream
-      if (webcamRef.current) {
-        webcamRef.current.srcObject = stream;
-      }
-  
+
       // Ensure TensorFlow.js backend is ready
       await tf.setBackend("webgl");
       await tf.ready();
-  
+
       // Load the face mesh model
       const model = await facemesh.createDetector(
         facemesh.SupportedModels.MediaPipeFaceMesh,
@@ -35,13 +30,16 @@ const FaceMeshVerification = () => {
           refineLandmarks: true,
         }
       );
-  
+
       setIsModelLoaded(true);
       setInterval(() => {
         detect(model);
       }, 100);
     } catch (error) {
-      console.error("Failed to access the camera or load the face mesh model:", error);
+      console.error(
+        "Failed to access the camera or load the face mesh model:",
+        error
+      );
       alert("Please allow camera access to use this feature.");
     }
   };
@@ -58,9 +56,10 @@ const FaceMeshVerification = () => {
       const videoHeight = video.videoHeight;
 
       // Set video and canvas dimensions
-      canvasRef.current.width = videoWidth;
-      canvasRef.current.height = videoHeight;
-
+      if (canvasRef.current !== null) {
+        canvasRef.current.width = videoWidth;
+        canvasRef.current.height = videoHeight;
+      }
       // Convert video frame to tensor
       const videoTensor = tf.browser.fromPixels(video);
 
@@ -71,13 +70,15 @@ const FaceMeshVerification = () => {
       setFaces(detectedFaces);
 
       // Get canvas context
-      const ctx = canvasRef.current.getContext("2d");
-      if (ctx) {
-        // Clear previous drawings
-        ctx.clearRect(0, 0, videoWidth, videoHeight);
+      if (canvasRef.current !== null) {
+        const ctx = canvasRef.current.getContext("2d");
+        if (ctx) {
+          // Clear previous drawings
+          ctx.clearRect(0, 0, videoWidth, videoHeight);
 
-        // Draw the mesh on detected faces
-        drawMesh(detectedFaces, ctx);
+          // Draw the mesh on detected faces
+          drawMesh(detectedFaces, ctx);
+        }
       }
 
       videoTensor.dispose(); // Clean up tensor
@@ -91,8 +92,15 @@ const FaceMeshVerification = () => {
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen p-5">
       <div className="relative w-full max-w-xl">
-        <Webcam videoConstraints={{ facingMode: "user" }} ref={webcamRef} className="w-full rounded-lg shadow-lg" />
-        <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full rounded-lg" />
+        <Webcam
+          videoConstraints={{ facingMode: "user" }}
+          ref={webcamRef}
+          className="w-full rounded-lg shadow-lg"
+        />
+        <canvas
+          ref={canvasRef}
+          className="absolute top-0 left-0 w-full h-full rounded-lg"
+        />
       </div>
 
       {/* Conditionally set the background color based on face detection */}
