@@ -1,71 +1,79 @@
-// components/ImageUploadCard.tsx
-import { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { uploadImage } from '@/screens/courier/registration/utils/Upload'; // Import the utility function
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { z } from "zod";
+import { Upload, Image as ImageIcon } from "lucide-react";
 
 interface ImageUploadCardProps {
-  folder: string; // New prop to specify the upload folder
+  folder: string;
   cardTitle: string;
+  onFileChange: (file: File | null) => void;
 }
 
-export default function ImageUploadCard({ folder, cardTitle }: ImageUploadCardProps) {
-  const [file, setFile] = useState<File | null>(null);
+const imageSchema = z.object({
+  file: z.instanceof(File).refine((file) => file.type === "image/png", {
+    message: "Only PNG files are allowed.",
+  }),
+});
+
+export default function ImageUploadCard({
+  folder,
+  cardTitle,
+  onFileChange,
+}: ImageUploadCardProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-      const objectUrl = URL.createObjectURL(e.target.files[0]);
-      setImageUrl(objectUrl); // Preview the image locally
+      const file = e.target.files[0];
+      const validation = imageSchema.safeParse({ file });
+      if (validation.success) {
+        onFileChange(file);
+        const objectUrl = URL.createObjectURL(file);
+        setImageUrl(objectUrl);
+      } else {
+        alert(validation.error.errors[0]?.message);
+        onFileChange(null);
+      }
     }
-  };
-
-  const handleUpload = async () => {
-    if (!file) return alert("Please select a file");
-
-    setLoading(true);
-
-    const { url, error } = await uploadImage(file, folder);  // Pass the folder to the utility function
-
-    if (error) {
-      alert(`Error uploading file: ${error}`);
-    } else if (url) {
-      setImageUrl(url); // Display the public URL of the uploaded image
-      console.log('Uploaded image URL:', url); // Log the URL to the console
-      alert('Image uploaded successfully!');
-    }
-
-    setLoading(false);
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto shadow-md p-4">
-      <CardHeader>
-        <CardTitle>{cardTitle}</CardTitle> {/* Display the folder name */}
+    <Card className="w-full bg-white shadow-md overflow-hidden transition-all duration-200 ease-in-out transform hover:shadow-lg hover:scale-105 rounded-none">
+      <CardHeader className="bg-gray-50 border-b border-gray-200">
+        <CardTitle className="text-lg font-semibold text-gray-800">
+          {cardTitle}
+        </CardTitle>
       </CardHeader>
-      <CardContent>
-        {imageUrl ? (
-          <img src={imageUrl} alt="Profile Preview" className="w-full h-64 object-cover rounded-md" />
-        ) : (
-          <div className="border border-dashed border-gray-400 rounded-md h-64 flex items-center justify-center">
-            <span className="text-gray-500">No Image Selected</span>
-          </div>
-        )}
-
-        <input
-          type="file"
-          accept="image/png"
-          onChange={handleFileChange}
-          className="mt-4 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-        />
+      <CardContent className="p-4">
+        <div className="relative">
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt="Document Preview"
+              className="w-full h-48 object-cover rounded-md"
+            />
+          ) : (
+            <div className="border-2 border-dashed border-gray-300 rounded-md h-48 flex flex-col items-center justify-center bg-gray-50">
+              <ImageIcon className="w-12 h-12 text-gray-400 mb-2" />
+              <span className="text-gray-500 text-sm">No Image Selected</span>
+            </div>
+          )}
+          <label
+            htmlFor={`file-upload-${folder}`}
+            className="absolute bottom-2 right-2 bg-black text-white py-2 px-4 rounded-md cursor-pointer hover:bg-gray-800 transition-colors duration-200"
+          >
+            <Upload className="w-4 h-4 inline-block mr-2" />
+            Upload PNG
+          </label>
+          <input
+            id={`file-upload-${folder}`}
+            type="file"
+            accept="image/png"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+        </div>
       </CardContent>
-      <CardFooter className="flex justify-end">
-        <Button onClick={handleUpload} disabled={loading} className="w-full">
-          {loading ? 'Uploading...' : 'Upload Image'}
-        </Button>
-      </CardFooter>
     </Card>
   );
 }

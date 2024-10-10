@@ -28,7 +28,7 @@ model clients {
 model Drivers {
   Id             String           @id
   email          String           @unique
-  phoneNumber    String
+  phoneNumber    String?
   firstName      String
   lastName       String
   photoUrl       String
@@ -36,9 +36,11 @@ model Drivers {
   vehicleType    String?
   dateCreated    DateTime         @default(now())
   dateUpdated    DateTime         @updatedAt
+  discPhotoUrl   String?
   VIN            String?
-  diskExpiry     String?
+  discExpiry     String?
   idNumber       String?
+  licensePhotoUrl String?
   licenseExpiry  String?
   licenseNumber  String?
   plateNumber    String?

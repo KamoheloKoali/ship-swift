@@ -6,18 +6,20 @@ const prisma = new PrismaClient();
 export const createDriver = async (driverData: {
   clerkId: string;
   email: string;
-  phoneNumber: string;
+  phoneNumber?: string;
   firstName: string;
   lastName: string;
   photoUrl: string;
   idPhotoUrl: string;
   idNumber?: string;
+  licensePhotoUrl?: string;
   licenseNumber?: string;
   licenseExpiry?: string;
   vehicleType?: string;
   plateNumber?: string;
   VIN?: string;
-  diskExpiry?: string;
+  discExpiry?: string;
+  discPhotoUrl?: string;
 }) => {
   try {
     const newDriver = await prisma.drivers.create({
@@ -30,12 +32,14 @@ export const createDriver = async (driverData: {
         photoUrl: driverData.photoUrl,
         idPhotoUrl: driverData.idPhotoUrl,
         idNumber: driverData.idNumber,
+        licensePhotoUrl: driverData.licensePhotoUrl,
         licenseNumber: driverData.licenseNumber,
         licenseExpiry: driverData.licenseExpiry,
         vehicleType: driverData.vehicleType,
         plateNumber: driverData.plateNumber,
+        discPhotoUrl: driverData.discPhotoUrl,
         VIN: driverData.VIN,
-        diskExpiry: driverData.diskExpiry,
+        discExpiry: driverData.discExpiry,
       },
     });
     return { success: true, data: newDriver };
@@ -50,18 +54,80 @@ export const createDriver = async (driverData: {
   }
 };
 
-export const getDriverById = async (driverId: string) => {
+export const upsertDriver = async (driverData: {
+  clerkId: string;
+  email: string;
+  phoneNumber?: string; // Now optional
+  firstName: string;
+  lastName: string;
+  photoUrl?: string; // Make this optional as it might not be set in every update
+  idPhotoUrl?: string; // Make this optional as it might not be set in every update
+  idNumber?: string;
+  licensePhotoUrl?: string;
+  licenseNumber?: string;
+  licenseExpiry?: string;
+  vehicleType?: string;
+  plateNumber?: string;
+  VIN?: string;
+  discExpiry?: string;
+  discPhotoUrl?: string;
+}) => {
   try {
-    const driver = await prisma.drivers.findUnique({
-      where: { Id: driverId },
+    const upsertedDriver = await prisma.drivers.upsert({
+      where: { Id: driverData.clerkId },
+      update: {
+        email: driverData.email,
+        phoneNumber: driverData.phoneNumber,
+        firstName: driverData.firstName,
+        lastName: driverData.lastName,
+        ...(driverData.photoUrl && { photoUrl: driverData.photoUrl }),
+        ...(driverData.idPhotoUrl && { idPhotoUrl: driverData.idPhotoUrl }),
+        ...(driverData.idNumber && { idNumber: driverData.idNumber }),
+        ...(driverData.licensePhotoUrl && {
+          licensePhotoUrl: driverData.licensePhotoUrl,
+        }),
+        ...(driverData.licenseNumber && {
+          licenseNumber: driverData.licenseNumber,
+        }),
+        ...(driverData.licenseExpiry && {
+          licenseExpiry: driverData.licenseExpiry,
+        }),
+        ...(driverData.vehicleType && { vehicleType: driverData.vehicleType }),
+        ...(driverData.plateNumber && { plateNumber: driverData.plateNumber }),
+        ...(driverData.discPhotoUrl && {
+          discPhotoUrl: driverData.discPhotoUrl,
+        }),
+        ...(driverData.VIN && { VIN: driverData.VIN }),
+        ...(driverData.discExpiry && { discExpiry: driverData.discExpiry }),
+      },
+      create: {
+        Id: driverData.clerkId,
+        email: driverData.email,
+        phoneNumber: driverData.phoneNumber,
+        firstName: driverData.firstName,
+        lastName: driverData.lastName,
+        photoUrl: driverData.photoUrl || "",
+        idPhotoUrl: driverData.idPhotoUrl || "",
+        idNumber: driverData.idNumber,
+        licensePhotoUrl: driverData.licensePhotoUrl,
+        licenseNumber: driverData.licenseNumber,
+        licenseExpiry: driverData.licenseExpiry,
+        vehicleType: driverData.vehicleType,
+        plateNumber: driverData.plateNumber,
+        discPhotoUrl: driverData.discPhotoUrl,
+        VIN: driverData.VIN,
+        discExpiry: driverData.discExpiry,
+      },
     });
-    if (driver) {
-      return { success: true, data: driver };
-    } else {
-      return { success: false, error: "Driver not found" };
-    }
+    return { success: true, data: upsertedDriver };
   } catch (error) {
-    return { success: false, error: "Error retrieving driver" };
+    console.error("Prisma error:", error);
+    if (error instanceof Error) {
+      return { success: false, error: error.message };
+    }
+    return { success: false, error: "Unknown error occurred" };
+  } finally {
+    await prisma.$disconnect();
   }
 };
 
