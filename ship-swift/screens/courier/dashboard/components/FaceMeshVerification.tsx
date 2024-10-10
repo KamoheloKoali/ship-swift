@@ -13,11 +13,6 @@ const FaceMeshVerification = () => {
 
   const runFacemesh = async () => {
     try {
-      // Request access to the user's camera
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true, // Request video input from the camera
-      });
-
       // Ensure TensorFlow.js backend is ready
       await tf.setBackend("webgl");
       await tf.ready();
