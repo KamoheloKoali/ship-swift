@@ -27,27 +27,14 @@ type InfoItemProps = {
 interface ProfileProps {
   onProfileClick: () => void;
   isProfileOpen: boolean;
+  driverData: any; // Replace 'any' with a more specific type if you have one
 }
 
-const Profile: React.FC<ProfileProps> = ({ onProfileClick, isProfileOpen }) => {
-  const courierData = {
-    name: "Khiba Koenane",
-    id: "CD123456",
-    photoUrl:
-      "https://media.licdn.com/dms/image/D4D03AQFK7cYf3VHK3A/profile-displayphoto-shrink_200_200/0/1723036619652?e=2147483647&v=beta&t=xTRVy-JtkBzHRU2WBBNDxX757ziL4x4G_PeCxM4GH80",
-    driversLicense: "DL987654321",
-    driversLicenseExpiration: "2025-12-31",
-    licensePlate: "ABC 1234",
-    vin: "1HGCM82633A004352",
-    vehicleDiscExpiration: "2024-06-30",
-    rating: 4.8,
-    completedDeliveries: 1250,
-    location: "Maseru, Lesotho",
-    completionRate: 100,
-    onTimeRate: 98,
-    safetyScore: 100,
-  };
-
+const Profile: React.FC<ProfileProps> = ({
+  onProfileClick,
+  isProfileOpen,
+  driverData,
+}) => {
   const InfoItem: React.FC<InfoItemProps> = ({ icon, label, value }) => (
     <div className="flex items-center space-x-2 bg-muted/50 rounded-lg p-2">
       {icon}
@@ -78,28 +65,21 @@ const Profile: React.FC<ProfileProps> = ({ onProfileClick, isProfileOpen }) => {
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between">
           <div className="flex flex-col sm:flex-row items-center sm:space-x-4">
             <Avatar className="w-24 h-24 sm:w-36 sm:h-36 border-4 border-background mb-4 sm:mb-0">
-              <AvatarImage src={courierData.photoUrl} alt={courierData.name} />
+              <AvatarImage
+                src={driverData.photoUrl}
+                alt={`${driverData.firstName} ${driverData.lastName}`}
+              />
               <AvatarFallback>
-                {courierData.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
+                {`${driverData.firstName[0]}${driverData.lastName[0]}`}
               </AvatarFallback>
             </Avatar>
             <div className="text-center sm:text-left">
               <h2 className="text-2xl sm:text-3xl font-bold">
-                {courierData.name}
+                {`${driverData.firstName} ${driverData.lastName}`}
               </h2>
               <div className="flex items-center justify-center sm:justify-start mt-1 text-sm text-muted-foreground">
                 <MapPin className="w-4 h-4 mr-1" />
-                {courierData.location}
-              </div>
-              <div className="flex items-center justify-center sm:justify-start mt-1">
-                <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                <span className="font-medium">{courierData.rating}</span>
-                <span className="text-sm text-muted-foreground ml-2">
-                  ({courierData.completedDeliveries} deliveries)
-                </span>
+                {driverData.location || "Location not available"}
               </div>
             </div>
           </div>
@@ -113,12 +93,6 @@ const Profile: React.FC<ProfileProps> = ({ onProfileClick, isProfileOpen }) => {
             />
           </div>
         </div>
-        <Badge
-          variant="outline"
-          className="absolute top-2 right-2 sm:top-4 sm:right-4"
-        >
-          ID: {courierData.id}
-        </Badge>
       </CardHeader>
       <CardContent className="pt-4 sm:pt-6 pb-2 sm:pb-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
@@ -128,14 +102,24 @@ const Profile: React.FC<ProfileProps> = ({ onProfileClick, isProfileOpen }) => {
             </h3>
             <div className="space-y-2">
               <InfoItem
+                icon={<User className="w-4 h-4 text-primary" />}
+                label="ID No."
+                value={driverData.idNumber || "N/A"}
+              />
+              <InfoItem
+                icon={<User className="w-4 h-4 text-primary" />}
+                label="Phone No."
+                value={driverData.phoneNumber || "N/A"}
+              />
+              <InfoItem
                 icon={<CreditCard className="w-4 h-4 text-primary" />}
                 label="License No."
-                value={courierData.driversLicense}
+                value={driverData.licenseNumber || "N/A"}
               />
               <InfoItem
                 icon={<Calendar className="w-4 h-4 text-primary" />}
-                label="Expires"
-                value={courierData.driversLicenseExpiration}
+                label="License Expires"
+                value={driverData.licenseExpiry || "N/A"}
               />
             </div>
           </div>
@@ -146,18 +130,23 @@ const Profile: React.FC<ProfileProps> = ({ onProfileClick, isProfileOpen }) => {
             <div className="space-y-2">
               <InfoItem
                 icon={<Truck className="w-4 h-4 text-primary" />}
+                label="Vehicle Type"
+                value={driverData.vehicleType || "N/A"}
+              />
+              <InfoItem
+                icon={<Truck className="w-4 h-4 text-primary" />}
                 label="Plate No."
-                value={courierData.licensePlate}
+                value={driverData.plateNumber || "N/A"}
               />
               <InfoItem
                 icon={<Shield className="w-4 h-4 text-primary" />}
                 label="VIN"
-                value={courierData.vin}
+                value={driverData.VIN || "N/A"}
               />
               <InfoItem
                 icon={<Calendar className="w-4 h-4 text-primary" />}
                 label="Disc Expires"
-                value={courierData.vehicleDiscExpiration}
+                value={driverData.discExpiry || "N/A"}
               />
             </div>
           </div>
@@ -172,17 +161,17 @@ const Profile: React.FC<ProfileProps> = ({ onProfileClick, isProfileOpen }) => {
           <div className="flex justify-around">
             <PerformanceMetric
               icon={<Award className="w-5 h-5 sm:w-6 sm:h-6" />}
-              value={courierData.completionRate}
+              value={100} // Placeholder value
               label="Completion"
             />
             <PerformanceMetric
               icon={<Clock className="w-5 h-5 sm:w-6 sm:h-6" />}
-              value={courierData.onTimeRate}
+              value={98} // Placeholder value
               label="On-Time"
             />
             <PerformanceMetric
               icon={<Shield className="w-5 h-5 sm:w-6 sm:h-6" />}
-              value={courierData.safetyScore}
+              value={100} // Placeholder value
               label="Safety Score"
             />
           </div>

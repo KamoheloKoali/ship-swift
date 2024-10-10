@@ -44,6 +44,7 @@ model Drivers {
   licenseExpiry  String?
   licenseNumber  String?
   plateNumber    String?
+  location       String?
   Contacts       Contacts[]
   driveRequests  DriverRequests[]
   Messages       Messages[]

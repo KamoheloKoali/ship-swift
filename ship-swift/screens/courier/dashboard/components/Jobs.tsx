@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
 import JobsMenu from "./JobsMenu";
 import CardJobsInfo from "@/screens/courier/dashboard/components/CardJobsInfo";
 import CardStatus from "@/screens/courier/dashboard/components/CardStatus";
@@ -9,13 +10,36 @@ import JobsRequestsTable, {
 } from "@/screens/courier/dashboard/components/JobsRequestsTable";
 import JobsInfoSheet from "@/screens/courier/dashboard/components/JobsInfoSheet";
 import Profile from "@/screens/courier/profile/components/Profile";
+import { getDriverByID } from "@/actions/driverActions"; // Adjust this import path as needed
 
 const Jobs = () => {
+  const { user } = useUser();
   const [sortType, setSortType] = useState("mostRecent");
   const [selectedJob, setSelectedJob] = useState<JobRequest | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(true);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [driverData, setDriverData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchDriverData = async () => {
+      if (!user) return;
+
+      try {
+        const data = await getDriverByID(user.id);
+        setDriverData(data);
+      } catch (err) {
+        setError("Failed to fetch driver data");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDriverData();
+  }, [user]);
 
   const handleSortChange = (newSortType: string) => {
     setSortType(newSortType);
@@ -48,6 +72,9 @@ const Jobs = () => {
     };
   }, []);
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
     <div className="flex flex-row justify-center lg:justify-start">
       <div className="hidden mylg:w-[2.5%] 2xl:w-[10%] lg:block"></div>
@@ -59,11 +86,13 @@ const Jobs = () => {
             <Profile
               onProfileClick={handleProfileClick}
               isProfileOpen={isProfileOpen}
+              driverData={driverData}
             />
           ) : (
             <UserProfile
               onProfileClick={handleProfileClick}
               isProfileOpen={isProfileOpen}
+              driverData={driverData}
             />
           )}
 

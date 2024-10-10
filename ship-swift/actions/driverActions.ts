@@ -20,6 +20,7 @@ export const createDriver = async (driverData: {
   VIN?: string;
   discExpiry?: string;
   discPhotoUrl?: string;
+  location?: string;
 }) => {
   try {
     const newDriver = await prisma.drivers.create({
@@ -40,6 +41,7 @@ export const createDriver = async (driverData: {
         discPhotoUrl: driverData.discPhotoUrl,
         VIN: driverData.VIN,
         discExpiry: driverData.discExpiry,
+        location: driverData.location,
       },
     });
     return { success: true, data: newDriver };
@@ -71,6 +73,7 @@ export const upsertDriver = async (driverData: {
   VIN?: string;
   discExpiry?: string;
   discPhotoUrl?: string;
+  location?: string;
 }) => {
   try {
     const upsertedDriver = await prisma.drivers.upsert({
@@ -117,6 +120,7 @@ export const upsertDriver = async (driverData: {
         discPhotoUrl: driverData.discPhotoUrl,
         VIN: driverData.VIN,
         discExpiry: driverData.discExpiry,
+        location: driverData.location,
       },
     });
     return { success: true, data: upsertedDriver };
@@ -128,6 +132,31 @@ export const upsertDriver = async (driverData: {
     return { success: false, error: "Unknown error occurred" };
   } finally {
     await prisma.$disconnect();
+  }
+};
+
+export const getDriverByID = async (driverId: string) => {
+  try {
+    const driver = await prisma.drivers.findUnique({
+      where: {
+        Id: driverId,
+      },
+      include: {
+        Contacts: true, // If you want to include related Contacts
+        driveRequests: true, // If you want to include related DriverRequests
+        Messages: true, // If you want to include related Messages
+        clientRequests: true, // If you want to include related clientRequests
+      },
+    });
+
+    if (!driver) {
+      throw new Error("Driver not found");
+    }
+
+    return driver;
+  } catch (error) {
+    console.error("Error fetching driver by ID:", error);
+    throw error;
   }
 };
 

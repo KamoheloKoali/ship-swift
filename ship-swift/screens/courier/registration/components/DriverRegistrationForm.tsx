@@ -50,7 +50,7 @@ export default function DriverRegistrationForm() {
 
     for (const [folder, file] of Object.entries(files)) {
       if (file) {
-        const { url, error } = await uploadImage(file, folder);
+        const { url, error } = await uploadImage(file, folder, userId || "");
 
         if (error) {
           setLoading(false);
