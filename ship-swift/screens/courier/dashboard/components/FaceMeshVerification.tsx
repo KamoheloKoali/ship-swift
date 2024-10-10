@@ -9,6 +9,7 @@ const FaceMeshVerification = () => {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isModelLoaded, setIsModelLoaded] = useState(false);
+  const [faces, setFaces] = useState<any[]>([]); // State to store detected faces
 
   const runFacemesh = async () => {
     try {
@@ -22,7 +23,6 @@ const FaceMeshVerification = () => {
         {
           runtime: "tfjs", // Use 'tfjs' if you want TensorFlow.js runtime
           refineLandmarks: true,
-          // solutionPath: "https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh", // Make sure solutionPath is correct
         }
       );
 
@@ -31,7 +31,11 @@ const FaceMeshVerification = () => {
         detect(model);
       }, 100);
     } catch (error) {
-      console.error("Failed to load the face mesh model:", error);
+      console.error(
+        "Failed to access the camera or load the face mesh model:",
+        error
+      );
+      alert("Please allow camera access to use this feature.");
     }
   };
 
@@ -47,23 +51,29 @@ const FaceMeshVerification = () => {
       const videoHeight = video.videoHeight;
 
       // Set video and canvas dimensions
-      canvasRef.current.width = videoWidth;
-      canvasRef.current.height = videoHeight;
-
+      if (canvasRef.current !== null) {
+        canvasRef.current.width = videoWidth;
+        canvasRef.current.height = videoHeight;
+      }
       // Convert video frame to tensor
       const videoTensor = tf.browser.fromPixels(video);
 
       // Run face mesh detection
-      const faces = await model.estimateFaces(videoTensor);
+      const detectedFaces = await model.estimateFaces(videoTensor);
+
+      // Store detected faces in state
+      setFaces(detectedFaces);
 
       // Get canvas context
-      const ctx = canvasRef.current.getContext("2d");
-      if (ctx) {
-        // Clear previous drawings
-        ctx.clearRect(0, 0, videoWidth, videoHeight);
+      if (canvasRef.current !== null) {
+        const ctx = canvasRef.current.getContext("2d");
+        if (ctx) {
+          // Clear previous drawings
+          ctx.clearRect(0, 0, videoWidth, videoHeight);
 
-        console.log(faces);
-        drawMesh(faces, ctx);
+          // Draw the mesh on detected faces
+          drawMesh(detectedFaces, ctx);
+        }
       }
 
       videoTensor.dispose(); // Clean up tensor
@@ -75,9 +85,27 @@ const FaceMeshVerification = () => {
   }, []);
 
   return (
-    <div>
-      <Webcam ref={webcamRef} style={{ width: 640, height: 480 }} />
-      <canvas ref={canvasRef} style={{ position: "absolute" }} />
+    <div className="flex flex-col items-center justify-center w-full h-screen p-5">
+      <div className="relative w-full max-w-xl">
+        <Webcam
+          videoConstraints={{ facingMode: "user" }}
+          ref={webcamRef}
+          className="w-full rounded-lg shadow-lg"
+        />
+        <canvas
+          ref={canvasRef}
+          className="absolute top-0 left-0 w-full h-full rounded-lg"
+        />
+      </div>
+
+      {/* Conditionally set the background color based on face detection */}
+      <div
+        className={`mt-5 w-full max-w-xl p-4 text-center font-bold text-lg rounded-lg shadow-md transition-colors duration-500 ${
+          faces.length > 0 ? "bg-green-500 text-white" : "bg-red-500 text-white"
+        }`}
+      >
+        {faces.length > 0 ? "Face Detected!" : "No Face Detected"}
+      </div>
     </div>
   );
 };

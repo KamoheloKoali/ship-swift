@@ -1,4 +1,6 @@
 import { FaceLandmarksDetector } from '@tensorflow-models/face-landmarks-detection';
+import * as facemesh from "@tensorflow-models/face-landmarks-detection";
+
 
 // Triangulation sets of three
 export const TRIANGULATION: number[] = [
@@ -121,7 +123,7 @@ export const TRIANGULATION: number[] = [
 448,
 255,
 ];
-
+    
 // Drawing Mesh
 export const drawMesh = (
   predictions: Awaited<ReturnType<facemesh.FaceLandmarksDetector['estimateFaces']>>,
