@@ -4,7 +4,7 @@ import React, { useState } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useUser } from "@clerk/nextjs"
-import { courierJobSchema } from "../../lib/zodSchema"
+import { courierJobSchema } from "../../../lib/zodSchema"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -54,32 +54,75 @@ export default function ModernJobForm() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <h1>Create a Job</h1>
-        <div>
-          <label>Title:</label>
-          <input type="text" name="title" required />
-        </div>
-        <div>
-          <label>Description:</label>
-          <textarea name="description" required />
-        </div>
-        <div>
-          <label>Budget:</label>
-          <input type="text" name="budget" required />
-        </div>
-        <div>
-          <label>Drop Off:</label>
-          <input type="text" name="DropOff" required />
-        </div>
-        <div>
-          <label>Pick Up:</label>
-          <input type="text" name="PickUp" required />
-        </div>
-        <button type="submit">Create Job</button>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {success && <p style={{ color: "green" }}>{success}</p>}
-      </form>
+  <form onSubmit={handleSubmit}>
+    <h1>Create a Job</h1>
+    
+    <div>
+      <label>Title:</label>
+      <input type="text" name="title" required />
     </div>
+
+    <div>
+      <label>Description:</label>
+      <textarea name="description" required />
+    </div>
+
+    <div>
+      <label>Budget:</label>
+      <input type="number" name="budget" required min="0" />
+    </div>
+
+    <div>
+      <label>Drop Off:</label>
+      <input type="text" name="DropOff" required />
+    </div>
+
+    <div>
+      <label>Pick Up:</label>
+      <input type="text" name="PickUp" required />
+    </div>
+
+    <div>
+      <label>District Pickup:</label>
+      <input type="text" name="districtpickup" required />
+    </div>
+
+    <div>
+      <label>District Drop Off:</label>
+      <input type="text" name="districtdropoff" required />
+    </div>
+
+    <div>
+      <label>Parcel Size:</label>
+      <input type="text" name="parcelsize" required />
+    </div>
+
+    <div>
+      <label>Pickup Phone Number:</label>
+      <input type="tel" name="pickupphonenumber" required pattern="[0-9]{10}" placeholder="1234567890" />
+    </div>
+
+    <div>
+      <label>Dropoff Phone Number:</label>
+      <input type="tel" name="dropoffphonenumber" required pattern="[0-9]{10}" placeholder="1234567890" />
+    </div>
+
+    <div>
+      <label>Dropoff Email:</label>
+      <input type="email" name="dropoffemail" required placeholder="example@example.com" />
+    </div>
+
+    <div>
+      <label>Collection Date:</label>
+      <input type="date" name="collectiondate" required />
+    </div>
+
+    <button type="submit">Create Job</button>
+
+    {error && <p style={{ color: "red" }}>{error}</p>}
+    {success && <p style={{ color: "green" }}>{success}</p>}
+  </form>
+</div>
+
   )
 }

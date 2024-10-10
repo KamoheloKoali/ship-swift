@@ -20,20 +20,15 @@ export default function ClientNavBar() {
   const menuItems = [
     {
       label: "Deliver", 
-      href: "/driver/dashboard/find-jobs",
+      href: "/client/dashboard/deliver",
 
     },
     {
-      label: "Shipments", href: "/driver/dashboard/myjobs" 
+      label: "Shipments", href: "/client/dashboard/shipments",
     },
     { label: "Service Locator", href: "/conversations" },
     {
       label: "Address book",
-      dropdownItems: [
-        { label: "Income", href: "/finances/income" },
-        { label: "Expenses", href: "/finances/expenses" },
-        { label: "Reports", href: "/finances/reports" },
-      ],
     },
     { label: "Chats", href: "/conversations" },
   ];
@@ -47,7 +42,9 @@ export default function ClientNavBar() {
           {/* Left side: Logo and Navigation Menu */}
           <div className="flex items-center space-x-8">
             {/* Logo */}
-            <div className="font-bold text-lg text-gray-800">Ship Swift</div>
+            <Link href={'/client'}>
+              <div className="font-bold text-lg text-gray-800">Ship Swift</div>
+            </Link>
 
             {/* Navigation Menu for larger screens */}
             <NavMenu items={menuItems} />

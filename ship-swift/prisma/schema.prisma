@@ -41,7 +41,7 @@ model Drivers {
   idNumber       String           @default("")
   licenseExpiry  String           @default("")
   licenseNumber  String           @default("")
-  plateNumber    String            
+  plateNumber    String
   Contacts       Contacts[]
   driveRequests  DriverRequests[]
   Messages       Messages[]
@@ -64,8 +64,9 @@ model CourierJobs {
   dropOffEmail       String?  @default("")
   collectionDate     DateTime @default(now())
   dateCreated        DateTime @default(now())
-  
-  client             clients  @relation(fields: [clientId], references: [Id])
+  packageStatus      String?  @default("")
+
+  client clients @relation(fields: [clientId], references: [Id])
 }
 
 model DriverRequests {
