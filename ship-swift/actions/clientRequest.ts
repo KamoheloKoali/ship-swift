@@ -1,4 +1,4 @@
-"use server"
+"use server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -6,19 +6,16 @@ const prisma = new PrismaClient();
 export const createClientRequest = async (requestData: {
   receiverId: string;
   senderId: string;
-  message: string;
 }) => {
-    const newRequest = await prisma.clientRequests.create({
-      data: {
-        receiverId: requestData.receiverId,
-        senderId: requestData.senderId,
-        message: requestData.message,
-        isPending: true,
-      },
-    });
-    if (newRequest.Id)
-      return { success: true, data: newRequest };
-    else return { success: false };
+  const newRequest = await prisma.clientRequests.create({
+    data: {
+      receiverId: requestData.receiverId,
+      senderId: requestData.senderId,
+      isPending: true,
+    },
+  });
+  if (newRequest.Id) return { success: true, data: newRequest };
+  else return { success: false };
 };
 
 export const getClientRequest = async (
@@ -29,8 +26,7 @@ export const getClientRequest = async (
     const requests = await prisma.clientRequests.findMany({
       where: { senderId: senderId, receiverId: receiverId },
     });
-    if (requests.length > 0)
-      return { success: true, data: requests };
+    if (requests.length > 0) return { success: true, data: requests };
   } catch (error) {
     return { success: false, error: "Error retrieving client request" };
   }
@@ -38,23 +34,21 @@ export const getClientRequest = async (
 
 export const getClientRequests = async (
   senderId: string = "",
-  receiverId: string = "",
+  receiverId: string = ""
 ) => {
   try {
-    if (senderId.length > 0){
-    const requests = await prisma.clientRequests.findMany({
-      where: { senderId: senderId },
-    });
-    
-    if (requests.length > 0)
-      return { success: true, data: requests };
-  } else {
-    const requests = await prisma.clientRequests.findMany({
-      where: { receiverId: receiverId },
-    });
-    if (requests.length > 0)
-      return { success: true, data: requests };
-  }
+    if (senderId.length > 0) {
+      const requests = await prisma.clientRequests.findMany({
+        where: { senderId: senderId },
+      });
+
+      if (requests.length > 0) return { success: true, data: requests };
+    } else {
+      const requests = await prisma.clientRequests.findMany({
+        where: { receiverId: receiverId },
+      });
+      if (requests.length > 0) return { success: true, data: requests };
+    }
   } catch (error) {
     return { success: false, error: "Error retrieving client requests" };
   }

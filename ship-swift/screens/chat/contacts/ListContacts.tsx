@@ -218,9 +218,6 @@ const ListContacts = ({
     };
   }, [supabase, userId, role]);
 
-  //   console.log(outgoingRequestsWithNames)
-  // console.log(incomingRequests);
-
   let contacts: any = [];
 
   incomingRequests.map((request) => {

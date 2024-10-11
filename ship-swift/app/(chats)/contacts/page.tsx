@@ -1,7 +1,8 @@
-import { getClientById } from "@/actions/clientActions";
-import { getDriverById } from "@/actions/driverActions";
+import { getAllClients, getClientById } from "@/actions/clientActions";
+import { getAllDrivers, getDriverById } from "@/actions/driverActions";
 import { getUserRoleById } from "@/app/utils/getUserRole";
-import ClientAddDriver from "@/screens/chat/contacts/ClientAddDriverDialog";
+import { clientComboBox } from "@/screens/chat/contacts/clientComboBox";
+import { driverComboBox } from "@/screens/chat/contacts/driverComboBox";
 import DriverAddClient from "@/screens/chat/contacts/DriverAddClientDialog";
 import ListContacts from "@/screens/chat/contacts/ListContacts";
 import ListOfContacts from "@/screens/chat/contacts/ListOfContacts";
@@ -15,6 +16,8 @@ type Props = {};
 const Page = async (props: Props) => {
   const userRole = await getUserRoleById();
   const listOfContacts = await ListOfContacts();
+  const drivers = await getAllDrivers();
+  const clients = await getAllClients();
   const incomingRequests = listOfContacts.incomingRequests;
   const outgoingRequests = listOfContacts.outgoingRequests;
   let incomingRequestsWithNames;
@@ -94,7 +97,11 @@ const Page = async (props: Props) => {
       <ItemList
         title="Contacts"
         action={
-          userRole.data?.client ? <ClientAddDriver /> : <DriverAddClient />
+          userRole.data?.client ? (
+            <clientComboBox drivers={drivers.data} />
+          ) : (
+            <driverComboBox clients={clients.data} />
+          )
         }
       >
         <div className="h-full w-full">

@@ -6,13 +6,11 @@ const prisma = new PrismaClient();
 export const createDriverRequest = async (requestData: {
   receiverId: string;
   senderId: string;
-  message: string;
 }) => {
   const newRequest = await prisma.driverRequests.create({
     data: {
       receiverId: requestData.receiverId,
       senderId: requestData.senderId,
-      message: requestData.message,
       isPending: true,
     },
   });
