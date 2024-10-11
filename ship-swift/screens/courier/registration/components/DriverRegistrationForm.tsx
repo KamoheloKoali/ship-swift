@@ -8,12 +8,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input"; // Assuming you have this component
 import ImageUploadCard from "./ImageUploadCard";
 import { uploadImage } from "@/screens/courier/registration/utils/Upload";
 import { upsertDriver } from "@/actions/driverActions";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { CheckCircle } from "lucide-react";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 export default function DriverRegistrationForm() {
   const [files, setFiles] = useState<{ [key: string]: File | null }>({
@@ -21,6 +22,13 @@ export default function DriverRegistrationForm() {
     "id-document": null,
     "drivers-license": null,
     "license-disc": null,
+  });
+  const [formData, setFormData] = useState({
+    phoneNumber: "",
+    location: "",
+    vehicleMake: "",
+    vehicleModel: "",
+    vehicleColor: "",
   });
   const [loading, setLoading] = useState(false);
   const { userId } = useAuth();
@@ -31,12 +39,22 @@ export default function DriverRegistrationForm() {
     setFiles((prev) => ({ ...prev, [folder]: file }));
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleUpload = async () => {
     const allFilesSelected = Object.values(files).every(
       (file) => file !== null
     );
     if (!allFilesSelected) {
       return alert("Please select all required files");
+    }
+
+    // Check if all form fields are filled
+    if (Object.values(formData).some((value) => value === "")) {
+      return alert("Please fill in all fields");
     }
 
     setLoading(true);
@@ -46,6 +64,10 @@ export default function DriverRegistrationForm() {
       firstName: user?.firstName || "",
       lastName: user?.lastName || "",
       email: user?.emailAddresses[0]?.emailAddress || "",
+      phoneNumber: formData.phoneNumber,
+      location: formData.location,
+      vehicleType:
+        `${formData.vehicleMake} ${formData.vehicleModel} ${formData.vehicleColor}`.trim(),
     };
 
     for (const [folder, file] of Object.entries(files)) {
@@ -77,7 +99,6 @@ export default function DriverRegistrationForm() {
     const result = await upsertDriver(updateData);
 
     if (result.success) {
-      // Client-side routing using useRouter
       router.push("/onboarding/driver-onboarding/details");
     } else {
       alert(`Error saving to database: ${result.error}`);
@@ -93,8 +114,8 @@ export default function DriverRegistrationForm() {
           Profile Verification
         </CardTitle>
         <CardDescription className="text-lg text-gray-600">
-          Upload the required documents to be verified and start working with
-          us.
+          Upload the required documents and provide additional information to be
+          verified and start working with us.
         </CardDescription>
       </CardHeader>
       <CardContent className="p-6 shadow-md">
@@ -120,6 +141,43 @@ export default function DriverRegistrationForm() {
             onFileChange={handleFileChange("license-disc")}
           />
         </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <Input
+            name="phoneNumber"
+            placeholder="Phone Number"
+            value={formData.phoneNumber}
+            onChange={handleInputChange}
+            required
+          />
+          <Input
+            name="location"
+            placeholder="Location"
+            value={formData.location}
+            onChange={handleInputChange}
+            required
+          />
+          <Input
+            name="vehicleMake"
+            placeholder="Vehicle Make"
+            value={formData.vehicleMake}
+            onChange={handleInputChange}
+            required
+          />
+          <Input
+            name="vehicleModel"
+            placeholder="Vehicle Model"
+            value={formData.vehicleModel}
+            onChange={handleInputChange}
+            required
+          />
+          <Input
+            name="vehicleColor"
+            placeholder="Vehicle Color"
+            value={formData.vehicleColor}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
         <Button
           onClick={handleUpload}
           disabled={loading}
@@ -130,7 +188,7 @@ export default function DriverRegistrationForm() {
           ) : (
             <>
               <CheckCircle className="mr-2 h-5 w-5" />
-              Upload All Documents
+              Upload All Documents and Submit
             </>
           )}
         </Button>

@@ -45,6 +45,7 @@ model Drivers {
   licenseNumber  String?
   plateNumber    String?
   location       String?
+  isVerified    Boolean          @default(false)
   Contacts       Contacts[]
   driveRequests  DriverRequests[]
   Messages       Messages[]
