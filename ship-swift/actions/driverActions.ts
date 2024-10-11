@@ -6,18 +6,21 @@ const prisma = new PrismaClient();
 export const createDriver = async (driverData: {
   clerkId: string;
   email: string;
-  phoneNumber: string;
+  phoneNumber?: string;
   firstName: string;
   lastName: string;
   photoUrl: string;
   idPhotoUrl: string;
   idNumber?: string;
+  licensePhotoUrl?: string;
   licenseNumber?: string;
   licenseExpiry?: string;
   vehicleType?: string;
   plateNumber?: string;
   VIN?: string;
-  diskExpiry?: string;
+  discExpiry?: string;
+  discPhotoUrl?: string;
+  location?: string;
 }) => {
   try {
     const newDriver = await prisma.drivers.create({
@@ -30,12 +33,15 @@ export const createDriver = async (driverData: {
         photoUrl: driverData.photoUrl,
         idPhotoUrl: driverData.idPhotoUrl,
         idNumber: driverData.idNumber,
+        licensePhotoUrl: driverData.licensePhotoUrl,
         licenseNumber: driverData.licenseNumber,
         licenseExpiry: driverData.licenseExpiry,
         vehicleType: driverData.vehicleType,
         plateNumber: driverData.plateNumber,
+        discPhotoUrl: driverData.discPhotoUrl,
         VIN: driverData.VIN,
-        diskExpiry: driverData.diskExpiry,
+        discExpiry: driverData.discExpiry,
+        location: driverData.location,
       },
     });
     return { success: true, data: newDriver };
@@ -50,18 +56,124 @@ export const createDriver = async (driverData: {
   }
 };
 
-export const getDriverById = async (driverId: string) => {
+export const upsertDriver = async (driverData: {
+  clerkId: string;
+  email: string;
+  phoneNumber: string; // Now required
+  firstName: string;
+  lastName: string;
+  photoUrl?: string;
+  idPhotoUrl?: string;
+  idNumber?: string;
+  licensePhotoUrl?: string;
+  licenseNumber?: string;
+  licenseExpiry?: string;
+  vehicleType: string; // Now required
+  plateNumber?: string;
+  VIN?: string;
+  discExpiry?: string;
+  discPhotoUrl?: string;
+  location: string; // Now required
+}) => {
+  try {
+    const upsertedDriver = await prisma.drivers.upsert({
+      where: { Id: driverData.clerkId },
+      update: {
+        email: driverData.email,
+        phoneNumber: driverData.phoneNumber,
+        firstName: driverData.firstName,
+        lastName: driverData.lastName,
+        location: driverData.location,
+        vehicleType: driverData.vehicleType,
+        ...(driverData.photoUrl && { photoUrl: driverData.photoUrl }),
+        ...(driverData.idPhotoUrl && { idPhotoUrl: driverData.idPhotoUrl }),
+        ...(driverData.idNumber && { idNumber: driverData.idNumber }),
+        ...(driverData.licensePhotoUrl && {
+          licensePhotoUrl: driverData.licensePhotoUrl,
+        }),
+        ...(driverData.licenseNumber && {
+          licenseNumber: driverData.licenseNumber,
+        }),
+        ...(driverData.licenseExpiry && {
+          licenseExpiry: driverData.licenseExpiry,
+        }),
+        ...(driverData.plateNumber && { plateNumber: driverData.plateNumber }),
+        ...(driverData.discPhotoUrl && {
+          discPhotoUrl: driverData.discPhotoUrl,
+        }),
+        ...(driverData.VIN && { VIN: driverData.VIN }),
+        ...(driverData.discExpiry && { discExpiry: driverData.discExpiry }),
+      },
+      create: {
+        Id: driverData.clerkId,
+        email: driverData.email,
+        phoneNumber: driverData.phoneNumber,
+        firstName: driverData.firstName,
+        lastName: driverData.lastName,
+        location: driverData.location,
+        vehicleType: driverData.vehicleType,
+        photoUrl: driverData.photoUrl || "",
+        idPhotoUrl: driverData.idPhotoUrl || "",
+        idNumber: driverData.idNumber,
+        licensePhotoUrl: driverData.licensePhotoUrl,
+        licenseNumber: driverData.licenseNumber,
+        licenseExpiry: driverData.licenseExpiry,
+        plateNumber: driverData.plateNumber,
+        discPhotoUrl: driverData.discPhotoUrl,
+        VIN: driverData.VIN,
+        discExpiry: driverData.discExpiry,
+      },
+    });
+    return { success: true, data: upsertedDriver };
+  } catch (error) {
+    console.error("Prisma error:", error);
+    if (error instanceof Error) {
+      return { success: false, error: error.message };
+    }
+    return { success: false, error: "Unknown error occurred" };
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
+export const updateDriverVerification = async (
+  driverId: string,
+  isVerified: boolean
+) => {
+  try {
+    const updatedDriver = await prisma.drivers.update({
+      where: { Id: driverId },
+      data: { isVerified },
+    });
+    return updatedDriver;
+  } catch (error) {
+    console.error("Error updating driver verification:", error);
+    throw error;
+  }
+};
+
+export const getDriverByID = async (driverId: string) => {
   try {
     const driver = await prisma.drivers.findUnique({
-      where: { Id: driverId },
+      where: {
+        Id: driverId,
+      },
+      include: {
+        Contacts: true, // If you want to include related Contacts
+        driveRequests: true, // If you want to include related DriverRequests
+        Messages: true, // If you want to include related Messages
+        clientRequests: true, // If you want to include related clientRequests
+      },
     });
-    if (driver) {
-      return { success: true, data: driver };
-    } else {
-      return { success: false, error: "Driver not found" };
+
+    if (!driver) {
+      throw new Error("Driver not found");
     }
+
+    return driver;
   } catch (error) {
-    return { success: false, error: "Error retrieving driver" };
+    console.error("Error fetching driver by ID:", error);
+    throw error;
   }
 };
 
