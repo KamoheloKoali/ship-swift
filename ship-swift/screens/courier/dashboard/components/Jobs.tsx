@@ -111,9 +111,11 @@ const Jobs = () => {
       <div className="flex flex-row w-full mylg:w-[95%] 2xl:w-[80%] justify-center">
         <div className="w-[98%] md:w-[80%] mylg:w-[72%]">{renderContent()}</div>
 
-        <div className="relative hidden mylg:block w-[28%] bg-muted/80">
-          <CardStatus />
-          <CardJobsInfo job={selectedJob} isOpen={isModalOpen} />
+        <div className="relative hidden mylg:block h-screen w-[28%] bg-muted/80">
+          <div className="fixed top-[138px] w-[26.5%] sideScreen:w-[22.5%]">
+            <CardStatus />
+            <CardJobsInfo job={selectedJob} isOpen={isModalOpen} />
+          </div>
         </div>
       </div>
 
