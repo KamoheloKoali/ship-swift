@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
       const newClient = await prisma.clients.create({
-        data: { firstName, email, phone, address },
+        data: { name, email, phone, address },
       });
       res.status(201).json(newClient);
     } catch (error) {
