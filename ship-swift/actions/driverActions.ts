@@ -158,12 +158,6 @@ export const getDriverByID = async (driverId: string) => {
       where: {
         Id: driverId,
       },
-      include: {
-        Contacts: true, // If you want to include related Contacts
-        driveRequests: true, // If you want to include related DriverRequests
-        Messages: true, // If you want to include related Messages
-        clientRequests: true, // If you want to include related clientRequests
-      },
     });
 
     if (!driver) {

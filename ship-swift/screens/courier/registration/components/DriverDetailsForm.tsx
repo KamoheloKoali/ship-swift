@@ -44,14 +44,14 @@ interface DriverData {
     clientId: string;
     isConversating: boolean;
   }>;
-  driveRequests: Array<{
-    Id: string;
-    receiverId: string;
-    senderId: string;
-    message: string;
-    isAccepted: boolean;
-    isPending: boolean;
-  }>;
+  // driveRequests: Array<{
+  //   Id: string;
+  //   receiverId: string;
+  //   senderId: string;
+  //   message: string;
+  //   isAccepted: boolean;
+  //   isPending: boolean;
+  // }>;
   Messages: any[];
   clientRequests: any[];
 }
