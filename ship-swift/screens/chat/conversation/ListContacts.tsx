@@ -1,6 +1,6 @@
 "use client";
 import { getClientById } from "@/actions/clientActions";
-import { getDriverById } from "@/actions/driverActions";
+import { getDriverByID } from "@/actions/driverActions";
 import supabase from "@/app/utils/supabase";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@clerk/nextjs";
@@ -25,9 +25,9 @@ const ListContacts = ({ role, Contacts }: Props) => {
       if (newContact.receiverId === userId) {
         let fullName: string;
         if (role) {
-          const driverData = await getDriverById(newContact.driverId); // Fetch driver by driverId
-          fullName = driverData.success
-            ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
+          const driverData = await getDriverByID(newContact.driverId); // Fetch driver by driverId
+          fullName = driverData.Id
+            ? `${driverData.firstName} ${driverData.lastName}`
             : "Unknown Driver";
         } else {
           const clientData = await getClientById(newContact.clientId); // Fetch client by clientId

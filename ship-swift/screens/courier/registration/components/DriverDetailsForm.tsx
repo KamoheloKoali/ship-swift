@@ -302,7 +302,10 @@ export default function DriverDetailsForm(): JSX.Element {
         </div>
       </CardContent>
       <CardFooter className="flex justify-between bg-gray-50 border-t p-6">
-        <Button onClick={handleEdit} className="w-full md:w-1/2 mr-2 bg-white text-black hover:bg-gray-100 border border-black">
+        <Button
+          onClick={handleEdit}
+          className="w-full md:w-1/2 mr-2 bg-white text-black hover:bg-gray-100 border border-black"
+        >
           Edit
         </Button>
         <Button

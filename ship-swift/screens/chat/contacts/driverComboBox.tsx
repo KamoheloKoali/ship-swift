@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { UserPlus } from "lucide-react";
+import { Loader2, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -17,14 +17,17 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useAuth } from "@clerk/nextjs";
+import { onSubmitAsDriver } from "@/app/utils/submitRequest";
+import { toast } from "sonner";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 type Props = {
   clients: any;
 };
 
-export function driverComboBox({ clients }: Props) {
+export function DriverComboBox({ clients }: Props) {
   const user = useAuth();
-  const userId = user.userId;
+  const [isSubmittingRequest, setIsSubmittingRequest] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -44,23 +47,65 @@ export function driverComboBox({ clients }: Props) {
         <Command>
           <CommandInput placeholder="Search contact..." />
           <CommandList>
-            <CommandEmpty>No contact found.</CommandEmpty>
-            <CommandGroup>
-              {clients.map((contact: any) => (
-                <CommandItem
-                  key={contact.Id}
-                  value={contact.fullName}
-                  onSelect={(receiver) => {
-                    // setValue(currentValue === value ? "" : currentValue);
-                    onSubmitAsDriver(receiver);
+            {isSubmittingRequest ? (
+              <div className="flex items-center justify-center">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending
+                Request
+              </div>
+            ) : (
+              <>
+                <CommandEmpty>No contact found.</CommandEmpty>
+                <CommandGroup>
+                  {clients.map((contact: any) => (
+                    <CommandItem
+                      key={contact.Id}
+                      value={contact.fullName}
+                      onSelect={async () => {
+                        // setValue(currentValue === value ? "" : currentValue);
+                        setIsSubmittingRequest(true);
+                        const result = await onSubmitAsDriver(contact);
 
-                    setOpen(false);
-                  }}
-                >
-                  {contact.fullName}
-                </CommandItem>
-              ))}
-            </CommandGroup>
+                        if (result === 1) {
+                          toast.error(
+                            `${
+                              contact.firstName + "" + contact.lastName
+                            } already sent you a request`
+                          );
+                        } else if (result === 2) {
+                          toast.error(
+                            `Request to add ${
+                              contact.firstName + "" + contact.lastName
+                            } as contact already sent!`
+                          );
+                        } else if (result === 3) {
+                          toast.error("Client does not exist");
+                        } else if (result) {
+                          toast.success(
+                            `Request to add ${contact.firstName} ${contact.lastName} sent!`
+                          );
+                        } else {
+                          toast.error(
+                            `Request to add ${contact.firstName} ${contact.lastName} unsuccessful`
+                          );
+                        }
+                        setIsSubmittingRequest(false);
+                        setOpen(false);
+                      }}
+                    >
+                      <div className="flex gap-2">
+                        <Avatar>
+                          <AvatarImage
+                            src={contact.photoUrl}
+                            alt="user photo"
+                          />
+                        </Avatar>
+                        {`${contact.firstName} ${contact.lastName}`}
+                      </div>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </>
+            )}
           </CommandList>
         </Command>
       </PopoverContent>

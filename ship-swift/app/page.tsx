@@ -1,5 +1,5 @@
 import { createClient, getClientById } from "@/actions/clientActions";
-import { createDriver, getDriverById } from "@/actions/driverActions";
+import { createDriver, getDriverByID } from "@/actions/driverActions";
 import getCurrentUserClerkDetails from "@/app/utils/getCurrentUserDetails";
 import { RadioGroup } from "@radix-ui/react-dropdown-menu";
 import { redirect } from "next/navigation";
@@ -23,7 +23,7 @@ export default async function Home() {
   }
 
   // const Driver = await getCurrentUserClerkDetails()
-  //   const dbDriver = await getDriverById(Driver?.id || "")
+  //   const dbDriver = await getDriverByID(Driver?.id || "")
 
   //   if (!dbDriver.success) {
 

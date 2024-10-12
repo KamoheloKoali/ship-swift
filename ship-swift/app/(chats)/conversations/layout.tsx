@@ -1,6 +1,6 @@
 import { getClientById } from "@/actions/clientActions";
 import { getAllcontacts } from "@/actions/contactsActions";
-import { getDriverById } from "@/actions/driverActions";
+import { getDriverByID } from "@/actions/driverActions";
 import { getUserRoleById } from "@/app/utils/getUserRole";
 import ListContacts from "@/screens/chat/conversation/ListContacts";
 import ItemList from "@/screens/chat/item-list/ItemList";
@@ -29,11 +29,11 @@ const ConversationsLayout = async ({ children }: Props) => {
       if (Array.isArray(contacts) && contacts.length > 0) {
         contactsWithNames = await Promise.all(
           contacts.map(async (request: any) => {
-            const driverData = await getDriverById(request.driverId); // Fetch driver by senderId
-            const fullName = driverData.success
-              ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
+            const driverData = await getDriverByID(request.driverId); // Fetch driver by senderId
+            const fullName = driverData.Id
+              ? `${driverData.firstName} ${driverData.lastName}`
               : "Unknown Driver";
-            const photoUrl = driverData.data?.photoUrl;
+            const photoUrl = driverData.photoUrl;
             return {
               ...request,
               fullName, // Add fullName to the request

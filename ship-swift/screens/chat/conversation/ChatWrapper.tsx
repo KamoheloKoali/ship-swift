@@ -1,6 +1,6 @@
 import { getClientById } from "@/actions/clientActions";
 import { getcontactById } from "@/actions/contactsActions";
-import { getDriverById } from "@/actions/driverActions";
+import { getDriverByID } from "@/actions/driverActions";
 import { getUserRoleById } from "@/app/utils/getUserRole";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { PhoneCall, VideoIcon } from "lucide-react";
@@ -17,7 +17,7 @@ const ChatWrapper = async ({ children, conversationId }: Props) => {
   let client;
   if (contact.success) {
     if (userRole.data?.client) {
-      driver = await getDriverById(contact.data?.driverId || "");
+      driver = await getDriverByID(contact.data?.driverId || "");
     } else {
       client = await getClientById(contact.data?.clientId || "");
     }
@@ -30,11 +30,11 @@ const ChatWrapper = async ({ children, conversationId }: Props) => {
             <div className="w-[50%] flex flex-row items-center gap-2 ">
               <div className="">
                 <Avatar>
-                  <AvatarImage src={driver?.data?.photoUrl} alt="user photo" />
+                  <AvatarImage src={driver?.photoUrl} alt="user photo" />
                 </Avatar>
               </div>
               <div className="flex flex-col">
-                <p className="font-semibold">{`${driver?.data?.firstName} ${driver?.data?.lastName}`}</p>
+                <p className="font-semibold">{`${driver?.firstName} ${driver?.lastName}`}</p>
               </div>
             </div>
             <div className=" w-[50%] flex justify-between items-center">
