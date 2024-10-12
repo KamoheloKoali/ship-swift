@@ -60,6 +60,8 @@ const config: Config = {
       screens: {
         "myq": "1821px", // Custom breakpoint for screens above 1821px
 		"mylg": "1441px",
+    "sideScreen": "1536px",
+    "buttonScreen" : "1740px"
       },
     },
   },

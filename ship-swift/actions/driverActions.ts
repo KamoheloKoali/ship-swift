@@ -20,6 +20,7 @@ export const createDriver = async (driverData: {
   VIN?: string;
   discExpiry?: string;
   discPhotoUrl?: string;
+  location?: string;
 }) => {
   try {
     const newDriver = await prisma.drivers.create({
@@ -40,6 +41,7 @@ export const createDriver = async (driverData: {
         discPhotoUrl: driverData.discPhotoUrl,
         VIN: driverData.VIN,
         discExpiry: driverData.discExpiry,
+        location: driverData.location,
       },
     });
     return { success: true, data: newDriver };
@@ -57,20 +59,21 @@ export const createDriver = async (driverData: {
 export const upsertDriver = async (driverData: {
   clerkId: string;
   email: string;
-  phoneNumber?: string; // Now optional
+  phoneNumber: string; // Now required
   firstName: string;
   lastName: string;
-  photoUrl?: string; // Make this optional as it might not be set in every update
-  idPhotoUrl?: string; // Make this optional as it might not be set in every update
+  photoUrl?: string;
+  idPhotoUrl?: string;
   idNumber?: string;
   licensePhotoUrl?: string;
   licenseNumber?: string;
   licenseExpiry?: string;
-  vehicleType?: string;
+  vehicleType: string; // Now required
   plateNumber?: string;
   VIN?: string;
   discExpiry?: string;
   discPhotoUrl?: string;
+  location: string; // Now required
 }) => {
   try {
     const upsertedDriver = await prisma.drivers.upsert({
@@ -80,6 +83,8 @@ export const upsertDriver = async (driverData: {
         phoneNumber: driverData.phoneNumber,
         firstName: driverData.firstName,
         lastName: driverData.lastName,
+        location: driverData.location,
+        vehicleType: driverData.vehicleType,
         ...(driverData.photoUrl && { photoUrl: driverData.photoUrl }),
         ...(driverData.idPhotoUrl && { idPhotoUrl: driverData.idPhotoUrl }),
         ...(driverData.idNumber && { idNumber: driverData.idNumber }),
@@ -92,7 +97,6 @@ export const upsertDriver = async (driverData: {
         ...(driverData.licenseExpiry && {
           licenseExpiry: driverData.licenseExpiry,
         }),
-        ...(driverData.vehicleType && { vehicleType: driverData.vehicleType }),
         ...(driverData.plateNumber && { plateNumber: driverData.plateNumber }),
         ...(driverData.discPhotoUrl && {
           discPhotoUrl: driverData.discPhotoUrl,
@@ -106,13 +110,14 @@ export const upsertDriver = async (driverData: {
         phoneNumber: driverData.phoneNumber,
         firstName: driverData.firstName,
         lastName: driverData.lastName,
+        location: driverData.location,
+        vehicleType: driverData.vehicleType,
         photoUrl: driverData.photoUrl || "",
         idPhotoUrl: driverData.idPhotoUrl || "",
         idNumber: driverData.idNumber,
         licensePhotoUrl: driverData.licensePhotoUrl,
         licenseNumber: driverData.licenseNumber,
         licenseExpiry: driverData.licenseExpiry,
-        vehicleType: driverData.vehicleType,
         plateNumber: driverData.plateNumber,
         discPhotoUrl: driverData.discPhotoUrl,
         VIN: driverData.VIN,
@@ -128,6 +133,41 @@ export const upsertDriver = async (driverData: {
     return { success: false, error: "Unknown error occurred" };
   } finally {
     await prisma.$disconnect();
+  }
+};
+
+export const updateDriverVerification = async (
+  driverId: string,
+  isVerified: boolean
+) => {
+  try {
+    const updatedDriver = await prisma.drivers.update({
+      where: { Id: driverId },
+      data: { isVerified },
+    });
+    return updatedDriver;
+  } catch (error) {
+    console.error("Error updating driver verification:", error);
+    throw error;
+  }
+};
+
+export const getDriverByID = async (driverId: string) => {
+  try {
+    const driver = await prisma.drivers.findUnique({
+      where: {
+        Id: driverId,
+      },
+    });
+
+    if (!driver) {
+      throw new Error("Driver not found");
+    }
+
+    return driver;
+  } catch (error) {
+    console.error("Error fetching driver by ID:", error);
+    throw error;
   }
 };
 
