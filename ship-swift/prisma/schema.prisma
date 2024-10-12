@@ -26,30 +26,30 @@ model clients {
 }
 
 model Drivers {
-  Id             String           @id
-  email          String           @unique
-  phoneNumber    String?
-  firstName      String
-  lastName       String
-  photoUrl       String
-  idPhotoUrl     String
-  vehicleType    String?
-  dateCreated    DateTime         @default(now())
-  dateUpdated    DateTime         @updatedAt
-  discPhotoUrl   String?
-  VIN            String?
-  discExpiry     String?
-  idNumber       String?
+  Id              String           @id
+  email           String           @unique
+  phoneNumber     String?
+  firstName       String
+  lastName        String
+  photoUrl        String
+  idPhotoUrl      String
+  vehicleType     String?
+  dateCreated     DateTime         @default(now())
+  dateUpdated     DateTime         @updatedAt
+  VIN             String?
+  idNumber        String?
+  licenseExpiry   String?
+  licenseNumber   String?
+  plateNumber     String?
+  discExpiry      String?
+  discPhotoUrl    String?
   licensePhotoUrl String?
-  licenseExpiry  String?
-  licenseNumber  String?
-  plateNumber    String?
-  location       String?
-  isVerified    Boolean          @default(false)
-  Contacts       Contacts[]
-  driveRequests  DriverRequests[]
-  Messages       Messages[]
-  clientRequests clientRequests[]
+  location        String?
+  isVerified      Boolean          @default(false)
+  Contacts        Contacts[]
+  driveRequests   DriverRequests[]
+  Messages        Messages[]
+  clientRequests  clientRequests[]
 }
 
 model CourierJobs {
@@ -68,7 +68,6 @@ model DriverRequests {
   Id         String  @id @default(uuid())
   receiverId String
   senderId   String
-  message    String
   isAccepted Boolean @default(false)
   isPending  Boolean @default(false)
   receiver   clients @relation(fields: [receiverId], references: [Id])
@@ -77,7 +76,6 @@ model DriverRequests {
 
 model clientRequests {
   Id         String  @id @default(uuid())
-  message    String
   senderId   String
   receiverId String
   isAccepted Boolean @default(false)
