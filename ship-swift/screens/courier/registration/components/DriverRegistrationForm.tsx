@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,104 +8,47 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input"; // Assuming you have this component
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import ImageUploadCard from "./ImageUploadCard";
-import { uploadImage } from "@/screens/courier/registration/utils/Upload";
-import { upsertDriver } from "@/actions/driverActions";
-import { useAuth, useUser } from "@clerk/nextjs";
 import { CheckCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
+import useDriverRegistration from "@/screens/courier/registration/utils/DriverRegistration";
 
 export default function DriverRegistrationForm() {
-  const [files, setFiles] = useState<{ [key: string]: File | null }>({
-    "profile-photo": null,
-    "id-document": null,
-    "drivers-license": null,
-    "license-disc": null,
-  });
-  const [formData, setFormData] = useState({
-    phoneNumber: "",
-    location: "",
-    vehicleMake: "",
-    vehicleModel: "",
-    vehicleColor: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const { userId } = useAuth();
-  const { user } = useUser();
-  const router = useRouter();
+  const {
+    files,
+    existingImages,
+    formData,
+    loading,
+    isLoading,
+    handleFileChange,
+    handleInputChange,
+    handleUpload,
+  } = useDriverRegistration();
 
-  const handleFileChange = (folder: string) => (file: File | null) => {
-    setFiles((prev) => ({ ...prev, [folder]: file }));
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleUpload = async () => {
-    const allFilesSelected = Object.values(files).every(
-      (file) => file !== null
+  if (isLoading) {
+    return (
+      <Card className="w-full max-w-4xl mx-auto bg-white rounded-none">
+        <CardHeader className="bg-gray-50 border-b border-gray-200">
+          <Skeleton className="h-8 w-3/4 mb-2" />
+          <Skeleton className="h-8 w-full" />
+        </CardHeader>
+        <CardContent className="p-6 shadow-md">
+          <div className="grid gap-6 md:grid-cols-2">
+            {[...Array(4)].map((_, index) => (
+              <Skeleton key={index} className="h-60 w-full" />
+            ))}
+          </div>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            {[...Array(5)].map((_, index) => (
+              <Skeleton key={index} className="h-10 w-full" />
+            ))}
+          </div>
+          <Skeleton className="h-12 w-full mt-6" />
+        </CardContent>
+      </Card>
     );
-    if (!allFilesSelected) {
-      return alert("Please select all required files");
-    }
-
-    // Check if all form fields are filled
-    if (Object.values(formData).some((value) => value === "")) {
-      return alert("Please fill in all fields");
-    }
-
-    setLoading(true);
-
-    const updateData: any = {
-      clerkId: userId || "",
-      firstName: user?.firstName || "",
-      lastName: user?.lastName || "",
-      email: user?.emailAddresses[0]?.emailAddress || "",
-      phoneNumber: formData.phoneNumber,
-      location: formData.location,
-      vehicleType:
-        `${formData.vehicleMake} ${formData.vehicleModel} ${formData.vehicleColor}`.trim(),
-    };
-
-    for (const [folder, file] of Object.entries(files)) {
-      if (file) {
-        const { url, error } = await uploadImage(file, folder, userId || "");
-
-        if (error) {
-          setLoading(false);
-          return alert(`Error uploading ${folder}: ${error}`);
-        }
-
-        const fieldName =
-          folder === "profile-photo"
-            ? "photoUrl"
-            : folder === "id-document"
-            ? "idPhotoUrl"
-            : folder === "drivers-license"
-            ? "licensePhotoUrl"
-            : folder === "license-disc"
-            ? "discPhotoUrl"
-            : null;
-
-        if (fieldName) {
-          updateData[fieldName] = url;
-        }
-      }
-    }
-
-    const result = await upsertDriver(updateData);
-
-    if (result.success) {
-      router.push("/onboarding/driver-onboarding/details");
-    } else {
-      alert(`Error saving to database: ${result.error}`);
-    }
-
-    setLoading(false);
-  };
+  }
 
   return (
     <Card className="w-full max-w-4xl mx-auto bg-white rounded-none">
@@ -124,21 +67,25 @@ export default function DriverRegistrationForm() {
             folder="profile-photo"
             cardTitle="Profile Photo"
             onFileChange={handleFileChange("profile-photo")}
+            existingImageUrl={existingImages["profile-photo"]}
           />
           <ImageUploadCard
             folder="id-document"
             cardTitle="Identity Document"
             onFileChange={handleFileChange("id-document")}
+            existingImageUrl={existingImages["id-document"]}
           />
           <ImageUploadCard
             folder="drivers-license"
             cardTitle="Drivers License"
             onFileChange={handleFileChange("drivers-license")}
+            existingImageUrl={existingImages["drivers-license"]}
           />
           <ImageUploadCard
             folder="license-disc"
             cardTitle="License Disc"
             onFileChange={handleFileChange("license-disc")}
+            existingImageUrl={existingImages["license-disc"]}
           />
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2">

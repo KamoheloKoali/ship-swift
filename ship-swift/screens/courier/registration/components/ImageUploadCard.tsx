@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { z } from "zod";
 import { Upload, Image as ImageIcon } from "lucide-react";
@@ -7,6 +7,7 @@ interface ImageUploadCardProps {
   folder: string;
   cardTitle: string;
   onFileChange: (file: File | null) => void;
+  existingImageUrl?: string | null;
 }
 
 const imageSchema = z.object({
@@ -19,8 +20,15 @@ export default function ImageUploadCard({
   folder,
   cardTitle,
   onFileChange,
+  existingImageUrl = null,
 }: ImageUploadCardProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (existingImageUrl) {
+      setImageUrl(existingImageUrl);
+    }
+  }, [existingImageUrl]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -63,7 +71,7 @@ export default function ImageUploadCard({
             className="absolute bottom-2 right-2 bg-black text-white py-2 px-4 rounded-md cursor-pointer hover:bg-gray-800 transition-colors duration-200"
           >
             <Upload className="w-4 h-4 inline-block mr-2" />
-            Upload PNG
+            {imageUrl ? "Replace PNG" : "Upload PNG"}
           </label>
           <input
             id={`file-upload-${folder}`}
