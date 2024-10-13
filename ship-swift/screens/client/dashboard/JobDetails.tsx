@@ -85,7 +85,7 @@ export default function Details({ job }: SideCardProps) {
             <CardContent className="p-6 text-sm">
               <div className="grid gap-3">
                 <div className="font-semibold">Order Details</div>
-                <ul className="grid gap-3">
+                {/* <ul className="grid gap-3">
                   <li className="flex items-center justify-between">
                     <span className="text-muted-foreground">
                       Glimmer Lamps x <span>2</span>
@@ -98,10 +98,10 @@ export default function Details({ job }: SideCardProps) {
                     </span>
                     <span>$49.00</span>
                   </li>
-                </ul>
+                </ul> */}
                 <Separator className="my-2" />
                 <ul className="grid gap-3">
-                  <li className="flex items-center justify-between">
+                  {/* <li className="flex items-center justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
                     <span>$299.00</span>
                   </li>
@@ -112,10 +112,10 @@ export default function Details({ job }: SideCardProps) {
                   <li className="flex items-center justify-between">
                     <span className="text-muted-foreground">Tax</span>
                     <span>$25.00</span>
-                  </li>
+                  </li> */}
                   <li className="flex items-center justify-between font-semibold">
                     <span className="text-muted-foreground">Total</span>
-                    <span>$329.00</span>
+                    <span>M{job.Budget}</span>
                   </li>
                 </ul>
               </div>
@@ -124,9 +124,9 @@ export default function Details({ job }: SideCardProps) {
                 <div className="grid gap-3">
                   <div className="font-semibold">Shipping Information</div>
                   <address className="grid gap-0.5 not-italic text-muted-foreground">
-                    <span>Liam Johnson</span>
-                    <span>1234 Main St.</span>
-                    <span>Anytown, CA 12345</span>
+                    <span>{job.client?.firstName} {job.client?.lastName}</span>
+                    <span>{job.DropOff}</span>
+                    <span>{job.districtDropOff}</span>
                   </address>
                 </div>
                 <div className="grid auto-rows-max gap-3">

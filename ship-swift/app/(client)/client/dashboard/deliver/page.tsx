@@ -102,11 +102,11 @@ export default function ModernJobForm() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="pickupphonenumber">Pickup Phone Number</Label>
-              <Input id="pickupphonenumber" name="pickupphonenumber" type="tel" required pattern="[0-9]{10}" placeholder="1234567890" />
+              <Input id="pickupphonenumber" name="pickupphonenumber" type="tel"placeholder="1234567890" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="dropoffphonenumber">Dropoff Phone Number</Label>
-              <Input id="dropoffphonenumber" name="dropoffphonenumber" type="tel" required pattern="[0-9]{10}" placeholder="1234567890" />
+              <Input id="dropoffphonenumber" name="dropoffphonenumber" type="tel" placeholder="1234567890" />
             </div>
           </div>
 
