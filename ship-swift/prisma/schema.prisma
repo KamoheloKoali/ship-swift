@@ -22,26 +22,31 @@ model clients {
   courierJobs    CourierJobs[]
   driverRequests DriverRequests[]
   Messages       Messages[]
+  Messages       Messages[]
   clientRequests clientRequests[]
 }
 
 model Drivers {
   Id             String           @id
   email          String           @unique
-  phoneNumber    String
+  phoneNumber    String?
   firstName      String
   lastName       String
   photoUrl       String
   idPhotoUrl     String
-  vehicleType    String           @default("")
+  vehicleType    String?
   dateCreated    DateTime         @default(now())
   dateUpdated    DateTime         @updatedAt
-  VIN            String           @default("")
-  diskExpiry     String           @default("")
-  idNumber       String           @default("")
-  licenseExpiry  String           @default("")
-  licenseNumber  String           @default("")
-  plateNumber    String
+  discPhotoUrl   String?
+  VIN            String?
+  discExpiry     String?
+  idNumber       String?
+  licensePhotoUrl String?
+  licenseExpiry  String?
+  licenseNumber  String?
+  plateNumber    String?
+  location       String?
+  isVerified    Boolean          @default(false)
   Contacts       Contacts[]
   driveRequests  DriverRequests[]
   Messages       Messages[]
@@ -73,7 +78,6 @@ model DriverRequests {
   Id         String  @id @default(uuid())
   receiverId String
   senderId   String
-  message    String
   isAccepted Boolean @default(false)
   isPending  Boolean @default(false)
   receiver   clients @relation(fields: [receiverId], references: [Id])
@@ -82,7 +86,6 @@ model DriverRequests {
 
 model clientRequests {
   Id         String  @id @default(uuid())
-  message    String
   senderId   String
   receiverId String
   isAccepted Boolean @default(false)
@@ -107,11 +110,11 @@ model Contacts {
 }
 
 model Messages {
-  Id       String  @id
+  Id       String  @id @default(uuid())
   message  String
   driverId String
   clientId String
   senderId String
-  clients  clients @relation(fields: [clientId], references: [Id])
-  Drivers  Drivers @relation(fields: [driverId], references: [Id])
+  client   clients @relation(fields: [clientId], references: [Id])
+  driver   Drivers @relation(fields: [driverId], references: [Id])
 }
