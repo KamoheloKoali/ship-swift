@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,6 +13,20 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ImageUploadCard from "./ImageUploadCard";
 import { CheckCircle } from "lucide-react";
 import useDriverRegistration from "@/screens/courier/registration/utils/DriverRegistration";
+import { z } from "zod";
+
+// Zod schema for validation
+const driverRegistrationSchema = z.object({
+  phoneNumber: z
+    .string()
+    .min(10, "Phone number must be at least 10 digits")
+    .nonempty("Phone number is required"),
+  location: z.string().nonempty("Address is required"),
+  vehicleMake: z.string().nonempty("Vehicle make is required"),
+  vehicleModel: z.string().nonempty("Vehicle model is required"),
+  typeOfVehicle: z.string().nonempty("Vehicle type is required"),
+  vehicleColor: z.string().nonempty("Vehicle color is required"),
+});
 
 export default function DriverRegistrationForm() {
   const {
@@ -25,6 +39,32 @@ export default function DriverRegistrationForm() {
     handleInputChange,
     handleUpload,
   } = useDriverRegistration();
+
+  // State to manage validation errors
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const handleSubmit = async () => {
+    try {
+      // Clear previous errors
+      setErrors({});
+
+      // Validate form data using Zod schema
+      driverRegistrationSchema.parse(formData);
+
+      await handleUpload(); // Proceed with upload if validation passes
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const formattedErrors: { [key: string]: string } = {};
+        // Map Zod errors to the corresponding input field
+        error.errors.forEach((err) => {
+          if (err.path[0]) {
+            formattedErrors[err.path[0].toString()] = err.message;
+          }
+        });
+        setErrors(formattedErrors); // Set validation errors
+      }
+    }
+  };
 
   if (isLoading) {
     return (
@@ -89,44 +129,83 @@ export default function DriverRegistrationForm() {
           />
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
-          <Input
-            name="phoneNumber"
-            placeholder="Phone Number"
-            value={formData.phoneNumber}
-            onChange={handleInputChange}
-            required
-          />
-          <Input
-            name="location"
-            placeholder="Location"
-            value={formData.location}
-            onChange={handleInputChange}
-            required
-          />
-          <Input
-            name="vehicleMake"
-            placeholder="Vehicle Make"
-            value={formData.vehicleMake}
-            onChange={handleInputChange}
-            required
-          />
-          <Input
-            name="vehicleModel"
-            placeholder="Vehicle Model"
-            value={formData.vehicleModel}
-            onChange={handleInputChange}
-            required
-          />
-          <Input
-            name="vehicleColor"
-            placeholder="Vehicle Color"
-            value={formData.vehicleColor}
-            onChange={handleInputChange}
-            required
-          />
+          <div>
+            <Input
+              name="phoneNumber"
+              placeholder="Phone Number"
+              value={formData.phoneNumber}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.phoneNumber && (
+              <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>
+            )}
+          </div>
+          <div>
+            <Input
+              name="location"
+              placeholder="Residential Address"
+              value={formData.location}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.location && (
+              <p className="text-red-500 text-sm mt-1">{errors.location}</p>
+            )}
+          </div>
+          <div>
+            <Input
+              name="vehicleMake"
+              placeholder="Vehicle Make"
+              value={formData.vehicleMake}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.vehicleMake && (
+              <p className="text-red-500 text-sm mt-1">{errors.vehicleMake}</p>
+            )}
+          </div>
+          <div>
+            <Input
+              name="vehicleModel"
+              placeholder="Vehicle Model"
+              value={formData.vehicleModel}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.vehicleModel && (
+              <p className="text-red-500 text-sm mt-1">{errors.vehicleModel}</p>
+            )}
+          </div>
+          <div>
+            <Input
+              name="typeOfVehicle"
+              placeholder="Vehicle Type"
+              value={formData.typeOfVehicle}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.typeOfVehicle && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.typeOfVehicle}
+              </p>
+            )}
+          </div>
+          <div>
+            <Input
+              name="vehicleColor"
+              placeholder="Vehicle Color"
+              value={formData.vehicleColor}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.vehicleColor && (
+              <p className="text-red-500 text-sm mt-1">{errors.vehicleColor}</p>
+            )}
+          </div>
         </div>
         <Button
-          onClick={handleUpload}
+          onClick={handleSubmit}
           disabled={loading}
           className="w-full mt-6 bg-black text-white hover:bg-gray-800 py-6 text-lg font-semibold transition-all duration-200 ease-in-out transform hover:scale-105"
         >
