@@ -26,42 +26,51 @@ model clients {
 }
 
 model Drivers {
-  Id             String           @id
-  email          String           @unique
-  phoneNumber    String?
-  firstName      String
-  lastName       String
-  photoUrl       String
-  idPhotoUrl     String
-  vehicleType    String?
-  dateCreated    DateTime         @default(now())
-  dateUpdated    DateTime         @updatedAt
-  discPhotoUrl   String?
-  VIN            String?
-  discExpiry     String?
-  idNumber       String?
+  Id              String           @id
+  email           String           @unique
+  phoneNumber     String?
+  firstName       String
+  lastName        String
+  photoUrl        String
+  idPhotoUrl      String
+  vehicleType     String?
+  dateCreated     DateTime         @default(now())
+  dateUpdated     DateTime         @updatedAt
+  VIN             String?
+  idNumber        String?
+  licenseExpiry   String?
+  licenseNumber   String?
+  plateNumber     String?
+  discExpiry      String?
+  discPhotoUrl    String?
   licensePhotoUrl String?
-  licenseExpiry  String?
-  licenseNumber  String?
-  plateNumber    String?
-  location       String?
-  isVerified    Boolean          @default(false)
-  Contacts       Contacts[]
-  driveRequests  DriverRequests[]
-  Messages       Messages[]
-  clientRequests clientRequests[]
+  location        String?
+  isVerified      Boolean          @default(false)
+  Contacts        Contacts[]
+  driveRequests   DriverRequests[]
+  Messages        Messages[]
+  clientRequests  clientRequests[]
 }
 
 model CourierJobs {
-  Id          String   @id @default(uuid())
-  Title       String?
-  Description String?
-  Budget      String?
-  clientId    String
-  DropOff     String?
-  PickUp      String?
-  dateCreated DateTime @default(now())
-  client      clients  @relation(fields: [clientId], references: [Id])
+  Id                 String   @id @default(uuid())
+  Title              String?  @default("")
+  Description        String?  @default("")
+  Budget             String?  @default("0")
+  clientId           String
+  DropOff            String?  @default("")
+  districtDropOff    String?  @default("")
+  PickUp             String?  @default("")
+  districtPickUp     String?  @default("")
+  parcelSize         String?  @default("")
+  pickupPhoneNumber  String?  @default("")
+  dropoffPhoneNumber String?  @default("")
+  dropOffEmail       String?  @default("")
+  collectionDate     DateTime @default(now())
+  dateCreated        DateTime @default(now())
+  packageStatus      String?  @default("")
+
+  client clients @relation(fields: [clientId], references: [Id])
 }
 
 model DriverRequests {

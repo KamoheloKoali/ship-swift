@@ -14,7 +14,8 @@ export async function uploadImage(
   folder: string,
   clerkId: string
 ): Promise<{ url: string | null; error: string | null }> {
-  const fileName = `${clerkId}.png`; // Use Clerk ID as the file name to ensure overwrite
+  const fileExtension = file.type === "image/png" ? "png" : "jpg";
+  const fileName = `${clerkId}.${fileExtension}`;
 
   try {
     // Upload the file to Supabase Storage
@@ -22,7 +23,7 @@ export async function uploadImage(
       .from("driver-documents")
       .upload(`${folder}/${fileName}`, file, {
         cacheControl: "3600",
-        upsert: true, // Prevent overwriting if the file already exists
+        upsert: true,
       });
 
     if (error) {
