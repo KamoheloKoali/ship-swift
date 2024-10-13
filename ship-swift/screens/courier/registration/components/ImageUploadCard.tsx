@@ -11,8 +11,8 @@ interface ImageUploadCardProps {
 }
 
 const imageSchema = z.object({
-  file: z.instanceof(File).refine((file) => file.type === "image/png", {
-    message: "Only PNG files are allowed.",
+  file: z.instanceof(File).refine((file) => file.type === "image/png" || file.type === "image/jpeg", {
+    message: "Only PNG & JPG files are allowed.",
   }),
 });
 
@@ -71,12 +71,12 @@ export default function ImageUploadCard({
             className="absolute bottom-2 right-2 bg-black text-white py-2 px-4 rounded-md cursor-pointer hover:bg-gray-800 transition-colors duration-200"
           >
             <Upload className="w-4 h-4 inline-block mr-2" />
-            {imageUrl ? "Replace PNG" : "Upload PNG"}
+            {imageUrl ? "Replace Image" : "Upload Image"}
           </label>
           <input
             id={`file-upload-${folder}`}
             type="file"
-            accept="image/png"
+            accept="image/png, image/jpeg"
             onChange={handleFileChange}
             className="hidden"
           />
