@@ -70,7 +70,7 @@ const ChatWrapper = ({ children, conversationId }: Props) => {
                   onClick={() => {
                     setFullName(`${driver?.firstName} ${driver?.lastName}`);
                     setCallReceiverId(driver?.Id);
-                    router.push(`/voicecalls/${conversationId}`);
+                    router.push(`/room/${conversationId}`);
                   }}
                   className="cursor-pointer"
                 />
@@ -96,7 +96,7 @@ const ChatWrapper = ({ children, conversationId }: Props) => {
                       `${client?.data?.firstName} ${client?.data?.lastName}`
                     );
                     setCallReceiverId(client?.Id);
-                    router.push(`/voicecalls/${conversationId}`);
+                    router.push(`/room/${conversationId}`);
                   }}
                   className="cursor-pointer"
                 />

@@ -1,7 +1,5 @@
 import { createClient, getClientById } from "@/actions/clientActions";
-import { createDriver, getDriverByID } from "@/actions/driverActions";
 import getCurrentUserClerkDetails from "@/app/utils/getCurrentUserDetails";
-import { RadioGroup } from "@radix-ui/react-dropdown-menu";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
