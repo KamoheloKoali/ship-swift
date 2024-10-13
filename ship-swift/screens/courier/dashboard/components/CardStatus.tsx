@@ -19,7 +19,7 @@ const CardStatus = () => {
             </label>
           </div>
           {/* Button for Trip Announcement */}
-          <Button variant="default" className="w-full">
+          <Button variant="default" className="w-[60%] buttonScreen:w-full">
             Announce Scheduled Trip
           </Button>
         </CardContent>

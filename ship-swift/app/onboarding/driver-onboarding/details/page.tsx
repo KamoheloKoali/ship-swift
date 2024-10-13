@@ -5,7 +5,7 @@ import DriverDetailsForm from "@/screens/courier/registration/components/DriverD
 const Page: React.FC = () => {
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 pt-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 pt-24">
       <DriverDetailsForm />
     </div>
   );
