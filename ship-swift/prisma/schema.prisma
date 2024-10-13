@@ -22,7 +22,6 @@ model clients {
   courierJobs    CourierJobs[]
   driverRequests DriverRequests[]
   Messages       Messages[]
-  Messages       Messages[]
   clientRequests clientRequests[]
 }
 
