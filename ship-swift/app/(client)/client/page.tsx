@@ -1,6 +1,8 @@
 import { CardDemo } from '@/components/ui/aceternity/animatedCard';
 import ImageCard from '@/components/ui/image-card';
 import React from 'react';
+import PackagePopover from './components/PackagePopover';
+import RestrictedPopover from './components/RestrictedPopover';
 
 const Page = () => {
   return (
@@ -13,20 +15,8 @@ const Page = () => {
           description="Deliver"
           href='/client/dashboard/deliver'
         />
-        <ImageCard
-          imageSrc="/assets/client/images/deliver_no_bg.gif"
-          imageAlt="gif"
-          title="Packaging Requirements"
-          description="Before picking your service, please ensure that you have what you need to package your parcel for that service."
-          href='#'
-        />
-        <ImageCard
-          imageSrc="/assets/client/images/deliver_no_bg.gif"
-          imageAlt="gif"
-          title="Restricted Items"
-          description="There are a few items that we will not courier. Please read the Restricted Item list before placing an order."
-          href='#'
-        />
+        <PackagePopover/>
+        <RestrictedPopover/>
       </div>
     </div>
   );
