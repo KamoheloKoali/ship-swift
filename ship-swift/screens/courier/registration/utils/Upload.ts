@@ -14,7 +14,8 @@ export async function uploadImage(
   folder: string,
   clerkId: string
 ): Promise<{ url: string | null; error: string | null }> {
-  const fileName = `${clerkId}.png || ${clerkId}.jpg`; // Use Clerk ID as the file name to ensure overwrite
+  const fileExtension = file.type === "image/png" ? "png" : "jpg";
+  const fileName = `${clerkId}.${fileExtension}`;
 
   try {
     // Upload the file to Supabase Storage

@@ -11,9 +11,11 @@ interface ImageUploadCardProps {
 }
 
 const imageSchema = z.object({
-  file: z.instanceof(File).refine((file) => file.type === "image/png" || file.type === "image/jpeg", {
-    message: "Only PNG & JPG files are allowed.",
-  }),
+  file: z
+    .instanceof(File)
+    .refine((file) => file.type === "image/png" || file.type === "image/jpeg", {
+      message: "Only PNG & JPG files are allowed.",
+    }),
 });
 
 export default function ImageUploadCard({
@@ -23,6 +25,7 @@ export default function ImageUploadCard({
   existingImageUrl = null,
 }: ImageUploadCardProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (existingImageUrl) {
@@ -35,11 +38,15 @@ export default function ImageUploadCard({
       const file = e.target.files[0];
       const validation = imageSchema.safeParse({ file });
       if (validation.success) {
+        setError(null); // Reset error message
         onFileChange(file);
         const objectUrl = URL.createObjectURL(file);
         setImageUrl(objectUrl);
+
+        // Cleanup: revoke the object URL when the file changes or component unmounts
+        return () => URL.revokeObjectURL(objectUrl);
       } else {
-        alert(validation.error.errors[0]?.message);
+        setError(validation.error.errors[0]?.message);
         onFileChange(null);
       }
     }
@@ -80,6 +87,9 @@ export default function ImageUploadCard({
             onChange={handleFileChange}
             className="hidden"
           />
+          {error && (
+            <p className="text-red-500 text-sm mt-2">{error}</p> // Display error message
+          )}
         </div>
       </CardContent>
     </Card>
