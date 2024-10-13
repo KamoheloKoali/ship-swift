@@ -1,48 +1,71 @@
-"use client"
-import React, { useState } from 'react';
-import AccountInfo from '@/components/onboarding/AccountInfo';
-import ProfileSetup from '@/components/onboarding/ProfileSetup';
-import ConfirmDetails from '@/components/onboarding/ConfirmDetails';
-import ProgressBar from '@/components/ProgressBar';
-import RegHeader from '@/components/RegHeader';
-const Onboarding = () => {
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-  });
+"use cilent"
 
-  const steps = 3;
+import Link from "next/link"
 
-  const nextStep = () => {
-    if (step < steps) setStep(step + 1);
-  };
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
-  const prevStep = () => {
-    if (step > 1) setStep(step - 1);
-  };
+export const description =
+  "A sign up form with first name, last name, email and password inside a card. There's an option to sign up with GitHub and a link to login if you already have an account"
 
+export function LoginForm() {
   return (
-    <div style={{ maxWidth: '500px', margin: 'auto' }}>
-      <RegHeader className="space-evenly"/>
-      <ProgressBar step={step} steps={steps} />
+    <Card className="mx-auto max-w-sm">
+      <CardHeader>
+        <CardTitle className="text-xl">Sign Up</CardTitle>
+        <CardDescription>
+          Enter your information to create an account
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="grid gap-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="first-name">First name</Label>
+              <Input id="first-name" placeholder="Max" required />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="last-name">Last name</Label>
+              <Input id="last-name" placeholder="Robinson" required />
+            </div>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="m@example.com"
+              required
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="password">Password</Label>
+            <Input id="password" type="password" />
+          </div>
+          <Button type="submit" className="w-full">
+            Create an account
+          </Button>
+          <Button variant="outline" className="w-full">
+            Sign up with GitHub
+          </Button>
+        </div>
+        <div className="mt-4 text-center text-sm">
+          Already have an account?{" "}
+          <Link href="#" className="underline">
+            Sign in
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
 
-      {step === 1 && <AccountInfo formData={formData} setFormData={setFormData} />}
-      {step === 2 && <ProfileSetup formData={formData} setFormData={setFormData} />}
-      {step === 3 && <ConfirmDetails formData={formData} />}
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-        <button onClick={prevStep} disabled={step === 1}>
-          Back
-        </button>
-        <button onClick={nextStep} disabled={step === steps}>
-          {step === steps ? 'Finish' : 'Next'}
-        </button>
-      </div>
-    </div>
-  );
-};
-
-export default Onboarding;
+export default LoginForm;
