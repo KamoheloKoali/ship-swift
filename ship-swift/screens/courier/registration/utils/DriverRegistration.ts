@@ -149,7 +149,7 @@ export default function useDriverRegistration() {
     const result = await upsertDriver(updateData);
 
     if (result.success) {
-      router.push("/onboarding/driver-onboarding/details");
+      router.push("/onboarding/driver-onboarding/face-recog");
     } else {
       alert(`Error saving to database: ${result.error}`);
     }
