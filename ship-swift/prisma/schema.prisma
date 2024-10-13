@@ -68,7 +68,6 @@ model DriverRequests {
   Id         String  @id @default(uuid())
   receiverId String
   senderId   String
-  message    String
   isAccepted Boolean @default(false)
   isPending  Boolean @default(false)
   receiver   clients @relation(fields: [receiverId], references: [Id])
@@ -77,7 +76,6 @@ model DriverRequests {
 
 model clientRequests {
   Id         String  @id @default(uuid())
-  message    String
   senderId   String
   receiverId String
   isAccepted Boolean @default(false)
