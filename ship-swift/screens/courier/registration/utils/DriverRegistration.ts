@@ -24,6 +24,7 @@ export default function useDriverRegistration() {
     location: "",
     vehicleMake: "",
     vehicleModel: "",
+    typeOfVehicle: "",
     vehicleColor: "",
   });
   const [loading, setLoading] = useState(false);
@@ -38,18 +39,18 @@ export default function useDriverRegistration() {
         try {
           const driver = await getDriverByID(userId);
           if (driver) {
+            console.log("Fetched Driver Data:", driver); // Debugging line
+            const vehicleTypeParts = driver.vehicleType
+              ? driver.vehicleType.split(",")
+              : [];
+
             setFormData({
               phoneNumber: driver.phoneNumber || "",
               location: driver.location || "",
-              vehicleMake: driver.vehicleType
-                ? driver.vehicleType.split(" ")[0]
-                : "",
-              vehicleModel: driver.vehicleType
-                ? driver.vehicleType.split(" ")[1]
-                : "",
-              vehicleColor: driver.vehicleType
-                ? driver.vehicleType.split(" ")[2]
-                : "",
+              vehicleMake: vehicleTypeParts[1] || "",
+              vehicleModel: vehicleTypeParts[2] || "",
+              typeOfVehicle: vehicleTypeParts[3] || "",
+              vehicleColor: vehicleTypeParts[0] || "",
             });
             setExistingImages({
               "profile-photo": driver.photoUrl || null,
@@ -66,7 +67,7 @@ export default function useDriverRegistration() {
     };
 
     fetchDriverData();
-  }, [userId]);
+  }, [userId]); // Ensure that userId changes trigger the effect
 
   const handleFileChange = (folder: string) => (file: File | null) => {
     setFiles((prev) => ({ ...prev, [folder]: file }));
@@ -102,7 +103,7 @@ export default function useDriverRegistration() {
       phoneNumber: formData.phoneNumber,
       location: formData.location,
       vehicleType:
-        `${formData.vehicleMake} ${formData.vehicleModel} ${formData.vehicleColor}`.trim(),
+        `${formData.vehicleColor}, ${formData.vehicleMake}, ${formData.vehicleModel}, ${formData.typeOfVehicle}`.trim(),
     };
 
     for (const [folder, file] of Object.entries(files)) {

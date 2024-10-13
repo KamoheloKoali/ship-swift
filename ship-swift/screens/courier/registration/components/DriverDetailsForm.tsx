@@ -13,7 +13,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import useDriverDetails from "@/screens/courier/registration/utils/DriverDetails";
-import Loading  from "@/screens/courier/registration/ui/Loading";
+import Loading from "@/screens/courier/registration/ui/Loading";
 
 interface ImageDisplayProps {
   url: string | null | undefined;
@@ -153,7 +153,11 @@ export default function DriverDetailsForm(): JSX.Element {
             <Label htmlFor="vehicleType">Vehicle Type</Label>
             <Input
               id="vehicleType"
-              value={driverData.vehicleType || ""}
+              value={
+                driverData.vehicleType
+                  ? driverData.vehicleType.replace(/,/g, "")
+                  : ""
+              }
               readOnly
               className="bg-gray-50"
             />

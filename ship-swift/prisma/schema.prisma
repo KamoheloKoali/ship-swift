@@ -26,30 +26,30 @@ model clients {
 }
 
 model Drivers {
-  Id              String           @id
-  email           String           @unique
-  phoneNumber     String?
-  firstName       String
-  lastName        String
-  photoUrl        String
-  idPhotoUrl      String
-  vehicleType     String?
-  dateCreated     DateTime         @default(now())
-  dateUpdated     DateTime         @updatedAt
-  VIN             String?
-  idNumber        String?
-  licenseExpiry   String?
-  licenseNumber   String?
-  plateNumber     String?
-  discExpiry      String?
-  discPhotoUrl    String?
-  licensePhotoUrl String?
-  location        String?
-  isVerified      Boolean          @default(false)
-  Contacts        Contacts[]
-  driveRequests   DriverRequests[]
-  Messages        Messages[]
-  clientRequests  clientRequests[]
+  Id             String           @id
+  email          String           @unique
+  phoneNumber    String
+  firstName      String
+  lastName       String
+  photoUrl       String
+  idPhotoUrl     String
+  vehicleType    String
+  dateCreated    DateTime         @default(now())
+  dateUpdated    DateTime         @updatedAt
+  discPhotoUrl   String
+  VIN            String?
+  discExpiry     String?
+  idNumber       String?
+  licensePhotoUrl String
+  licenseExpiry  String?
+  licenseNumber  String?
+  plateNumber    String?
+  location       String
+  isVerified    Boolean          @default(false)
+  Contacts       Contacts[]
+  driveRequests  DriverRequests[]
+  Messages       Messages[]
+  clientRequests clientRequests[]
 }
 
 model CourierJobs {
