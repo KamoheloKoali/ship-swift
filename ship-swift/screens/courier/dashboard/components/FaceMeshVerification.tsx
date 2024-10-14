@@ -1,7 +1,7 @@
 "use client";
 // components/FaceRecognition.tsx
 import React, { useEffect, useRef, useState } from "react";
-import * as faceapi from "face-api.js";
+import * as faceapi from "face-api.js"
 
 const FaceRecognition: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
