@@ -1,6 +1,6 @@
 import { getClientById } from "@/actions/clientActions";
 import { getcontactById } from "@/actions/contactsActions";
-import { getDriverById } from "@/actions/driverActions";
+import { getDriverByID } from "@/actions/driverActions";
 import { getMessages } from "@/actions/messagesActions";
 import { getUserRoleById } from "@/app/utils/getUserRole";
 import ChatWrapper from "@/screens/chat/conversation/ChatWrapper";
@@ -17,11 +17,11 @@ const ConversationsPage = async ({
   const contact = await getcontactById(params.conversationId);
   const userRole = await getUserRoleById();
 
-  const driver = await getDriverById(contact.data?.driverId || "");
+  const driver = await getDriverByID(contact.data?.driverId || "");
   const client = await getClientById(contact.data?.clientId || "");
 
   const driverDetails = {
-    ...driver?.data,
+    ...driver,
   };
   const clientDetails = {
     ...client?.data,

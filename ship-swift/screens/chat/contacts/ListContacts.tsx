@@ -3,7 +3,7 @@ import supabase from "@/app/utils/supabase";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import React, { useEffect, useState } from "react";
-import { getDriverById } from "@/actions/driverActions";
+import { getDriverByID } from "@/actions/driverActions";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
@@ -141,6 +141,7 @@ const ListContacts = ({
       // Ensure data is defined and non-empty before accessing it
       router.push(`/conversations/${getConversationsResponse.data[0].Id}`);
     } else if (getConversationsResponse.error === "contact not found") {
+      console.log("creating contact");
       const createContactResponse = await createcontact({
         clientId,
         driverId,
@@ -164,9 +165,9 @@ const ListContacts = ({
       if (newRequest.receiverId === userId) {
         let fullName: string;
         if (role) {
-          const driverData = await getDriverById(newRequest.senderId); // Fetch driver by senderId
-          fullName = driverData.success
-            ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
+          const driverData = await getDriverByID(newRequest.senderId); // Fetch driver by senderId
+          fullName = driverData.Id
+            ? `${driverData.firstName} ${driverData.lastName}`
             : "Unknown Driver";
         } else {
           const clientData = await getClientById(newRequest.senderId); // Fetch client by senderId
@@ -216,9 +217,6 @@ const ListContacts = ({
       supabase.removeChannel(insertChannel);
     };
   }, [supabase, userId, role]);
-
-  //   console.log(outgoingRequestsWithNames)
-  // console.log(incomingRequests);
 
   let contacts: any = [];
 

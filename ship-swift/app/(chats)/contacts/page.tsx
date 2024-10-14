@@ -1,7 +1,8 @@
-import { getClientById } from "@/actions/clientActions";
-import { getDriverById } from "@/actions/driverActions";
+import { getAllClients, getClientById } from "@/actions/clientActions";
+import { getAllDrivers, getDriverByID } from "@/actions/driverActions";
 import { getUserRoleById } from "@/app/utils/getUserRole";
-import ClientAddDriver from "@/screens/chat/contacts/ClientAddDriverDialog";
+import { ClientComboBox } from "@/screens/chat/contacts/clientComboBox";
+import { DriverComboBox } from "@/screens/chat/contacts/driverComboBox";
 import DriverAddClient from "@/screens/chat/contacts/DriverAddClientDialog";
 import ListContacts from "@/screens/chat/contacts/ListContacts";
 import ListOfContacts from "@/screens/chat/contacts/ListOfContacts";
@@ -15,6 +16,8 @@ type Props = {};
 const Page = async (props: Props) => {
   const userRole = await getUserRoleById();
   const listOfContacts = await ListOfContacts();
+  const drivers = await getAllDrivers();
+  const clients = await getAllClients();
   const incomingRequests = listOfContacts.incomingRequests;
   const outgoingRequests = listOfContacts.outgoingRequests;
   let incomingRequestsWithNames;
@@ -25,11 +28,11 @@ const Page = async (props: Props) => {
     if (Array.isArray(incomingRequests) && incomingRequests.length > 0) {
       incomingRequestsWithNames = await Promise.all(
         incomingRequests.map(async (request: any) => {
-          const driverData = await getDriverById(request.senderId); // Fetch driver by senderId
-          const fullName = driverData.success
-            ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
+          const driverData = await getDriverByID(request.senderId); // Fetch driver by senderId
+          const fullName = driverData.Id
+            ? `${driverData.firstName} ${driverData.lastName}`
             : "Unknown Driver";
-          const photoUrl = driverData.data?.photoUrl;
+          const photoUrl = driverData.photoUrl;
           return {
             ...request,
             fullName, // Add fullName to the request
@@ -41,11 +44,11 @@ const Page = async (props: Props) => {
     if (Array.isArray(outgoingRequests) && outgoingRequests.length > 0) {
       outgoingRequestsWithNames = await Promise.all(
         outgoingRequests.map(async (request: any) => {
-          const driverData = await getDriverById(request.receiverId); // Fetch driver by receiverId
-          const fullName = driverData.success
-            ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
+          const driverData = await getDriverByID(request.receiverId); // Fetch driver by receiverId
+          const fullName = driverData.Id
+            ? `${driverData.firstName} ${driverData.lastName}`
             : "Unknown Driver";
-          const photoUrl = driverData.data?.photoUrl;
+          const photoUrl = driverData.photoUrl;
           return {
             ...request,
             fullName, // Add fullName to the request
@@ -94,7 +97,11 @@ const Page = async (props: Props) => {
       <ItemList
         title="Contacts"
         action={
-          userRole.data?.client ? <ClientAddDriver /> : <DriverAddClient />
+          userRole.data?.client ? (
+            <ClientComboBox drivers={drivers.data} />
+          ) : (
+            <DriverComboBox clients={clients.data} />
+          )
         }
       >
         <div className="h-full w-full">

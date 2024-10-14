@@ -43,7 +43,7 @@ export const getcontact = async (clientId: string, driverId: string) => {
     const contact = await prisma.contacts.findMany({
       where: { clientId: clientId, driverId: driverId },
     });
-    if (contact) {
+    if (contact.length > 0) {
       return { success: true, data: contact };
     } else {
       return { success: false, error: "contact not found" };
