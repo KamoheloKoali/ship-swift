@@ -29,10 +29,10 @@ const Page = async (props: Props) => {
       incomingRequestsWithNames = await Promise.all(
         incomingRequests.map(async (request: any) => {
           const driverData = await getDriverByID(request.senderId); // Fetch driver by senderId
-          const fullName = driverData.Id
+          const fullName = driverData?.Id
             ? `${driverData.firstName} ${driverData.lastName}`
             : "Unknown Driver";
-          const photoUrl = driverData.photoUrl;
+          const photoUrl = driverData?.photoUrl;
           return {
             ...request,
             fullName, // Add fullName to the request
@@ -45,10 +45,10 @@ const Page = async (props: Props) => {
       outgoingRequestsWithNames = await Promise.all(
         outgoingRequests.map(async (request: any) => {
           const driverData = await getDriverByID(request.receiverId); // Fetch driver by receiverId
-          const fullName = driverData.Id
+          const fullName = driverData?.Id
             ? `${driverData.firstName} ${driverData.lastName}`
             : "Unknown Driver";
-          const photoUrl = driverData.photoUrl;
+          const photoUrl = driverData?.photoUrl;
           return {
             ...request,
             fullName, // Add fullName to the request

@@ -52,9 +52,17 @@ const Conversation = ({
 
   useEffect(() => {
     const handleNewMessage = async (payload: any) => {
-      const newMessage = payload.new;
-      if (newMessage.senderId !== userId) {
-        setNewMessage((prevMessages) => [...prevMessages, { ...newMessage }]);
+      console.log("Payload:", payload); // Log entire payload object
+      if (payload.errors[0]) {
+        toast.error(
+          `Error(s) occured while trying to update chat: ${payload.errors[0]} please refresh the page and consider contacting support`
+        );
+      } else {
+        const newMessage = payload.new;
+        console.log(payload.new);
+        if (newMessage.senderId !== userId) {
+          setNewMessage((prevMessages) => [...prevMessages, { ...newMessage }]);
+        }
       }
     };
 
@@ -80,7 +88,6 @@ const Conversation = ({
     const textarea = textareaRef.current;
 
     if (!textarea) return;
-
     const messageText = textarea.value.trim(); // Get value and trim leading/trailing whitespace
 
     // Validation to prevent empty or whitespace-only messages
@@ -97,6 +104,12 @@ const Conversation = ({
       driverId: driverDetails.Id,
     };
 
+    // Add the new message object to the state so it's rendered in the UI
+    setNewMessage((prevMessages) => [...prevMessages, newMessage]);
+    // Clear the textarea after successful submission
+    textarea.value = "";
+    textarea.style.height = "auto"; // Reset the height
+
     // You can replace this with your actual submission logic (e.g., send to Supabase or another backend)
     const response = await createMessage(newMessage);
 
@@ -106,12 +119,8 @@ const Conversation = ({
       setNewMessage((prevMessages) => prevMessages.slice(0, -1));
       return;
     }
-
-    // Clear the textarea after successful submission
-    textarea.value = "";
-    textarea.style.height = "auto"; // Reset the height
-    setNewMessage((prevMessages) => [...prevMessages, newMessage]);
   };
+
   return (
     <div className="w-full h-full flex flex-col justify-between flex-1 overflow-y-auto gap-2 p-3 no-scrollbar">
       <div className="w-full h-[95%] overflow-y-auto no-scrollbar">
