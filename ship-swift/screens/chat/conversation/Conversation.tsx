@@ -52,17 +52,16 @@ const Conversation = ({
 
   useEffect(() => {
     const handleNewMessage = async (payload: any) => {
-      console.log("Payload:", payload); // Log entire payload object
-      if (payload.errors[0]) {
-        toast.error(
-          `Error(s) occured while trying to update chat: ${payload.errors[0]} please refresh the page and consider contacting support`
-        );
-      } else {
+      try {
         const newMessage = payload.new;
         console.log(payload.new);
         if (newMessage.senderId !== userId) {
           setNewMessage((prevMessages) => [...prevMessages, { ...newMessage }]);
         }
+      } catch (error) {
+        toast.error(
+          `Error(s) occured while trying to update chat: ${payload.errors[0]} please refresh the page and consider contacting support`
+        );
       }
     };
 

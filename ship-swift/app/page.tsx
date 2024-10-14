@@ -21,24 +21,25 @@ export default async function Home() {
   //   await createClient(clientData);
   // }
 
-  const Driver = await getCurrentUserClerkDetails();
-  const dbDriver = await getDriverByID(Driver?.id || "");
+  // const Driver = await getCurrentUserClerkDetails();
+  // const dbDriver = await getDriverByID(Driver?.id || "");
 
-  if (!dbDriver) {
-    const DriverData = {
-      clerkId: Driver?.id || "",
-      email: Driver?.emailAddresses[0].emailAddress || "",
-      phoneNumber: Driver?.phoneNumbers?.[0]?.phoneNumber || "", // Assuming phoneNumbers is an array
-      firstName: Driver?.firstName || "",
-      lastName: Driver?.lastName || "",
-      photoUrl: Driver?.imageUrl || "",
-      idPhotoUrl: "", // Assuming you will fetch or add the actual value later
-      vehicleType: "",
-      vehicleDetails: [""],
-    };
+  // if (!dbDriver) {
+  //   const DriverData = {
+  //     clerkId: Driver?.id || "",
+  //     email: Driver?.emailAddresses[0].emailAddress || "",
+  //     phoneNumber: Driver?.phoneNumbers?.[0]?.phoneNumber || "", // Assuming phoneNumbers is an array
+  //     firstName: Driver?.firstName || "",
+  //     lastName: Driver?.lastName || "",
+  //     photoUrl: Driver?.imageUrl || "",
+  //     idPhotoUrl: "", // Assuming you will fetch or add the actual value later
+  //     vehicleType: "",
+  //     vehicleDetails: [""],
+  //   };
 
-    await createDriver(DriverData);
-  }
+  //   await createDriver(DriverData);
+  // }
 
-  return redirect("/conversations");
+  // return redirect("/conversations");
+  return null;
 }
