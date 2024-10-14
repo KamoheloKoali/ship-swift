@@ -1,5 +1,5 @@
 import { createClient, getClientById } from "@/actions/clientActions";
-import { createDriver, getDriverById } from "@/actions/driverActions";
+// import { createDriver, getDriverById } from "@/actions/driverActions";
 import getCurrentUserClerkDetails from "@/app/utils/getCurrentUserDetails";
 import { redirect } from "next/navigation";
 
@@ -21,25 +21,25 @@ export default async function Home() {
   //   await createClient(clientData);
   // }
 
-  const Driver = await getCurrentUserClerkDetails()
-    const dbDriver = await getDriverById(Driver?.id || "")
+  // const Driver = await getCurrentUserClerkDetails()
+  //   const dbDriver = await getDriverById(Driver?.id || "")
 
-    if (!dbDriver.success) {
+  //   if (!dbDriver.success) {
 
-    const DriverData = {
-      clerkId: Driver?.id || "",
-      email: Driver?.emailAddresses[0].emailAddress || "",
-      phoneNumber: Driver?.phoneNumbers?.[0]?.phoneNumber || "", // Assuming phoneNumbers is an array
-      firstName: Driver?.firstName || "",
-      lastName: Driver?.lastName || "",
-      photoUrl: Driver?.imageUrl || "",
-      idPhotoUrl: "", // Assuming you will fetch or add the actual value later
-      vehicleType: "",
-      vehicleDetails: [""],
-    }
+  //   const DriverData = {
+  //     clerkId: Driver?.id || "",
+  //     email: Driver?.emailAddresses[0].emailAddress || "",
+  //     phoneNumber: Driver?.phoneNumbers?.[0]?.phoneNumber || "", // Assuming phoneNumbers is an array
+  //     firstName: Driver?.firstName || "",
+  //     lastName: Driver?.lastName || "",
+  //     photoUrl: Driver?.imageUrl || "",
+  //     idPhotoUrl: "", // Assuming you will fetch or add the actual value later
+  //     vehicleType: "",
+  //     vehicleDetails: [""],
+  //   }
 
-    await createDriver(DriverData)
-  }
+  //   await createDriver(DriverData)
+  // }
 
   return redirect("/conversations");
 }
