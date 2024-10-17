@@ -1,11 +1,12 @@
+import ClientRegistrationForm from '@/screens/client/onboarding/ClientRegistrationForm'
 import React from 'react'
 
-type Props = {}
-
-const Page = (props: Props) => {
+const page = () => {
   return (
-    <div>Client onboarding</div>
+    <div className='flex flex-col items-center justify-center min-h-screen bg-gray-100 pt-24'>
+      <ClientRegistrationForm />
+    </div>
   )
 }
 
-export default Page
+export default page

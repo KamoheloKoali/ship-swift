@@ -12,18 +12,17 @@ import {
 } from "@/components/ui/tooltip";
 import { Truck, User } from "lucide-react";
 import RegHeader from "@/screens/courier/registration/components/RegHeader";
-import getCurrentUserClerkDetails from "../utils/getCurrentUserDetails";
 import { getDriverByID } from "@/actions/driverActions";
 import { getClientById } from "@/actions/clientActions";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 
 const Page = () => {
   const router = useRouter();
   useEffect(() => {
     const checkUser = async () => {
-      const user = await getCurrentUserClerkDetails();
-      const responseFromDriverTable = await getDriverByID(user?.id || "");
-      const responseFromClientTable = await getClientById(user?.id || "");
+      const user = useAuth();
+      const [responseFromDriverTable, responseFromClientTable] = await Promise.all([await getDriverByID(user.userId || ""), getClientById(user.userId || "")])
       if (responseFromDriverTable && !responseFromClientTable.success) {
         router.push("/driver/dashboard");
       } else if (responseFromClientTable.success && !responseFromDriverTable) {
@@ -53,7 +52,7 @@ const Page = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link href={"/"} passHref className="w-full m-4">
+                <Link href={"/onboarding/client-onboarding"} passHref className="w-full m-4">
                   <Button className=" w-full text-white font-semibold rounded-lg">
                     Apply
                   </Button>
