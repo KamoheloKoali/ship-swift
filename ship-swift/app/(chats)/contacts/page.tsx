@@ -14,10 +14,12 @@ import React from "react";
 type Props = {};
 
 const Page = async (props: Props) => {
-  const userRole = await getUserRoleById();
-  const listOfContacts = await ListOfContacts();
-  const drivers = await getAllDrivers();
-  const clients = await getAllClients();
+  const [userRole, listOfContacts, drivers, clients] = await Promise.all([
+    getUserRoleById(),
+    ListOfContacts(),
+    getAllDrivers(),
+    getAllClients(),
+  ]);
   const incomingRequests = listOfContacts.incomingRequests;
   const outgoingRequests = listOfContacts.outgoingRequests;
   let incomingRequestsWithNames;
