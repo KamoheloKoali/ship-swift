@@ -26,7 +26,7 @@ const ListContacts = ({ role, Contacts }: Props) => {
         let fullName: string;
         if (role) {
           const driverData = await getDriverByID(newContact.driverId); // Fetch driver by driverId
-          fullName = driverData.Id
+          fullName = driverData?.Id
             ? `${driverData.firstName} ${driverData.lastName}`
             : "Unknown Driver";
         } else {
