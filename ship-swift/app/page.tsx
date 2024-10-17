@@ -1,30 +1,30 @@
 import { createClient, getClientById } from "@/actions/clientActions";
+import { createDriver, getDriverByID } from "@/actions/driverActions";
 import getCurrentUserClerkDetails from "@/app/utils/getCurrentUserDetails";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const client = await getCurrentUserClerkDetails();
-  const dbClient = await getClientById(client?.id || "");
+  // const client = await getCurrentUserClerkDetails();
+  // const dbClient = await getClientById(client?.id || "");
 
-  if (!dbClient.success) {
-    const clientData = {
-      clerkId: client?.id || "",
-      email: client?.emailAddresses[0]?.emailAddress || "",
-      phoneNumber: client?.phoneNumbers?.[0]?.phoneNumber || "", // Assuming phoneNumbers is an array
-      firstName: client?.firstName || "",
-      lastName: client?.lastName || "",
-      photoUrl: client?.imageUrl || "",
-      idPhotoUrl: "", // Assuming you will fetch or add the actual value later
-    };
+  // if (!dbClient.success) {
+  //   const clientData = {
+  //     clerkId: client?.id || "",
+  //     email: client?.emailAddresses[0]?.emailAddress || "",
+  //     phoneNumber: client?.phoneNumbers?.[0]?.phoneNumber || "", // Assuming phoneNumbers is an array
+  //     firstName: client?.firstName || "",
+  //     lastName: client?.lastName || "",
+  //     photoUrl: client?.imageUrl || "",
+  //     idPhotoUrl: "", // Assuming you will fetch or add the actual value later
+  //   };
 
-    await createClient(clientData);
-  }
+  //   await createClient(clientData);
+  // }
 
-  // const Driver = await getCurrentUserClerkDetails()
-  //   const dbDriver = await getDriverByID(Driver?.id || "")
+  // const Driver = await getCurrentUserClerkDetails();
+  // const dbDriver = await getDriverByID(Driver?.id || "");
 
-  //   if (!dbDriver.success) {
-
+  // if (!dbDriver) {
   //   const DriverData = {
   //     clerkId: Driver?.id || "",
   //     email: Driver?.emailAddresses[0].emailAddress || "",
@@ -35,10 +35,11 @@ export default async function Home() {
   //     idPhotoUrl: "", // Assuming you will fetch or add the actual value later
   //     vehicleType: "",
   //     vehicleDetails: [""],
-  //   }
+  //   };
 
-  //   await createDriver(DriverData)
+  //   await createDriver(DriverData);
   // }
 
-  return redirect("/conversations");
+  // return redirect("/conversations");
+  return null;
 }

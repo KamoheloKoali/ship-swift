@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "@clerk/nextjs";
-import {
-  getDriverByID,
-  updateDriverVerification,
-} from "@/actions/driverActions";
+"use client";
+
+import React from "react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
@@ -14,47 +12,8 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-
-interface DriverData {
-  Id: string;
-  email: string;
-  phoneNumber: string | null;
-  firstName: string;
-  lastName: string;
-  photoUrl: string;
-  idPhotoUrl: string;
-  vehicleType: string | null;
-  dateCreated: Date;
-  dateUpdated: Date;
-  discPhotoUrl: string | null;
-  VIN: string | null;
-  discExpiry: string | null;
-  idNumber: string | null;
-  licensePhotoUrl: string | null;
-  licenseExpiry: string | null;
-  licenseNumber: string | null;
-  plateNumber: string | null;
-  location: string | null;
-  isVerified: boolean;
-  Contacts: Array<{
-    Id: string;
-    driverId: string;
-    clientId: string;
-    isConversating: boolean;
-  }>;
-  driveRequests: Array<{
-    Id: string;
-    receiverId: string;
-    senderId: string;
-    message: string;
-    isAccepted: boolean;
-    isPending: boolean;
-  }>;
-  Messages: any[];
-  clientRequests: any[];
-}
+import useDriverDetails from "@/screens/courier/registration/utils/DriverDetails";
+import Loading from "@/screens/courier/registration/ui/Loading";
 
 interface ImageDisplayProps {
   url: string | null | undefined;
@@ -75,58 +34,13 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ url, alt }) =>
   );
 
 export default function DriverDetailsForm(): JSX.Element {
-  const { userId } = useAuth();
-  const [driverData, setDriverData] = useState<DriverData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    const fetchDriverData = async () => {
-      if (userId) {
-        try {
-          const driver = await getDriverByID(userId);
-          setDriverData(driver as DriverData);
-        } catch (err) {
-          setError("Failed to fetch driver data");
-          console.error(err);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchDriverData();
-  }, [userId]);
-
-  const handleConfirm = async () => {
-    if (driverData) {
-      try {
-        setLoading(true);
-        const updatedDriver = await updateDriverVerification(
-          driverData.Id,
-          true
-        );
-        setDriverData(updatedDriver as DriverData);
-        router.push("/driver/dashboard/find-jobs");
-      } catch (err) {
-        setError("Failed to verify driver");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-
-  const handleEdit = () => {
-    // Replace '/edit-driver' with the actual path you want to redirect to
-    router.push("/onboarding/driver-onboarding/registration");
-  };
+  const { driverData, loading, error, handleConfirm, handleEdit } =
+    useDriverDetails();
 
   if (loading)
     return (
-      <div className="flex justify-center items-center h-screen">
-        Loading...
+      <div className="w-full flex justify-center items-center h-screen pt-24">
+        <Loading />
       </div>
     );
   if (error)
@@ -239,7 +153,11 @@ export default function DriverDetailsForm(): JSX.Element {
             <Label htmlFor="vehicleType">Vehicle Type</Label>
             <Input
               id="vehicleType"
-              value={driverData.vehicleType || ""}
+              value={
+                driverData.vehicleType
+                  ? driverData.vehicleType.replace(/,/g, "")
+                  : ""
+              }
               readOnly
               className="bg-gray-50"
             />

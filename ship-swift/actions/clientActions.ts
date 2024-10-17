@@ -24,6 +24,13 @@ export const createClient = async (clientData: {
         idPhotoUrl: clientData.idPhotoUrl,
       },
     });
+    await prisma.userRole.create({
+      data: {
+        userId: clientData.clerkId,
+        driver: false,
+        client: true,
+      },
+    });
     if (newClient.Id) return { success: true, data: newClient };
     else return { success: false };
   } catch (error) {

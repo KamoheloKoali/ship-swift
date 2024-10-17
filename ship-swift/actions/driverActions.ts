@@ -44,6 +44,13 @@ export const createDriver = async (driverData: {
         location: driverData.location,
       },
     });
+    await prisma.userRole.create({
+      data: {
+        userId: driverData.clerkId,
+        driver: true,
+        client: false,
+      },
+    });
     return { success: true, data: newDriver };
   } catch (error) {
     console.error("Prisma error:", error);
@@ -158,16 +165,10 @@ export const getDriverByID = async (driverId: string) => {
       where: {
         Id: driverId,
       },
-      include: {
-        Contacts: true, // If you want to include related Contacts
-        driveRequests: true, // If you want to include related DriverRequests
-        Messages: true, // If you want to include related Messages
-        clientRequests: true, // If you want to include related clientRequests
-      },
     });
 
     if (!driver) {
-      throw new Error("Driver not found");
+      return driver;
     }
 
     return driver;

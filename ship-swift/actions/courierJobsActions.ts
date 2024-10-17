@@ -1,6 +1,7 @@
 "use server"
 import { PrismaClient } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
+import { getAuth } from '@clerk/nextjs/server';
 
 const prisma = new PrismaClient();
 
@@ -13,14 +14,18 @@ export const createJob = async (jobData: FormData) => {
     const clientId = jobData.get("clientId") as string | null;
     const dropOff = jobData.get("DropOff") as string | null;
     const pickUp = jobData.get("PickUp") as string | null;
+    const districtDropOff = jobData.get("districtdropoff") as string | null;
+    const districtPickUp = jobData.get("districtpickup") as string | null;
+    const parcelSize = jobData.get("parcelsize") as string | null;
+    const pickupPhoneNumber = jobData.get("pickupphonenumber") as string | null;
+    const dropoffPhoneNumber = jobData.get("dropoffphonenumber") as string | null;
+    const dropOffEmail = jobData.get("dropoffemail") as string | null;
+    const collectionDate = jobData.get("collectiondate") as string | null;
 
     // Ensure none of the required fields are null or undefined
     if (!clientId) {
       return { success: false, error: "Client ID is required." };
     }
-
-    // Log to see the data being passed
-    console.log("Job Data: ", { title, description, budget, clientId, dropOff, pickUp });
 
     // Create a new job in the database
     const newJob = await prisma.courierJobs.create({
@@ -31,6 +36,14 @@ export const createJob = async (jobData: FormData) => {
         clientId: clientId,
         DropOff: dropOff,
         PickUp: pickUp,
+        districtDropOff: districtDropOff,
+        districtPickUp: districtPickUp,
+        parcelSize: parcelSize,
+        pickupPhoneNumber: pickupPhoneNumber,
+        dropoffPhoneNumber: dropoffPhoneNumber,
+        dropOffEmail: dropOffEmail,
+        collectionDate: collectionDate ? new Date(collectionDate) : undefined, // Convert to Date
+        packageStatus: "Pending Collection",
       },
     });
 
@@ -43,7 +56,7 @@ export const createJob = async (jobData: FormData) => {
   }
 };
 
-// Add this function to your server actions
+// Function to get all jobs
 export const getAllJobs = async () => {
   try {
     const jobs = await prisma.courierJobs.findMany({
@@ -56,7 +69,7 @@ export const getAllJobs = async () => {
   }
 };
 
-
+// Function to get job by ID
 export const getJobById = async (jobId: string) => {
   try {
     const job = await prisma.courierJobs.findUnique({
@@ -73,6 +86,7 @@ export const getJobById = async (jobId: string) => {
   }
 };
 
+// Function to update a job
 export const updateJob = async (jobId: string, jobData: Partial<any>) => {
   try {
     const updatedJob = await prisma.courierJobs.update({
@@ -86,6 +100,7 @@ export const updateJob = async (jobId: string, jobData: Partial<any>) => {
   }
 };
 
+// Function to delete a job
 export const deleteJob = async (jobId: string) => {
   try {
     const deletedJob = await prisma.courierJobs.delete({
