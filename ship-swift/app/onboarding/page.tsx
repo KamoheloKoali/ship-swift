@@ -22,8 +22,11 @@ const Page = () => {
   useEffect(() => {
     const checkUser = async () => {
       const user = await getCurrentUserClerkDetails();
-      const responseFromDriverTable = await getDriverByID(user?.id || "");
-      const responseFromClientTable = await getClientById(user?.id || "");
+      const [responseFromDriverTable, responseFromClientTable] =
+        await Promise.all([
+          getDriverByID(user?.id || ""),
+          getClientById(user?.id || ""),
+        ]);
       if (responseFromDriverTable && !responseFromClientTable.success) {
         router.push("/driver/dashboard");
       } else if (responseFromClientTable.success && !responseFromDriverTable) {

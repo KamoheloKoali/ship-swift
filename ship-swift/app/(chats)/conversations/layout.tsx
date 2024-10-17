@@ -13,8 +13,10 @@ type Props = React.PropsWithChildren<{}>;
 
 const ConversationsLayout = async ({ children }: Props) => {
   try {
-    const user = await currentUser();
-    const userRole = await getUserRoleById();
+    const [user, userRole] = await Promise.all([
+      currentUser(),
+      getUserRoleById(),
+    ]);
     const role = userRole.data?.client;
     let contacts: any = [];
     let contactsWithNames;
@@ -30,10 +32,10 @@ const ConversationsLayout = async ({ children }: Props) => {
         contactsWithNames = await Promise.all(
           contacts.map(async (request: any) => {
             const driverData = await getDriverByID(request.driverId); // Fetch driver by senderId
-            const fullName = driverData.Id
+            const fullName = driverData?.Id
               ? `${driverData.firstName} ${driverData.lastName}`
               : "Unknown Driver";
-            const photoUrl = driverData.photoUrl;
+            const photoUrl = driverData?.photoUrl;
             return {
               ...request,
               fullName, // Add fullName to the request
