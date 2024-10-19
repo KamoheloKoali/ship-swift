@@ -56,7 +56,7 @@ export function DriverComboBox({ clients }: Props) {
               <>
                 <CommandEmpty>No contact found.</CommandEmpty>
                 <CommandGroup>
-                  {clients.map((contact: any) => (
+                  {clients?.map((contact: any) => (
                     <CommandItem
                       key={contact.Id}
                       value={contact.fullName}
