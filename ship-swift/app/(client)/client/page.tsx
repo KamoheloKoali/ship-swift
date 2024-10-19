@@ -1,8 +1,8 @@
-import { CardDemo } from '@/components/ui/aceternity/animatedCard';
-import ImageCard from '@/components/ui/image-card';
-import React from 'react';
-import PackagePopover from './components/PackagePopover';
-import RestrictedPopover from './components/RestrictedPopover';
+import { CardDemo } from "@/components/ui/aceternity/animatedCard";
+import ImageCard from "@/components/ui/image-card";
+import React from "react";
+import PackagePopover from "./components/PackagePopover";
+import RestrictedPopover from "./components/RestrictedPopover";
 
 const Page = () => {
   return (
@@ -13,10 +13,10 @@ const Page = () => {
           imageAlt="gif"
           title="Create A New Order"
           description="Deliver"
-          href='/client/dashboard/deliver'
+          href="/client/dashboard/deliver"
         />
-        <PackagePopover/>
-        <RestrictedPopover/>
+        <PackagePopover />
+        <RestrictedPopover />
       </div>
     </div>
   );

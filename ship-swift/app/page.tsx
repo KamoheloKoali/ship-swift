@@ -1,11 +1,15 @@
 import { createClient, getClientById } from "@/actions/clientActions";
+<<<<<<< HEAD
 // import { createDriver, getDriverById } from "@/actions/driverActions";
+=======
+import { createDriver, getDriverByID } from "@/actions/driverActions";
+>>>>>>> 19101a08b4a24b9c666368b1f73b1dac39bcf77a
 import getCurrentUserClerkDetails from "@/app/utils/getCurrentUserDetails";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const client = await getCurrentUserClerkDetails();
-  const dbClient = await getClientById(client?.id || "");
+  // const client = await getCurrentUserClerkDetails();
+  // const dbClient = await getClientById(client?.id || "");
 
   // if (!dbClient.success) {
   //   const clientData = {
@@ -17,6 +21,7 @@ export default async function Home() {
   //     photoUrl: client?.imageUrl || "",
   //     idPhotoUrl: "", // Assuming you will fetch or add the actual value later
   //   };
+<<<<<<< HEAD
 
   //   await createClient(clientData);
   // }
@@ -50,15 +55,16 @@ export default async function Home() {
       photoUrl: client?.imageUrl || "",
       idPhotoUrl: "", // Assuming you will fetch or add the actual value later
     };
+=======
+>>>>>>> 19101a08b4a24b9c666368b1f73b1dac39bcf77a
 
-    await createClient(clientData);
-  }
+  //   await createClient(clientData);
+  // }
 
-  // const Driver = await getCurrentUserClerkDetails()
-  //   const dbDriver = await getDriverByID(Driver?.id || "")
+  // const Driver = await getCurrentUserClerkDetails();
+  // const dbDriver = await getDriverByID(Driver?.id || "");
 
-  //   if (!dbDriver.success) {
-
+  // if (!dbDriver) {
   //   const DriverData = {
   //     clerkId: Driver?.id || "",
   //     email: Driver?.emailAddresses[0].emailAddress || "",
@@ -69,10 +75,11 @@ export default async function Home() {
   //     idPhotoUrl: "", // Assuming you will fetch or add the actual value later
   //     vehicleType: "",
   //     vehicleDetails: [""],
-  //   }
+  //   };
 
-  //   await createDriver(DriverData)
+  //   await createDriver(DriverData);
   // }
 
-  return redirect("/conversations");
+  // return redirect("/conversations");
+  return null;
 }

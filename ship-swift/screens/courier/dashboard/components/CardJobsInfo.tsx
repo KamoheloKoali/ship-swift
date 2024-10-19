@@ -2,9 +2,19 @@ import React from "react";
 import { JobRequest } from "./JobsRequestsTable";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Calendar, Package, DollarSign, Clock, CheckCheck } from "lucide-react";
+import {
+  MapPin,
+  Calendar,
+  Package,
+  DollarSign,
+  Clock,
+  CheckCheck,
+} from "lucide-react";
 import { UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@clerk/nextjs";
+import { createJobRequest } from "@/actions/jobRequestActions";
+import { handleApply } from "./utils/jobRequests";
 
 interface JobsInfoProps {
   job: JobRequest | null;
@@ -12,12 +22,19 @@ interface JobsInfoProps {
 }
 
 const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
+  const { userId } = useAuth();
   if (!job) return null;
 
   const fullName = `${job.client.firstName} ${job.client.lastName}`;
   const initials = `${job.client.firstName.charAt(
     0
   )}${job.client.lastName.charAt(0)}`;
+
+  const jobApply = async () => {
+    await handleApply(job.Id, userId ?? null);
+  };
+
+  if (jobApply)
 
   return (
     <div className="p-4 min-h-screen flex items-center justify-center w-full h-full z-50">
@@ -43,6 +60,7 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
               <Button
                 className="flex items-center justify-start space-x-2 border border-black bg-white hover:bg-gray-100 transition-colors duration-200 my-2"
                 variant="outline"
+                onClick={jobApply}
               >
                 <CheckCheck className="w-4 h-4 text-black" />
                 <span className="text-black">Apply</span>
@@ -56,7 +74,6 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
               </Button>
             </div>
           </div>
-
           <div className="mb-4">
             <h2 className="text-xl font-bold text-gray-800 mb-2">
               {job.Title}
@@ -116,5 +133,4 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
     </div>
   );
 };
-
 export default CardJobsInfo;

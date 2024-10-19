@@ -161,7 +161,7 @@ export const getDriverByID = async (driverId: string) => {
     });
 
     if (!driver) {
-      throw new Error("Driver not found");
+      return driver;
     }
 
     return driver;

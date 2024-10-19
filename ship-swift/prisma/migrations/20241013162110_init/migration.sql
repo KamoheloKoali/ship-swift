@@ -17,7 +17,7 @@ CREATE TABLE "clients" (
 CREATE TABLE "Drivers" (
     "Id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "phoneNumber" TEXT NOT NULL,
+    "phoneNumber" TEXT,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
     "photoUrl" TEXT NOT NULL,
@@ -26,11 +26,15 @@ CREATE TABLE "Drivers" (
     "dateCreated" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "dateUpdated" TIMESTAMP(3) NOT NULL,
     "VIN" TEXT,
-    "diskExpiry" TEXT,
     "idNumber" TEXT,
     "licenseExpiry" TEXT,
     "licenseNumber" TEXT,
     "plateNumber" TEXT,
+    "discExpiry" TEXT,
+    "discPhotoUrl" TEXT,
+    "licensePhotoUrl" TEXT,
+    "location" TEXT,
+    "isVerified" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Drivers_pkey" PRIMARY KEY ("Id")
 );
@@ -38,13 +42,21 @@ CREATE TABLE "Drivers" (
 -- CreateTable
 CREATE TABLE "CourierJobs" (
     "Id" TEXT NOT NULL,
-    "Title" TEXT,
-    "Description" TEXT,
-    "Budget" TEXT,
+    "Title" TEXT DEFAULT '',
+    "Description" TEXT DEFAULT '',
+    "Budget" TEXT DEFAULT '0',
     "clientId" TEXT NOT NULL,
-    "DropOff" TEXT,
-    "PickUp" TEXT,
+    "DropOff" TEXT DEFAULT '',
+    "districtDropOff" TEXT DEFAULT '',
+    "PickUp" TEXT DEFAULT '',
+    "districtPickUp" TEXT DEFAULT '',
+    "parcelSize" TEXT DEFAULT '',
+    "pickupPhoneNumber" TEXT DEFAULT '',
+    "dropoffPhoneNumber" TEXT DEFAULT '',
+    "dropOffEmail" TEXT DEFAULT '',
+    "collectionDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "dateCreated" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "packageStatus" TEXT DEFAULT '',
 
     CONSTRAINT "CourierJobs_pkey" PRIMARY KEY ("Id")
 );
@@ -54,7 +66,6 @@ CREATE TABLE "DriverRequests" (
     "Id" TEXT NOT NULL,
     "receiverId" TEXT NOT NULL,
     "senderId" TEXT NOT NULL,
-    "message" TEXT NOT NULL,
     "isAccepted" BOOLEAN NOT NULL DEFAULT false,
     "isPending" BOOLEAN NOT NULL DEFAULT false,
 
@@ -64,7 +75,6 @@ CREATE TABLE "DriverRequests" (
 -- CreateTable
 CREATE TABLE "clientRequests" (
     "Id" TEXT NOT NULL,
-    "message" TEXT NOT NULL,
     "senderId" TEXT NOT NULL,
     "receiverId" TEXT NOT NULL,
     "isAccepted" BOOLEAN NOT NULL DEFAULT false,
