@@ -19,9 +19,9 @@ import { useAuth } from "@clerk/nextjs";
 
 const Page = () => {
   const router = useRouter();
+  const user = useAuth();
   useEffect(() => {
     const checkUser = async () => {
-      const user = useAuth();
       const [responseFromDriverTable, responseFromClientTable] = await Promise.all([await getDriverByID(user.userId || ""), getClientById(user.userId || "")])
       if (responseFromDriverTable && !responseFromClientTable.success) {
         router.push("/driver/dashboard");
