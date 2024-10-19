@@ -21,12 +21,12 @@ export default clerkMiddleware(async (auth, request) => {
   }
 
   // If user is authenticated, check onboarding status
-  if (userId) {
-    // If onboarding is not completed, redirect to the onboarding page
-    return NextResponse.redirect(new URL("/onboarding", request.url));
-  } else {
-    auth().protect();
-  }
+  // if (userId) {
+  //   // If onboarding is not completed, redirect to the onboarding page
+  //   return NextResponse.redirect(new URL("/onboarding", request.url));
+  // } else {
+  auth().protect();
+  // }
 
   // Allow the request to continue as usual
   return NextResponse.next();
