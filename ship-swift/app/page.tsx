@@ -1,30 +1,25 @@
 import { createClient, getClientById } from "@/actions/clientActions";
-<<<<<<< HEAD
 // import { createDriver, getDriverById } from "@/actions/driverActions";
-=======
-import { createDriver, getDriverByID } from "@/actions/driverActions";
->>>>>>> 19101a08b4a24b9c666368b1f73b1dac39bcf77a
 import getCurrentUserClerkDetails from "@/app/utils/getCurrentUserDetails";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
-  // const client = await getCurrentUserClerkDetails();
-  // const dbClient = await getClientById(client?.id || "");
+  const client = await getCurrentUserClerkDetails();
+  const dbClient = await getClientById(client?.id || "");
 
-  // if (!dbClient.success) {
-  //   const clientData = {
-  //     clerkId: client?.id || "",
-  //     email: client?.emailAddresses[0]?.emailAddress || "",
-  //     phoneNumber: client?.phoneNumbers?.[0]?.phoneNumber || "", // Assuming phoneNumbers is an array
-  //     firstName: client?.firstName || "",
-  //     lastName: client?.lastName || "",
-  //     photoUrl: client?.imageUrl || "",
-  //     idPhotoUrl: "", // Assuming you will fetch or add the actual value later
-  //   };
-<<<<<<< HEAD
+  if (!dbClient.success) {
+    const clientData = {
+      clerkId: client?.id || "",
+      email: client?.emailAddresses[0]?.emailAddress || "",
+      phoneNumber: client?.phoneNumbers?.[0]?.phoneNumber || "", // Assuming phoneNumbers is an array
+      firstName: client?.firstName || "",
+      lastName: client?.lastName || "",
+      photoUrl: client?.imageUrl || "",
+      idPhotoUrl: "", // Assuming you will fetch or add the actual value later
+    };
 
-  //   await createClient(clientData);
-  // }
+    await createClient(clientData);
+  }
 
   // const Driver = await getCurrentUserClerkDetails()
   //   const dbDriver = await getDriverById(Driver?.id || "")
@@ -55,11 +50,9 @@ export default async function Home() {
       photoUrl: client?.imageUrl || "",
       idPhotoUrl: "", // Assuming you will fetch or add the actual value later
     };
-=======
->>>>>>> 19101a08b4a24b9c666368b1f73b1dac39bcf77a
 
-  //   await createClient(clientData);
-  // }
+    await createClient(clientData);
+  }
 
   // const Driver = await getCurrentUserClerkDetails();
   // const dbDriver = await getDriverByID(Driver?.id || "");
