@@ -2,7 +2,7 @@ import { HouseIcon, MessageCircle, UsersIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 
-export const useNavigation = (userRole: Boolean) => {
+export const useNavigation = (userRole: boolean) => {
   const pathname = usePathname();
 
   const paths = useMemo(

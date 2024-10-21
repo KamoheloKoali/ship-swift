@@ -53,7 +53,7 @@ const ClientAddDriver = (props: Props) => {
 
     try {
       console.log(email);
-      let receiverResponse = await getAllDrivers();
+      const receiverResponse = await getAllDrivers();
 
       // Check if the API call to get all clients succeeded
       if (!receiverResponse.success || !receiverResponse.data) {

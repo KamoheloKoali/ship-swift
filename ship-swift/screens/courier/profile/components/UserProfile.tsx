@@ -30,7 +30,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
     <Card className="flex flex-row p-4 border border-gray-200 rounded-lg mb-12">
       <div className="flex flex-col items-center mr-4">
         <Avatar className="hidden md:block md:h-36 md:w-36 lg:h-48 lg:w-48 rounded-full border-2 border-gray-300">
-          <img
+          <Image
             src={
               driverData?.photoUrl || user?.imageUrl || "/default-avatar.png"
             }

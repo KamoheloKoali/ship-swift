@@ -1,5 +1,5 @@
 "use server";
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -34,7 +34,7 @@ export const createClient = async (clientData: {
     if (newClient.Id) return { success: true, data: newClient };
     else return { success: false };
   } catch (error) {
-    return { success: false, error: "Error creating client" };
+    return { success: false, error: "Error creating client" + error };
   }
 };
 
@@ -49,7 +49,7 @@ export const getClientById = async (clientId: string) => {
       return { success: false, error: "Client not found" };
     }
   } catch (error) {
-    return { success: false, error: "Error retrieving client by ID" };
+    return { success: false, error: "Error retrieving client by ID" + error };
   }
 };
 
@@ -64,7 +64,7 @@ export const getAllClients = async () => {
 
 export const updateClient = async (
   clientId: string,
-  clientData: Partial<any>
+  clientData: Prisma.clientsUpdateInput
 ) => {
   try {
     const updatedClient = await prisma.clients.update({
@@ -73,7 +73,7 @@ export const updateClient = async (
     });
     return { success: true, data: updatedClient };
   } catch (error) {
-    return { success: false, error: "Error updating client" };
+    return { success: false, error: "Error updating client" + error };
   }
 };
 
@@ -84,6 +84,6 @@ export const deleteClient = async (clientId: string) => {
     });
     return { success: true, data: deletedClient };
   } catch (error) {
-    return { success: false, error: "Error deleting client" };
+    return { success: false, error: "Error deleting client" + error };
   }
 };

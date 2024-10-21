@@ -1,7 +1,19 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CheckCircle } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { CheckCircle } from "lucide-react";
+import Image from "next/image";
 
 export default function PackagePopover() {
   return (
@@ -9,7 +21,7 @@ export default function PackagePopover() {
       <PopoverTrigger asChild>
         <Card className="cursor-pointer hover:bg-gray-50 transition-colors">
           <CardContent className="p-0">
-            <img
+            <Image
               src="/assets/client/images/deliver_no_bg.gif"
               alt="Packaging gif"
               className="w-full h-[200px] object-cover"
@@ -18,7 +30,8 @@ export default function PackagePopover() {
           <CardHeader className="pb-2">
             <CardTitle className="text-lg">Packaging Requirements</CardTitle>
             <CardDescription>
-              Ensure you have what you need to package your parcel for your chosen service.
+              Ensure you have what you need to package your parcel for your
+              chosen service.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -41,11 +54,12 @@ export default function PackagePopover() {
             ))}
           </ul>
           <p className="text-sm text-gray-600">
-            Proper packaging ensures your items arrive safely and helps avoid additional handling fees.
+            Proper packaging ensures your items arrive safely and helps avoid
+            additional handling fees.
           </p>
           <Button className="w-full">Learn More</Button>
         </div>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import useDriverDetails from "@/screens/courier/registration/utils/DriverDetails";
 import Loading from "@/screens/courier/registration/ui/Loading";
+import Image from "next/image";
 
 interface ImageDisplayProps {
   url: string | null | undefined;
@@ -22,7 +23,7 @@ interface ImageDisplayProps {
 
 const ImageDisplay: React.FC<ImageDisplayProps> = ({ url, alt }) =>
   url ? (
-    <img
+    <Image
       src={url}
       alt={alt}
       className="w-full h-40 object-cover rounded-md shadow-sm"

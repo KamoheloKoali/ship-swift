@@ -33,6 +33,7 @@
     "@radix-ui/react-toast": "^1.2.2",
     "@radix-ui/react-tooltip": "^1.1.2",
     "@supabase/supabase-js": "^2.45.4",
+    "@zegocloud/zego-uikit-prebuilt": "^2.11.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
