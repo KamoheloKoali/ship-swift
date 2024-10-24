@@ -18,7 +18,7 @@ const ConversationsLayout = async ({ children }: Props) => {
       getUserRoleById(),
     ]);
     const role = userRole.data?.client;
-    let contacts: any = [];
+    const contacts: any = [];
     let contactsWithNames;
     const allContacts = await getAllcontacts();
     allContacts.data?.map((contact) => {

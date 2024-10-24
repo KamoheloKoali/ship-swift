@@ -6,7 +6,6 @@ import { useMap } from "react-leaflet"; // Import the useMap hook directly
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { toast } from "sonner";
-import { getJobById } from "@/actions/courierJobsActions";
 import { useAuth } from "@clerk/nextjs";
 
 // Dynamically import components (only those depending on DOM)

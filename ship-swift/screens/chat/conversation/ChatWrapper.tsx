@@ -98,7 +98,7 @@ const ChatWrapper = ({ children, conversationId }: Props) => {
                       `${client?.data?.firstName} ${client?.data?.lastName}`
                     );
                     setCallReceiverId(client?.Id);
-                    router.push(`/room/${conversationId}`);
+                    window.open(`/room/${conversationId}`, "_blank");
                   }}
                   className="cursor-pointer"
                 />

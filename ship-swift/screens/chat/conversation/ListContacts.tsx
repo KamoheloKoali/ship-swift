@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 
 type Props = {
   Contacts: any;
-  role: Boolean;
+  role: boolean;
 };
 
 const ListContacts = ({ role, Contacts }: Props) => {

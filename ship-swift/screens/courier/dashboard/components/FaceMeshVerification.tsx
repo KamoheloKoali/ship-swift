@@ -1,7 +1,7 @@
 "use client";
 // components/FaceRecognition.tsx
 import React, { useEffect, useRef, useState } from "react";
-import * as faceapi from "face-api.js"
+import * as faceapi from "face-api.js";
 
 const FaceRecognition: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -174,7 +174,7 @@ const FaceRecognition: React.FC = () => {
           <h3 className="text-xl font-semibold text-gray-700">
             Uploaded Image:
           </h3>
-          <img
+          <Image
             src={uploadedImageUrl}
             alt="Uploaded"
             className="mt-2 max-w-xs rounded-lg shadow-lg"
@@ -206,7 +206,7 @@ const FaceRecognition: React.FC = () => {
           <h3 className="text-xl font-semibold text-gray-700">
             Captured Image:
           </h3>
-          <img
+          <Image
             src={capturedImageUrl}
             alt="Captured"
             className="mt-2 max-w-xs rounded-lg shadow-lg"

@@ -23,7 +23,7 @@ import { getClientById } from "@/actions/clientActions";
 type Props = {
   incomingRequestsWithNames: any;
   outgoingRequestsWithNames: any;
-  role: Boolean;
+  role: boolean;
 };
 
 const ListContacts = ({
@@ -228,7 +228,7 @@ const ListContacts = ({
     };
   }, [supabase, userId, role]);
 
-  let contacts: any = [];
+  const contacts: any = [];
 
   incomingRequests.map((request) => {
     request.isAccepted && contacts.push(request);

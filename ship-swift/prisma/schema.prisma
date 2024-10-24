@@ -23,6 +23,7 @@ model clients {
   driverRequests DriverRequests[]
   Messages       Messages[]
   clientRequests clientRequests[]
+  Location       Location[]
 }
 
 model Drivers {
@@ -51,6 +52,7 @@ model Drivers {
   Messages        Messages[]
   clientRequests  clientRequests[]
   JobRequests     JobRequest[]
+  Location        Location[]
 }
 
 model CourierJobs {
@@ -134,4 +136,12 @@ model JobRequest {
 
   // Add an optional relation back to CourierJobs for the approved request
   approvedJob CourierJobs? @relation("ApprovedRequest")
+}
+
+model Location {
+  Id       String  @id @default(uuid())
+  driverId String
+  clientId String
+  client   clients @relation(fields: [clientId], references: [Id])
+  driver   Drivers @relation(fields: [driverId], references: [Id])
 }
