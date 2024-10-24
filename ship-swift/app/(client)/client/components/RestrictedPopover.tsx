@@ -13,6 +13,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { CheckCircle } from "lucide-react";
+import Image from "next/image";
 
 export default function RestrictedPopover() {
   return (
