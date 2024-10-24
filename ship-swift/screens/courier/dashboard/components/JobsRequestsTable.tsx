@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import JobsRequests from "./JobsRequests";
 import { getAllJobs } from "@/actions/courierJobsActions";
 import { useEffect } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Client {
   Id: string;
@@ -87,7 +88,7 @@ const JobsRequestsTable: React.FC<JobsRequestsTableProps> = ({
   };
 
   if (loading) {
-    return <div className="py-4">Loading...</div>;
+    return <Skeleton className="py-4 w-full h-24"></Skeleton>;
   }
 
   if (error) {
