@@ -7,6 +7,8 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
+import { getClientById } from "@/actions/clientActions";
+import { getLocation } from "@/actions/locationAction";
 
 // Dynamically import components (only those depending on DOM)
 const MapContainer = dynamic(
@@ -56,53 +58,49 @@ export default function LocationPage({
   const [position, setPosition] = useState<[number, number] | null>(null); // Correct type for position (latitude, longitude)
   const [accuracy, setAccuracy] = useState<number | null>(null); // Accuracy is a number in meters
   const [isClient, setIsClient] = useState(false);
+  const [isWindow, setIsWindow] = useState(false);
   const user = useAuth();
 
   useEffect(() => {
     const checkIsAuthorized = async () => {
       // remember to check if driverid or clientid is equal to current userid
+      const response = await getClientById(user.userId || "");
+      if (response.success) {
+        setIsClient(true);
+      } else {
+        setIsClient(false);
+      }
     };
-    setIsClient(typeof window !== "undefined");
+    checkIsAuthorized();
+    setIsWindow(typeof window !== "undefined");
   }, []);
 
   useEffect(() => {
-    if (isClient && navigator.geolocation) {
-      const watchId = navigator.geolocation.watchPosition(
-        (position) => {
-          const { latitude, longitude, accuracy } = position.coords;
-
-          // Only update if accuracy is within an acceptable range (e.g., less than 100 meters)
-          if (accuracy < 500) {
-            setPosition([latitude, longitude]);
-            setAccuracy(accuracy); // Get the accuracy in meters
-          } else {
-            console.warn("Poor accuracy:", accuracy);
-            toast.warning("Location accuracy is low: " + accuracy + " meters");
-          }
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-          toast.error(
-            "Error getting location: " + error.message + " please refresh page"
-          );
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0,
-        }
+    const getCourierLocation = async () => {
+      const response = await getLocation(
+        "kamohelo",
+        "user_2mv81YaZFKahFZXJiU3Yv6gYErn"
       );
 
-      return () => {
-        navigator.geolocation.clearWatch(watchId);
-      };
-    }
-  }, [isClient]);
+      if (response.success) {
+        const data = response.data || "";
+        console.log(data);
+        // Only update if accuracy is within an acceptable range (e.g., less than 100 meters)
+        if (700 < 500) {
+          setPosition([-29, 50]);
+          setAccuracy(accuracy); // Get the accuracy in meters
+        } else {
+          console.warn("Poor accuracy:", accuracy);
+          toast.warning("Location accuracy is low: " + accuracy + " meters");
+        }
+      }
+    };
+  }, [isWindow]);
 
   if (!isClient || !position) {
     return (
       <div className="h-screen w-full flex justify-center items-center">
-        Getting your location...
+        Getting courier's location...
       </div>
     );
   }

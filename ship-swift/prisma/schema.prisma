@@ -23,7 +23,7 @@ model clients {
   driverRequests DriverRequests[]
   Messages       Messages[]
   clientRequests clientRequests[]
-  Location       Location[]
+  // Location       Location[]
 }
 
 model Drivers {
@@ -139,9 +139,13 @@ model JobRequest {
 }
 
 model Location {
-  Id       String  @id @default(uuid())
-  driverId String
-  clientId String
-  client   clients @relation(fields: [clientId], references: [Id])
-  driver   Drivers @relation(fields: [driverId], references: [Id])
+  Id        String   @id @default(uuid())
+  time      DateTime @default(now())
+  latitude  Float
+  longitude Float
+  accuracy  Float
+  driverId  String
+  clientId  String
+  // client    clients  @relation(fields: [clientId], references: [Id])
+  driver    Drivers  @relation(fields: [driverId], references: [Id])
 }

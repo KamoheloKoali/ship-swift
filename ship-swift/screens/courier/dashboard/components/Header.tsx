@@ -13,18 +13,37 @@ import {
 } from "@/components/ui/sheet";
 import NavMenu from "./HeaderMenu";
 import { Bars3Icon } from "@heroicons/react/24/outline";
+import LocationTracker from "@/screens/track-delivery/LocationTracker";
+import { createLocation } from "@/actions/locationAction";
+import { useAuth } from "@clerk/nextjs";
 
 export default function Header() {
+  const { userId } = useAuth();
+
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const updateLocation = async (lat: number, lng: number, accuracy: number) => {
+    const response = await createLocation({
+      clientId: "kamohelo",
+      driverId: userId || "",
+      latitude: lat,
+      longitude: lng,
+      accuracy: accuracy,
+    });
+    if (response.success) {
+      console.log("Location created successfully");
+    } else {
+      console.log("Error creating location: " + response.error);
+    }
+  };
 
   const menuItems = [
     {
-      label: "Find Jobs", 
+      label: "Find Jobs",
       href: "/driver/dashboard/find-jobs",
-
     },
     {
-      label: "My Jobs", href: "/driver/dashboard/myjobs" 
+      label: "My Jobs",
+      href: "/driver/dashboard/myjobs",
     },
     {
       label: "Manage Finances",
@@ -71,6 +90,9 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             {/* Logo */}
             <div className="font-bold text-lg text-gray-800">Ship Swift</div>
+            <div className="md:hidden">
+              <LocationTracker updateLocation={updateLocation} />
+            </div>
           </div>
 
           {/* Menu Button for small screens */}
