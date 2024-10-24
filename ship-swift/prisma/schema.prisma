@@ -24,6 +24,7 @@ model clients {
   Messages       Messages[]
   clientRequests clientRequests[]
   Location       Location[]
+  activeJobs  ActiveJobs[]
 }
 
 model Drivers {
@@ -53,6 +54,7 @@ model Drivers {
   clientRequests  clientRequests[]
   JobRequests     JobRequest[]
   Location        Location[]
+  activeJobs  ActiveJobs[]
 }
 
 model CourierJobs {
@@ -78,6 +80,8 @@ model CourierJobs {
 
   JobRequests JobRequest[] @relation("CourierJobsToJobRequest") // One-to-many relation with JobRequest
   client      clients      @relation(fields: [clientId], references: [Id])
+
+  activeJobs  ActiveJobs[]
 }
 
 model DriverRequests {
@@ -136,6 +140,22 @@ model JobRequest {
 
   // Add an optional relation back to CourierJobs for the approved request
   approvedJob CourierJobs? @relation("ApprovedRequest")
+}
+
+model ActiveJobs {
+  Id           String @id @default(uuid())
+  courierJobId String // Relation to CourierJobs
+  driverId     String // Relation to Driver
+  clientId     String // Relation to Client
+  startDate    String
+  endDate      String @default("Ongoing")
+  jobStatus    String @default("pending") // Status, default synonym for "not picked up yet"
+
+  CourierJob CourierJobs @relation(fields: [courierJobId], references: [Id])
+  Driver     Drivers     @relation(fields: [driverId], references: [Id])
+  Client     clients     @relation(fields: [clientId], references: [Id])
+
+  // Additional fields if needed
 }
 
 model Location {
