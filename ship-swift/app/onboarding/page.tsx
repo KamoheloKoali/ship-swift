@@ -51,7 +51,7 @@ const Page = () => {
     };
 
     checkUser();
-  }, [user]); // Add `user` to the dependency array
+  }, [user, router]); // Add `user` to the dependency array
 
   return (
     <>

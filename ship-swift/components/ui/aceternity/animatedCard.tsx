@@ -71,9 +71,8 @@ const Skeleton = () => {
       repeat: Infinity,
       repeatDelay: 1,
     });
-  }, []);
+  });
 
-  
   return (
     <div className="p-8 overflow-hidden relative flex items-center justify-center border border-black">
       <div className="flex flex-row flex-shrink-0 justify-center items-center gap-2">
