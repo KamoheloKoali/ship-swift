@@ -16,7 +16,6 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import CardStatus from "@/screens/courier/dashboard/components/CardStatus";
-import ProfileButton from "../../profile/components/ProfileButton";
 
 type InfoItemProps = {
   icon: React.ReactNode;
@@ -25,16 +24,10 @@ type InfoItemProps = {
 };
 
 interface ProfileProps {
-  onProfileClick: () => void;
-  isProfileOpen: boolean;
   driverData: any; // Replace 'any' with a more specific type if you have one
 }
 
-const Profile: React.FC<ProfileProps> = ({
-  onProfileClick,
-  isProfileOpen,
-  driverData,
-}) => {
+const Profile: React.FC<ProfileProps> = ({ driverData }) => {
   const InfoItem: React.FC<InfoItemProps> = ({ icon, label, value }) => (
     <div className="flex items-center space-x-2 bg-muted/50 rounded-lg p-2">
       {icon}
@@ -66,16 +59,16 @@ const Profile: React.FC<ProfileProps> = ({
           <div className="flex flex-col sm:flex-row items-center sm:space-x-4">
             <Avatar className="w-24 h-24 sm:w-36 sm:h-36 border-4 border-background mb-4 sm:mb-0">
               <AvatarImage
-                src={driverData.photoUrl}
-                alt={`${driverData.firstName} ${driverData.lastName}`}
+                src={driverData?.photoUrl || ""}
+                alt={`${driverData?.firstName} ${driverData.lastName}`}
               />
               <AvatarFallback>
-                {`${driverData.firstName[0]}${driverData.lastName[0]}`}
+                {`${driverData?.firstName[0]}${driverData.lastName[0]}`}
               </AvatarFallback>
             </Avatar>
             <div className="text-center sm:text-left">
               <h2 className="text-2xl sm:text-3xl font-bold">
-                {`${driverData.firstName} ${driverData.lastName}`}
+                {`${driverData?.firstName} ${driverData?.lastName}`}
               </h2>
               <div className="flex items-center justify-center sm:justify-start mt-1 text-sm text-muted-foreground">
                 <MapPin className="w-4 h-4 mr-1" />
@@ -84,13 +77,9 @@ const Profile: React.FC<ProfileProps> = ({
             </div>
           </div>
           <div className="flex flex-row sm:flex-col items-center sm:items-end mt-4 sm:mt-0 w-full sm:w-auto">
-            <div className="hidden md:block mylg:hidden justify-start mr-2 sm:mr-0 sm:mb-2">
+            <div className="hidden md:block mylg:hidden justify-start md:justify-end mylg:justify-start mr-2 sm:mr-0 sm:mb-2">
               <CardStatus />
             </div>
-            <ProfileButton
-              onClick={onProfileClick}
-              isProfileOpen={isProfileOpen}
-            />
           </div>
         </div>
       </CardHeader>

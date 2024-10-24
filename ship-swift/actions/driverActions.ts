@@ -3,65 +3,58 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const createDriver = async (driverData: {
-  clerkId: string;
-  email: string;
-  phoneNumber?: string;
-  firstName: string;
-  lastName: string;
-  photoUrl: string;
-  idPhotoUrl: string;
-  idNumber?: string;
-  licensePhotoUrl?: string;
-  licenseNumber?: string;
-  licenseExpiry?: string;
-  vehicleType?: string;
-  plateNumber?: string;
-  VIN?: string;
-  discExpiry?: string;
-  discPhotoUrl?: string;
-  location?: string;
-}) => {
-  try {
-    const newDriver = await prisma.drivers.create({
-      data: {
-        Id: driverData.clerkId,
-        email: driverData.email,
-        phoneNumber: driverData.phoneNumber,
-        firstName: driverData.firstName,
-        lastName: driverData.lastName,
-        photoUrl: driverData.photoUrl,
-        idPhotoUrl: driverData.idPhotoUrl,
-        idNumber: driverData.idNumber,
-        licensePhotoUrl: driverData.licensePhotoUrl,
-        licenseNumber: driverData.licenseNumber,
-        licenseExpiry: driverData.licenseExpiry,
-        vehicleType: driverData.vehicleType,
-        plateNumber: driverData.plateNumber,
-        discPhotoUrl: driverData.discPhotoUrl,
-        VIN: driverData.VIN,
-        discExpiry: driverData.discExpiry,
-        location: driverData.location,
-      },
-    });
-    await prisma.userRole.create({
-      data: {
-        userId: driverData.clerkId,
-        driver: true,
-        client: false,
-      },
-    });
-    return { success: true, data: newDriver };
-  } catch (error) {
-    console.error("Prisma error:", error);
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-    return { success: false, error: "Unknown error occurred" };
-  } finally {
-    await prisma.$disconnect();
-  }
-};
+// export const createDriver = async (driverData: {
+//   clerkId: string;
+//   email: string;
+//   phoneNumber?: string;
+//   firstName: string;
+//   lastName: string;
+//   photoUrl: string;
+//   idPhotoUrl: string;
+//   idNumber?: string;
+//   licensePhotoUrl?: string;
+//   licenseNumber?: string;
+//   licenseExpiry?: string;
+//   vehicleType?: string;
+//   plateNumber?: string;
+//   VIN?: string;
+//   discExpiry?: string;
+//   discPhotoUrl?: string;
+//   location?: string;
+// }) => {
+//   try {
+//     const newDriver = await prisma.drivers.create({
+//       data: {
+//         Id: driverData.clerkId,
+//         email: driverData.email,
+//         phoneNumber: driverData.phoneNumber,
+//         firstName: driverData.firstName,
+//         lastName: driverData.lastName,
+//         photoUrl: driverData.photoUrl,
+//         idPhotoUrl: driverData.idPhotoUrl,
+//         idNumber: driverData.idNumber,
+//         licensePhotoUrl: driverData.licensePhotoUrl,
+//         licenseNumber: driverData.licenseNumber,
+//         licenseExpiry: driverData.licenseExpiry,
+//         vehicleType: driverData.vehicleType,
+//         plateNumber: driverData.plateNumber,
+//         discPhotoUrl: driverData.discPhotoUrl,
+//         VIN: driverData.VIN,
+//         discExpiry: driverData.discExpiry,
+//         location: driverData.location,
+//       },
+//     });
+//     return { success: true, data: newDriver };
+//   } catch (error) {
+//     console.error("Prisma error:", error);
+//     if (error instanceof Error) {
+//       return { success: false, error: error.message };
+//     }
+//     return { success: false, error: "Unknown error occurred" };
+//   } finally {
+//     await prisma.$disconnect();
+//   }
+// };
 
 export const upsertDriver = async (driverData: {
   clerkId: string;

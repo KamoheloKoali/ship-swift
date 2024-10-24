@@ -3,7 +3,7 @@ import { useUser } from "@clerk/nextjs";
 import JobsMenu from "./JobsMenu";
 import CardJobsInfo from "@/screens/courier/dashboard/components/CardJobsInfo";
 import CardStatus from "@/screens/courier/dashboard/components/CardStatus";
-import UserProfile from "@/screens/courier/profile/components/UserProfile";
+
 import JobsRequestsTable, {
   JobRequest,
 } from "@/screens/courier/dashboard/components/JobsRequestsTable";
@@ -18,7 +18,6 @@ const Jobs = () => {
   const [selectedJob, setSelectedJob] = useState<JobRequest | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(true);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [driverData, setDriverData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,10 +49,6 @@ const Jobs = () => {
     setIsModalOpen(!!job);
   };
 
-  const handleProfileClick = () => {
-    setIsProfileOpen((prev) => !prev);
-  };
-
   useEffect(() => {
     const handleResize = () => {
       setIsSheetOpen(window.innerWidth < 1441);
@@ -80,19 +75,7 @@ const Jobs = () => {
 
     return (
       <>
-        {isProfileOpen ? (
-          <Profile
-            onProfileClick={handleProfileClick}
-            isProfileOpen={isProfileOpen}
-            driverData={driverData}
-          />
-        ) : (
-          <UserProfile
-            onProfileClick={handleProfileClick}
-            isProfileOpen={isProfileOpen}
-            driverData={driverData}
-          />
-        )}
+        <Profile driverData={driverData} />
 
         <div className="flex md:hidden justify-start w-full">
           <CardStatus />
@@ -111,7 +94,7 @@ const Jobs = () => {
       <div className="flex flex-row w-full mylg:w-[95%] 2xl:w-[80%] justify-center">
         <div className="w-[98%] md:w-[80%] mylg:w-[72%]">{renderContent()}</div>
 
-        <div className="relative hidden mylg:block h-screen w-[28%] bg-muted/80">
+        <div className="relative hidden mylg:block h-full w-[28%] bg-muted/80">
           <div className="fixed top-[138px] w-[26.5%] sideScreen:w-[22.5%]">
             <CardStatus />
             <CardJobsInfo job={selectedJob} isOpen={isModalOpen} />

@@ -51,6 +51,7 @@ model Drivers {
   driveRequests   DriverRequests[]
   Messages        Messages[]
   clientRequests  clientRequests[]
+  JobRequests     JobRequest[]
   Location        Location[]
 }
 
@@ -72,7 +73,11 @@ model CourierJobs {
   dateCreated        DateTime @default(now())
   packageStatus      String?  @default("")
 
-  client clients @relation(fields: [clientId], references: [Id])
+  approvedRequestId String?     @unique // Make this field unique
+  approvedRequest   JobRequest? @relation("ApprovedRequest", fields: [approvedRequestId], references: [Id])
+
+  JobRequests JobRequest[] @relation("CourierJobsToJobRequest") // One-to-many relation with JobRequest
+  client      clients      @relation(fields: [clientId], references: [Id])
 }
 
 model DriverRequests {
@@ -118,6 +123,19 @@ model Messages {
   senderId String
   client   clients @relation(fields: [clientId], references: [Id])
   driver   Drivers @relation(fields: [driverId], references: [Id])
+}
+
+model JobRequest {
+  Id           String  @id @default(uuid())
+  isApproved   Boolean @default(false)
+  courierJobId String // Relation to CourierJobs
+  driverId     String // Relation to Driver
+
+  CourierJob CourierJobs @relation("CourierJobsToJobRequest", fields: [courierJobId], references: [Id])
+  Driver     Drivers     @relation(fields: [driverId], references: [Id])
+
+  // Add an optional relation back to CourierJobs for the approved request
+  approvedJob CourierJobs? @relation("ApprovedRequest")
 }
 
 model Location {

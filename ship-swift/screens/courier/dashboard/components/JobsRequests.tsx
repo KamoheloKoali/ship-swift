@@ -1,6 +1,7 @@
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Calendar, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Image from "next/image";
 
 interface JobsRequestsProps {
   profilePhoto: string;
@@ -10,7 +11,9 @@ interface JobsRequestsProps {
   jobDate: string;
   amount: string;
   postDate: string;
-  isSelected: boolean;
+  parcelSize: string;
+  description: string;
+  isSelected?: boolean;
 }
 
 const JobsRequests: React.FC<JobsRequestsProps> = ({
@@ -21,7 +24,9 @@ const JobsRequests: React.FC<JobsRequestsProps> = ({
   jobDate,
   amount,
   postDate,
-  isSelected,
+  parcelSize,
+  description,
+  isSelected = false,
 }) => {
   return (
     <Card
@@ -36,10 +41,12 @@ const JobsRequests: React.FC<JobsRequestsProps> = ({
             {/* Avatar and Name */}
             <div className="flex items-center w-full lg:w-1/3">
               <Avatar className="h-16 w-16 border-2 border-gray-200 rounded-full mr-4 flex-shrink-0">
-                <Image
+                <AvatarImage
                   src={profilePhoto}
                   alt={name}
                   className="h-full w-full rounded-full object-cover"
+                  width={48}
+                  height={48}
                 />
               </Avatar>
               <div className="font-bold text-lg truncate">{name}</div>

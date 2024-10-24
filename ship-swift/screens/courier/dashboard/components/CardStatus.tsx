@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 
 const CardStatus = () => {
   return (
-    <div className="w-full py-4 mylg:p-4">
-      <Card className="relative w-full md:w-full md:max-w-md md:mx-auto border-none bg-muted/80 mylg:bg-white">
+    <div className="w-full py-4 mylg:p-4"><Card className="relative w-full md:w-full md:max-w-md md:mx-auto border-none sm:bg-muted/80 md:bg-gradient-to-r from-primary-foreground/60 to-primary-foreground/95 mylg:bg-gradient-to-left from-white to-white">
+      
         <CardHeader>
           <CardTitle className="text-lg font-bold">Status</CardTitle>
         </CardHeader>
@@ -19,7 +19,7 @@ const CardStatus = () => {
             </label>
           </div>
           {/* Button for Trip Announcement */}
-          <Button variant="default" className="w-[60%] buttonScreen:w-full">
+          <Button variant="default" className="w-[100%] mylg:w-[60%] buttonScreen:w-full">
             Announce Scheduled Trip
           </Button>
         </CardContent>
