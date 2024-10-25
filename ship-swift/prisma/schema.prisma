@@ -132,30 +132,28 @@ model Messages {
 model JobRequest {
   Id           String  @id @default(uuid())
   isApproved   Boolean @default(false)
-  courierJobId String // Relation to CourierJobs
-  driverId     String // Relation to Driver
+  courierJobId String
+  driverId     String
 
   CourierJob CourierJobs @relation("CourierJobsToJobRequest", fields: [courierJobId], references: [Id])
   Driver     Drivers     @relation(fields: [driverId], references: [Id])
 
-  // Add an optional relation back to CourierJobs for the approved request
   approvedJob CourierJobs? @relation("ApprovedRequest")
 }
 
 model ActiveJobs {
   Id           String @id @default(uuid())
-  courierJobId String // Relation to CourierJobs
-  driverId     String // Relation to Driver
-  clientId     String // Relation to Client
+  courierJobId String
+  driverId     String
+  clientId     String
   startDate    String
   endDate      String @default("Ongoing")
-  jobStatus    String @default("pending") // Status, default synonym for "not picked up yet"
+  jobStatus    String @default("pending")
 
   CourierJob CourierJobs @relation(fields: [courierJobId], references: [Id])
   Driver     Drivers     @relation(fields: [driverId], references: [Id])
   Client     clients     @relation(fields: [clientId], references: [Id])
 
-  // Additional fields if needed
 }
 
 model Location {
