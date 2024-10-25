@@ -58,8 +58,12 @@ const JobsTable: FC<TableProps> = ({ jobs, onRowClick }: TableProps) => {
                 <TableRow>
                   <TableHead>Title</TableHead>
                   <TableHead className="hidden sm:table-cell">PickUp</TableHead>
-                  <TableHead className="hidden sm:table-cell">DropOff</TableHead>
-                  <TableHead className="hidden md:table-cell">Date Created</TableHead>
+                  <TableHead className="hidden sm:table-cell">
+                    DropOff
+                  </TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    Date Created
+                  </TableHead>
                   <TableHead className="text-right">Amount</TableHead>
                 </TableRow>
               </TableHeader>
@@ -76,8 +80,12 @@ const JobsTable: FC<TableProps> = ({ jobs, onRowClick }: TableProps) => {
                         {job.Description}
                       </div>
                     </TableCell>
-                    <TableCell className="hidden sm:table-cell">{job.PickUp}</TableCell>
-                    <TableCell className="hidden sm:table-cell">{job.DropOff}</TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      {job.PickUp}
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      {job.DropOff}
+                    </TableCell>
                     <TableCell className="hidden md:table-cell">
                       {new Date(job.dateCreated).toLocaleString()}
                     </TableCell>
@@ -101,8 +109,12 @@ const JobsTable: FC<TableProps> = ({ jobs, onRowClick }: TableProps) => {
                 <TableRow>
                   <TableHead>Title</TableHead>
                   <TableHead className="hidden sm:table-cell">PickUp</TableHead>
-                  <TableHead className="hidden sm:table-cell">DropOff</TableHead>
-                  <TableHead className="hidden md:table-cell">Date Created</TableHead>
+                  <TableHead className="hidden sm:table-cell">
+                    DropOff
+                  </TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    Date Created
+                  </TableHead>
                   <TableHead className="text-right">Amount</TableHead>
                 </TableRow>
               </TableHeader>
@@ -119,8 +131,12 @@ const JobsTable: FC<TableProps> = ({ jobs, onRowClick }: TableProps) => {
                         {job.Description}
                       </div>
                     </TableCell>
-                    <TableCell className="hidden sm:table-cell">{job.PickUp}</TableCell>
-                    <TableCell className="hidden sm:table-cell">{job.DropOff}</TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      {job.PickUp}
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      {job.DropOff}
+                    </TableCell>
                     <TableCell className="hidden md:table-cell">
                       {new Date(job.dateCreated).toLocaleString()}
                     </TableCell>
@@ -144,8 +160,12 @@ const JobsTable: FC<TableProps> = ({ jobs, onRowClick }: TableProps) => {
                 <TableRow>
                   <TableHead>Title</TableHead>
                   <TableHead className="hidden sm:table-cell">PickUp</TableHead>
-                  <TableHead className="hidden sm:table-cell">DropOff</TableHead>
-                  <TableHead className="hidden md:table-cell">Date Created</TableHead>
+                  <TableHead className="hidden sm:table-cell">
+                    DropOff
+                  </TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    Date Created
+                  </TableHead>
                   <TableHead className="text-right">Amount</TableHead>
                 </TableRow>
               </TableHeader>
@@ -162,8 +182,12 @@ const JobsTable: FC<TableProps> = ({ jobs, onRowClick }: TableProps) => {
                         {job.Description}
                       </div>
                     </TableCell>
-                    <TableCell className="hidden sm:table-cell">{job.PickUp}</TableCell>
-                    <TableCell className="hidden sm:table-cell">{job.DropOff}</TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      {job.PickUp}
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      {job.DropOff}
+                    </TableCell>
                     <TableCell className="hidden md:table-cell">
                       {new Date(job.dateCreated).toLocaleString()}
                     </TableCell>

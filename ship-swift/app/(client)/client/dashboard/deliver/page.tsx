@@ -1,59 +1,76 @@
-'use client'
+"use client";
 
-import React, { useState } from "react"
-import { useUser } from "@clerk/nextjs"
-import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
-import { createJob } from '@/actions/courierJobsActions'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Calendar } from "@/components/ui/calendar"
+import React, { useState } from "react";
+import { useUser } from "@clerk/nextjs";
+import { CalendarIcon, Loader2 } from "lucide-react";
+import { format } from "date-fns";
+import { createJob } from "@/actions/courierJobsActions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { toast } from "@/hooks/use-toast";
 
 export default function ModernJobForm() {
-  const { user, isLoaded } = useUser()
-  const [error, setError] = useState<string | null | undefined>(null)
-  const [success, setSuccess] = useState<string | null>(null)
-  const [date, setDate] = useState<Date>()
+  const { user, isLoaded } = useUser();
+  const [date, setDate] = useState<Date>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    
-    const formData = new FormData(event.currentTarget)
+    event.preventDefault();
+    setIsLoading(true);
+
+    const formData = new FormData(event.currentTarget);
 
     if (isLoaded && user) {
-      formData.append("clientId", "user_2nMx74vPJbPLBQcOsnFcwNUkKF7")
+      formData.append("clientId", user.id);
     } else {
-      setError("User is not authenticated.")
-      return
+      toast({
+        description: "User is not authenticated.",
+        variant: "destructive",
+      });
+      return;
     }
 
-    const response = await createJob(formData)
+    const response = await createJob(formData);
 
     if (response.success) {
-      setSuccess("Job created successfully!")
-      setError(null)
-      event.currentTarget.reset()
-      setDate(undefined)
+      toast({
+        description: "Job created successfully!",
+      });
+      if (event.currentTarget) event.currentTarget.reset();
+      setDate(undefined);
     } else {
-      setError(response.error)
-      setSuccess(null)
+      toast({
+        description: response.error,
+        variant: "destructive",
+      });
     }
-  }
+    setIsLoading(false);
+  };
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle>Create a Job</CardTitle>
-        <CardDescription>Fill out the form below to create a new courier job.</CardDescription>
+        <CardDescription>
+          Fill out the form below to create a new courier job.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -102,17 +119,37 @@ export default function ModernJobForm() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="pickupphonenumber">Pickup Phone Number</Label>
-              <Input id="pickupphonenumber" name="pickupphonenumber" type="tel" required pattern="[0-9]{10}" placeholder="1234567890" />
+              <Input
+                id="pickupphonenumber"
+                name="pickupphonenumber"
+                type="tel"
+                required
+                pattern="[0-9]{10}"
+                placeholder="1234567890"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="dropoffphonenumber">Dropoff Phone Number</Label>
-              <Input id="dropoffphonenumber" name="dropoffphonenumber" type="tel" required pattern="[0-9]{10}" placeholder="1234567890" />
+              <Input
+                id="dropoffphonenumber"
+                name="dropoffphonenumber"
+                type="tel"
+                required
+                pattern="[0-9]{10}"
+                placeholder="1234567890"
+              />
             </div>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="dropoffemail">Dropoff Email</Label>
-            <Input id="dropoffemail" name="dropoffemail" type="email" required placeholder="example@example.com" />
+            <Input
+              id="dropoffemail"
+              name="dropoffemail"
+              type="email"
+              required
+              placeholder="example@example.com"
+            />
           </div>
 
           <div className="space-y-2">
@@ -139,22 +176,27 @@ export default function ModernJobForm() {
                 />
               </PopoverContent>
             </Popover>
-            <Input 
-              id="collectiondate" 
-              name="collectiondate" 
-              type="hidden" 
-              value={date ? format(date, "yyyy-MM-dd") : ''} 
-              required 
+            <Input
+              id="collectiondate"
+              name="collectiondate"
+              type="hidden"
+              value={date ? format(date, "yyyy-MM-dd") : ""}
+              required
             />
           </div>
 
-          <Button type="submit" className="w-full">Create Job</Button>
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Creating
+                Job...
+              </>
+            ) : (
+              "Create Job"
+            )}
+          </Button>
         </form>
       </CardContent>
-      <CardFooter>
-        {error && <p className="text-red-500">{error}</p>}
-        {success && <p className="text-green-500">{success}</p>}
-      </CardFooter>
     </Card>
-  )
+  );
 }

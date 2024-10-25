@@ -19,12 +19,8 @@ export default function ClientNavBar() {
 
   const menuItems = [
     {
-      label: "Deliver", 
-      href: "/client/dashboard/deliver",
-
-    },
-    {
-      label: "Shipments", href: "/client/dashboard/shipments",
+      label: "Shipments",
+      href: "/client/dashboard/shipments",
     },
     { label: "Service Locator", href: "/conversations" },
     {
@@ -42,7 +38,7 @@ export default function ClientNavBar() {
           {/* Left side: Logo and Navigation Menu */}
           <div className="flex items-center space-x-8">
             {/* Logo */}
-            <Link href={'/client'}>
+            <Link href={"/client"}>
               <div className="font-bold text-lg text-gray-800">Ship Swift</div>
             </Link>
 
@@ -51,16 +47,9 @@ export default function ClientNavBar() {
           </div>
 
           {/* Right side: Search Bar and User Button */}
-          <div className="flex items-center space-x-4 w-[20%]">
-            {/* Search Bar */}
-            <Input
-              type="text"
-              placeholder="Search..."
-              className="w-full max-w-lg border-gray-300"
-            />
-
+          <div className="flex justify-end space-x-4 w-[20%]">
             {/* User Button (Clerk) */}
-            <UserButton />
+            <UserButton showName />
           </div>
         </div>
 
