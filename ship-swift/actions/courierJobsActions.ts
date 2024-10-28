@@ -45,7 +45,7 @@ export const createJob = async (jobData: FormData) => {
         dropoffPhoneNumber: dropoffPhoneNumber,
         dropOffEmail: dropOffEmail,
         collectionDate: collectionDate ? new Date(collectionDate) : undefined, // Convert to Date
-        packageStatus: "in progress",
+        packageStatus: "unclaimed",
       },
     });
 

@@ -8,7 +8,7 @@ const font = DM_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Ship Swift",
-  description: "Courier Freelancing",
+  description: "Courier Services",
 };
 
 export default function RootLayout({

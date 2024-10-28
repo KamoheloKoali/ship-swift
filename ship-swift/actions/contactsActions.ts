@@ -15,7 +15,6 @@ export const createcontact = async (contactData: {
       isConversating: true,
     },
   });
-  console.log(newcontact);
   if (newcontact.Id) return { success: true, data: newcontact };
   else return { success: false };
   // } catch (error) {
