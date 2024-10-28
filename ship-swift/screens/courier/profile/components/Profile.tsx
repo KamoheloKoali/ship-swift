@@ -60,10 +60,10 @@ const Profile: React.FC<ProfileProps> = ({ driverData }) => {
             <Avatar className="w-24 h-24 sm:w-36 sm:h-36 border-4 border-background mb-4 sm:mb-0">
               <AvatarImage
                 src={driverData?.photoUrl || ""}
-                alt={`${driverData?.firstName} ${driverData.lastName}`}
+                alt={`${driverData?.firstName} ${driverData?.lastName}`}
               />
               <AvatarFallback>
-                {`${driverData?.firstName[0]}${driverData.lastName[0]}`}
+                {`${driverData?.firstName[0]}${driverData?.lastName[0]}`}
               </AvatarFallback>
             </Avatar>
             <div className="text-center sm:text-left">
@@ -72,7 +72,7 @@ const Profile: React.FC<ProfileProps> = ({ driverData }) => {
               </h2>
               <div className="flex items-center justify-center sm:justify-start mt-1 text-sm text-muted-foreground">
                 <MapPin className="w-4 h-4 mr-1" />
-                {driverData.location || "Location not available"}
+                {driverData?.location || "Location not available"}
               </div>
             </div>
           </div>
@@ -93,22 +93,22 @@ const Profile: React.FC<ProfileProps> = ({ driverData }) => {
               <InfoItem
                 icon={<User className="w-4 h-4 text-primary" />}
                 label="ID No."
-                value={driverData.idNumber || "N/A"}
+                value={driverData?.idNumber || "N/A"}
               />
               <InfoItem
                 icon={<User className="w-4 h-4 text-primary" />}
                 label="Phone No."
-                value={driverData.phoneNumber || "N/A"}
+                value={driverData?.phoneNumber || "N/A"}
               />
               <InfoItem
                 icon={<CreditCard className="w-4 h-4 text-primary" />}
                 label="License No."
-                value={driverData.licenseNumber || "N/A"}
+                value={driverData?.licenseNumber || "N/A"}
               />
               <InfoItem
                 icon={<Calendar className="w-4 h-4 text-primary" />}
                 label="License Expires"
-                value={driverData.licenseExpiry || "N/A"}
+                value={driverData?.licenseExpiry || "N/A"}
               />
             </div>
           </div>
@@ -120,22 +120,22 @@ const Profile: React.FC<ProfileProps> = ({ driverData }) => {
               <InfoItem
                 icon={<Truck className="w-4 h-4 text-primary" />}
                 label="Vehicle Type"
-                value={driverData.vehicleType || "N/A"}
+                value={driverData?.vehicleType || "N/A"}
               />
               <InfoItem
                 icon={<Truck className="w-4 h-4 text-primary" />}
                 label="Plate No."
-                value={driverData.plateNumber || "N/A"}
+                value={driverData?.plateNumber || "N/A"}
               />
               <InfoItem
                 icon={<Shield className="w-4 h-4 text-primary" />}
                 label="VIN"
-                value={driverData.VIN || "N/A"}
+                value={driverData?.VIN || "N/A"}
               />
               <InfoItem
                 icon={<Calendar className="w-4 h-4 text-primary" />}
                 label="Disc Expires"
-                value={driverData.discExpiry || "N/A"}
+                value={driverData?.discExpiry || "N/A"}
               />
             </div>
           </div>
