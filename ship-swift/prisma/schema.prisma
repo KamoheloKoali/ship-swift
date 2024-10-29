@@ -148,8 +148,8 @@ model ActiveJobs {
   driverId     String
   clientId     String
   startDate    String
-  endDate      String @default("Ongoing")
-  jobStatus    String @default("pending")
+  endDate      String? 
+  jobStatus    String @default("ongoing")
 
   CourierJob CourierJobs @relation(fields: [courierJobId], references: [Id])
   Driver     Drivers     @relation(fields: [driverId], references: [Id])
