@@ -1,7 +1,7 @@
-"use server"
-import { PrismaClient } from '@prisma/client';
-import { revalidatePath } from 'next/cache';
-import { getAuth } from '@clerk/nextjs/server';
+"use server";
+import { PrismaClient } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+import { getAuth } from "@clerk/nextjs/server";
 
 const prisma = new PrismaClient();
 
@@ -18,7 +18,9 @@ export const createJob = async (jobData: FormData) => {
     const districtPickUp = jobData.get("districtpickup") as string | null;
     const parcelSize = jobData.get("parcelsize") as string | null;
     const pickupPhoneNumber = jobData.get("pickupphonenumber") as string | null;
-    const dropoffPhoneNumber = jobData.get("dropoffphonenumber") as string | null;
+    const dropoffPhoneNumber = jobData.get("dropoffphonenumber") as
+      | string
+      | null;
     const dropOffEmail = jobData.get("dropoffemail") as string | null;
     const collectionDate = jobData.get("collectiondate") as string | null;
 
@@ -43,12 +45,12 @@ export const createJob = async (jobData: FormData) => {
         dropoffPhoneNumber: dropoffPhoneNumber,
         dropOffEmail: dropOffEmail,
         collectionDate: collectionDate ? new Date(collectionDate) : undefined, // Convert to Date
-        packageStatus: "Pending Collection",
+        packageStatus: "unclaimed",
       },
     });
 
     // Revalidate the cache for the client dashboard path
-    revalidatePath('/client/dashboard');
+    revalidatePath("/client/dashboard");
     return { success: true, data: newJob };
   } catch (error: any) {
     console.error("Detailed error creating job:", error); // Log full error message
@@ -78,7 +80,7 @@ export const getJobById = async (jobId: string) => {
     if (job) {
       return { success: true, data: job };
     } else {
-      return { success: false, error: 'Job not found' };
+      return { success: false, error: "Job not found" };
     }
   } catch (error: any) {
     console.error("Error retrieving job:", error.message);

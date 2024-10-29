@@ -24,7 +24,7 @@ model clients {
   Messages       Messages[]
   clientRequests clientRequests[]
   // Location       Location[]
-  activeJobs  ActiveJobs[]
+  activeJobs     ActiveJobs[]
 }
 
 model Drivers {
@@ -82,7 +82,7 @@ model CourierJobs {
   JobRequests JobRequest[] @relation("CourierJobsToJobRequest") // One-to-many relation with JobRequest
   client      clients      @relation(fields: [clientId], references: [Id])
 
-  activeJobs  ActiveJobs[]
+  activeJobs ActiveJobs[]
 }
 
 model DriverRequests {
@@ -154,7 +154,6 @@ model ActiveJobs {
   CourierJob CourierJobs @relation(fields: [courierJobId], references: [Id])
   Driver     Drivers     @relation(fields: [driverId], references: [Id])
   Client     clients     @relation(fields: [clientId], references: [Id])
-
 }
 
 model Location {
@@ -164,7 +163,6 @@ model Location {
   longitude Float
   accuracy  Float
   driverId  String
-  clientId  String
   // client    clients  @relation(fields: [clientId], references: [Id])
   driver    Drivers  @relation(fields: [driverId], references: [Id])
 }

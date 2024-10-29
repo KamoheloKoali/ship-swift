@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/toaster";
 
 const font = DM_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Ship Swift",
-  description: "Courier Freelancing",
+  description: "Courier Services",
 };
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={font.className}>
           {children}
-          <Toaster richColors />
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

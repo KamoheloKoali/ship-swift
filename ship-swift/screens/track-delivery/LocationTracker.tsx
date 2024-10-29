@@ -40,7 +40,7 @@ const LocationTracker = ({
       width="50"
       height="50"
       viewBox="0 0 24 24"
-      className="animate-pulse"
+      className="animate-ping"
     >
       <circle cx="12" cy="12" r="4" opacity=".35"></circle>
     </svg>

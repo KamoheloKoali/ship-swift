@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -8,6 +8,7 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu"; // Adjust the path as necessary
 import LocationTracker from "@/screens/track-delivery/LocationTracker";
+import { getUserRoleById } from "@/app/utils/getUserRole";
 
 // Define the types for the menu items
 type NavItem = {
@@ -27,6 +28,18 @@ const NavMenu: React.FC<NavMenuProps> = ({ items }) => {
   const updateLocation = async (lat: number, lng: number) => {
     // just here, doing nothing
   };
+  const [isDriver, setIsDriver] = useState(false);
+
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  useEffect(() => {
+    const isDriver = async () => {
+      const response = await getUserRoleById();
+      if (response.data?.driver) {
+        setIsDriver(true);
+      }
+    };
+    isDriver();
+  }, []);
   return (
     <NavigationMenu>
       <NavigationMenuList className="flex flex-col items-start lg:flex-row lg:items-center space-y-4 lg:space-y-0 lg:space-x-6">
@@ -59,9 +72,11 @@ const NavMenu: React.FC<NavMenuProps> = ({ items }) => {
             )}
           </NavigationMenuItem>
         ))}
-        <div className="hidden md:block">
-          <LocationTracker updateLocation={updateLocation} />
-        </div>
+        {isDriver && (
+          <div className="hidden md:block">
+            <LocationTracker updateLocation={updateLocation} />
+          </div>
+        )}
       </NavigationMenuList>
     </NavigationMenu>
   );

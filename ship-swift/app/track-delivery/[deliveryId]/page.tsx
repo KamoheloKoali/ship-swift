@@ -59,12 +59,12 @@ export default function LocationPage({
   const [accuracy, setAccuracy] = useState<number | null>(null); // Accuracy is a number in meters
   const [isClient, setIsClient] = useState(false);
   const [isWindow, setIsWindow] = useState(false);
-  const user = useAuth();
+  const { userId } = useAuth();
 
   useEffect(() => {
     const checkIsAuthorized = async () => {
       // remember to check if driverid or clientid is equal to current userid
-      const response = await getClientById(user.userId || "");
+      const response = await getClientById(userId || "");
       if (response.success) {
         setIsClient(true);
       } else {
@@ -78,23 +78,24 @@ export default function LocationPage({
   useEffect(() => {
     const getCourierLocation = async () => {
       const response = await getLocation(
-        "kamohelo",
+        userId || "",
         "user_2mv81YaZFKahFZXJiU3Yv6gYErn"
       );
 
-      if (response.success) {
+      if (response.success || true) {
         const data = response.data || "";
         console.log(data);
         // Only update if accuracy is within an acceptable range (e.g., less than 100 meters)
-        if (700 < 500) {
-          setPosition([-29, 50]);
-          setAccuracy(accuracy); // Get the accuracy in meters
+        if (400 < 500) {
+          setPosition([-29.303089, 27.518352]);
+          setAccuracy(accuracy || 300); // Get the accuracy in meters
         } else {
           console.warn("Poor accuracy:", accuracy);
           toast.warning("Location accuracy is low: " + accuracy + " meters");
         }
       }
     };
+    getCourierLocation();
   }, [isWindow]);
 
   if (!isClient || !position) {

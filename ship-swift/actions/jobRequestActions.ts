@@ -1,4 +1,6 @@
+"use server";
 import { PrismaClient } from "@prisma/client";
+import { createcontact } from "./contactsActions";
 
 const prisma = new PrismaClient();
 
@@ -23,6 +25,20 @@ export async function getAllJobRequests() {
     },
   });
   return jobRequests;
+}
+
+export async function getJobRequestByDriverIdAndByCourierJobId(
+  driverId: string,
+  courierJobId: string
+) {
+  const jobRequest = await prisma.jobRequest.findMany({
+    where: { driverId: driverId, courierJobId: courierJobId },
+    include: {
+      CourierJob: true,
+      Driver: true,
+    },
+  });
+  return jobRequest;
 }
 
 export async function getJobRequestById(id: string) {
@@ -77,4 +93,38 @@ export async function getJobRequestsByDriverId(driverId: string) {
     },
   });
   return jobRequests;
+}
+
+export async function approveJobRequest(data: {
+  driverId: string;
+  clientId: string;
+  courierJobId: string;
+}) {
+  const request = await getJobRequestByDriverIdAndByCourierJobId(
+    data.driverId,
+    data.courierJobId
+  );
+  const jobRequestId = request[0].Id;
+  const jobRequest = await prisma.jobRequest.update({
+    where: { Id: jobRequestId },
+    data: {
+      isApproved: true,
+    },
+  });
+  const courierJob = await prisma.courierJobs.update({
+    where: {
+      Id: data.courierJobId,
+    },
+    data: {
+      packageStatus: "claimed",
+      approvedRequestId: jobRequestId,
+    },
+  });
+  const contact = await createcontact({
+    clientId: data.clientId,
+    driverId: data.driverId,
+  });
+
+  if (jobRequest.Id && courierJob.Id && contact.success) return "success";
+  return "unsuccessful";
 }

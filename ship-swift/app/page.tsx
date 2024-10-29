@@ -1,3 +1,4 @@
+// landing page here
 import { createClient, getClientById } from "@/actions/clientActions";
 // import { createDriver, getDriverById } from "@/actions/driverActions";
 import getCurrentUserClerkDetails from "@/app/utils/getCurrentUserDetails";

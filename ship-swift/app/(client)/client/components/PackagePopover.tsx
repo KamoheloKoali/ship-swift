@@ -21,7 +21,7 @@ export default function PackagePopover() {
       <PopoverTrigger asChild>
         <Card className="cursor-pointer hover:bg-gray-50 transition-colors">
           <CardContent className="p-0">
-            <Image
+            <img
               src="/assets/client/images/deliver_no_bg.gif"
               alt="Packaging gif"
               className="w-full h-[200px] object-cover"

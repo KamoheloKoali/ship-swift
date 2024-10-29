@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { UserButton } from "@clerk/nextjs";
@@ -16,11 +16,22 @@ import { Bars3Icon } from "@heroicons/react/24/outline";
 import LocationTracker from "@/screens/track-delivery/LocationTracker";
 import { createLocation } from "@/actions/locationAction";
 import { useAuth } from "@clerk/nextjs";
+import { getUserRoleById } from "@/app/utils/getUserRole";
 
 export default function Header() {
   const { userId } = useAuth();
+  const [isDriver, setIsDriver] = useState(false);
 
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  useEffect(() => {
+    const isDriver = async () => {
+      const response = await getUserRoleById();
+      if (response.data?.driver) {
+        setIsDriver(true);
+      }
+    };
+    isDriver();
+  }, []);
   const updateLocation = async (lat: number, lng: number, accuracy: number) => {
     const response = await createLocation({
       clientId: "kamohelo",
@@ -90,9 +101,11 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             {/* Logo */}
             <div className="font-bold text-lg text-gray-800">Ship Swift</div>
-            <div className="md:hidden">
-              <LocationTracker updateLocation={updateLocation} />
-            </div>
+            {isDriver && (
+              <div className="md:hidden">
+                <LocationTracker updateLocation={updateLocation} />
+              </div>
+            )}
           </div>
 
           {/* Menu Button for small screens */}
