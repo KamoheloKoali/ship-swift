@@ -51,7 +51,10 @@ const StatusBadge: FC<{ status: string }> = ({ status }) => (
   </span>
 );
 
-const StatusActions: FC<{ job: ActiveJob; onStatusChange: (jobId: string, newStatus: string) => Promise<void> }> = ({ job, onStatusChange }) => {
+const StatusActions: FC<{
+  job: ActiveJob;
+  onStatusChange: (jobId: string, newStatus: string) => Promise<void>;
+}> = ({ job, onStatusChange }) => {
   const currentActions =
     STATUS_ACTIONS[job.jobStatus as keyof typeof STATUS_ACTIONS] || [];
 
@@ -177,14 +180,16 @@ const JobsTable: FC<TableProps> = ({
                         {job.CourierJob.DropOff}
                       </TableCell>
                       <TableCell className="hidden md:table-cell">
-                        {job.Client.name}
+                        {job.Client.firstName} {job.Client.lastName}
                       </TableCell>
                       <TableCell className="hidden lg:table-cell">
                         {formatDate(job.startDate)}
                       </TableCell>
                       <TableCell className="text-right">
-                        <div>M {job.CourierJob.Budget}</div>
-                        <StatusBadge status={job.jobStatus} />
+                        <div className="flex flex-col items-center">
+                          <div>M {job.CourierJob.Budget}</div>
+                          <StatusBadge status={job.jobStatus} />
+                        </div>
                       </TableCell>
                       <TableCell>
                         <StatusActions

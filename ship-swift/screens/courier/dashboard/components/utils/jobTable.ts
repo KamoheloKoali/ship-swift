@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 // types.ts
 export interface CourierJob {
     Id: string;
@@ -15,6 +17,8 @@ export interface CourierJob {
   }
   
   export interface Client {
+    lastName: ReactNode;
+    firstName: ReactNode;
     Id: string;
     name: string;
   }
