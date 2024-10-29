@@ -55,6 +55,7 @@ model Drivers {
   JobRequests     JobRequest[]
   Location        Location[]
   activeJobs  ActiveJobs[]
+  scheduledTrips ScheduledTrips[]
 }
 
 model CourierJobs {
@@ -166,4 +167,23 @@ model Location {
   clientId  String
   // client    clients  @relation(fields: [clientId], references: [Id])
   driver    Drivers  @relation(fields: [driverId], references: [Id])
+}
+
+model ScheduledTrips {
+  id          String   @id @default(cuid())
+  driverId    String
+  driver      Drivers  @relation(fields: [driverId], references: [Id])
+  fromLocation String
+  toLocation   String
+  routeDetails String
+  tripDate     DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  status       TripStatus @default(SCHEDULED)
+}
+
+enum TripStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
 }

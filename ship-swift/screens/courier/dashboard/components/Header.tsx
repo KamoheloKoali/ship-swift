@@ -43,7 +43,7 @@ export default function Header() {
     },
     {
       label: "My Jobs",
-      href: "/driver/dashboard/myjobs",
+      href: "/driver/dashboard/my-jobs",
     },
     {
       label: "Manage Finances",
