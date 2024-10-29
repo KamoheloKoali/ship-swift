@@ -13,36 +13,6 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@clerk/nextjs";
 import { approveJobRequest } from "@/actions/jobRequestActions";
 
-// interface Driver {
-//     Id: string;
-//     email: string;
-//     phoneNumber?: string;
-//     firstName: string;
-//     lastName: string;
-//     photoUrl: string;
-//     idPhotoUrl: string;
-//     vehicleType?: string;
-//     dateCreated: Date;
-//     dateUpdated: Date;
-//     VIN?: string;
-//     idNumber?: string;
-//     licenseExpiry?: string;
-//     licenseNumber?: string;
-//     plateNumber?: string;
-//     discExpiry?: string;
-//     discPhotoUrl?: string;
-//     licensePhotoUrl?: string;
-//     location?: string;
-//     isVerified: boolean;
-//     Contacts: any[];         // You'll need to define these related types
-//     driveRequests: any[];
-//     Messages: any[];
-//     clientRequests: any[];
-//     JobRequests: any[];
-//     Location: any[];
-//     activeJobs: any[];
-//   }
-
 type Props = {
   driver: any;
   job: any;

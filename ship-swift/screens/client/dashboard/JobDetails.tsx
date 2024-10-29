@@ -5,6 +5,7 @@ import {
   Copy,
   CreditCard,
   Loader2,
+  MessageSquareDot,
   MoreVertical,
   Truck,
 } from "lucide-react";
@@ -15,11 +16,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-} from "@/components/ui/pagination";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +30,7 @@ import { useEffect, useState } from "react";
 import DriverProfile from "./DriverProfile";
 import { toast } from "@/hooks/use-toast";
 import { getJobRequestById } from "@/actions/jobRequestActions";
+import { useRouter } from "next/navigation";
 
 interface SideCardProps {
   job: {
@@ -47,6 +44,8 @@ interface SideCardProps {
       phoneNumber?: string;
     };
     approvedRequestId: string;
+    PickUp: string;
+    DropOff: string;
   };
   requests?: Array<any>;
 }
@@ -55,6 +54,7 @@ export default function Details({ job, requests = [] }: SideCardProps) {
   const [isClaimed, setIsClaimed] = useState(false);
   const [driver, setDriver] = useState<any | null>({});
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   // Move the status check to useEffect to avoid infinite re-renders
   useEffect(() => {
@@ -78,23 +78,33 @@ export default function Details({ job, requests = [] }: SideCardProps) {
   };
 
   const OrderDetails = () => (
-    <div className="grid gap-3">
-      <div className="font-semibold">Order Details</div>
-      <ul className="grid gap-3">
-        <li className="flex items-center justify-between">
-          <span className="text-muted-foreground">
-            Glimmer Lamps x <span>2</span>
-          </span>
-          <span>$250.00</span>
-        </li>
-        <li className="flex items-center justify-between">
-          <span className="text-muted-foreground">
-            Aqua Filters x <span>1</span>
-          </span>
-          <span>$49.00</span>
-        </li>
-      </ul>
-    </div>
+    <>
+      <div className="grid gap-3">
+        <div className="font-semibold">Order Details</div>
+        <ul className="grid gap-3">
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">
+              Glimmer Lamps x <span>2</span>
+            </span>
+            <span>$250.00</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">
+              Aqua Filters x <span>1</span>
+            </span>
+            <span>$49.00</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Pick Up</span>
+            <span>{job.PickUp}</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Drop Off</span>
+            <span>{job.DropOff}</span>
+          </li>
+        </ul>
+      </div>
+    </>
   );
 
   const PriceBreakdown = () => (
@@ -121,7 +131,20 @@ export default function Details({ job, requests = [] }: SideCardProps) {
   const CustomerCourierInformation = () => (
     <>
       <div className="grid gap-3">
-        <div className="font-semibold">Courier Information</div>
+        <div className="font-semibold flex justify-between">
+          <p>Courier Information</p>
+          <Button
+            className=""
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              router.push(`/something`);
+            }}
+          >
+            <MessageSquareDot size={8} />
+            Message
+          </Button>
+        </div>
         <dl className="grid gap-3">
           <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">Courier</dt>
@@ -133,12 +156,6 @@ export default function Details({ job, requests = [] }: SideCardProps) {
             <dt className="text-muted-foreground">Email</dt>
             <dd>
               <a href={`mailto:${driver?.email}`}>{driver?.email}</a>
-            </dd>
-          </div>
-          <div className="flex items-center justify-between">
-            <dt className="text-muted-foreground">Phone</dt>
-            <dd>
-              <a href={`tel:${driver?.phoneNumber}`}>{driver?.phoneNumber}</a>
             </dd>
           </div>
           <div className="flex items-center justify-between">
@@ -163,14 +180,14 @@ export default function Details({ job, requests = [] }: SideCardProps) {
               <a href={`mailto:${job.client?.email}`}>{job.client?.email}</a>
             </dd>
           </div>
-          <div className="flex items-center justify-between">
+          {/* <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">Phone</dt>
             <dd>
               <a href={`tel:${job.client?.phoneNumber}`}>
                 {job.client?.phoneNumber}
               </a>
             </dd>
-          </div>
+          </div> */}
         </dl>
       </div>
     </>
