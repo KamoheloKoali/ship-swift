@@ -58,7 +58,7 @@ const ChatWrapper = ({ children, conversationId }: Props) => {
   return (
     <>
       {isLoading ? (
-        <div className="h-screen w-full">
+        <div className="h-screen w-full flex justify-center items-center">
           <Loader2 className="animate-spin h-8 w-8" />
         </div>
       ) : (
