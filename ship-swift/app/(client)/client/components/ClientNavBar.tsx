@@ -22,10 +22,6 @@ export default function ClientNavBar() {
       label: "Shipments",
       href: "/client/dashboard/shipments",
     },
-    { label: "Service Locator", href: "/conversations" },
-    {
-      label: "Address book",
-    },
     { label: "Chats", href: "/conversations" },
   ];
 
