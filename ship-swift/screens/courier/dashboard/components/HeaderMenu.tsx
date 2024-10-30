@@ -8,7 +8,6 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu"; // Adjust the path as necessary
 import LocationTracker from "@/screens/track-delivery/LocationTracker";
-import { getUserRoleById } from "@/app/utils/getUserRole";
 
 // Define the types for the menu items
 type NavItem = {
@@ -22,8 +21,8 @@ type NavItem = {
 
 interface NavMenuProps {
   items: NavItem[]; // Array of navigation items
-  isDriver: Boolean;
-  hasActiveJobs: Boolean;
+  isDriver?: Boolean;
+  hasActiveJobs?: Boolean;
 }
 
 const NavMenu: React.FC<NavMenuProps> = ({
