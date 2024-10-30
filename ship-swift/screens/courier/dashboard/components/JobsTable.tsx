@@ -41,7 +41,7 @@ interface TableProps {
   isLoading?: boolean;
 }
 
-const StatusBadge: FC<{ status: string }> = ({ status }) => (
+export const StatusBadge: FC<{ status: string }> = ({ status }) => (
   <span
     className={`px-2 py-1 rounded-full text-xs font-medium ${
       STATUS_STYLES[status as keyof typeof STATUS_STYLES]
@@ -58,7 +58,9 @@ const StatusActions: FC<{
   const currentActions =
     STATUS_ACTIONS[job.jobStatus as keyof typeof STATUS_ACTIONS] || [];
 
-  // if (currentActions.length === 0) return null;
+  if (!currentActions.length) {
+    return null;
+  }
 
   return (
     <DropdownMenu>
@@ -88,7 +90,6 @@ const StatusActions: FC<{
     </DropdownMenu>
   );
 };
-
 const LoadingState: FC = () => (
   <Card>
     <CardContent className="p-6">

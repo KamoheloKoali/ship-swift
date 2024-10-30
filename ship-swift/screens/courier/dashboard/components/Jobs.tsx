@@ -46,6 +46,7 @@ const Jobs = () => {
 
   const handleJobSelect = (job: JobRequest | null) => {
     setSelectedJob(job);
+
     setIsModalOpen(!!job);
   };
 
