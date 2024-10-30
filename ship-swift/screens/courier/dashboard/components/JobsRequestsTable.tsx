@@ -57,9 +57,23 @@ const JobsRequestsTable: React.FC<JobsRequestsTableProps> = ({
       try {
         const result: JobsResponse = await getAllJobs();
         if (result.success && result.data) {
-          setJobs(result.data);
-          setSelectedJob(result.data[0]); // Set the first job as selected by default
-          onJobSelect(result.data[0]);
+          // Sort the jobs according to sortType immediately
+          const sortedData = result.data.sort((a, b) => {
+            if (sortType === "mostRecent") {
+              return new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime();
+            } else if (sortType === "highestPaying") {
+              return parseFloat(b.Budget || "0") - parseFloat(a.Budget || "0");
+            }
+            return 0;
+          });
+    
+          setJobs(sortedData);
+    
+          if (sortedData.length > 0) {
+            // Select the first job in the sorted list
+            setSelectedJob(sortedData[0]);
+            onJobSelect(sortedData[0]);
+          }
         } else {
           setError(result.error || "Failed to fetch jobs");
         }

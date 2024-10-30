@@ -58,7 +58,9 @@ const StatusActions: FC<{
   const currentActions =
     STATUS_ACTIONS[job.jobStatus as keyof typeof STATUS_ACTIONS] || [];
 
-  // if (currentActions.length === 0) return null;
+  if (!currentActions.length) {
+    return null;
+  }
 
   return (
     <DropdownMenu>
@@ -88,7 +90,6 @@ const StatusActions: FC<{
     </DropdownMenu>
   );
 };
-
 const LoadingState: FC = () => (
   <Card>
     <CardContent className="p-6">
