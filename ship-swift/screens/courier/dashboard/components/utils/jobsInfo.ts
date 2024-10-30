@@ -125,7 +125,7 @@ export async function createContact(
     driverId: driverId,
   };
   const isContact = await createcontact(contactData);
-  if (isContact) {
+  if (isContact.success) {
     return true;
   }
   return false;
