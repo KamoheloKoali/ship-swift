@@ -30,7 +30,7 @@ export default function MyJobs() {
       const response = await getAllActiveJobsByDriverId(userId || "");
       if (response && response.length > 0) {
         setJobs(response);
-        console.log("jobs", response);
+        setSelectedJob(response[0]);
       } else if (response) {
         setError("An unexpected error occured");
       } else {

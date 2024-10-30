@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -65,12 +65,17 @@ interface JobDetailsProps {
   };
 }
 const StatusBadge: React.FC<{ status: string }> = ({ status }) => (
-  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-    status === 'ongoing' ? 'bg-blue-100 text-blue-800' :
-    status === 'completed' ? 'bg-green-100 text-green-800' :
-    status === 'cancelled' ? 'bg-red-100 text-red-800' :
-    'bg-gray-100 text-gray-800'
-  }`}>
+  <span
+    className={`px-2 py-1 rounded-full text-xs font-medium ${
+      status === "ongoing"
+        ? "bg-blue-100 text-blue-800"
+        : status === "completed"
+        ? "bg-green-100 text-green-800"
+        : status === "cancelled"
+        ? "bg-red-100 text-red-800"
+        : "bg-gray-100 text-gray-800"
+    }`}
+  >
     {status.charAt(0).toUpperCase() + status.slice(1)}
   </span>
 );
@@ -106,12 +111,6 @@ export default function Details({ job }: JobDetailsProps) {
             </CardDescription>
           </div>
           <div className="ml-auto flex items-center gap-1">
-            <Button size="sm" variant="outline" className="h-8 gap-1">
-              <Truck className="h-3.5 w-3.5" />
-              <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                View Map
-              </span>
-            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button size="icon" variant="outline" className="h-8 w-8">
@@ -123,7 +122,9 @@ export default function Details({ job }: JobDetailsProps) {
                 <DropdownMenuItem>Edit</DropdownMenuItem>
                 <DropdownMenuItem>Export</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-red-600">Cancel</DropdownMenuItem>
+                <DropdownMenuItem className="text-red-600">
+                  Cancel
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -167,15 +168,25 @@ export default function Details({ job }: JobDetailsProps) {
               <dl className="grid gap-3">
                 <div className="flex items-center justify-between">
                   <dt className="text-muted-foreground">Name</dt>
-                  <dd>{job.Client.firstName} {job.Client.lastName}</dd>
+                  <dd>
+                    {job.Client.firstName} {job.Client.lastName}
+                  </dd>
                 </div>
                 <div className="flex items-center justify-between">
                   <dt className="text-muted-foreground">Email</dt>
-                  <dd><a href={`mailto:${job.Client.email}`}>{job.Client.email}</a></dd>
+                  <dd>
+                    <a href={`mailto:${job.Client.email}`}>
+                      {job.Client.email}
+                    </a>
+                  </dd>
                 </div>
                 <div className="flex items-center justify-between">
                   <dt className="text-muted-foreground">Phone</dt>
-                  <dd><a href={`tel:${job.Client.phoneNumber}`}>{job.Client.phoneNumber}</a></dd>
+                  <dd>
+                    <a href={`tel:${job.Client.phoneNumber}`}>
+                      {job.Client.phoneNumber}
+                    </a>
+                  </dd>
                 </div>
               </dl>
             </div>
@@ -185,11 +196,17 @@ export default function Details({ job }: JobDetailsProps) {
               <dl className="grid gap-3">
                 <div className="flex items-center justify-between">
                   <dt className="text-muted-foreground">Name</dt>
-                  <dd>{job.Driver.firstName} {job.Driver.lastName}</dd>
+                  <dd>
+                    {job.Driver.firstName} {job.Driver.lastName}
+                  </dd>
                 </div>
                 <div className="flex items-center justify-between">
                   <dt className="text-muted-foreground">Phone</dt>
-                  <dd><a href={`tel:${job.Driver.phoneNumber}`}>{job.Driver.phoneNumber}</a></dd>
+                  <dd>
+                    <a href={`tel:${job.Driver.phoneNumber}`}>
+                      {job.Driver.phoneNumber}
+                    </a>
+                  </dd>
                 </div>
                 <div className="flex items-center justify-between">
                   <dt className="text-muted-foreground">Vehicle Type</dt>
@@ -214,7 +231,8 @@ export default function Details({ job }: JobDetailsProps) {
         </CardContent>
         <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
           <div className="text-xs text-muted-foreground">
-            Collection Date: {new Date(job.CourierJob.collectionDate).toLocaleString()}
+            Collection Date:{" "}
+            {new Date(job.CourierJob.collectionDate).toLocaleString()}
           </div>
           <Pagination className="ml-auto mr-0 w-auto">
             <PaginationContent>
