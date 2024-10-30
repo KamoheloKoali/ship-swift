@@ -48,7 +48,7 @@ const ConversationsLayout = async ({ children }: Props) => {
       if (Array.isArray(contacts) && contacts.length > 0) {
         contactsWithNames = await Promise.all(
           contacts.map(async (request: any) => {
-            const clientData = await getClientById(request.sclientId); // Fetch client by senderId
+            const clientData = await getClientById(request.clientId); // Fetch client by senderId
             const fullName = clientData.success
               ? `${clientData.data?.firstName} ${clientData.data?.lastName}`
               : "Unknown Client";
@@ -62,6 +62,8 @@ const ConversationsLayout = async ({ children }: Props) => {
         );
       }
     }
+
+    console.log(contactsWithNames);
 
     return (
       <>
