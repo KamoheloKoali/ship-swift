@@ -72,7 +72,7 @@ const ChatWrapper = ({ children, conversationId }: Props) => {
                   onClick={() => {
                     setFullName(`${driver?.firstName} ${driver?.lastName}`);
                     setCallReceiverId(driver?.Id);
-                    router.push(`/room/${conversationId}`);
+                    window.open(`/room/${conversationId}`, "_blank");
                   }}
                   className="cursor-pointer"
                 />
