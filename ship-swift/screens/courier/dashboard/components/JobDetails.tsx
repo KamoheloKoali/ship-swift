@@ -29,6 +29,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { StatusBadge } from "./JobsTable";
 
 interface JobDetailsProps {
   job: {
@@ -64,21 +65,6 @@ interface JobDetailsProps {
     };
   };
 }
-const StatusBadge: React.FC<{ status: string }> = ({ status }) => (
-  <span
-    className={`px-2 py-1 rounded-full text-xs font-medium ${
-      status === "ongoing"
-        ? "bg-blue-100 text-blue-800"
-        : status === "completed"
-        ? "bg-green-100 text-green-800"
-        : status === "cancelled"
-        ? "bg-red-100 text-red-800"
-        : "bg-gray-100 text-gray-800"
-    }`}
-  >
-    {status.charAt(0).toUpperCase() + status.slice(1)}
-  </span>
-);
 
 export default function Details({ job }: JobDetailsProps) {
   return (

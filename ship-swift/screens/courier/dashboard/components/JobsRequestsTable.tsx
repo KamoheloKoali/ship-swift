@@ -58,6 +58,8 @@ const JobsRequestsTable: React.FC<JobsRequestsTableProps> = ({
         const result: JobsResponse = await getAllJobs();
         if (result.success && result.data) {
           setJobs(result.data);
+          setSelectedJob(result.data[0]); // Set the first job as selected by default
+          onJobSelect(result.data[0]);
         } else {
           setError(result.error || "Failed to fetch jobs");
         }

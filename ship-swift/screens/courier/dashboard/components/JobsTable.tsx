@@ -41,7 +41,7 @@ interface TableProps {
   isLoading?: boolean;
 }
 
-const StatusBadge: FC<{ status: string }> = ({ status }) => (
+export const StatusBadge: FC<{ status: string }> = ({ status }) => (
   <span
     className={`px-2 py-1 rounded-full text-xs font-medium ${
       STATUS_STYLES[status as keyof typeof STATUS_STYLES]
