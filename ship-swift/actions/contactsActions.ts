@@ -7,16 +7,22 @@ export const createcontact = async (contactData: {
   clientId: string;
   driverId: string;
 }) => {
-  // try {
-  const newcontact = await prisma.contacts.create({
-    data: {
-      clientId: contactData.clientId,
-      driverId: contactData.driverId,
-      isConversating: true,
-    },
-  });
-  if (newcontact.Id) return { success: true, data: newcontact };
-  else return { success: false };
+  const contact = await getcontact(contactData.clientId, contactData.driverId);
+
+  if (contact.error === "contact not found") {
+    // try {
+    const newcontact = await prisma.contacts.create({
+      data: {
+        clientId: contactData.clientId,
+        driverId: contactData.driverId,
+        isConversating: true,
+      },
+    });
+    if (newcontact.Id) return { success: true, data: newcontact };
+    else return { success: false };
+  } else {
+    return { success: false, error: "contact already exists" };
+  }
   // } catch (error) {
   //   return { success: false, error: "Error creating contact" };
   // }
