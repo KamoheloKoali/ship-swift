@@ -1,7 +1,7 @@
-"use server"
-import { PrismaClient } from '@prisma/client';
-import { revalidatePath } from 'next/cache';
-import { getAuth } from '@clerk/nextjs/server';
+"use server";
+import { PrismaClient } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+import { getAuth } from "@clerk/nextjs/server";
 
 const prisma = new PrismaClient();
 
@@ -12,15 +12,17 @@ export const createJob = async (jobData: FormData) => {
     const description = jobData.get("description") as string | null;
     const budget = jobData.get("budget") as string | null;
     const clientId = jobData.get("clientId") as string | null;
-    const dropOff = jobData.get("DropOff") as string | null;
-    const pickUp = jobData.get("PickUp") as string | null;
-    const districtDropOff = jobData.get("districtdropoff") as string | null;
-    const districtPickUp = jobData.get("districtpickup") as string | null;
-    const parcelSize = jobData.get("parcelsize") as string | null;
-    const pickupPhoneNumber = jobData.get("pickupphonenumber") as string | null;
-    const dropoffPhoneNumber = jobData.get("dropoffphonenumber") as string | null;
-    const dropOffEmail = jobData.get("dropoffemail") as string | null;
-    const collectionDate = jobData.get("collectiondate") as string | null;
+    const dropOff = jobData.get("dropOff") as string | null;
+    const pickUp = jobData.get("pickUp") as string | null;
+    const districtDropOff = jobData.get("districtDropoff") as string | null;
+    const districtPickUp = jobData.get("districtPickup") as string | null;
+    const parcelSize = jobData.get("parcelSize") as string | null;
+    const pickupPhoneNumber = jobData.get("pickupPhoneNumber") as string | null;
+    const dropoffPhoneNumber = jobData.get("dropoffPhoneNumber") as
+      | string
+      | null;
+    const dropOffEmail = jobData.get("dropoffEmail") as string | null;
+    const collectionDate = jobData.get("collectionDate") as string | null;
 
     // Ensure none of the required fields are null or undefined
     if (!clientId) {
@@ -43,12 +45,12 @@ export const createJob = async (jobData: FormData) => {
         dropoffPhoneNumber: dropoffPhoneNumber,
         dropOffEmail: dropOffEmail,
         collectionDate: collectionDate ? new Date(collectionDate) : undefined, // Convert to Date
-        packageStatus: "Pending Collection",
+        packageStatus: "unclaimed",
       },
     });
 
     // Revalidate the cache for the client dashboard path
-    revalidatePath('/client/dashboard');
+    revalidatePath("/client/dashboard");
     return { success: true, data: newJob };
   } catch (error: any) {
     console.error("Detailed error creating job:", error); // Log full error message
@@ -78,7 +80,7 @@ export const getJobById = async (jobId: string) => {
     if (job) {
       return { success: true, data: job };
     } else {
-      return { success: false, error: 'Job not found' };
+      return { success: false, error: "Job not found" };
     }
   } catch (error: any) {
     console.error("Error retrieving job:", error.message);

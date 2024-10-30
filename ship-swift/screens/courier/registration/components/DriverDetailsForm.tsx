@@ -27,6 +27,8 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ url, alt }) =>
       src={url}
       alt={alt}
       className="w-full h-40 object-cover rounded-md shadow-sm"
+      width={500}
+      height={500}
     />
   ) : (
     <div className="w-full h-40 bg-gray-100 flex items-center justify-center rounded-md">

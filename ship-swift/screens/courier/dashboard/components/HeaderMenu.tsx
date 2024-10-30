@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -8,6 +8,7 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu"; // Adjust the path as necessary
 import LocationTracker from "@/screens/track-delivery/LocationTracker";
+import { getUserRoleById } from "@/app/utils/getUserRole";
 
 // Define the types for the menu items
 type NavItem = {
@@ -21,9 +22,15 @@ type NavItem = {
 
 interface NavMenuProps {
   items: NavItem[]; // Array of navigation items
+  isDriver: Boolean;
+  hasActiveJobs: Boolean;
 }
 
-const NavMenu: React.FC<NavMenuProps> = ({ items }) => {
+const NavMenu: React.FC<NavMenuProps> = ({
+  items,
+  isDriver,
+  hasActiveJobs,
+}) => {
   const updateLocation = async (lat: number, lng: number) => {
     // just here, doing nothing
   };
@@ -59,9 +66,11 @@ const NavMenu: React.FC<NavMenuProps> = ({ items }) => {
             )}
           </NavigationMenuItem>
         ))}
-        <div className="hidden md:block">
-          <LocationTracker updateLocation={updateLocation} />
-        </div>
+        {isDriver && hasActiveJobs && (
+          <div className="hidden md:block">
+            <LocationTracker updateLocation={updateLocation} />
+          </div>
+        )}
       </NavigationMenuList>
     </NavigationMenu>
   );

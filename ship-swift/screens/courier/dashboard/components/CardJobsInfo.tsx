@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { JobRequest } from "./JobsRequestsTable";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -13,8 +14,18 @@ import {
 import { UserPlus, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
-import { handleApply, handleApplied } from "./utils/jobRequests";
-import { Skeleton } from "@/components/ui/skeleton";
+import {
+  ApplicationStatus,
+  checkJobApplication,
+  applyForJob,
+  formatClientName,
+  formatDate,
+  formatBudget,
+  checkContact,
+  createContact,
+  messageContact,
+} from "./utils/jobsInfo";
+import CardJobsLoad from "./CardJobsLoad";
 
 interface JobsInfoProps {
   job: JobRequest | null;
@@ -22,60 +33,36 @@ interface JobsInfoProps {
 }
 
 const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
+  const router = useRouter();
   const { userId } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [applicationStatus, setApplicationStatus] = useState<
-    "not_applied" | "applying" | "applied" | "error"
-  >("not_applied");
+  const [applicationStatus, setApplicationStatus] =
+    useState<ApplicationStatus>("not_applied");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isContact, setIsContact] = useState<boolean>(false);
+  const [isContactLoading, setIsContactLoading] = useState<boolean>(false);
+  const [isMessaging, setIsMessaging] = useState<boolean>(false);
 
   useEffect(() => {
-    const checkJobApplication = async () => {
+    const initializeJobApplication = async () => {
       if (userId && job) {
         setLoading(true);
-        try {
-          const result = await handleApplied(userId);
-          if (result.success) {
-            const hasAlreadyApplied = result.data.some(
-              (request) => request.CourierJob.Id === job.Id
-            );
-            setApplicationStatus(hasAlreadyApplied ? "applied" : "not_applied");
-          } else {
-            setApplicationStatus("error");
-            setErrorMessage(
-              result.error || "Failed to check application status"
-            );
-          }
-        } catch (error) {
-          console.error("Error checking job application:", error);
-          setApplicationStatus("error");
-          setErrorMessage("An unexpected error occurred");
-        } finally {
-          setLoading(false);
-        }
+        const result = await checkJobApplication(userId, job);
+        setApplicationStatus(result.status);
+        setErrorMessage(result.errorMessage);
+        setLoading(false);
       }
     };
 
-    checkJobApplication();
+    initializeJobApplication();
   }, [userId, job]);
 
   const jobApply = async () => {
     if (userId && job?.Id) {
       setApplicationStatus("applying");
-      try {
-        const result = await handleApply(job.Id, userId);
-        if (result.success) {
-          setApplicationStatus("applied");
-        } else {
-          throw new Error(result.error);
-        }
-      } catch (error) {
-        console.error("Error applying for job:", error);
-        setApplicationStatus("error");
-        setErrorMessage(
-          error instanceof Error ? error.message : "Failed to apply for job"
-        );
-      }
+      const result = await applyForJob(job.Id, userId);
+      setApplicationStatus(result.status);
+      setErrorMessage(result.errorMessage);
     }
   };
 
@@ -122,47 +109,110 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
     }
   };
 
+  useEffect(() => {
+    const checkContactStatus = async () => {
+      if (userId && job?.client.Id) {
+        setIsContactLoading(true);
+        try {
+          const hasContact = await checkContact(job.client.Id, userId);
+          setIsContact(hasContact.success);
+        } catch (error) {
+          console.error("Error checking contact status:", error);
+        } finally {
+          setIsContactLoading(false);
+        }
+      }
+    };
+
+    checkContactStatus();
+  }, [userId, job?.client.Id]);
+
+  const handleCreateContact = async () => {
+    if (userId && job?.client.Id) {
+      setIsContactLoading(true);
+      try {
+        const result = await createContact(userId, job.client.Id);
+        if (result) {
+          setIsContact(true);
+        }
+      } catch (error) {
+        console.error("Error creating contact:", error);
+      } finally {
+        setIsContactLoading(false);
+      }
+    }
+  };
+
+  const handleMessage = async () => {
+    if (userId && job?.client.Id) {
+      setIsMessaging(true);
+      try {
+        const conversationId = await messageContact(job.client.Id, userId);
+        console.log("Conversation ID:", conversationId);
+
+        if (conversationId) {
+          router.push(`/conversations/${conversationId}`);
+        } else {
+          console.error("No conversation ID was returned");
+        }
+      } catch (error) {
+        console.error("Error navigating to conversation:", error);
+      } finally {
+        setIsMessaging(false);
+      }
+    } else {
+      console.warn("Missing user or client ID");
+    }
+  };
+
+  const renderContactButton = () => {
+    if (isContactLoading) {
+      return (
+        <Button
+          className="flex items-center space-x-2 border border-gray-500 bg-gray-100 text-gray-700 px-4 py-2 rounded-md my-2 cursor-not-allowed"
+          disabled
+        >
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span>Loading...</span>
+        </Button>
+      );
+    }
+
+    if (isContact) {
+      return (
+        <Button
+          className="flex text-black items-center justify-center space-x-2 border border-black bg-white hover:bg-gray-100 transition-colors duration-200 my-2 w-full"
+          onClick={handleMessage}
+        >
+          <CheckCheck className="w-4 h-4" />
+          <span>Message</span>
+        </Button>
+      );
+    }
+
+    return (
+      <Button
+        className="flex items-center justify-center space-x-2 border border-black bg-white hover:bg-gray-100 transition-colors duration-200 my-2 w-full"
+        variant="outline"
+        onClick={handleCreateContact}
+      >
+        <UserPlus className="w-4 h-4 text-black" />
+        <span className="text-black">Connect</span>
+      </Button>
+    );
+  };
+
   if (!job) return null;
 
-  if (loading) {
-    return (
-      <div className="p-4 min-h-screen flex items-center justify-center w-full h-full z-50">
-        <Card className="w-full max-w-lg bg-white shadow-xl rounded-xl overflow-hidden">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <Skeleton className="h-12 w-12 rounded-full" />
-                <div>
-                  <Skeleton className="h-4 w-24 mb-2" />
-                  <Skeleton className="h-3 w-16" />
-                </div>
-              </div>
-              <div className="flex flex-col w-full max-w-[200px]">
-                <Skeleton className="h-10 w-full rounded-md mb-2" />
-                <Skeleton className="h-10 w-full rounded-md" />
-              </div>
-            </div>
-            <Skeleton className="h-6 w-3/4 mb-2" />
-            <Skeleton className="h-4 w-full mb-4" />
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              {[...Array(4)].map((_, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <Skeleton className="h-4 w-4 rounded-full" />
-                  <Skeleton className="h-4 w-full" />
-                </div>
-              ))}
-            </div>
-            <Skeleton className="h-16 w-full rounded-lg" />
-          </CardContent>
-        </Card>
-      </div>
-    );
+  if (loading || isContactLoading || isMessaging) {
+    return <CardJobsLoad />;
   }
 
-  const fullName = `${job.client.firstName} ${job.client.lastName}`;
-  const initials = `${job.client.firstName.charAt(
-    0
-  )}${job.client.lastName.charAt(0)}`;
+  const { fullName, initials } = formatClientName(
+    job.client.firstName,
+    job.client.lastName
+  );
+
   return (
     <div className="p-4 min-h-screen flex items-center justify-center w-full h-full z-50">
       <Card className="w-full max-w-lg bg-white shadow-xl rounded-xl overflow-hidden">
@@ -185,13 +235,7 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
             </div>
             <div className="flex flex-col">
               {renderApplyButton()}
-              <Button
-                className="flex items-center space-x-2 border border-black bg-white hover:bg-gray-100 transition-colors duration-200 my-2"
-                variant="outline"
-              >
-                <UserPlus className="w-4 h-4 text-black" />
-                <span className="text-black">Connect</span>
-              </Button>
+              {renderContactButton()}
             </div>
           </div>
           <div className="mb-4">
@@ -222,7 +266,7 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
               <Calendar className="w-4 h-4" />
               <span className="text-sm">
                 <div className="font-medium">Job Date</div>
-                {job.collectionDate.toLocaleDateString()}
+                {formatDate(job.collectionDate)}
               </span>
             </div>
             <div className="flex items-center space-x-2 text-gray-600">
@@ -238,13 +282,13 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
             <div className="flex items-center space-x-2">
               <Clock className="w-4 h-4 text-gray-500" />
               <span className="text-sm text-gray-600">
-                Posted {job.dateCreated.toLocaleDateString()}
+                Posted {formatDate(job.dateCreated)}
               </span>
             </div>
             <div className="flex items-center space-x-1">
               <DollarSign className="w-4 h-4 text-green-600" />
               <span className="font-bold text-gray-800">
-                M{job.Budget || "0"}
+                {formatBudget(job.Budget)}
               </span>
             </div>
           </div>
@@ -253,4 +297,5 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
     </div>
   );
 };
+
 export default CardJobsInfo;

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { UserButton } from "@clerk/nextjs";
@@ -16,14 +16,30 @@ import { Bars3Icon } from "@heroicons/react/24/outline";
 import LocationTracker from "@/screens/track-delivery/LocationTracker";
 import { createLocation } from "@/actions/locationAction";
 import { useAuth } from "@clerk/nextjs";
+import { getUserRoleById } from "@/app/utils/getUserRole";
+import { getAllActiveJobsByDriverId } from "@/actions/activeJobsActions";
 
 export default function Header() {
   const { userId } = useAuth();
+  const [isDriver, setIsDriver] = useState(false);
+  const [hasActiveJobs, setHasActiveJobs] = useState(false);
 
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  useEffect(() => {
+    const isDriver = async () => {
+      const [response, activeJobs] = await Promise.all([
+        getUserRoleById(),
+        getAllActiveJobsByDriverId(userId || ""),
+      ]);
+      if (response.data?.driver && activeJobs && activeJobs?.length > 0) {
+        setIsDriver(true);
+        setHasActiveJobs(true);
+      }
+    };
+    isDriver();
+  }, []);
   const updateLocation = async (lat: number, lng: number, accuracy: number) => {
     const response = await createLocation({
-      clientId: "kamohelo",
       driverId: userId || "",
       latitude: lat,
       longitude: lng,
@@ -43,7 +59,7 @@ export default function Header() {
     },
     {
       label: "My Jobs",
-      href: "/driver/dashboard/myjobs",
+      href: "/driver/dashboard/my-jobs",
     },
     {
       label: "Manage Finances",
@@ -68,7 +84,11 @@ export default function Header() {
             <div className="font-bold text-lg text-gray-800">Ship Swift</div>
 
             {/* Navigation Menu for larger screens */}
-            <NavMenu items={menuItems} />
+            <NavMenu
+              items={menuItems}
+              isDriver={isDriver}
+              hasActiveJobs={hasActiveJobs}
+            />
           </div>
 
           {/* Right side: Search Bar and User Button */}
@@ -90,9 +110,11 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             {/* Logo */}
             <div className="font-bold text-lg text-gray-800">Ship Swift</div>
-            <div className="md:hidden">
-              <LocationTracker updateLocation={updateLocation} />
-            </div>
+            {isDriver && hasActiveJobs && (
+              <div className="md:hidden">
+                <LocationTracker updateLocation={updateLocation} />
+              </div>
+            )}
           </div>
 
           {/* Menu Button for small screens */}
@@ -110,7 +132,11 @@ export default function Header() {
               </SheetHeader>
 
               {/* Navigation Menu in Sheet */}
-              <NavMenu items={menuItems} />
+              <NavMenu
+                items={menuItems}
+                isDriver={isDriver}
+                hasActiveJobs={hasActiveJobs}
+              />
             </SheetContent>
           </Sheet>
         </div>

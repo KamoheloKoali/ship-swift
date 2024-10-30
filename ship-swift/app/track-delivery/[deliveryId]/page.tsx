@@ -5,10 +5,13 @@ import dynamic from "next/dynamic";
 import { useMap } from "react-leaflet"; // Import the useMap hook directly
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
 import { getClientById } from "@/actions/clientActions";
 import { getLocation } from "@/actions/locationAction";
+import { getJobRequestById } from "@/actions/jobRequestActions";
+import { toast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
+import supabase from "@/app/utils/supabase";
 
 // Dynamically import components (only those depending on DOM)
 const MapContainer = dynamic(
@@ -59,12 +62,12 @@ export default function LocationPage({
   const [accuracy, setAccuracy] = useState<number | null>(null); // Accuracy is a number in meters
   const [isClient, setIsClient] = useState(false);
   const [isWindow, setIsWindow] = useState(false);
-  const user = useAuth();
+  const { userId } = useAuth();
 
   useEffect(() => {
     const checkIsAuthorized = async () => {
       // remember to check if driverid or clientid is equal to current userid
-      const response = await getClientById(user.userId || "");
+      const response = await getClientById(userId || "");
       if (response.success) {
         setIsClient(true);
       } else {
@@ -76,39 +79,101 @@ export default function LocationPage({
   }, []);
 
   useEffect(() => {
-    const getCourierLocation = async () => {
-      const response = await getLocation(
-        "kamohelo",
-        "user_2mv81YaZFKahFZXJiU3Yv6gYErn"
-      );
+    const setupLocationTracking = async () => {
+      try {
+        const job = await getJobRequestById(params.deliveryId);
 
-      if (response.success) {
-        const data = response.data || "";
-        console.log(data);
-        // Only update if accuracy is within an acceptable range (e.g., less than 100 meters)
-        if (700 < 500) {
-          setPosition([-29, 50]);
-          setAccuracy(accuracy); // Get the accuracy in meters
-        } else {
-          console.warn("Poor accuracy:", accuracy);
-          toast.warning("Location accuracy is low: " + accuracy + " meters");
+        if (!job?.Id || !job.driverId) {
+          toast({
+            description: "Could not find delivery job information",
+            variant: "destructive",
+          });
+          return;
         }
+
+        // Get initial location using existing getLocation function
+        const response = await getLocation(job.driverId);
+
+        if (!response.success) {
+          toast({
+            description: response.error,
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const latestLocation = response.data?.latest;
+
+        if (latestLocation) {
+          setAccuracy(latestLocation.accuracy);
+          if (latestLocation.accuracy <= 500) {
+            setPosition([latestLocation.latitude, latestLocation.longitude]);
+          } else {
+            console.warn("Poor accuracy:", latestLocation.accuracy);
+            toast({
+              description: `Location accuracy is low: ${latestLocation.accuracy} meters`,
+              variant: "destructive",
+            });
+          }
+        }
+
+        // Subscribe to realtime updates
+        const subscription = supabase
+          .channel("location-updates")
+          .on(
+            "postgres_changes",
+            {
+              event: "INSERT",
+              schema: "public",
+              table: "Location",
+              filter: `driverId=eq.${job.driverId}`,
+            },
+            (payload) => {
+              const newLocation = payload.new;
+              setAccuracy(newLocation.accuracy);
+
+              if (newLocation.accuracy <= 500) {
+                setPosition([newLocation.latitude, newLocation.longitude]);
+              } else {
+                console.warn("Poor accuracy:", newLocation.accuracy);
+                toast({
+                  description: `Location accuracy is low: ${newLocation.accuracy} meters`,
+                  variant: "destructive",
+                });
+              }
+            }
+          )
+          .subscribe();
+
+        // Cleanup subscription
+        return () => {
+          subscription.unsubscribe();
+        };
+      } catch (error) {
+        console.error("Error setting up location tracking:", error);
+        toast({
+          description: "Error setting up location tracking",
+          variant: "destructive",
+        });
       }
     };
-  }, [isWindow]);
 
-  if (!isClient || !position) {
-    return (
-      <div className="h-screen w-full flex justify-center items-center">
-        Getting courier's location...
-      </div>
-    );
-  }
+    setupLocationTracking();
+  }, [params.deliveryId]);
 
   if (accuracy && accuracy > 500) {
     return (
       <div className="h-screen w-full flex justify-center items-center">
         Low Accuracy: {accuracy} meters
+      </div>
+    );
+  }
+
+  if (!isClient || !position) {
+    return (
+      <div className="h-screen w-full flex justify-center items-center">
+        <Loader2 className="animate-spin mr-2 h-4 w-4" />
+        Getting courier's location...
       </div>
     );
   }

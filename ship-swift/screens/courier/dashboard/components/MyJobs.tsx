@@ -2,6 +2,7 @@
 
 import Details from "./JobDetails";
 import { useEffect, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,25 +14,27 @@ import {
 } from "@/components/ui/card";
 import { Truck } from "lucide-react";
 import JobsTable from "./JobsTable";
-
 import { Progress } from "@/components/ui/progress";
-import { getAllJobs } from "@/actions/courierJobsActions";
-
+import { getAllActiveJobsByDriverId, updateActiveJobStatus } from "@/actions/activeJobsActions";
 
 export default function MyJobs() {
   const [jobs, setJobs] = useState<any[] | undefined>([]);
   const [selectedJob, setSelectedJob] = useState<any | null>(null);
   const [error, setError] = useState<string | null | undefined>(null);
   const [loading, setLoading] = useState<boolean>(true); // Loading state
+  const { userId } = useAuth();
 
   useEffect(() => {
     const fetchJobs = async () => {
       setLoading(true); // Start loading
-      const response = await getAllJobs();
-      if (response.success) {
-        setJobs(response.data);
+      const response = await getAllActiveJobsByDriverId(userId || "");
+      if (response && response.length > 0) {
+        setJobs(response);
+        setSelectedJob(response[0]);
+      } else if (response) {
+        setError("An unexpected error occured");
       } else {
-        setError(response.error);
+        setError("No response received");
       }
       setLoading(false);
     };
@@ -41,6 +44,19 @@ export default function MyJobs() {
 
   const handleRowClick = (job: any | undefined) => {
     setSelectedJob(job);
+  };
+
+  const handleStatusChange = async (jobId: string, newStatus: string) => {
+    try {
+      await updateActiveJobStatus(jobId, newStatus);
+      setJobs((prevJobs) =>
+        prevJobs?.map((job) =>
+          job.Id === jobId ? { ...job, jobStatus: newStatus } : job
+        )
+      );
+    } catch (error) {
+      console.error("Error updating job status:", error);
+    }
   };
 
   return (
@@ -100,7 +116,7 @@ export default function MyJobs() {
             </div>
 
             {/* Render the table only when loading is false */}
-            <JobsTable jobs={jobs} onRowClick={handleRowClick} />
+            <JobsTable jobs={jobs} onStatusChange={handleStatusChange} onRowClick={handleRowClick} />
           </div>
 
           {/* Display details if a job is selected */}

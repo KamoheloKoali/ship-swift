@@ -67,6 +67,8 @@ export default function ImageUploadCard({
               src={imageUrl}
               alt="Document Preview"
               className="w-full h-48 object-cover rounded-md"
+              width={320}
+              height={320}
             />
           ) : (
             <div className="border-2 border-dashed border-gray-300 rounded-md h-48 flex flex-col items-center justify-center bg-gray-50">

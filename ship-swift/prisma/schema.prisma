@@ -24,6 +24,7 @@ model clients {
   Messages       Messages[]
   clientRequests clientRequests[]
   // Location       Location[]
+  activeJobs     ActiveJobs[]
 }
 
 model Drivers {
@@ -53,6 +54,8 @@ model Drivers {
   clientRequests  clientRequests[]
   JobRequests     JobRequest[]
   Location        Location[]
+  activeJobs  ActiveJobs[]
+  scheduledTrips ScheduledTrips[]
 }
 
 model CourierJobs {
@@ -78,6 +81,8 @@ model CourierJobs {
 
   JobRequests JobRequest[] @relation("CourierJobsToJobRequest") // One-to-many relation with JobRequest
   client      clients      @relation(fields: [clientId], references: [Id])
+
+  activeJobs ActiveJobs[]
 }
 
 model DriverRequests {
@@ -128,14 +133,27 @@ model Messages {
 model JobRequest {
   Id           String  @id @default(uuid())
   isApproved   Boolean @default(false)
-  courierJobId String // Relation to CourierJobs
-  driverId     String // Relation to Driver
+  courierJobId String
+  driverId     String
 
   CourierJob CourierJobs @relation("CourierJobsToJobRequest", fields: [courierJobId], references: [Id])
   Driver     Drivers     @relation(fields: [driverId], references: [Id])
 
-  // Add an optional relation back to CourierJobs for the approved request
   approvedJob CourierJobs? @relation("ApprovedRequest")
+}
+
+model ActiveJobs {
+  Id           String @id @default(uuid())
+  courierJobId String
+  driverId     String
+  clientId     String
+  startDate    String
+  endDate      String? 
+  jobStatus    String @default("ongoing")
+
+  CourierJob CourierJobs @relation(fields: [courierJobId], references: [Id])
+  Driver     Drivers     @relation(fields: [driverId], references: [Id])
+  Client     clients     @relation(fields: [clientId], references: [Id])
 }
 
 model Location {
@@ -145,7 +163,25 @@ model Location {
   longitude Float
   accuracy  Float
   driverId  String
-  clientId  String
   // client    clients  @relation(fields: [clientId], references: [Id])
   driver    Drivers  @relation(fields: [driverId], references: [Id])
+}
+
+model ScheduledTrips {
+  id          String   @id @default(cuid())
+  driverId    String
+  driver      Drivers  @relation(fields: [driverId], references: [Id])
+  fromLocation String
+  toLocation   String
+  routeDetails String
+  tripDate     DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  status       TripStatus @default(SCHEDULED)
+}
+
+enum TripStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
 }
