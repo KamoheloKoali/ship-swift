@@ -26,8 +26,8 @@ const ChatWrapper = ({ children, conversationId }: Props) => {
 
   useEffect(() => {
     // Function to fetch the data asynchronously
-    setIsLoading(true);
     const fetchData = async () => {
+      setIsLoading(true);
       const [contactResponse, userRoleResponse] = await Promise.all([
         getcontactById(conversationId),
         getUserRoleById(),
@@ -49,10 +49,10 @@ const ChatWrapper = ({ children, conversationId }: Props) => {
           setClient(clientResponse);
         }
       }
+      setIsLoading(false);
     };
 
     fetchData();
-    setIsLoading(false);
   }, [conversationId]);
 
   return (
