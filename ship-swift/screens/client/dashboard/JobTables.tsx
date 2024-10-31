@@ -30,7 +30,7 @@ const JobsTable: FC<TableProps> = ({ jobs, onRowClick }: TableProps) => {
   const statusMap: { [key: string]: string } = {
     unclaimed: "unclaimed",
     delivered: "delivered",
-    ongoing: "claimed" || "collected",
+    ongoing: "claimed",
   };
 
   // Function to filter jobs based on the packageStatus
