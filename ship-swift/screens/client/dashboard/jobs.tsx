@@ -14,7 +14,7 @@ import {
 import JobsTable from "./JobTables";
 
 import { Progress } from "@/components/ui/progress";
-import { getAllJobs } from "@/actions/courierJobsActions";
+import { getAllJobsFiltered } from "@/actions/courierJobsActions";
 import { Loader2, Truck } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { getJobRequestsByCourierJobId } from "@/actions/jobRequestActions";
@@ -32,9 +32,9 @@ export default function MyJobs() {
   useEffect(() => {
     const fetchJobs = async () => {
       setLoading(true); // Start loading
-      const response = await getAllJobs();
+      const response = await getAllJobsFiltered(userId || "");
       if (response.success) {
-        const data = response.data?.filter((job) => job.clientId === userId);
+        const data = response.data;
         setJobs(data);
       } else {
         setError(response.error);

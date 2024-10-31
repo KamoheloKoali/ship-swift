@@ -62,7 +62,19 @@ export const createJob = async (jobData: FormData) => {
 export const getAllJobs = async () => {
   try {
     const jobs = await prisma.courierJobs.findMany({
-      where: { packageStatus: "unclaimed" },
+      include: { client: true }, // Include client data if needed
+    });
+    return { success: true, data: jobs };
+  } catch (error) {
+    console.error("Error retrieving jobs:", error);
+    return { success: false, error: "Error retrieving jobs." };
+  }
+};
+
+export const getAllJobsFiltered = async (clientId: string) => {
+  try {
+    const jobs = await prisma.courierJobs.findMany({
+      where: { clientId: clientId },
       include: { client: true }, // Include client data if needed
     });
     return { success: true, data: jobs };
