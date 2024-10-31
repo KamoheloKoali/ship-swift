@@ -178,17 +178,17 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
       );
     }
 
-    if (isContact) {
-      return (
-        <Button
-          className="flex text-black items-center justify-center space-x-2 border border-black bg-white hover:bg-gray-100 transition-colors duration-200 my-2 w-full"
-          onClick={handleMessage}
-        >
-          <CheckCheck className="w-4 h-4" />
-          <span>Message</span>
-        </Button>
-      );
-    }
+    // if (isContact) {
+    //   return (
+    //     <Button
+    //       className="flex text-black items-center justify-center space-x-2 border border-black bg-white hover:bg-gray-100 transition-colors duration-200 my-2 w-full"
+    //       onClick={handleMessage}
+    //     >
+    //       <CheckCheck className="w-4 h-4" />
+    //       <span>Message</span>
+    //     </Button>
+    //   );
+    // }
 
     return (
       <Button
@@ -214,7 +214,7 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
   );
 
   return (
-    <div className="p-4 min-h-screen flex items-center justify-center w-full h-full z-50">
+    <div className="p-4 flex items-center justify-center w-full h-full z-50">
       <Card className="w-full max-w-lg bg-white shadow-xl rounded-xl overflow-hidden">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">

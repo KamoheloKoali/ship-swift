@@ -11,6 +11,7 @@ import JobsInfoSheet from "@/screens/courier/dashboard/components/JobsInfoSheet"
 import Profile from "@/screens/courier/profile/components/Profile";
 import { getDriverByID } from "@/actions/driverActions";
 import { Skeleton } from "@/components/ui/skeleton";
+import ScheduledTrips from "./TripCard";
 
 const Jobs = () => {
   const { user } = useUser();
@@ -63,7 +64,7 @@ const Jobs = () => {
   const renderContent = () => {
     if (loading) {
       return (
-        <div className="space-y-4">
+        <div className="space-y-4 border">
           <Skeleton className="h-24 md:h-72 w-full mb-24" />
           <Skeleton className="h-8 w-1/6" />
           <Skeleton className="h-8 w-[40%]" />
@@ -80,6 +81,9 @@ const Jobs = () => {
 
         <div className="flex md:hidden justify-start w-full">
           <CardStatus />
+        </div>
+        <div className="hidden md:block mylg:hidden">
+          <ScheduledTrips />
         </div>
         <h1 className="font-semibold text-lg py-8">Job Requests</h1>
         <JobsMenu onSortChange={handleSortChange} />

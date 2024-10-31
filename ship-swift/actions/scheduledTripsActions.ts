@@ -70,6 +70,7 @@ export async function getScheduledTripsByDriverId(driverId: string) {
         driver: {
           Id: driverId,
         },
+        status: "SCHEDULED",
       },
     });
     return trips;

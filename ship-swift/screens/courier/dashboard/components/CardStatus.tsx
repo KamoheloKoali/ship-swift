@@ -4,6 +4,7 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import TripForm from "./TripForm";
 import { createScheduledTrip } from "@/actions/scheduledTripsActions";
+import ScheduledTrips from "./TripCard";
 import { useUser } from "@clerk/nextjs";
 
 interface TripFormData {
@@ -24,7 +25,8 @@ const CardStatus = () => {
       const tripDate = new Date(formData.tripDate).toISOString();
 
       await createScheduledTrip({
-        ...formData, tripDate,
+        ...formData,
+        tripDate,
         driver: {
           connect: {
             Id: user?.id || "",
@@ -39,8 +41,8 @@ const CardStatus = () => {
     }
   };
   return (
-    <div className="w-full py-4 mylg:p-4">
-      <Card className="relative w-full md:w-full md:max-w-md md:mx-auto border-none sm:bg-muted/80 md:bg-gradient-to-r from-primary-foreground/60 to-primary-foreground/95 mylg:bg-gradient-to-left from-white to-white">
+    <div className="w-full py-4 mylg:mb-6 mylg:p-4">
+      <Card className="relative w-full md:w-full md:max-w-md md:mx-auto mylg:w-full sm:bg-muted/80 md:bg-gradient-to-r from-primary-foreground/60 to-primary-foreground/95 mylg:bg-gradient-to-left from-white to-white">
         <CardHeader>
           <CardTitle className="text-lg font-bold">Status</CardTitle>
         </CardHeader>
@@ -72,6 +74,9 @@ const CardStatus = () => {
           />
         </CardContent>
       </Card>
+      <div className="sm:block md:hidden mylg:block mylg:mt-4 mylg:h-[225px] mylg:overflow-y-auto mylg:no-scrollbar">
+        <ScheduledTrips />
+      </div>
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 export default function CardJobsLoad() {
   return (
-    <div className="p-4 min-h-screen flex items-center justify-center w-full h-full z-50">
+    <div className="p-4 flex items-center justify-center w-full h-full z-50">
       <Card className="w-full max-w-lg bg-white shadow-xl rounded-xl overflow-hidden">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
