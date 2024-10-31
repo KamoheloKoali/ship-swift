@@ -126,3 +126,15 @@ export const deleteJob = async (jobId: string) => {
     return { success: false, error: "Error deleting job." };
   }
 };
+
+export async function updateJobStatus(id: string, status: string) {
+  try {
+    const updatedJob = await prisma.courierJobs.update({
+      where: { Id: id },
+      data: { packageStatus: status },
+    });
+    return updatedJob;
+  } catch (error) {
+    console.error("Error updating Job status:", error);
+  }
+}

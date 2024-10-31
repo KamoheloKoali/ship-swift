@@ -1,9 +1,11 @@
 "use client";
 import {
+  Check,
   ChevronLeft,
   ChevronRight,
   Copy,
   CreditCard,
+  HandCoins,
   Loader2,
   MessageSquareDot,
   MoreVertical,
@@ -31,6 +33,7 @@ import DriverProfile from "./DriverProfile";
 import { toast } from "@/hooks/use-toast";
 import { getJobRequestById } from "@/actions/jobRequestActions";
 import { useRouter } from "next/navigation";
+import { updateJobStatus } from "@/actions/courierJobsActions";
 
 interface SideCardProps {
   job: {
@@ -55,6 +58,7 @@ export default function Details({ job, requests = [] }: SideCardProps) {
   const [driver, setDriver] = useState<any | null>({});
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const [isJobCompleted, setIsJobCompleted] = useState(false);
 
   // Move the status check to useEffect to avoid infinite re-renders
   useEffect(() => {
@@ -63,7 +67,9 @@ export default function Details({ job, requests = [] }: SideCardProps) {
       setDriver(jobRequest?.Driver);
       setIsLoading(false);
     };
-    setIsClaimed(job.packageStatus === "claimed");
+    setIsClaimed(
+      job.packageStatus === "claimed" || job.packageStatus === "collected"
+    );
     if (job.packageStatus === "claimed") {
       setIsLoading(true);
       getDriverDetails();
@@ -75,6 +81,18 @@ export default function Details({ job, requests = [] }: SideCardProps) {
     toast({
       description: `Copied: ${job.Id}`,
     });
+  };
+
+  const handleJobComplete = async (id: string) => {
+    const updatedJob = await updateJobStatus(id, "delivered");
+    if (updatedJob?.Id) {
+      setIsJobCompleted(true);
+    } else {
+      toast({
+        description: "An unexpected error occured",
+        variant: "destructive",
+      });
+    }
   };
 
   const OrderDetails = () => (
@@ -193,9 +211,37 @@ export default function Details({ job, requests = [] }: SideCardProps) {
     </>
   );
 
-  const PaymentInformation = () => (
+  const PackageStatus = () => (
     <div className="grid gap-3">
-      <div className="font-semibold">Payment Information</div>
+      <div className="font-semibold">Package Status</div>
+      <dl className="grid gap-3">
+        <div className="flex items-center justify-between">
+          <dt className="flex items-center gap-1 text-muted-foreground">
+            Status
+          </dt>
+          <dd>
+            {job.packageStatus === "collected"
+              ? "Collected"
+              : "Not yet collected"}
+            {job.packageStatus === "delivered" && "Delivered"}
+          </dd>
+        </div>
+      </dl>
+    </div>
+  );
+
+  const PaymentMethod = () => (
+    <div className="grid gap-3">
+      <div
+        className={`font-semibold ${isJobCompleted && "flex justify-between"}`}
+      >
+        <p>Payment Method</p>
+        {isJobCompleted && (
+          <Button variant="outline" size="sm">
+            <HandCoins className="h-4 w-4" /> Release payment
+          </Button>
+        )}
+      </div>
       <dl className="grid gap-3">
         <div className="flex items-center justify-between">
           <dt className="flex items-center gap-1 text-muted-foreground">
@@ -249,38 +295,46 @@ export default function Details({ job, requests = [] }: SideCardProps) {
                     <Copy className="h-3 w-3" />
                     <span className="sr-only">Copy Order ID</span>
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-8 gap-1"
-                    onClick={() => {
-                      window.open(
-                        `/track-delivery/${job.approvedRequestId}`,
-                        "_blank"
-                      );
-                    }}
-                  >
-                    <Truck className="h-3.5 w-3.5" />
-                    <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                      View Map
-                    </span>
-                  </Button>
+                  {!isJobCompleted && isClaimed && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-8 gap-1"
+                      onClick={() => {
+                        window.open(
+                          `/track-delivery/${job.approvedRequestId}`,
+                          "_blank"
+                        );
+                      }}
+                    >
+                      <Truck className="h-3.5 w-3.5" />
+                      <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
+                        View Map
+                      </span>
+                    </Button>
+                  )}
                 </>
               )}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button size="icon" variant="outline" className="h-8 w-8">
-                    <MoreVertical className="h-3.5 w-3.5" />
-                    <span className="sr-only">More</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem>Edit</DropdownMenuItem>
-                  <DropdownMenuItem>Export</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>Trash</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {job.packageStatus === "collected" && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="icon" variant="outline" className="h-8 w-8">
+                      <MoreVertical className="h-3.5 w-3.5" />
+                      <span className="sr-only">More</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() => {
+                        handleJobComplete(job.Id);
+                      }}
+                    >
+                      <Check className="h-4 w-4 mr-2" />
+                      Mark as completed
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
           </CardHeader>
 
@@ -294,7 +348,9 @@ export default function Details({ job, requests = [] }: SideCardProps) {
                   {/* <Separator className="my-4" /> */}
                   <CustomerCourierInformation />
                   <Separator className="my-4" />
-                  <PaymentInformation />
+                  <PackageStatus />
+                  <Separator className="my-4" />
+                  <PaymentMethod />
                 </>
               )}
               {!isClaimed && (
