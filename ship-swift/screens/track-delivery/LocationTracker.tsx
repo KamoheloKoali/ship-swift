@@ -20,7 +20,7 @@ const LocationTracker = ({
         {
           enableHighAccuracy: true,
           maximumAge: 30000,
-          timeout: 27000,
+          timeout: 60000,
         }
       );
 
@@ -77,5 +77,3 @@ const LocationTracker = ({
 };
 
 export default LocationTracker;
-
-// gonna try lookin
