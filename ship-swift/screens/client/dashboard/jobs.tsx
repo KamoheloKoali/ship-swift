@@ -17,7 +17,10 @@ import { Progress } from "@/components/ui/progress";
 import { getAllJobsFiltered } from "@/actions/courierJobsActions";
 import { Loader2, Truck } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
-import { getJobRequestsByCourierJobId } from "@/actions/jobRequestActions";
+import {
+  getJobRequestById,
+  getJobRequestsByCourierJobId,
+} from "@/actions/jobRequestActions";
 import { getDriverByID } from "@/actions/driverActions";
 
 export default function MyJobs() {
@@ -28,6 +31,7 @@ export default function MyJobs() {
   const [loading, setLoading] = useState<boolean>(true); // Loading state
   const [isGettingDrivers, setIsGettingDrivers] = useState<boolean>(false); // Loading state
   const { userId } = useAuth();
+  const [driver, setDriver] = useState<any | null>({});
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -44,11 +48,16 @@ export default function MyJobs() {
 
     fetchJobs();
   }, []);
+  const getDriverDetails = async (job: any | undefined) => {
+    const jobRequest = await getJobRequestById(job.approvedRequestId);
+
+    return jobRequest?.Driver;
+  };
 
   const handleRowClick = async (job: any | undefined) => {
     setRequests([]);
+    setIsGettingDrivers(true);
     if (job.packageStatus === "unclaimed") {
-      setIsGettingDrivers(true);
       const requests = await getJobRequestsByCourierJobId(job.Id);
       if (requests.length > 0) {
         let drivers = [];
@@ -59,6 +68,13 @@ export default function MyJobs() {
           setRequests(drivers);
         }
       }
+    } else if (
+      job.packageStatus === "claimed" ||
+      job.packageStatus === "collected" ||
+      job.packageStatus === "delivered"
+    ) {
+      const driver = await getDriverDetails(job);
+      setDriver(driver);
     }
     setIsGettingDrivers(false);
     setSelectedJob(job);
@@ -89,7 +105,9 @@ export default function MyJobs() {
               <p className="text-lg text-gray-700">____________________</p>
             </div>
           ) : (
-            selectedJob && <Details job={selectedJob} requests={requests} />
+            selectedJob && (
+              <Details job={selectedJob} requests={requests} driver={driver} />
+            )
           )}
         </main>
       </div>

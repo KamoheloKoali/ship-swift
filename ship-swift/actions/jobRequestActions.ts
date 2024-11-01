@@ -82,6 +82,7 @@ export async function getJobRequestsByCourierJobId(courierJobId: string) {
       Driver: true,
     },
   });
+
   return jobRequests;
 }
 

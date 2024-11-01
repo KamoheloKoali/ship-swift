@@ -31,9 +31,9 @@ import {
 import { useEffect, useState } from "react";
 import DriverProfile from "./DriverProfile";
 import { toast } from "@/hooks/use-toast";
-import { getJobRequestById } from "@/actions/jobRequestActions";
 import { useRouter } from "next/navigation";
 import { updateJobStatus } from "@/actions/courierJobsActions";
+import { getContactByDriverAndClientId } from "@/actions/contactsActions";
 
 interface SideCardProps {
   job: {
@@ -41,6 +41,7 @@ interface SideCardProps {
     packageStatus: string;
     dateCreated: string;
     client?: {
+      Id?: string;
       firstName?: string;
       lastName?: string;
       email?: string;
@@ -49,31 +50,27 @@ interface SideCardProps {
     approvedRequestId: string;
     PickUp: string;
     DropOff: string;
+    Title: string;
   };
   requests?: Array<any>;
+  driver?: any;
 }
 
-export default function Details({ job, requests = [] }: SideCardProps) {
+export default function Details({ job, requests = [], driver }: SideCardProps) {
   const [isClaimed, setIsClaimed] = useState(false);
-  const [driver, setDriver] = useState<any | null>({});
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [isJobCompleted, setIsJobCompleted] = useState(false);
+  const [isGettingContact, setIsGettingContact] = useState(false);
 
   // Move the status check to useEffect to avoid infinite re-renders
   useEffect(() => {
-    const getDriverDetails = async () => {
-      const jobRequest = await getJobRequestById(job.approvedRequestId);
-      setDriver(jobRequest?.Driver);
-      setIsLoading(false);
-    };
     setIsClaimed(
-      job.packageStatus === "claimed" || job.packageStatus === "collected"
+      job.packageStatus === "claimed" ||
+        job.packageStatus === "collected" ||
+        job.packageStatus === "delivered"
     );
-    if (job.packageStatus === "claimed") {
-      setIsLoading(true);
-      getDriverDetails();
-    }
+    setIsJobCompleted(job.packageStatus === "delivered");
   }, [job.packageStatus]);
 
   const handleCopyId = () => {
@@ -81,6 +78,15 @@ export default function Details({ job, requests = [] }: SideCardProps) {
     toast({
       description: `Copied: ${job.Id}`,
     });
+  };
+
+  const getContact = async () => {
+    setIsGettingContact(true);
+    const contact = await getContactByDriverAndClientId(
+      driver.Id,
+      job.client?.Id || ""
+    );
+    return contact.data;
   };
 
   const handleJobComplete = async (id: string) => {
@@ -155,12 +161,20 @@ export default function Details({ job, requests = [] }: SideCardProps) {
             className=""
             variant="outline"
             size="sm"
-            onClick={() => {
-              router.push(`/something`);
+            onClick={async () => {
+              const contact = await getContact();
+              router.push(`/conversations/${contact?.Id}`);
+              setIsGettingContact(false);
             }}
           >
-            <MessageSquareDot size={8} />
-            Message
+            {isGettingContact ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <>
+                <MessageSquareDot size={8} />
+                Message
+              </>
+            )}
           </Button>
         </div>
         <dl className="grid gap-3">
@@ -180,6 +194,12 @@ export default function Details({ job, requests = [] }: SideCardProps) {
             <dt className="text-muted-foreground">Vehicle</dt>
             <dd>{driver.vehicleType}</dd>
           </div>
+          <div className="flex items-center justify-between">
+            <dt className="text-muted-foreground">Phone</dt>
+            <dd>
+              <a href={`tel:${driver.phoneNumber}`}>{driver.phoneNumber}</a>
+            </dd>
+          </div>
         </dl>
       </div>
       <Separator className="my-2" />
@@ -198,14 +218,14 @@ export default function Details({ job, requests = [] }: SideCardProps) {
               <a href={`mailto:${job.client?.email}`}>{job.client?.email}</a>
             </dd>
           </div>
-          {/* <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">Phone</dt>
             <dd>
               <a href={`tel:${job.client?.phoneNumber}`}>
                 {job.client?.phoneNumber}
               </a>
             </dd>
-          </div> */}
+          </div>
         </dl>
       </div>
     </>
@@ -222,8 +242,9 @@ export default function Details({ job, requests = [] }: SideCardProps) {
           <dd>
             {job.packageStatus === "collected"
               ? "Collected"
+              : isJobCompleted
+              ? "Delivered"
               : "Not yet collected"}
-            {job.packageStatus === "delivered" && "Delivered"}
           </dd>
         </div>
       </dl>
@@ -265,19 +286,22 @@ export default function Details({ job, requests = [] }: SideCardProps) {
         <Card className="overflow-hidden">
           <CardHeader className="flex flex-row items-start bg-muted/50">
             <div className="grid gap-0.5">
-              <CardTitle className="group flex items-center gap-2 text-lg">
-                Order: {job.Id}
-                {!isClaimed && (
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="h-6 w-6 transition-opacity group-hover:opacity-100"
-                    onClick={handleCopyId}
-                  >
-                    <Copy className="h-3 w-3" />
-                    <span className="sr-only">Copy Order ID</span>
-                  </Button>
-                )}
+              <CardTitle className="group flex flex-col gap-2 text-lg">
+                <div className="text-2xl flex flex-wrap">{job.Title}</div>
+                <div>
+                  Order: {job.Id}
+                  {!isClaimed && (
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      className="h-6 w-6 transition-opacity group-hover:opacity-100"
+                      onClick={handleCopyId}
+                    >
+                      <Copy className="h-3 w-3" />
+                      <span className="sr-only">Copy Order ID</span>
+                    </Button>
+                  )}
+                </div>
               </CardTitle>
               <CardDescription>
                 Date: {new Date(job.dateCreated).toLocaleString()}
@@ -315,7 +339,7 @@ export default function Details({ job, requests = [] }: SideCardProps) {
                   )}
                 </>
               )}
-              {job.packageStatus === "collected" && (
+              {job.packageStatus === "collected" && !isJobCompleted && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button size="icon" variant="outline" className="h-8 w-8">

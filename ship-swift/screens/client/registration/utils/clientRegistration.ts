@@ -102,7 +102,7 @@ export default function useclientRegistration() {
     const result = await createClient(updateData);
 
     if (result.success) {
-      router.push("/onboarding/driver-onboarding/face-recog");
+      router.push("/client");
     } else {
       alert(`Error saving to database: ${result.error}`);
     }

@@ -63,8 +63,6 @@ const ConversationsLayout = async ({ children }: Props) => {
       }
     }
 
-    console.log(contactsWithNames);
-
     return (
       <>
         <ItemList title="Conversations">

@@ -67,6 +67,20 @@ export const getAllcontacts = async () => {
   }
 };
 
+export const getContactByDriverAndClientId = async (
+  driverId: string,
+  clientId: string
+) => {
+  const contacts = await prisma.contacts.findFirst({
+    where: { driverId: driverId, clientId: clientId },
+  }); // Remove where clause to get all contacts
+  if (contacts?.Id) {
+    return { success: true, data: contacts };
+  } else {
+    return { success: false, error: "No contacts found" };
+  }
+};
+
 export const deletecontact = async (contactId: string) => {
   try {
     const deletedcontact = await prisma.contacts.delete({

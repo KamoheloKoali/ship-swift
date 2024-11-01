@@ -17,13 +17,7 @@ import { Bars3Icon } from "@heroicons/react/24/outline";
 export default function ClientNavBar() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
-  const menuItems = [
-    {
-      label: "Shipments",
-      href: "/client/dashboard/shipments",
-    },
-    { label: "Chats", href: "/conversations" },
-  ];
+  const menuItems = [{ label: "Messages", href: "/conversations" }];
 
   return (
     <header className="w-full bg-white mb-16">

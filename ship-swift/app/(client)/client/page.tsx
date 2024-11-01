@@ -4,6 +4,7 @@ import React from "react";
 import PackagePopover from "./components/PackagePopover";
 import RestrictedPopover from "./components/RestrictedPopover";
 import Dashboard from "@/screens/client-dashboard/DashBoard";
+import MyJobs from "@/screens/client/dashboard/jobs";
 
 const Page = () => {
   return (
@@ -19,7 +20,8 @@ const Page = () => {
         <PackagePopover />
         <RestrictedPopover />
       </div> */}
-      <Dashboard />
+      {/* <Dashboard /> */}
+      <MyJobs />
     </div>
   );
 };
