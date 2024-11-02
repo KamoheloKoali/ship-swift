@@ -62,6 +62,9 @@ export const getAllJobs = async () => {
   try {
     const jobs = await prisma.courierJobs.findMany({
       include: { client: true }, // Include client data if needed
+      where: {
+        packageStatus: "unclaimed",
+      }
     });
     return { success: true, data: jobs };
   } catch (error) {
