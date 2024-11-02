@@ -119,7 +119,7 @@ const PhotoCapture: React.FC = () => {
         />
         <button
           onClick={startCamera}
-          className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 focus:ring focus:ring-red-300"
+          className="absolute top-4 right-4 bg-black text-white px-4 py-2 rounded-lg hover:bg-slate-500 focus:ring focus:ring-white"
           disabled={isLoading}
         >
           Start Camera
