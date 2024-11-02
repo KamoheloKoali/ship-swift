@@ -5,6 +5,7 @@ import {
   updateDriverVerification,
 } from "@/actions/driverActions";
 import { useRouter } from "next/navigation";
+import { ArrowLeftToLine } from "lucide-react";
 
 interface DriverData {
   Id: string;
@@ -68,9 +69,10 @@ export default function useDriverDetails() {
         setLoading(true);
         const updatedDriver = await updateDriverVerification(
           driverData.Id,
-          true
+          false,
         );
         setDriverData(updatedDriver as DriverData);
+        alert("Thank you for the submition of your documents. They will be verified shortly.");
         router.push("/driver/dashboard/find-jobs");
       } catch (err) {
         setError("Failed to verify driver");

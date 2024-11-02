@@ -1,7 +1,14 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { UserPlus, MessageSquare, Clock, Loader2 } from "lucide-react";
 import { createRequest, messageContact, checkRequest } from "./utils/jobsInfo";
+import useDriverDetails from "@/screens/courier/registration/utils/DriverDetails";
 
 interface RequestStatus {
   isPending: boolean;
@@ -25,7 +32,7 @@ const RequestButton: React.FC<RequestButtonProps> = ({
   isInitialCheckDone,
   isRequestLoading,
   setIsRequestLoading,
-  setRequestStatus
+  setRequestStatus,
 }) => {
   const router = useRouter();
 
@@ -71,6 +78,28 @@ const RequestButton: React.FC<RequestButtonProps> = ({
       }
     }
   };
+
+  const { driverData } = useDriverDetails();
+
+  if (driverData?.isVerified == false) {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button
+              className="flex items-center space-x-2 border border-gray-500 bg-gray-100 text-gray-700 px-4 py-2 rounded-md my-2 cursor-not-allowed"
+              disabled
+            >
+              <span>Chat</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Not verified</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  }
 
   if (!isInitialCheckDone || isRequestLoading) {
     return (
@@ -119,5 +148,4 @@ const RequestButton: React.FC<RequestButtonProps> = ({
     </Button>
   );
 };
-
 export default RequestButton;

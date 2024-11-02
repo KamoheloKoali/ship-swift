@@ -138,7 +138,7 @@ export const upsertDriver = async (driverData: {
 
 export const updateDriverVerification = async (
   driverId: string,
-  isVerified: boolean
+  isVerified: boolean,
 ) => {
   try {
     const updatedDriver = await prisma.drivers.update({

@@ -1,8 +1,15 @@
 // ApplyButton.tsx
-import React from 'react';
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { CheckCheck, Loader2, AlertCircle } from "lucide-react";
 import { ApplicationStatus, applyForJob } from "./utils/jobsInfo";
+import useDriverDetails from "@/screens/courier/registration/utils/DriverDetails";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ApplyButtonProps {
   jobId: string;
@@ -17,7 +24,7 @@ const ApplyButton: React.FC<ApplyButtonProps> = ({
   userId,
   applicationStatus,
   setApplicationStatus,
-  setErrorMessage
+  setErrorMessage,
 }) => {
   const jobApply = async () => {
     if (userId && jobId) {
@@ -27,6 +34,28 @@ const ApplyButton: React.FC<ApplyButtonProps> = ({
       setErrorMessage(result.errorMessage);
     }
   };
+
+  const { driverData } = useDriverDetails();
+
+  if (driverData?.isVerified == false) {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button
+              className="flex items-center justify-center space-x-2 border border-gray-500 bg-gray-100 text-gray-700 px-4 py-2 rounded-md my-2 cursor-not-allowed w-full"
+              disabled
+            >
+              <span>Apply</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Not verified</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  }
 
   switch (applicationStatus) {
     case "applying":

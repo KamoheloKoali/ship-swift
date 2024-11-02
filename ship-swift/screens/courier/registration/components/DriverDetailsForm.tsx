@@ -229,6 +229,7 @@ export default function DriverDetailsForm(): JSX.Element {
         >
           Edit
         </Button>
+        
         <Button
           className="w-full md:w-1/2 ml-2 bg-black text-white hover:bg-gray-800"
           onClick={handleConfirm}

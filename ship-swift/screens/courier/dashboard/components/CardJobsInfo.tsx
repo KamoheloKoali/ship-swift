@@ -17,7 +17,6 @@ import {
   checkRequest,
 } from "./utils/jobsInfo";
 import CardJobsLoad from "./CardJobsLoad";
-
 interface JobsInfoProps {
   job: JobRequest | null;
   isOpen: boolean;
@@ -30,6 +29,7 @@ interface RequestStatus {
 
 const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
   const { userId } = useAuth();
+  const router = useRouter();
 
   // State management
   const [loading, setLoading] = useState(true);
@@ -43,7 +43,7 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
     isAccepted: false,
   });
   const [isInitialCheckDone, setIsInitialCheckDone] = useState(false);
-
+    
   // Effects
   useEffect(() => {
     const initializeJobApplication = async () => {
@@ -205,6 +205,3 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
   );
 };
 export default CardJobsInfo;
-function setIsInitialCheckDone(arg0: boolean) {
-  throw new Error("Function not implemented.");
-}
