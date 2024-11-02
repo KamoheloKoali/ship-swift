@@ -30,6 +30,7 @@ const Page = () => {
 
   useEffect(() => {
     // router.push("/client/dashboard/deliver");
+    setIsLoading(true);
     const checkUser = async () => {
       if (!user || !user.userId) {
         setIsLoading(false);
