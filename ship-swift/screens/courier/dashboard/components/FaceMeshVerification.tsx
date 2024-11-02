@@ -1,5 +1,4 @@
 "use client";
-// components/PhotoCapture.tsx
 import { uploadImage } from "../../registration/utils/Upload";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
@@ -78,7 +77,6 @@ const PhotoCapture: React.FC = () => {
       await uploadImage(file, "driver-photo-rt", userId);
 
       router.push("/driver/dashboard/find-jobs");
-
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to upload photo");
       console.error("Photo upload error:", err);
@@ -103,7 +101,7 @@ const PhotoCapture: React.FC = () => {
   };
 
   if (!isClient) return null;
-  
+
   return (
     <div className="photo-capture flex flex-col justify-center items-center sm:p-0 xl:p-4 bg-gray-50 rounded-lg shadow-lg relative sm:w-[90%] lg:w-[50%]">
       {error && (
@@ -112,11 +110,7 @@ const PhotoCapture: React.FC = () => {
         </div>
       )}
       <div className="relative w-full sm:h-full xl:h-[80%] bg-blue-100 rounded-lg overflow-hidden mb-4">
-        <video
-          ref={videoRef}
-          autoPlay
-          className="w-full h-full object-cover"
-        />
+        <video ref={videoRef} autoPlay className="w-full h-full object-cover" />
         <button
           onClick={startCamera}
           className="absolute top-4 right-4 bg-black text-white px-4 py-2 rounded-lg hover:bg-slate-500 focus:ring focus:ring-white"
@@ -135,25 +129,23 @@ const PhotoCapture: React.FC = () => {
       </button>
 
       {photo && (
-  <div className="photo-preview flex flex-col items-center gap-4 fixed inset-0 bg-gray-800 bg-opacity-70 backdrop-blur-sm justify-center z-50">
-    <Image
-      src={photo}
-      alt="Captured photo"
-      width={580}
-      height={580}
-      className="rounded-lg shadow-md m-2"
-    />
-    <button
-      onClick={uploadPhoto}
-      className="bg-slate-800 text-white px-6 py-2 rounded-lg hover:bg-slate-500 transition w-full max-w-xs disabled:opacity-50"
-      disabled={isLoading}
-    >
-      {isLoading ? "Uploading..." : "Upload Photo"}
-    </button>
-  </div>
-)}
-
-
+        <div className="photo-preview flex flex-col items-center gap-4 fixed inset-0 bg-gray-800 bg-opacity-70 backdrop-blur-lg justify-center z-50">
+          <Image
+            src={photo}
+            alt="Captured photo"
+            width={580}
+            height={580}
+            className="rounded-lg shadow-md m-2"
+          />
+          <button
+            onClick={uploadPhoto}
+            className="bg-black text-white px-6 py-2 rounded-lg hover:bg-slate-500 transition w-full max-w-xs disabled:opacity-50"
+            disabled={isLoading}
+          >
+            {isLoading ? "Uploading..." : "Upload Photo"}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

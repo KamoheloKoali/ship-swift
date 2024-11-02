@@ -2,6 +2,13 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
+  PhoneInput,
+  phoneNumberSchema,
+  ValidationResult,
+} from "@/screens/global/phone-input";
+
+import type { E164Number } from "libphonenumber-js";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -130,12 +137,24 @@ export default function DriverRegistrationForm() {
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <div>
-            <Input
+            {/* <Input
               name="phoneNumber"
               placeholder="Phone Number"
               value={formData.phoneNumber}
               onChange={handleInputChange}
               required
+            /> */}
+            <PhoneInput
+              value={formData.phoneNumber}
+              placeholder="Phone Number"
+              onValueChange={({ phoneNumber, validation }) =>
+                handleInputChange({
+                  target: {
+                    name: "phoneNumber",
+                    value: phoneNumber as E164Number
+                  }
+                })
+              }
             />
             {errors.phoneNumber && (
               <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>
