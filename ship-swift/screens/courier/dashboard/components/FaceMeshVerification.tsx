@@ -18,6 +18,7 @@ const PhotoCapture: React.FC = () => {
     setIsClient(true);
   }, []);
 
+  // Start camera stream
   const startCamera = async () => {
     try {
       setError(null);
@@ -31,6 +32,15 @@ const PhotoCapture: React.FC = () => {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to access camera");
       console.error("Camera access error:", err);
+    }
+  };
+
+// Stop camera stream
+  const stopCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
+      videoRef.current.srcObject = null;
     }
   };
 
@@ -80,7 +90,9 @@ const PhotoCapture: React.FC = () => {
       });
       await uploadImage(file, "driver-photo-rt", userId);
 
-      router.push("/driver/dashboard/find-jobs");
+      stopCamera();
+
+      router.push("/onboarding/driver/details");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to upload photo");
       console.error("Photo upload error:", err);

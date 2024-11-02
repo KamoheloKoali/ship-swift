@@ -1,9 +1,11 @@
 "use client";
 
 import Details from "./JobDetails";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
+import Loading from "@/app/loading";
+import { Truck } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -12,7 +14,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Truck } from "lucide-react";
 import JobsTable from "./JobsTable";
 import { Progress } from "@/components/ui/progress";
 import { getAllActiveJobsByDriverId, updateActiveJobStatus } from "@/actions/activeJobsActions";
@@ -64,12 +65,13 @@ export default function MyJobs() {
       {/* Full-screen loading overlay */}
       {loading && (
         <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-30 backdrop-blur-md">
-          {/* Animated Delivery Truck */}
+          {/* Animated Delivery Truck  */}
           <Truck className="animate-truck" width="100" height="100" />
           <p className="text-lg text-gray-700">____________________</p>
         </div>
-      )}
 
+        // <Suspense fallback={<Loading/>}/>
+      )}
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
           <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
@@ -123,6 +125,7 @@ export default function MyJobs() {
           {selectedJob && <Details job={selectedJob} />}
         </main>
       </div>
+      
     </div>
   );
 }
