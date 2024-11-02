@@ -1,6 +1,7 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
 import { createcontact } from "./contactsActions";
+import { createActiveJob } from "./activeJobsActions";
 
 const prisma = new PrismaClient();
 
@@ -81,6 +82,7 @@ export async function getJobRequestsByCourierJobId(courierJobId: string) {
       Driver: true,
     },
   });
+
   return jobRequests;
 }
 
@@ -100,31 +102,58 @@ export async function approveJobRequest(data: {
   clientId: string;
   courierJobId: string;
 }) {
+  // First, we need to get the jobRequestId before we can proceed with parallel operations
   const request = await getJobRequestByDriverIdAndByCourierJobId(
     data.driverId,
     data.courierJobId
   );
   const jobRequestId = request[0].Id;
-  const jobRequest = await prisma.jobRequest.update({
-    where: { Id: jobRequestId },
-    data: {
-      isApproved: true,
-    },
-  });
-  const courierJob = await prisma.courierJobs.update({
-    where: {
-      Id: data.courierJobId,
-    },
-    data: {
-      packageStatus: "claimed",
-      approvedRequestId: jobRequestId,
-    },
-  });
-  const contact = await createcontact({
-    clientId: data.clientId,
-    driverId: data.driverId,
-  });
 
-  if (jobRequest.Id && courierJob.Id && contact.success) return "success";
+  // Get current date
+  const date = new Date();
+  const currentDate = `${date.getDate()}/${
+    date.getMonth() + 1
+  }/${date.getFullYear()}`;
+
+  // Group operations that can be executed concurrently
+  const [jobRequest, courierJob, contact, setActiveJob] = await Promise.all([
+    // Update job request
+    prisma.jobRequest.update({
+      where: { Id: jobRequestId },
+      data: {
+        isApproved: true,
+      },
+    }),
+
+    // Update courier job
+    prisma.courierJobs.update({
+      where: {
+        Id: data.courierJobId,
+      },
+      data: {
+        packageStatus: "claimed",
+        approvedRequestId: jobRequestId,
+      },
+    }),
+
+    // Create contact
+    createcontact({
+      clientId: data.clientId,
+      driverId: data.driverId,
+    }),
+
+    // Create active job
+    createActiveJob({
+      courierJobId: data.courierJobId,
+      driverId: data.driverId,
+      clientId: data.clientId,
+      startDate: currentDate,
+    }),
+  ]);
+
+  // Check if all operations were successful
+  if (jobRequest.Id && courierJob.Id && contact.success && setActiveJob) {
+    return "success";
+  }
   return "unsuccessful";
 }

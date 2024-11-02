@@ -86,6 +86,7 @@ export default function ModernJobForm() {
       });
       return;
     }
+    console.log(data);
 
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {

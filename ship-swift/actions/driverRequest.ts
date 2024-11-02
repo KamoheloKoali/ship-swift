@@ -67,6 +67,13 @@ export const updateDriverRequest = async (
       where: { Id: requestId },
       data: requestData,
     });
+
+    await prisma.contacts.create({
+      data: {
+        clientId: requestData.receiverId,
+        driverId: requestData.senderId,
+      },
+    });
     return { success: true, data: updatedRequest };
   } catch (error) {
     return { success: false, error: "Error updating driver request" };

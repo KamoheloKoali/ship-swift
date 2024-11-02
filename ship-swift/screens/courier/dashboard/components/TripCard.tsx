@@ -79,7 +79,7 @@ const ScheduledTrips = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3' mylg:grid-cols-1 gap-4 w-full max-w-3xl mx-auto mt-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 mylg:grid-cols-1 gap-4 w-full mx-auto mt-6">
       {trips.map((trip) => (
         <Card
           key={trip.id}

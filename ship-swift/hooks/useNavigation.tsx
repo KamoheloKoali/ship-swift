@@ -9,7 +9,7 @@ export const useNavigation = (userRole: boolean) => {
     () => [
       {
         name: "Dashboard",
-        href: userRole ? "/client/dashboard" : "/driver/dashboard",
+        href: userRole ? "/client" : "/driver/dashboard/find-jobs",
         icon: <HouseIcon />,
       },
       {

@@ -17,17 +17,7 @@ import { Bars3Icon } from "@heroicons/react/24/outline";
 export default function ClientNavBar() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
-  const menuItems = [
-    {
-      label: "Shipments",
-      href: "/client/dashboard/shipments",
-    },
-    { label: "Service Locator", href: "/conversations" },
-    {
-      label: "Address book",
-    },
-    { label: "Chats", href: "/conversations" },
-  ];
+  const menuItems = [{ label: "Messages", href: "/conversations" }];
 
   return (
     <header className="w-full bg-white mb-16">
@@ -57,6 +47,7 @@ export default function ClientNavBar() {
         <div className="flex items-center justify-between lg:hidden">
           <div className="flex items-center space-x-4">
             {/* Logo */}
+          <UserButton userProfileMode="navigation" userProfileUrl="/profile" />
             <div className="font-bold text-lg text-gray-800">Ship Swift</div>
           </div>
 
@@ -78,19 +69,6 @@ export default function ClientNavBar() {
               <NavMenu items={menuItems} />
             </SheetContent>
           </Sheet>
-        </div>
-
-        {/* Row 2: Search Bar and User Button on Small Screens */}
-        <div className="flex items-center space-x-4 mt-2 lg:hidden">
-          {/* Search Bar */}
-          <Input
-            type="text"
-            placeholder="Search..."
-            className="w-full max-w-lg border-gray-300"
-          />
-
-          {/* User Button (Clerk) */}
-          <UserButton />
         </div>
       </nav>
     </header>

@@ -83,9 +83,16 @@ export async function updateActiveJobStatus(id: string, status: string) {
       where: { Id: id },
       data: { jobStatus: status },
     });
+
+    if (status !== "delivered") {
+      await prisma.courierJobs.update({
+        where: { Id: updatedJob.courierJobId },
+        data: { packageStatus: status },
+      });
+    }
     return updatedJob;
   } catch (error) {
-    console.error("Error updating ActiveJob status:", error);
+    console.error("Error updating Job status:", error);
   }
 }
 
