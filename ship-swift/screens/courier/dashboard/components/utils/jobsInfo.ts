@@ -1,7 +1,12 @@
+import { createJobRequest } from "@/actions/jobRequestActions";
 import { JobRequest } from "../JobsRequestsTable";
 import { handleApply, handleApplied } from "../utils/jobRequests";
-import { getcontact, createcontact } from "@/actions/contactsActions";
+import { getcontact } from "@/actions/contactsActions";
 import { createMessage } from "@/actions/messagesActions";
+import {
+  createDriverRequest1,
+  getDriverRequest,
+} from "@/actions/driverRequest";
 
 export type ApplicationStatus =
   | "not_applied"
@@ -116,19 +121,43 @@ export async function checkContact(
   return { success: false, data: null };
 }
 
-export async function createContact(
+export async function checkRequest(
   driverId: string,
   clientId: string
+): Promise<{ isPending: boolean; isAccepted: boolean }> {
+  try {
+    const isRequested = await getDriverRequest(driverId, clientId);
+    
+    // Add more detailed logging to debug the response
+    console.log('Request check response:', isRequested);
+    
+    if (isRequested.success && isRequested.data && isRequested.data.length > 0) {
+      const request = isRequested.data[0];
+      // Ensure we're explicitly checking boolean values
+      return {
+        isPending: Boolean(request.isPending),
+        isAccepted: Boolean(request.isAccepted),
+      };
+    }
+    return { isPending: false, isAccepted: false };
+  } catch (error) {
+    console.error('Error checking request status:', error);
+    // Return the last known state instead of false values on error
+    return { isPending: false, isAccepted: false };
+  }
+}
+
+export async function createRequest(
+  clientId: string,
+  driverId: string
 ): Promise<boolean> {
   const contactData = {
-    clientId: clientId,
-    driverId: driverId,
+    receiverId: clientId,
+    senderId: driverId,
   };
-  const isContact = await createcontact(contactData);
-  if (isContact) {
-    return true;
-  }
-  return false;
+  const response = await createDriverRequest1(contactData);
+  console.log("createRequest response:", response);
+  return response.success;
 }
 
 export async function messageContact(
@@ -138,6 +167,7 @@ export async function messageContact(
   console.log("messageContact called with:", { clientId, driverId });
 
   try {
+    console.log("messageContact called with:", { clientId, driverId });
     const contactResponse = await getcontact(clientId, driverId);
     console.log("getcontact response:", contactResponse);
 
