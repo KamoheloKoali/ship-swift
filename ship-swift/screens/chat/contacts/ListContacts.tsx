@@ -156,7 +156,10 @@ const ListContacts = ({
         clientId,
         driverId,
       });
-      if (!createContactResponse.success) {
+      if (
+        !createContactResponse.success &&
+        createContactResponse.error !== "contact already exists"
+      ) {
         toast.error("An unexpected error occurred");
         return;
       } else {

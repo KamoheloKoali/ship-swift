@@ -4,7 +4,6 @@ import * as RPNInput from "react-phone-number-input";
 import type { E164Number } from "libphonenumber-js/core";
 import {
   isPossiblePhoneNumber,
-  formatPhoneNumber,
   formatPhoneNumberIntl,
 } from "react-phone-number-input";
 import flags from "react-phone-number-input/flags";

@@ -34,8 +34,15 @@ const JobsTable: FC<TableProps> = ({ jobs, onRowClick }: TableProps) => {
   };
 
   // Function to filter jobs based on the packageStatus
-  const filterJobs = (status: string) =>
-    jobs?.filter((job) => job.packageStatus === statusMap[status]);
+  const filterJobs = (status: string) => {
+    if (status === "ongoing") {
+      return jobs?.filter(
+        (job) =>
+          job.packageStatus === "claimed" || job.packageStatus === "collected"
+      );
+    }
+    return jobs?.filter((job) => job.packageStatus === statusMap[status]);
+  };
 
   return (
     <Tabs defaultValue="ongoing">

@@ -71,7 +71,7 @@ const DriverProfile = ({ driver, job }: Props) => {
               <Loader2 className="h-4 w-4 animate-spin" />
             </Button>
           ) : (
-            <>
+            <div className="flex gap-2 flex-wrap">
               <Button
                 size="sm"
                 variant="outline"
@@ -106,7 +106,7 @@ const DriverProfile = ({ driver, job }: Props) => {
                   Message
                 </Button>
               )}
-            </>
+            </div>
           )}
         </div>
 

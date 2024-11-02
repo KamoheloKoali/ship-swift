@@ -20,7 +20,7 @@ const LocationTracker = ({
         {
           enableHighAccuracy: true,
           maximumAge: 30000,
-          timeout: 27000,
+          timeout: 60000,
         }
       );
 
@@ -33,17 +33,46 @@ const LocationTracker = ({
   return error ? (
     <div>Error: {error}</div>
   ) : (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      x="0px"
-      y="0px"
-      width="50"
-      height="50"
-      viewBox="0 0 24 24"
-      className="animate-ping"
-    >
-      <circle cx="12" cy="12" r="4" opacity=".35"></circle>
-    </svg>
+    <div className="relative flex justify-center items-center">
+      {/* SVG Icon  */}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="64"
+        height="64"
+        viewBox="0 0 24 24"
+        className="relative"
+      >
+        <circle
+          cx="12.1"
+          cy="12.1"
+          r="1"
+          fill="none"
+          stroke="#33d17a"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        />
+      </svg>
+
+      {/* Ping Effect  */}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="64"
+        height="64"
+        viewBox="0 0 24 24"
+        className="absolute animate-ping"
+      >
+        <circle
+          cx="12.1"
+          cy="12.1"
+          r="4"
+          fill="none"
+          stroke="#33d17a"
+          opacity="0.5"
+          stroke-width="2"
+        />
+      </svg>
+    </div>
   );
 };
 
