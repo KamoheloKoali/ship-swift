@@ -63,6 +63,12 @@ export const updateClientRequest = async (
       where: { Id: requestId },
       data: requestData,
     });
+    await prisma.contacts.create({
+      data: {
+        clientId: requestData.senderId,
+        driverId: requestData.receiverId,
+      },
+    });
     return { success: true, data: updatedRequest };
   } catch (error) {
     return { success: false, error: "Error updating client request" };

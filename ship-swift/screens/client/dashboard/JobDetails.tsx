@@ -51,6 +51,7 @@ interface SideCardProps {
     PickUp: string;
     DropOff: string;
     Title: string;
+    Description: string;
   };
   requests?: Array<any>;
   driver?: any;
@@ -108,15 +109,9 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
         <ul className="grid gap-3">
           <li className="flex items-center justify-between">
             <span className="text-muted-foreground">
-              Glimmer Lamps x <span>2</span>
+              Item(s)
             </span>
-            <span>$250.00</span>
-          </li>
-          <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">
-              Aqua Filters x <span>1</span>
-            </span>
-            <span>$49.00</span>
+            <span className="flex-wrap">{job.Description}</span>
           </li>
           <li className="flex items-center justify-between">
             <span className="text-muted-foreground">Pick Up</span>
