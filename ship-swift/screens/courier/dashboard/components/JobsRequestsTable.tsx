@@ -40,11 +40,13 @@ interface JobsResponse {
 
 interface JobsRequestsTableProps {
   sortType: string;
+  searchTerm: string;
   onJobSelect: (job: JobRequest | null) => void;
 }
 
 const JobsRequestsTable: React.FC<JobsRequestsTableProps> = ({
   sortType,
+  searchTerm,
   onJobSelect,
 }) => {
   const [selectedJob, setSelectedJob] = useState<JobRequest | null>(null);
@@ -57,23 +59,7 @@ const JobsRequestsTable: React.FC<JobsRequestsTableProps> = ({
       try {
         const result: JobsResponse = await getAllJobs();
         if (result.success && result.data) {
-          // Sort the jobs according to sortType immediately
-          const sortedData = result.data.sort((a, b) => {
-            if (sortType === "mostRecent") {
-              return new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime();
-            } else if (sortType === "highestPaying") {
-              return parseFloat(b.Budget || "0") - parseFloat(a.Budget || "0");
-            }
-            return 0;
-          });
-    
-          setJobs(sortedData);
-    
-          if (sortedData.length > 0) {
-            // Select the first job in the sorted list
-            setSelectedJob(sortedData[0]);
-            onJobSelect(sortedData[0]);
-          }
+          setJobs(result.data);
         } else {
           setError(result.error || "Failed to fetch jobs");
         }
@@ -87,16 +73,25 @@ const JobsRequestsTable: React.FC<JobsRequestsTableProps> = ({
     fetchJobs();
   }, []);
 
-  const sortedData = [...jobs].sort((a, b) => {
-    if (sortType === "mostRecent") {
+  // Apply search and sort filters
+  const filteredJobs = jobs
+    .filter((job) => {
+      const searchLower = searchTerm.toLowerCase();
       return (
-        new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
+        job.PickUp?.toLowerCase().includes(searchLower) ||
+        job.DropOff?.toLowerCase().includes(searchLower)
       );
-    } else if (sortType === "highestPaying") {
-      return parseFloat(b.Budget || "0") - parseFloat(a.Budget || "0");
-    }
-    return 0;
-  });
+    })
+    .sort((a, b) => {
+      if (sortType === "mostRecent") {
+        return (
+          new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
+        );
+      } else if (sortType === "highestPaying") {
+        return parseFloat(b.Budget || "0") - parseFloat(a.Budget || "0");
+      }
+      return 0;
+    });
 
   const handleJobClick = (job: JobRequest) => {
     setSelectedJob(job);
@@ -114,7 +109,7 @@ const JobsRequestsTable: React.FC<JobsRequestsTableProps> = ({
   return (
     <div className="py-4">
       <div className="flex flex-col">
-        {sortedData.map((job) => (
+        {filteredJobs.map((job) => (
           <div
             key={job.Id}
             onClick={() => handleJobClick(job)}

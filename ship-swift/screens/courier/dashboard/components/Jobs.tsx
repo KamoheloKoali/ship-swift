@@ -22,6 +22,7 @@ const Jobs = () => {
   const [driverData, setDriverData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchDriverData = async () => {
@@ -43,6 +44,10 @@ const Jobs = () => {
 
   const handleSortChange = (newSortType: string) => {
     setSortType(newSortType);
+  };
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
   };
 
   const handleJobSelect = (job: JobRequest | null) => {
@@ -86,8 +91,12 @@ const Jobs = () => {
           <ScheduledTrips />
         </div>
         <h1 className="font-semibold text-lg py-8">Job Requests</h1>
-        <JobsMenu onSortChange={handleSortChange} />
-        <JobsRequestsTable sortType={sortType} onJobSelect={handleJobSelect} />
+        <JobsMenu onSortChange={handleSortChange} onSearch={handleSearch} />
+        <JobsRequestsTable
+          sortType={sortType}
+          onJobSelect={handleJobSelect}
+          searchTerm={searchTerm}
+        />
       </>
     );
   };
