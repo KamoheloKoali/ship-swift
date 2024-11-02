@@ -12,7 +12,7 @@ import { getClientById } from "@/actions/clientActions";
 const Page = () => {
   const router = useRouter();
   const user = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [selectedRole, setSelectedRole] = useState<"client" | "courier" | null>(
     null
@@ -30,7 +30,6 @@ const Page = () => {
 
   useEffect(() => {
     // router.push("/client/dashboard/deliver");
-    setIsLoading(true);
     const checkUser = async () => {
       if (!user || !user.userId) {
         setIsLoading(false);
