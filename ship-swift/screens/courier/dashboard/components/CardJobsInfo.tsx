@@ -3,27 +3,18 @@ import { useRouter } from "next/navigation";
 import { JobRequest } from "./JobsRequestsTable";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  MapPin,
-  Calendar,
-  Package,
-  DollarSign,
-  Clock,
-  CheckCheck,
-} from "lucide-react";
-import { UserPlus, Loader2, AlertCircle } from "lucide-react";
+import ApplyButton from "./ApplyButton";
+import RequestButton from "./RequestButton";
+import { MapPin, Calendar, Package, DollarSign, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import {
   ApplicationStatus,
   checkJobApplication,
-  applyForJob,
   formatClientName,
   formatDate,
   formatBudget,
-  checkContact,
-  createContact,
-  messageContact,
+  checkRequest,
 } from "./utils/jobsInfo";
 import CardJobsLoad from "./CardJobsLoad";
 
@@ -32,17 +23,28 @@ interface JobsInfoProps {
   isOpen: boolean;
 }
 
+interface RequestStatus {
+  isPending: boolean;
+  isAccepted: boolean;
+}
+
 const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
-  const router = useRouter();
   const { userId } = useAuth();
+
+  // State management
   const [loading, setLoading] = useState(true);
   const [applicationStatus, setApplicationStatus] =
     useState<ApplicationStatus>("not_applied");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isContact, setIsContact] = useState<boolean>(false);
-  const [isContactLoading, setIsContactLoading] = useState<boolean>(false);
-  const [isMessaging, setIsMessaging] = useState<boolean>(false);
+  const [isRequest, setIsRequest] = useState<boolean>(false);
+  const [isRequestLoading, setIsRequestLoading] = useState<boolean>(false);
+  const [requestStatus, setRequestStatus] = useState<RequestStatus>({
+    isPending: false,
+    isAccepted: false,
+  });
+  const [isInitialCheckDone, setIsInitialCheckDone] = useState(false);
 
+  // Effects
   useEffect(() => {
     const initializeJobApplication = async () => {
       if (userId && job) {
@@ -57,154 +59,45 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
     initializeJobApplication();
   }, [userId, job]);
 
-  const jobApply = async () => {
-    if (userId && job?.Id) {
-      setApplicationStatus("applying");
-      const result = await applyForJob(job.Id, userId);
-      setApplicationStatus(result.status);
-      setErrorMessage(result.errorMessage);
-    }
-  };
-
-  const renderApplyButton = () => {
-    switch (applicationStatus) {
-      case "applying":
-        return (
-          <Button
-            className="flex items-center justify-center space-x-2 border border-gray-500 bg-gray-100 text-gray-700 px-4 py-2 rounded-md my-2 cursor-not-allowed w-full"
-            disabled
-          >
-            <Loader2 className="w-4 h-4 animate-spin" />
-            <span>Applying...</span>
-          </Button>
-        );
-      case "applied":
-        return (
-          <div className="flex items-center justify-center space-x-2 border border-gray-500 bg-gray-100 text-gray-700 px-4 py-2 rounded-md my-2 cursor-not-allowed w-full">
-            <CheckCheck className="w-4 h-4" />
-            <span>Applied</span>
-          </div>
-        );
-      case "error":
-        return (
-          <Button
-            className="flex items-center justify-center space-x-2 border border-red-500 bg-red-100 text-red-700 px-4 py-2 rounded-md my-2 w-full"
-            onClick={() => setApplicationStatus("not_applied")}
-          >
-            <AlertCircle className="w-4 h-4" />
-            <span>Error - Try Again</span>
-          </Button>
-        );
-      case "not_applied":
-        return (
-          <Button
-            className="flex items-center justify-center space-x-2 border border-black bg-white hover:bg-gray-100 transition-colors duration-200 my-2 w-full"
-            variant="outline"
-            onClick={jobApply}
-          >
-            <CheckCheck className="w-4 h-4 text-black" />
-            <span className="text-black">Apply</span>
-          </Button>
-        );
-    }
-  };
-
   useEffect(() => {
+    let isSubscribed = true;
+
     const checkContactStatus = async () => {
       if (userId && job?.client.Id) {
-        setIsContactLoading(true);
+        setIsRequestLoading(true);
         try {
-          const hasContact = await checkContact(job.client.Id, userId);
-          setIsContact(hasContact.success);
+          const status = await checkRequest(userId, job.client.Id);
+          if (isSubscribed) {
+            console.log("Setting request status:", status);
+            setRequestStatus(status);
+            setIsInitialCheckDone(true);
+          }
         } catch (error) {
-          console.error("Error checking contact status:", error);
+          console.error("Error checking request status:", error);
+          if (isSubscribed) {
+            setIsInitialCheckDone(true);
+          }
         } finally {
-          setIsContactLoading(false);
+          if (isSubscribed) {
+            setIsRequestLoading(false);
+          }
         }
       }
     };
 
-    checkContactStatus();
-  }, [userId, job?.client.Id]);
-
-  const handleCreateContact = async () => {
-    if (userId && job?.client.Id) {
-      setIsContactLoading(true);
-      try {
-        const result = await createContact(userId, job.client.Id);
-        if (result) {
-          setIsContact(true);
-        }
-      } catch (error) {
-        console.error("Error creating contact:", error);
-      } finally {
-        setIsContactLoading(false);
-      }
-    }
-  };
-
-  const handleMessage = async () => {
-    if (userId && job?.client.Id) {
-      setIsMessaging(true);
-      try {
-        const conversationId = await messageContact(job.client.Id, userId);
-        console.log("Conversation ID:", conversationId);
-
-        if (conversationId) {
-          router.push(`/conversations/${conversationId}`);
-        } else {
-          console.error("No conversation ID was returned");
-        }
-      } catch (error) {
-        console.error("Error navigating to conversation:", error);
-      } finally {
-        setIsMessaging(false);
-      }
-    } else {
-      console.warn("Missing user or client ID");
-    }
-  };
-
-  const renderContactButton = () => {
-    if (isContactLoading) {
-      return (
-        <Button
-          className="flex items-center space-x-2 border border-gray-500 bg-gray-100 text-gray-700 px-4 py-2 rounded-md my-2 cursor-not-allowed"
-          disabled
-        >
-          <Loader2 className="w-4 h-4 animate-spin" />
-          <span>Loading...</span>
-        </Button>
-      );
+    if (!isInitialCheckDone || (userId && job?.client.Id)) {
+      checkContactStatus();
     }
 
-    // if (isContact) {
-    //   return (
-    //     <Button
-    //       className="flex text-black items-center justify-center space-x-2 border border-black bg-white hover:bg-gray-100 transition-colors duration-200 my-2 w-full"
-    //       onClick={handleMessage}
-    //     >
-    //       <CheckCheck className="w-4 h-4" />
-    //       <span>Message</span>
-    //     </Button>
-    //   );
-    // }
+    return () => {
+      isSubscribed = false;
+    };
+  }, [userId, job?.client.Id, isInitialCheckDone]);
 
-    return (
-      <Button
-        className="flex items-center justify-center space-x-2 border border-black bg-white hover:bg-gray-100 transition-colors duration-200 my-2 w-full"
-        variant="outline"
-        onClick={handleCreateContact}
-      >
-        <UserPlus className="w-4 h-4 text-black" />
-        <span className="text-black">Connect</span>
-      </Button>
-    );
-  };
-
+  // Render logic
   if (!job) return null;
 
-  if (loading || isContactLoading || isMessaging) {
+  if (loading || isRequestLoading) {
     return <CardJobsLoad />;
   }
 
@@ -234,8 +127,22 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
               </div>
             </div>
             <div className="flex flex-col">
-              {renderApplyButton()}
-              {renderContactButton()}
+              <ApplyButton
+                jobId={job.Id}
+                userId={userId || ""}
+                applicationStatus={applicationStatus}
+                setApplicationStatus={setApplicationStatus}
+                setErrorMessage={setErrorMessage}
+              />
+              <RequestButton
+                clientId={job.client.Id}
+                userId={userId || ""}
+                requestStatus={requestStatus}
+                isInitialCheckDone={isInitialCheckDone}
+                isRequestLoading={isRequestLoading}
+                setIsRequestLoading={setIsRequestLoading}
+                setRequestStatus={setRequestStatus}
+              />
             </div>
           </div>
           <div className="mb-4">
@@ -297,5 +204,7 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
     </div>
   );
 };
-
 export default CardJobsInfo;
+function setIsInitialCheckDone(arg0: boolean) {
+  throw new Error("Function not implemented.");
+}

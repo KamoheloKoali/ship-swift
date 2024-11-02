@@ -23,7 +23,6 @@ export const handleApply = async (
     return { success: false, error: "Failed to submit job request." };
   }
 };
-
 interface JobRequest {
   CourierJob: {
     Id: string;
