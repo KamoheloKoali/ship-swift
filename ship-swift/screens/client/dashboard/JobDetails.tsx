@@ -115,11 +115,11 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
           </li>
           <li className="flex items-center justify-between">
             <span className="text-muted-foreground">Pick Up</span>
-            <span>{job.PickUp}</span>
+            <span className="flex flex-wrap">{job.PickUp}</span>
           </li>
           <li className="flex items-center justify-between">
             <span className="text-muted-foreground">Drop Off</span>
-            <span>{job.DropOff}</span>
+            <span className="flex flex-wrap">{job.DropOff}</span>
           </li>
         </ul>
       </div>
@@ -175,19 +175,19 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
         <dl className="grid gap-3">
           <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">Courier</dt>
-            <dd>
+            <dd className="flex flex-wrap">
               {driver?.firstName} {driver?.lastName}
             </dd>
           </div>
           <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">Email</dt>
             <dd>
-              <a href={`mailto:${driver?.email}`}>{driver?.email}</a>
+              <a href={`mailto:${driver?.email}`} className="flex flex-wrap">{driver?.email}</a>
             </dd>
           </div>
           <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">Vehicle</dt>
-            <dd>{driver.vehicleType}</dd>
+            <dd className="flex flex-wrap">{driver.vehicleType}</dd>
           </div>
           <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">Phone</dt>
@@ -203,14 +203,14 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
         <dl className="grid gap-3">
           <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">Customer</dt>
-            <dd>
+            <dd className="flex flex-wrap">
               {job.client?.firstName} {job.client?.lastName}
             </dd>
           </div>
           <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">Email</dt>
             <dd>
-              <a href={`mailto:${job.client?.email}`}>{job.client?.email}</a>
+              <a href={`mailto:${job.client?.email}`} className="flex flex-wrap">{job.client?.email}</a>
             </dd>
           </div>
           <div className="flex items-center justify-between">
