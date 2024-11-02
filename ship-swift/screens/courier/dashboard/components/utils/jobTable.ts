@@ -41,6 +41,7 @@ export interface CourierJob {
     Ongoing: 'ongoing',
     COLLECTED: 'collected',
     DELIVERED: 'delivered',
+
   } as const;
   
   export const STATUS_DESCRIPTIONS = {

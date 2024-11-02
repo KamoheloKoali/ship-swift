@@ -1,238 +1,161 @@
 "use client";
-// components/FaceRecognition.tsx
-import React, { useEffect, useRef, useState } from "react";
-import * as faceapi from "face-api.js";
+// components/PhotoCapture.tsx
+import { uploadImage } from "../../registration/utils/Upload";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 
-const FaceRecognition: React.FC = () => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
-  const [uploadedFaceDescriptor, setUploadedFaceDescriptor] =
-    useState<any>(null);
-  const [matchResult, setMatchResult] = useState<string | null>(null);
-  const [isMatched, setIsMatched] = useState<boolean | null>(null);
-  const [capturedImageUrl, setCapturedImageUrl] = useState<string | null>(null);
+const PhotoCapture: React.FC = () => {
+  const router = useRouter();
+  const [photo, setPhoto] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const { userId } = useAuth();
+  const [isClient, setIsClient] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const loadModels = async () => {
-      try {
-        console.log("Loading models...");
-        await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
-        await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
-        await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
-        console.log("Models loaded successfully.");
-      } catch (error) {
-        console.error("Error loading models:", error);
-      }
-    };
-
-    const startVideo = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          console.log("Video stream started.");
-        } else {
-          console.error("Video element reference is null.");
-        }
-      } catch (error) {
-        console.error("Error starting video stream:", error);
-      }
-    };
-
-    loadModels().then(startVideo);
+    setIsClient(true);
   }, []);
 
-  useEffect(() => {
-    if (uploadedImage) {
-      const img = document.createElement("img");
-      img.src = uploadedImageUrl!;
-      img.onload = async () => {
-        try {
-          console.log("Detecting face in uploaded image...");
-          const detection = await faceapi
-            .detectSingleFace(img)
-            .withFaceLandmarks()
-            .withFaceDescriptor();
-
-          if (detection) {
-            console.log("Face detected:", detection);
-            setUploadedFaceDescriptor(detection.descriptor);
-          } else {
-            console.error("No face detected in the uploaded image.");
-          }
-        } catch (error) {
-          console.error("Error detecting face in uploaded image:", error);
-        }
-      };
-    }
-  }, [uploadedImage, uploadedImageUrl]);
-
-  const captureImageFromVideo = async () => {
-    if (videoRef.current && canvasRef.current) {
-      const displaySize = {
-        width: videoRef.current.videoWidth,
-        height: videoRef.current.videoHeight,
-      };
-      faceapi.matchDimensions(canvasRef.current, displaySize);
-
-      const context = canvasRef.current.getContext("2d");
-      if (context) {
-        // Capture a single frame from the video
-        context.drawImage(
-          videoRef.current,
-          0,
-          0,
-          displaySize.width,
-          displaySize.height
-        );
-
-        // Convert the canvas to an image URL (data URL)
-        const dataUrl = canvasRef.current.toDataURL("image/png");
-        setCapturedImageUrl(dataUrl); // Save the captured image URL
-
-        const img = new Image();
-        img.src = dataUrl;
-        img.onload = async () => {
-          try {
-            console.log("Detecting face in captured image...");
-            const detection = await faceapi
-              .detectSingleFace(img)
-              .withFaceLandmarks()
-              .withFaceDescriptor();
-
-            if (detection) {
-              console.log("Face detected in captured image:", detection);
-              compareCapturedFace(detection.descriptor); // Compare the captured face with uploaded face
-            } else {
-              console.error("No face detected in the captured image.");
-            }
-          } catch (error) {
-            console.error("Error detecting face in captured image:", error);
-          }
-        };
-      }
-    }
-  };
-
-  // Function to compare the captured face with the uploaded image
-  const compareCapturedFace = (capturedFaceDescriptor: Float32Array) => {
-    if (!uploadedFaceDescriptor) return;
-
-    console.log("Comparing captured face with uploaded image...");
-    const distance = faceapi.euclideanDistance(
-      uploadedFaceDescriptor,
-      capturedFaceDescriptor
-    );
-    console.log(`Distance to uploaded face: ${distance}`);
-    if (distance < 0.6) {
-      console.log("Match found!");
-      setMatchResult("Match found!");
-      setIsMatched(true);
-    } else {
-      console.log("No match found.");
-      setMatchResult("No match found.");
-      setIsMatched(false);
-    }
-  };
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const startCamera = async () => {
     try {
-      const file = event.target.files?.[0];
-      if (file) {
-        console.log("Image uploaded:", file.name);
-        setUploadedImage(file);
-        setUploadedImageUrl(URL.createObjectURL(file));
-        setMatchResult(null); // Reset match result on new upload
-      } else {
-        console.error("No file selected.");
+      setError(null);
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error("Camera access is not supported in your browser");
       }
-    } catch (error) {
-      console.error("Error handling image upload:", error);
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to access camera");
+      console.error("Camera access error:", err);
     }
   };
 
+  const capturePhoto = () => {
+    try {
+      setError(null);
+      const video = videoRef.current;
+      if (!video) {
+        throw new Error("Video stream not available");
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        throw new Error("Failed to create canvas context");
+      }
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL("image/png");
+      setPhoto(dataUrl);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to capture photo");
+      console.error("Photo capture error:", err);
+    }
+  };
+
+  const uploadPhoto = async () => {
+    if (!photo) {
+      setError("No photo to upload");
+      return;
+    }
+    if (!userId) {
+      setError("User ID not found");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    try {
+      const blob = dataURItoBlob(photo);
+      const file = new File([blob], `courier_${Date.now()}.png`, {
+        type: "image/png",
+      });
+      await uploadImage(file, "driver-photo-rt", userId);
+
+      router.push("/driver/dashboard/find-jobs");
+
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to upload photo");
+      console.error("Photo upload error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const dataURItoBlob = (dataURI: string) => {
+    try {
+      const byteString = atob(dataURI.split(",")[1]);
+      const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      return new Blob([ab], { type: mimeString });
+    } catch (err) {
+      throw new Error("Failed to convert photo data");
+    }
+  };
+
+  if (!isClient) return null;
+  
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-100">
-      <h2 className="mb-4 text-3xl font-bold text-center text-gray-800">
-        Upload an Image to Compare
-      </h2>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleImageUpload}
-        className="mb-4 text-sm text-gray-500 
-          file:mr-4 file:py-2 file:px-4 
-          file:rounded-full file:border-0 
-          file:text-sm file:font-semibold 
-          file:bg-blue-600 file:text-white 
-          hover:file:bg-blue-700 cursor-pointer"
-      />
-      {uploadedImageUrl && (
-        <div className="mb-4">
-          <h3 className="text-xl font-semibold text-gray-700">
-            Uploaded Image:
-          </h3>
-          <Image
-            src={uploadedImageUrl}
-            alt="Uploaded"
-            className="mt-2 max-w-xs rounded-lg shadow-lg"
-          />
+    <div className="photo-capture flex flex-col justify-center items-center sm:p-0 xl:p-4 bg-gray-50 rounded-lg shadow-lg relative sm:w-[90%] lg:w-[50%]">
+      {error && (
+        <div className="w-full p-3 mb-4 bg-red-100 text-red-700 rounded-lg">
+          {error}
         </div>
       )}
-      <div className="relative w-full max-w-2xl">
+      <div className="relative w-full sm:h-full xl:h-[80%] bg-blue-100 rounded-lg overflow-hidden mb-4">
         <video
           ref={videoRef}
           autoPlay
-          muted
-          className="w-full h-auto rounded-lg shadow-lg"
+          className="w-full h-full object-cover"
         />
-        <canvas
-          ref={canvasRef}
-          className="absolute top-0 left-0 w-full h-full rounded-lg"
-        />
+        <button
+          onClick={startCamera}
+          className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 focus:ring focus:ring-red-300"
+          disabled={isLoading}
+        >
+          Start Camera
+        </button>
       </div>
 
       <button
-        onClick={captureImageFromVideo}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
+        onClick={capturePhoto}
+        className="bg-slate-500 text-white px-6 py-2 rounded-lg mb-4 w-full max-w-xs hover:bg-black transition duration-700 disabled:opacity-50"
+        disabled={isLoading || !videoRef.current?.srcObject}
       >
-        Capture Face from Video
+        Capture Photo
       </button>
 
-      {capturedImageUrl && (
-        <div className="mt-4">
-          <h3 className="text-xl font-semibold text-gray-700">
-            Captured Image:
-          </h3>
-          <Image
-            src={capturedImageUrl}
-            alt="Captured"
-            className="mt-2 max-w-xs rounded-lg shadow-lg"
-          />
-        </div>
-      )}
+      {photo && (
+  <div className="photo-preview flex flex-col items-center gap-4 fixed inset-0 bg-gray-800 bg-opacity-70 backdrop-blur-sm justify-center z-50">
+    <Image
+      src={photo}
+      alt="Captured photo"
+      width={580}
+      height={580}
+      className="rounded-lg shadow-md m-2"
+    />
+    <button
+      onClick={uploadPhoto}
+      className="bg-slate-800 text-white px-6 py-2 rounded-lg hover:bg-slate-500 transition w-full max-w-xs disabled:opacity-50"
+      disabled={isLoading}
+    >
+      {isLoading ? "Uploading..." : "Upload Photo"}
+    </button>
+  </div>
+)}
 
-      <div className="mt-6 p-4 rounded-lg shadow-lg bg-white w-full max-w-md text-center">
-        {matchResult && (
-          <div
-            className={`flex items-center justify-center ${
-              isMatched ? "text-green-500" : "text-red-500"
-            }`}
-          >
-            {isMatched ? (
-              <div className="h-6 w-6 mr-2">We have a match</div>
-            ) : (
-              <div className="h-6 w-6 mr-2">No match at all</div>
-            )}
-            <span className="text-xl font-semibold">{matchResult}</span>
-          </div>
-        )}
-      </div>
+
     </div>
   );
 };
 
-export default FaceRecognition;
+export default PhotoCapture;
