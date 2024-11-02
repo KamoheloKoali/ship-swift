@@ -23,7 +23,6 @@ interface JobsMenuProps {
 }
 
 const JobsMenu: React.FC<JobsMenuProps> = ({ onSortChange }) => {
-  console.log("Rendering JobsMenu");
   const [activeTab, setActiveTab] = useState<string>("mostRecent");
   const [showSearchBar, setShowSearchBar] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
