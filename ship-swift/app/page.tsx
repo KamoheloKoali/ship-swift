@@ -12,11 +12,11 @@ export default async function Home() {
     const clientData = {
       clerkId: client?.id || "",
       email: client?.emailAddresses[0]?.emailAddress || "",
-      phoneNumber: client?.phoneNumbers?.[0]?.phoneNumber || "", // Assuming phoneNumbers is an array
+      phoneNumber: client?.phoneNumbers?.[0]?.phoneNumber || "",
       firstName: client?.firstName || "",
       lastName: client?.lastName || "",
       photoUrl: client?.imageUrl || "",
-      idPhotoUrl: "", // Assuming you will fetch or add the actual value later
+      idPhotoUrl: "",
     };
 
     await createClient(clientData);
@@ -41,6 +41,7 @@ export default async function Home() {
 
   //   await createDriver(DriverData)
   // }
+  
   if (!dbClient.success) {
     const clientData = {
       clerkId: client?.id || "",

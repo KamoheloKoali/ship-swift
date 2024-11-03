@@ -68,7 +68,7 @@ export default function DriverRegistrationForm() {
             formattedErrors[err.path[0].toString()] = err.message;
           }
         });
-        setErrors(formattedErrors); // Set validation errors
+        setErrors(formattedErrors);
       }
     }
   };
@@ -100,10 +100,10 @@ export default function DriverRegistrationForm() {
   return (
     <Card className="w-full max-w-4xl mx-auto bg-white rounded-none">
       <CardHeader className="bg-gray-50 border-b border-gray-200">
-        <CardTitle className="text-3xl font-bold text-gray-900">
-          Profile Verification
+        <CardTitle className="text-3xl text-center font-bold text-gray-900">
+          Profile Registration Form
         </CardTitle>
-        <CardDescription className="text-lg text-gray-600">
+        <CardDescription className="text-lg text-center text-gray-600">
           Upload the required documents and provide additional information to be
           verified and start working with us.
         </CardDescription>
