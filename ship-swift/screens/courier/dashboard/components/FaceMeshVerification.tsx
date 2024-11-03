@@ -1,9 +1,9 @@
-"use client";
-import { uploadImage } from "../../registration/utils/Upload";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
+"use client"
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
+import { uploadImage } from "../../registration/utils/Upload";
 
 const PhotoCapture: React.FC = () => {
   const router = useRouter();
@@ -13,6 +13,7 @@ const PhotoCapture: React.FC = () => {
   const [isClient, setIsClient] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCameraReady, setIsCameraReady] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -28,6 +29,7 @@ const PhotoCapture: React.FC = () => {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        setIsCameraReady(true);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to access camera");
@@ -35,39 +37,40 @@ const PhotoCapture: React.FC = () => {
     }
   };
 
-// Stop camera stream
+  // Stop camera stream
   const stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach((track) => track.stop());
       videoRef.current.srcObject = null;
+      setIsCameraReady(false);
     }
   };
 
   const capturePhoto = () => {
-    if(videoRef.current?.srcObject){
-    try {
-      setError(null);
-      const video = videoRef.current;
-      if (!video) {
-        throw new Error("Video stream not available");
-      }
-      const canvas = document.createElement("canvas");
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        throw new Error("Failed to create canvas context");
-      }
+    if (videoRef.current?.srcObject) {
+      try {
+        setError(null);
+        const video = videoRef.current;
+        if (!video) {
+          throw new Error("Video stream not available");
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          throw new Error("Failed to create canvas context");
+        }
 
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL("image/png");
-      setPhoto(dataUrl);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to capture photo");
-      console.error("Photo capture error:", err);
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL("image/png");
+        setPhoto(dataUrl);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to capture photo");
+        console.error("Photo capture error:", err);
+      }
     }
-  }
   };
 
   const uploadPhoto = async () => {
@@ -136,7 +139,7 @@ const PhotoCapture: React.FC = () => {
       <button
         onClick={capturePhoto}
         className="bg-slate-500 text-white px-6 py-2 rounded-lg mb-4 w-full max-w-xs hover:bg-black transition duration-700 disabled:opacity-50"
-        disabled={isLoading || !videoRef.current?.srcObject}
+        disabled={isLoading || !isCameraReady}
       >
         Capture Photo
       </button>
@@ -165,4 +168,5 @@ const PhotoCapture: React.FC = () => {
     </div>
   );
 };
+
 export default PhotoCapture;
