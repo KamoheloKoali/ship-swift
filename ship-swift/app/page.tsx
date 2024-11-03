@@ -4,6 +4,7 @@ import { createClient, getClientById } from "@/actions/clientActions";
 import getCurrentUserClerkDetails from "@/app/utils/getCurrentUserDetails";
 import { redirect } from "next/navigation";
 
+
 export default async function Home() {
   return(
     <>

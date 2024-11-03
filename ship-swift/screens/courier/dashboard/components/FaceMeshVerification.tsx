@@ -45,13 +45,13 @@ const PhotoCapture: React.FC = () => {
   };
 
   const capturePhoto = () => {
+    if(videoRef.current?.srcObject){
     try {
       setError(null);
       const video = videoRef.current;
       if (!video) {
         throw new Error("Video stream not available");
       }
-
       const canvas = document.createElement("canvas");
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
@@ -67,6 +67,7 @@ const PhotoCapture: React.FC = () => {
       setError(err instanceof Error ? err.message : "Failed to capture photo");
       console.error("Photo capture error:", err);
     }
+  }
   };
 
   const uploadPhoto = async () => {
@@ -87,8 +88,6 @@ const PhotoCapture: React.FC = () => {
         type: "image/png",
       });
       await uploadImage(file, "driver-photo-rt", userId);
-
-      stopCamera();
 
       router.push("/onboarding/driver/details");
     } catch (err) {
@@ -152,7 +151,10 @@ const PhotoCapture: React.FC = () => {
             className="rounded-lg shadow-md m-2"
           />
           <button
-            onClick={uploadPhoto}
+            onClick={() => {
+              uploadPhoto();
+              stopCamera();
+            }}
             className="bg-black text-white px-6 py-2 rounded-lg hover:bg-slate-500 transition w-full max-w-xs disabled:opacity-50"
             disabled={isLoading}
           >
@@ -163,5 +165,4 @@ const PhotoCapture: React.FC = () => {
     </div>
   );
 };
-
 export default PhotoCapture;

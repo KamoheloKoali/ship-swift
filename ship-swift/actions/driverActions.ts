@@ -1,5 +1,6 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
+import { UserRoundPlus } from "lucide-react";
 
 const prisma = new PrismaClient();
 
@@ -85,7 +86,7 @@ export const upsertDriver = async (driverData: {
 
 export const updateDriverVerification = async (
   driverId: string,
-  isVerified: boolean
+  isVerified: boolean,
 ) => {
   try {
     const updatedDriver = await prisma.drivers.update({
@@ -129,13 +130,14 @@ export const getAllDrivers = async () => {
 
 export const updateDriver = async (
   driverId: string,
-  driverData: Partial<any>
+  driverData: Partial<any>,
 ) => {
   try {
     const updatedDriver = await prisma.drivers.update({
       where: { Id: driverId },
       data: driverData,
     });
+
     return { success: true, data: updatedDriver };
   } catch (error) {
     return { success: false, error: "Error updating driver" };
