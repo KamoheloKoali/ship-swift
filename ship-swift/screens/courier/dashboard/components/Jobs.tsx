@@ -109,7 +109,7 @@ const Jobs = () => {
         <div className="w-[98%] md:w-[80%] mylg:w-[72%]">{renderContent()}</div>
 
         <div className="relative hidden mylg:block h-full w-[28%] bg-muted/80">
-          <div className="fixed top-[160px] w-[26.5%] sideScreen:w-[22.5%]">
+          <div className="fixed top-[154px] w-[26.5%] sideScreen:w-[22.5%]">
             <CardStatus />
             <CardJobsInfo job={selectedJob} isOpen={isModalOpen} />
           </div>
