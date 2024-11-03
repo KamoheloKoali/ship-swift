@@ -56,10 +56,10 @@ const PhotoCapture: React.FC = () => {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext("2d");
-
       if (!ctx) {
         throw new Error("Failed to create canvas context");
       }
+
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       const dataUrl = canvas.toDataURL("image/png");
       setPhoto(dataUrl);
