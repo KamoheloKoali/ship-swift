@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
-import { checkDriverRole } from "@/actions/driverActions";
+import { checkDriverRole } from "@/actions/protectActions";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import Header from "@/screens/courier/dashboard/components/Header";
