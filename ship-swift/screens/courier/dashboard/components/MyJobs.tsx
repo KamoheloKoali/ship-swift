@@ -16,11 +16,17 @@ import {
 } from "@/components/ui/card";
 import JobsTable from "./JobsTable";
 import { Progress } from "@/components/ui/progress";
-import { getAllActiveJobsByDriverId, updateActiveJobStatus } from "@/actions/activeJobsActions";
+import {
+  getAllActiveJobsByDriverId,
+  updateActiveJobStatus,
+} from "@/actions/activeJobsActions";
+import { getJobRequestsByDriverId } from "@/actions/jobRequestActions";
+
 
 export default function MyJobs() {
   const [jobs, setJobs] = useState<any[] | undefined>([]);
   const [selectedJob, setSelectedJob] = useState<any | null>(null);
+  const [jobRequests, setJobRequests] = useState<any[] | undefined>([]);
   const [error, setError] = useState<string | null | undefined>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const { userId } = useAuth();
@@ -42,6 +48,17 @@ export default function MyJobs() {
 
     fetchJobs();
   }, []);
+
+  useEffect(() => {
+    const fetchJobRequests = async () => {
+      if (userId) {
+        const requests = await getJobRequestsByDriverId(userId);
+        setJobRequests(requests);
+      }
+    };
+
+    fetchJobRequests();
+  }, [userId]);
 
   const handleRowClick = (job: any | undefined) => {
     setSelectedJob(job);
@@ -116,14 +133,18 @@ export default function MyJobs() {
             </div>
 
             {/* Render the table only when loading is false */}
-            <JobsTable jobs={jobs} onStatusChange={handleStatusChange} onRowClick={handleRowClick} />
+            <JobsTable
+              jobs={jobs}
+              jobRequests={jobRequests}
+              onStatusChange={handleStatusChange}
+              onRowClick={handleRowClick}
+            />
           </div>
 
           {/* Display details if a job is selected */}
           {selectedJob && <Details job={selectedJob} />}
         </main>
       </div>
-      
     </div>
   );
 }

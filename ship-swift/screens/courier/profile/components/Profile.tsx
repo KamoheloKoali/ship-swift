@@ -158,9 +158,9 @@ const Profile: React.FC<ProfileProps> = ({ driverData }) => {
           </div>
         </div>
 
-        <Separator className="my-4 sm:my-6" />
+        {/* <Separator className="my-4 sm:my-6" /> */}
 
-        <div>
+        {/* <div>
           <h3 className="text-lg font-semibold mb-3 sm:mb-4">
             Performance Metrics
           </h3>
@@ -181,7 +181,7 @@ const Profile: React.FC<ProfileProps> = ({ driverData }) => {
               label="Safety Score"
             />
           </div>
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   );

@@ -35,6 +35,15 @@ export interface CourierJob {
     Driver: Driver;
     Client: Client;
   }
+
+  export interface JobRequest {
+    Id: string;
+    isApproved: boolean;
+    courierJobId: string;
+    driverId: string;
+    CourierJob: CourierJob;
+    Driver: Driver;
+  }
   
   // constants.ts
   export const JOB_STATUS = {

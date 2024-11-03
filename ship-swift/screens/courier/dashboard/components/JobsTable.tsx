@@ -33,9 +33,11 @@ import {
   filterJobsByStatus,
   capitalizeFirstLetter,
 } from "@/screens/courier/dashboard/components/utils/jobTable";
+import MyRequests from "@/screens/courier/dashboard/components/MyRequests";
 
 interface TableProps {
   jobs: ActiveJob[] | undefined;
+  jobRequests: any[] | undefined;
   onRowClick: (job: ActiveJob) => void;
   onStatusChange: (jobId: string, newStatus: string) => Promise<void>;
   isLoading?: boolean;
@@ -102,6 +104,7 @@ const LoadingState: FC = () => (
 
 const JobsTable: FC<TableProps> = ({
   jobs,
+  jobRequests,
   onRowClick,
   onStatusChange,
   isLoading = false,
@@ -111,17 +114,24 @@ const JobsTable: FC<TableProps> = ({
   return (
     <Tabs defaultValue={JOB_STATUS.Ongoing}>
       <div className="flex items-center">
-        <TabsList>
-          {Object.values(JOB_STATUS).map((status) => (
-            <TabsTrigger key={status} value={status}>
-              {capitalizeFirstLetter(status)}
-              {filterJobsByStatus(jobs, status).length > 0 && (
-                <span className="ml-2 bg-primary/20 px-2 py-0.5 rounded-full text-xs">
-                  {filterJobsByStatus(jobs, status).length}
-                </span>
-              )}
-            </TabsTrigger>
-          ))}
+        <TabsList className="flex w-full">
+          <div className="flex flex-grow">
+            {Object.values(JOB_STATUS).map((status) => (
+              <TabsTrigger key={status} value={status}>
+                {capitalizeFirstLetter(status)}
+                {filterJobsByStatus(jobs, status).length > 0 && (
+                  <span className="ml-2 bg-primary/20 px-2 py-0.5 rounded-full text-xs">
+                    {filterJobsByStatus(jobs, status).length}
+                  </span>
+                )}
+              </TabsTrigger>
+            ))}
+          </div>
+
+          {/* Spacer and My Requests tab */}
+          {/* <TabsTrigger className="ml-auto" value="my-requests">
+            My Requests
+          </TabsTrigger> */}
         </TabsList>
       </div>
 
@@ -213,8 +223,8 @@ const JobsTable: FC<TableProps> = ({
           </Card>
         </TabsContent>
       ))}
+     {/* <MyRequests jobRequests={jobRequests || []} onRowClick={onRowClick} /> */}
     </Tabs>
   );
 };
-
 export default JobsTable;

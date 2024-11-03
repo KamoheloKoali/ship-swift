@@ -41,7 +41,7 @@ const CardStatus = () => {
     }
   };
   return (
-    <div className="w-full mylg:mb-4 mylg:px-4">
+    <div className="w-full mylg:mb-2 mylg:px-4 mylg:pt-4">
       <Card className="relative w-full md:w-full md:max-w-md md:mx-auto mylg:w-full sm:bg-muted/80 md:bg-gradient-to-r from-primary-foreground/60 to-primary-foreground/95 mylg:bg-gradient-to-left from-white to-white">
         <CardContent className="flex items-center justify-center p-4">
           <Button
@@ -60,7 +60,7 @@ const CardStatus = () => {
           />
         </CardContent>
       </Card>
-      <div className="sm:block md:hidden mylg:block mylg:mt-4 mylg:h-[225px] mylg:overflow-y-auto mylg:no-scrollbar">
+      <div className="sm:block md:hidden mylg:block mylg:mt-2 mylg:h-[225px] mylg:overflow-y-auto mylg:no-scrollbar">
         <ScheduledTrips />
       </div>
     </div>
