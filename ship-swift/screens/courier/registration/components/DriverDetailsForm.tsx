@@ -40,6 +40,11 @@ export default function DriverDetailsForm(): JSX.Element {
   const { driverData, loading, error, handleConfirm, handleEdit } =
     useDriverDetails();
 
+// const addUserRole = async () => {
+//   const newRole = await createUserRole({ userId: driverData.Id, driver: true, client: false });
+//   console.log(newRole);
+// };
+
   if (loading)
     return (
       <div className="w-full flex justify-center items-center h-screen pt-24">
@@ -229,13 +234,13 @@ export default function DriverDetailsForm(): JSX.Element {
         >
           Edit
         </Button>
-        
+
         <Button
           className="w-full md:w-1/2 ml-2 bg-black text-white hover:bg-gray-800"
           onClick={handleConfirm}
           disabled={driverData.isVerified || loading}
         >
-          {driverData.isVerified ? "Verified" : "Confirm"}
+          {driverData.isVerified ? "Verified" : "Proceed"}
         </Button>
       </CardFooter>
     </Card>

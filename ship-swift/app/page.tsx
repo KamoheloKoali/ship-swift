@@ -1,12 +1,10 @@
-// landing page here
 import { auth } from "@clerk/nextjs/server";
 import { checkRoles } from "@/actions/protectActions";
 import { redirect } from "next/navigation";
-
+import Landing from "./(public)/public/page";
 
 export default async function Home() {
   const { userId } = auth();
-
   if (userId === null) {
     redirect("/public");
   }
@@ -22,7 +20,7 @@ export default async function Home() {
   }
   return (
     <>
-      <div>Home</div>
+      <Landing/>
     </>
   );
 }
