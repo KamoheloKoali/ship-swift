@@ -8,6 +8,7 @@ import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { getDriverByID } from "@/actions/driverActions";
 import { getClientById } from "@/actions/clientActions";
+import { checkDriverRole } from "@/actions/protectActions";
 
 const Page = () => {
   const router = useRouter();
@@ -37,7 +38,7 @@ const Page = () => {
       } // Guard clause to wait for user data
       const [responseFromDriverTable, responseFromClientTable] =
         await Promise.all([
-          getDriverByID(user.userId),
+          checkDriverRole(user.userId),
           getClientById(user.userId),
         ]);
 
@@ -45,7 +46,7 @@ const Page = () => {
         router.push("/driver/dashboard/find-jobs");
       } else if (
         responseFromClientTable.success &&
-        !responseFromDriverTable?.idNumber
+        !responseFromDriverTable
       ) {
         console.log(
           "Client is not a courier:  redirecting to client dashboard " +
