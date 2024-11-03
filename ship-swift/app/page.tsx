@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { checkRoles } from "@/actions/protectActions";
 import { redirect } from "next/navigation";
 
+
 export default async function Home() {
   const { userId } = auth();
 
