@@ -41,23 +41,9 @@ const CardStatus = () => {
     }
   };
   return (
-    <div className="w-full py-4 mylg:mb-6 mylg:p-4">
+    <div className="w-full py-4 mylg:mb-4 mylg:p-4">
       <Card className="relative w-full md:w-full md:max-w-md md:mx-auto mylg:w-full sm:bg-muted/80 md:bg-gradient-to-r from-primary-foreground/60 to-primary-foreground/95 mylg:bg-gradient-to-left from-white to-white">
-        <CardHeader>
-          <CardTitle className="text-lg font-bold">Status</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col mylg:flex-row mylg:items-center mylg:justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Switch
-              id="availability"
-              checked={isAvailable}
-              onCheckedChange={setIsAvailable}
-            />
-            <label htmlFor="availability" className="text-sm font-medium">
-              Available
-            </label>
-          </div>
-
+        <CardContent className="flex items-center justify-center p-4">
           <Button
             variant="default"
             className="w-[100%] mylg:w-[60%] buttonScreen:w-full"
