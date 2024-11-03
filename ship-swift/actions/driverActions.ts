@@ -152,11 +152,12 @@ export const getUnverifiedDrivers = async () => {
 
 export const updateDriverVerification = async (
   driverId: string,
+  isVerified: boolean = true,
 ) => {
   try {
     const updatedDriver = await prisma.drivers.update({
       where: { Id: driverId },
-      data: { isVerified: true },
+      data: { isVerified: isVerified },
     });
     return updatedDriver;
   } catch (error) {
