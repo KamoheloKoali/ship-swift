@@ -136,14 +136,27 @@ export const upsertDriver = async (driverData: {
   }
 };
 
+export const getUnverifiedDrivers = async () => {
+  try {
+    const unverifiedDrivers = await prisma.drivers.findMany({
+      where: {
+        isVerified: false,
+      },
+    });
+    return unverifiedDrivers;
+  } catch (error) {
+    console.error("Error fetching unverified drivers:", error);
+    throw error;
+  }
+};
+
 export const updateDriverVerification = async (
   driverId: string,
-  isVerified: boolean
 ) => {
   try {
     const updatedDriver = await prisma.drivers.update({
       where: { Id: driverId },
-      data: { isVerified },
+      data: { isVerified: true },
     });
     return updatedDriver;
   } catch (error) {
