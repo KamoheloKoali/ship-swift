@@ -9,6 +9,8 @@ import {
   Shield,
   Award,
   Clock,
+  ShieldCheck,
+  ShieldX,
 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -54,7 +56,7 @@ const Profile: React.FC<ProfileProps> = ({ driverData }) => {
   return (
     <Card className="flex flex-col p-2 sm:p-4 border border-gray-200 rounded-lg mb-6 sm:mb-12">
       <CardHeader className="relative pb-0">
-        <div className="absolute top-0 left-0 w-full h-16 sm:h-24 bg-gradient-to-r from-primary to-primary-foreground opacity-20 rounded-t-lg" />
+        <div className="absolute top-0 left-0 w-full h-16 sm:h-24 bg-gradient-to-b from-primary/50 to-white opacity-20 rounded-t-lg" />
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between">
           <div className="flex flex-col sm:flex-row items-center sm:space-x-4">
             <Avatar className="w-24 h-24 sm:w-36 sm:h-36 border-4 border-background mb-4 sm:mb-0">
@@ -74,6 +76,21 @@ const Profile: React.FC<ProfileProps> = ({ driverData }) => {
                 <MapPin className="w-4 h-4 mr-1" />
                 {driverData?.location || "Location not available"}
               </div>
+              {driverData?.isVerified ? (
+                <Badge
+                  variant="outline"
+                  className="bg-blue-500 text-xs text-white border my-2"
+                >
+                  <ShieldCheck className="w-4 mr-1" /> <p>Verified</p>
+                </Badge>
+              ) : (
+                <Badge
+                  variant="outline"
+                  className="bg-blue-500 text-xs text-white border my-2"
+                >
+                  <ShieldX className="w-4 mr-1" /> <p>Not Verified</p>
+                </Badge>
+              )}
             </div>
           </div>
           <div className="flex flex-row sm:flex-col items-center sm:items-end mt-4 sm:mt-0 w-full sm:w-auto">
