@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Package, Truck, User, CheckCircle, MapPin, Clock } from "lucide-react"
+import Link from "next/link"
 
 export default function LandingPage() {
   return (
@@ -13,13 +14,15 @@ export default function LandingPage() {
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-white">
                   Swift Delivery at Your Fingertips
                 </h1>
-                <p className="mx-auto max-w-[700px] text-gray-300 md:text-xl">
+                <p className="mx-auto max-w-[700px] text-gray-300 md:text-xl ">
                   Connect with verified couriers and get your packages delivered fast and securely.
                 </p>
               </div>
               <div className="space-x-4">
+                <Link href="/sign-up">
                 <Button className="bg-white text-black hover:bg-gray-200">Get Started</Button>
-                <Button variant="outline" className="text-white border-white hover:bg-white hover:text-black">
+                </Link>
+                <Button variant="outline" className="text-white border-white bg-slate-600 hover:bg-white hover:text-black">
                   Learn More
                 </Button>
               </div>
