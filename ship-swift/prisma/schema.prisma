@@ -18,6 +18,7 @@ model clients {
   idPhotoUrl     String
   dateCreated    DateTime         @default(now())
   dateUpdated    DateTime         @updatedAt
+  isVerified     Boolean          @default(false)
   activeJobs     ActiveJobs[]
   Contacts       Contacts[]
   courierJobs    CourierJobs[]

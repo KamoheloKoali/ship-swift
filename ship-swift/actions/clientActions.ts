@@ -38,6 +38,39 @@ export const createClient = async (clientData: {
   }
 };
 
+export const getUnverifiedClients = async () => {
+  try {
+    const unverifiedClients = await prisma.clients.findMany({
+      where: {
+        isVerified: false,
+      },
+    });
+    if (unverifiedClients.length > 0) {
+      return { success: true, data: unverifiedClients };
+    } else {
+      return { success: false, error: "No unverified clients found" };
+    }
+  } catch (error) {
+    return { success: false, error: "Error retrieving unverified clients" + error };
+  }
+};
+
+export const verifyClient = async (clientId: string) => {
+  try {
+    const updatedClient = await prisma.clients.update({
+      where: { Id: clientId },
+      data: { isVerified: true },
+    });
+    if (updatedClient) {
+      return { success: true, data: updatedClient };
+    } else {
+      return { success: false, error: "Client not found" };
+    }
+  } catch (error) {
+    return { success: false, error: "Error updating client" + error };
+  }
+};
+
 export const getClientById = async (clientId: string) => {
   try {
     const client = await prisma.clients.findUnique({

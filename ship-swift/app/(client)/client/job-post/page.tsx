@@ -29,6 +29,7 @@ import { createJob } from "@/actions/courierJobsActions";
 import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
+import { getClientById } from "@/actions/clientActions";
 
 const packageSizes = [
   {
@@ -218,6 +219,17 @@ export default function PostJobWizard() {
         setStep(step + 1);
       } else {
         setIsSubmitting(true);
+        // check if user is verified
+        const client = await getClientById(userId || "")
+        if (!client.data?.isVerified) {
+          setIsSubmitting(false);
+          toast({
+            title: "You must be verified to post a job",
+            description: "Please wait until your account is verified to post a job",
+            variant: "destructive", // Use the 'destructive' variant for error messages
+          })
+          return
+        }
         // submit form data
         const formDataToSubmit = new FormData();
         Object.entries(formData).forEach(([key, value]) => {

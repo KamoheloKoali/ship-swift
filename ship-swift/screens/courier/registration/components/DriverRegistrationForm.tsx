@@ -46,6 +46,7 @@ export default function DriverRegistrationForm() {
     handleInputChange,
     handleUpload,
   } = useDriverRegistration();
+  const [phoneValidation, setPhoneValidation] = useState<ValidationResult | null>(null);
 
   // State to manage validation errors
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -147,14 +148,16 @@ export default function DriverRegistrationForm() {
             <PhoneInput
               value={formData.phoneNumber}
               placeholder="Phone Number"
-              onValueChange={({ phoneNumber, validation }) =>
+              onValueChange={({ phoneNumber, validation }) => {
+                setPhoneValidation(validation)
                 handleInputChange({
                   target: {
                     name: "phoneNumber",
-                    value: phoneNumber as E164Number
-                  }
-                })
+                    value: phoneNumber as string
+                  } 
+                } as React.ChangeEvent<HTMLInputElement>) 
               }
+            }
             />
             {errors.phoneNumber && (
               <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>
