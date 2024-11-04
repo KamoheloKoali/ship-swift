@@ -14,11 +14,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { formatDate } from "@/screens/courier/dashboard/components/utils/jobTable";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
-// Define the JobRequest interface based on your Prisma schema
-interface JobRequest {
+export interface JobRequest {
   Id: string;
   isApproved: boolean;
   CourierJob: {
@@ -38,24 +36,12 @@ interface JobRequest {
 
 interface MyRequestsProps {
   jobRequests: JobRequest[];
-  onRowClick: (job: any) => void;
+  onRequestClick: (jobRequest: any) => void;
 }
 
-const RequestStatusBadge: FC<{ isApproved: boolean }> = ({ isApproved }) => (
-  <span
-    className={`px-2 py-1 rounded-full text-xs font-medium ${
-      isApproved
-        ? "bg-green-100 text-green-800"
-        : "bg-yellow-100 text-yellow-800"
-    }`}
-  >
-    {isApproved ? "Approved" : "Pending"}
-  </span>
-);
-
-const MyRequests: FC<MyRequestsProps> = ({ jobRequests, onRowClick }) => {
+const MyRequests: FC<MyRequestsProps> = ({ jobRequests, onRequestClick }) => {
   return (
-    <Tabs>
+    <Tabs defaultValue="my-requests" className="w-full">
       <TabsContent value="my-requests">
         <Card>
           <CardHeader className="px-7">
@@ -76,11 +62,7 @@ const MyRequests: FC<MyRequestsProps> = ({ jobRequests, onRowClick }) => {
                     Dropoff Location
                   </TableHead>
                   <TableHead className="hidden md:table-cell">Client</TableHead>
-                  <TableHead className="hidden lg:table-cell">
-                    Request Date
-                  </TableHead>
                   <TableHead className="text-right">Amount</TableHead>
-                  <TableHead className="text-center">Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -89,7 +71,7 @@ const MyRequests: FC<MyRequestsProps> = ({ jobRequests, onRowClick }) => {
                     <TableRow
                       key={request.Id}
                       className="cursor-pointer hover:bg-accent"
-                      onClick={() => onRowClick(request)}
+                      onClick={() => onRequestClick(request)}
                     >
                       <TableCell>
                         <div className="font-medium">
@@ -109,14 +91,8 @@ const MyRequests: FC<MyRequestsProps> = ({ jobRequests, onRowClick }) => {
                         {request.CourierJob.client.firstName}{" "}
                         {request.CourierJob.client.lastName}
                       </TableCell>
-                      <TableCell className="hidden lg:table-cell">
-                        {formatDate(request.dateCreated)}
-                      </TableCell>
                       <TableCell className="text-right">
                         M {request.CourierJob.Budget}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <RequestStatusBadge isApproved={request.isApproved} />
                       </TableCell>
                     </TableRow>
                   ))

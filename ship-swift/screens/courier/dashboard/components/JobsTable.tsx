@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { MoreVertical, Check, Package } from "lucide-react";
 import {
   Card,
@@ -39,6 +39,7 @@ interface TableProps {
   jobs: ActiveJob[] | undefined;
   jobRequests: any[] | undefined;
   onRowClick: (job: ActiveJob) => void;
+  onRequestClick: (job: any) => void;
   onStatusChange: (jobId: string, newStatus: string) => Promise<void>;
   isLoading?: boolean;
 }
@@ -63,7 +64,6 @@ const StatusActions: FC<{
   if (!currentActions.length) {
     return null;
   }
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="h-8 w-8 p-0">
@@ -106,125 +106,143 @@ const JobsTable: FC<TableProps> = ({
   jobs,
   jobRequests,
   onRowClick,
+  onRequestClick,
   onStatusChange,
   isLoading = false,
 }) => {
+  const [activeTab, setActiveTab] = useState<string>(JOB_STATUS.Ongoing);
   if (isLoading) return <LoadingState />;
-
   return (
-    <Tabs defaultValue={JOB_STATUS.Ongoing}>
-      <div className="flex items-center">
-        <TabsList className="flex w-full">
-          <div className="flex flex-grow">
-            {Object.values(JOB_STATUS).map((status) => (
-              <TabsTrigger key={status} value={status}>
-                {capitalizeFirstLetter(status)}
-                {filterJobsByStatus(jobs, status).length > 0 && (
-                  <span className="ml-2 bg-primary/20 px-2 py-0.5 rounded-full text-xs">
-                    {filterJobsByStatus(jobs, status).length}
-                  </span>
-                )}
-              </TabsTrigger>
-            ))}
-          </div>
+    <Tabs
+      defaultValue={JOB_STATUS.Ongoing}
+      onValueChange={(value: string) => setActiveTab(value)}
+    >
+      <TabsList className="flex w-full">
+        <div className="flex flex-grow">
+          {Object.values(JOB_STATUS).map((status) => (
+            <TabsTrigger
+              key={status}
+              value={status}
+              data-state={activeTab === status ? "active" : "inactive"}
+            >
+              {capitalizeFirstLetter(status)}
+              {filterJobsByStatus(jobs, status).length > 0 && (
+                <span className="ml-2 bg-primary/20 px-2 py-0.5 rounded-full text-xs">
+                  {filterJobsByStatus(jobs, status).length}
+                </span>
+              )}
+            </TabsTrigger>
+          ))}
+        </div>
 
-          {/* Spacer and My Requests tab */}
-          {/* <TabsTrigger className="ml-auto" value="my-requests">
-            My Requests
-          </TabsTrigger> */}
-        </TabsList>
-      </div>
+        {/* Spacer and My Requests tab */}
+        <TabsTrigger
+          className="ml-auto"
+          value="my-requests"
+          data-state={activeTab === "my-requests" ? "active" : "inactive"}
+        >
+          My Requests
+        </TabsTrigger>
+      </TabsList>
 
+      {/* Tab content for each status */}
       {Object.values(JOB_STATUS).map((status) => (
         <TabsContent key={status} value={status}>
-          <Card>
-            <CardHeader className="px-7">
-              <CardTitle>Deliveries</CardTitle>
-              <CardDescription>
-                {
-                  STATUS_DESCRIPTIONS[
-                    status as keyof typeof STATUS_DESCRIPTIONS
-                  ]
-                }
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead className="hidden sm:table-cell">
-                      Pickup
-                    </TableHead>
-                    <TableHead className="hidden sm:table-cell">
-                      Dropoff
-                    </TableHead>
-                    <TableHead className="hidden md:table-cell">
-                      Client
-                    </TableHead>
-                    <TableHead className="hidden lg:table-cell">
-                      Start Date
-                    </TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                    <TableHead className="w-[50px]"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filterJobsByStatus(jobs, status).map((job) => (
-                    <TableRow
-                      key={job.Id}
-                      className="cursor-pointer hover:bg-accent"
-                      onClick={() => onRowClick(job)}
-                    >
-                      <TableCell>
-                        <div className="font-medium">
-                          {job.CourierJob.Title}
-                        </div>
-                        <div className="hidden text-sm text-muted-foreground md:inline">
-                          {job.CourierJob.Description}
-                        </div>
-                      </TableCell>
-                      <TableCell className="hidden sm:table-cell">
-                        {job.CourierJob.PickUp}
-                      </TableCell>
-                      <TableCell className="hidden sm:table-cell">
-                        {job.CourierJob.DropOff}
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {job.Client.firstName} {job.Client.lastName}
-                      </TableCell>
-                      <TableCell className="hidden lg:table-cell">
-                        {formatDate(job.startDate)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex flex-col items-center">
-                          <div>M {job.CourierJob.Budget}</div>
-                          <StatusBadge status={job.jobStatus} />
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <StatusActions
-                          job={job}
-                          onStatusChange={onStatusChange}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  {filterJobsByStatus(jobs, status).length === 0 && (
+          {activeTab === status && (
+            <Card>
+              <CardHeader className="px-7">
+                <CardTitle>Deliveries</CardTitle>
+                <CardDescription>
+                  {
+                    STATUS_DESCRIPTIONS[
+                      status as keyof typeof STATUS_DESCRIPTIONS
+                    ]
+                  }
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
                     <TableRow>
-                      <TableCell colSpan={7} className="h-24 text-center">
-                        No {status} deliveries found.
-                      </TableCell>
+                      <TableHead>Title</TableHead>
+                      <TableHead className="hidden sm:table-cell">
+                        Pickup
+                      </TableHead>
+                      <TableHead className="hidden sm:table-cell">
+                        Dropoff
+                      </TableHead>
+                      <TableHead className="hidden md:table-cell">
+                        Client
+                      </TableHead>
+                      <TableHead className="hidden lg:table-cell">
+                        Date Approved
+                      </TableHead>
+                      <TableHead className="text-right">Amount</TableHead>
+                      <TableHead className="w-[50px]"></TableHead>
                     </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+                  </TableHeader>
+                  <TableBody>
+                    {filterJobsByStatus(jobs, status).map((job) => (
+                      <TableRow
+                        key={job.Id}
+                        className="cursor-pointer hover:bg-accent"
+                        onClick={() => onRowClick(job)}
+                      >
+                        <TableCell>
+                          <div className="font-medium">
+                            {job.CourierJob.Title}
+                          </div>
+                          <div className="hidden text-sm text-muted-foreground md:inline">
+                            {job.CourierJob.Description}
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden sm:table-cell">
+                          {job.CourierJob.PickUp}
+                        </TableCell>
+                        <TableCell className="hidden sm:table-cell">
+                          {job.CourierJob.DropOff}
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {job.Client.firstName} {job.Client.lastName}
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell">
+                          {formatDate(job.startDate)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex flex-col items-center">
+                            <div>M {job.CourierJob.Budget}</div>
+                            <StatusBadge status={job.jobStatus} />
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <StatusActions
+                            job={job}
+                            onStatusChange={onStatusChange}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {filterJobsByStatus(jobs, status).length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={7} className="h-24 text-center">
+                          No {status} deliveries found.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       ))}
-     {/* <MyRequests jobRequests={jobRequests || []} onRowClick={onRowClick} /> */}
+
+      {/* Conditionally render MyRequests based on activeTab */}
+      {activeTab === "my-requests" && (
+        <MyRequests jobRequests={jobRequests || []} onRequestClick={onRequestClick} />
+      )}
     </Tabs>
   );
 };
+
 export default JobsTable;

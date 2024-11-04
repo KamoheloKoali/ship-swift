@@ -97,6 +97,21 @@ export async function getJobRequestsByDriverId(driverId: string) {
   return jobRequests;
 }
 
+export async function getUnapprovedJobRequests(driverId: string) {
+  const jobRequests = await prisma.jobRequest.findMany({
+    where: { driverId: driverId, isApproved: false },
+    include: {
+      CourierJob: {
+        include: {
+          client: true,
+        },
+      },
+      Driver: true,
+    },
+  });
+  return jobRequests;
+}
+
 export async function approveJobRequest(data: {
   driverId: string;
   clientId: string;

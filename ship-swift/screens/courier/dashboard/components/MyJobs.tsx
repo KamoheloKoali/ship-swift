@@ -1,6 +1,7 @@
 "use client";
 
 import Details from "./JobDetails";
+import RequestDetails from "./RequestDetails"; // New RequestDetails component
 import { Suspense, useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
@@ -20,13 +21,13 @@ import {
   getAllActiveJobsByDriverId,
   updateActiveJobStatus,
 } from "@/actions/activeJobsActions";
-import { getJobRequestsByDriverId } from "@/actions/jobRequestActions";
-
+import { getUnapprovedJobRequests } from "@/actions/jobRequestActions";
 
 export default function MyJobs() {
   const [jobs, setJobs] = useState<any[] | undefined>([]);
   const [selectedJob, setSelectedJob] = useState<any | null>(null);
   const [jobRequests, setJobRequests] = useState<any[] | undefined>([]);
+  const [selectedRequest, setSelectedRequest] = useState(null);
   const [error, setError] = useState<string | null | undefined>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const { userId } = useAuth();
@@ -39,7 +40,7 @@ export default function MyJobs() {
         setJobs(response);
         setSelectedJob(response[0]);
       } else if (response) {
-        setError("An unexpected error occured");
+        setError("An unexpected error occurred");
       } else {
         setError("No response received");
       }
@@ -47,13 +48,14 @@ export default function MyJobs() {
     };
 
     fetchJobs();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     const fetchJobRequests = async () => {
       if (userId) {
-        const requests = await getJobRequestsByDriverId(userId);
+        const requests = await getUnapprovedJobRequests(userId);
         setJobRequests(requests);
+        console.log(requests);
       }
     };
 
@@ -62,6 +64,12 @@ export default function MyJobs() {
 
   const handleRowClick = (job: any | undefined) => {
     setSelectedJob(job);
+    setSelectedRequest(null); // Clear selected request when a job is clicked
+  };
+
+  const handleRequestClick = (request: any | undefined) => {
+    setSelectedRequest(request);
+    setSelectedJob(null); // Clear selected job when a request is clicked
   };
 
   const handleStatusChange = async (jobId: string, newStatus: string) => {
@@ -84,8 +92,6 @@ export default function MyJobs() {
           <Truck className="animate-truck" width="100" height="100" />
           <p className="text-lg text-gray-700">____________________</p>
         </div>
-
-        // <Suspense fallback={<Loading/>}/>
       )}
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
@@ -138,11 +144,16 @@ export default function MyJobs() {
               jobRequests={jobRequests}
               onStatusChange={handleStatusChange}
               onRowClick={handleRowClick}
+              onRequestClick={handleRequestClick} // Pass the request click handler to the JobsTable
             />
           </div>
 
-          {/* Display details if a job is selected */}
-          {selectedJob && <Details job={selectedJob} />}
+          {/* Display job details if a job is selected, otherwise display request details */}
+          {selectedJob ? (
+            <Details job={selectedJob} />
+          ) : selectedRequest ? (
+            <RequestDetails request={selectedRequest} />
+          ) : null}
         </main>
       </div>
     </div>
