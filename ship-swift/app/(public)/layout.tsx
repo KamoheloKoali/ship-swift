@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
+import PublicNavBar from "./components/PublicNavBar";
+import PublicFooter from "./components/PublicFooter";
 
 export const metadata: Metadata = {
   title: "Ship-swift",
@@ -13,7 +15,9 @@ export default function PublicLayout({
 }>) {
   return (
     <div>
+      <PublicNavBar />
       {children}
+      <PublicFooter />
     </div>
   );
 }

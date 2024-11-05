@@ -30,6 +30,9 @@ interface ProfileProps {
 }
 
 const Profile: React.FC<ProfileProps> = ({ driverData }) => {
+  function removeCommas(value: string) {
+    return String(value).replace(/,/g, '');
+  }
   const InfoItem: React.FC<InfoItemProps> = ({ icon, label, value }) => (
     <div className="flex items-center space-x-2 bg-muted/50 rounded-lg p-2">
       {icon}
@@ -110,22 +113,22 @@ const Profile: React.FC<ProfileProps> = ({ driverData }) => {
               <InfoItem
                 icon={<User className="w-4 h-4 text-primary" />}
                 label="ID No."
-                value={driverData?.idNumber || "N/A"}
+                value={driverData?.idNumber || ""}
               />
               <InfoItem
                 icon={<User className="w-4 h-4 text-primary" />}
                 label="Phone No."
-                value={driverData?.phoneNumber || "N/A"}
+                value={driverData?.phoneNumber || ""}
               />
               <InfoItem
                 icon={<CreditCard className="w-4 h-4 text-primary" />}
                 label="License No."
-                value={driverData?.licenseNumber || "N/A"}
+                value={driverData?.licenseNumber || ""}
               />
               <InfoItem
                 icon={<Calendar className="w-4 h-4 text-primary" />}
                 label="License Expires"
-                value={driverData?.licenseExpiry || "N/A"}
+                value={driverData?.licenseExpiry || ""}
               />
             </div>
           </div>
@@ -137,30 +140,30 @@ const Profile: React.FC<ProfileProps> = ({ driverData }) => {
               <InfoItem
                 icon={<Truck className="w-4 h-4 text-primary" />}
                 label="Vehicle Type"
-                value={driverData?.vehicleType || "N/A"}
+                value={removeCommas(driverData?.vehicleType || "")}
               />
               <InfoItem
                 icon={<Truck className="w-4 h-4 text-primary" />}
                 label="Plate No."
-                value={driverData?.plateNumber || "N/A"}
+                value={driverData?.plateNumber || ""}
               />
               <InfoItem
                 icon={<Shield className="w-4 h-4 text-primary" />}
                 label="VIN"
-                value={driverData?.VIN || "N/A"}
+                value={driverData?.VIN || ""}
               />
               <InfoItem
                 icon={<Calendar className="w-4 h-4 text-primary" />}
                 label="Disc Expires"
-                value={driverData?.discExpiry || "N/A"}
+                value={driverData?.discExpiry || ""}
               />
             </div>
           </div>
         </div>
 
-        <Separator className="my-4 sm:my-6" />
+        {/* <Separator className="my-4 sm:my-6" /> */}
 
-        <div>
+        {/* <div>
           <h3 className="text-lg font-semibold mb-3 sm:mb-4">
             Performance Metrics
           </h3>
@@ -181,7 +184,7 @@ const Profile: React.FC<ProfileProps> = ({ driverData }) => {
               label="Safety Score"
             />
           </div>
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   );

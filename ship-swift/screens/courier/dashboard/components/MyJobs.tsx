@@ -1,6 +1,7 @@
 "use client";
 
 import Details from "./JobDetails";
+import RequestDetails from "./RequestDetails"; // New RequestDetails component
 import { Suspense, useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
@@ -16,11 +17,17 @@ import {
 } from "@/components/ui/card";
 import JobsTable from "./JobsTable";
 import { Progress } from "@/components/ui/progress";
-import { getAllActiveJobsByDriverId, updateActiveJobStatus } from "@/actions/activeJobsActions";
+import {
+  getAllActiveJobsByDriverId,
+  updateActiveJobStatus,
+} from "@/actions/activeJobsActions";
+import { getUnapprovedJobRequests } from "@/actions/jobRequestActions";
 
 export default function MyJobs() {
   const [jobs, setJobs] = useState<any[] | undefined>([]);
   const [selectedJob, setSelectedJob] = useState<any | null>(null);
+  const [jobRequests, setJobRequests] = useState<any[] | undefined>([]);
+  const [selectedRequest, setSelectedRequest] = useState(null);
   const [error, setError] = useState<string | null | undefined>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const { userId } = useAuth();
@@ -33,7 +40,7 @@ export default function MyJobs() {
         setJobs(response);
         setSelectedJob(response[0]);
       } else if (response) {
-        setError("An unexpected error occured");
+        setError("An unexpected error occurred");
       } else {
         setError("No response received");
       }
@@ -41,10 +48,28 @@ export default function MyJobs() {
     };
 
     fetchJobs();
-  }, []);
+  }, [userId]);
+
+  useEffect(() => {
+    const fetchJobRequests = async () => {
+      if (userId) {
+        const requests = await getUnapprovedJobRequests(userId);
+        setJobRequests(requests);
+        console.log(requests);
+      }
+    };
+
+    fetchJobRequests();
+  }, [userId]);
 
   const handleRowClick = (job: any | undefined) => {
     setSelectedJob(job);
+    setSelectedRequest(null); // Clear selected request when a job is clicked
+  };
+
+  const handleRequestClick = (request: any | undefined) => {
+    setSelectedRequest(request);
+    setSelectedJob(null); // Clear selected job when a request is clicked
   };
 
   const handleStatusChange = async (jobId: string, newStatus: string) => {
@@ -65,65 +90,79 @@ export default function MyJobs() {
       {loading && (
         <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-30 backdrop-blur-md">
           <Truck className="animate-truck" width="100" height="100" />
-          <p className="text-lg text-gray-700">____________________</p>
+          <p className="text-lg text-gray-700">Loading...</p>
         </div>
-
-        // <Suspense fallback={<Loading/>}/>
       )}
-      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-        <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
-          <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
-              <Card className="sm:col-span-2" x-chunk="dashboard-05-chunk-0">
-                <CardHeader className="pb-3">
-                  <CardTitle>My Deliveries</CardTitle>
-                  <CardDescription className="max-w-lg text-balance leading-relaxed">
-                    Get feedback of my progress
-                  </CardDescription>
-                </CardHeader>
-                <CardFooter>
-                  <Button>Get feedback</Button>
-                </CardFooter>
-              </Card>
-              <Card x-chunk="dashboard-05-chunk-1">
-                <CardHeader className="pb-2">
-                  <CardDescription>This Week</CardDescription>
-                  <CardTitle className="text-4xl">M 0.00</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xs text-muted-foreground">
-                    +25% from last week
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Progress value={25} aria-label="25% increase" />
-                </CardFooter>
-              </Card>
-              <Card x-chunk="dashboard-05-chunk-2">
-                <CardHeader className="pb-2">
-                  <CardDescription>This Month</CardDescription>
-                  <CardTitle className="text-4xl">M 0.00</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xs text-muted-foreground">
-                    +10% from last month
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Progress value={12} aria-label="12% increase" />
-                </CardFooter>
-              </Card>
-            </div>
 
-            {/* Render the table only when loading is false */}
-            <JobsTable jobs={jobs} onStatusChange={handleStatusChange} onRowClick={handleRowClick} />
+      <div className="flex flex-col gap-4 p-4 md:py-4 md:px-6 lg:px-8">
+        <main className="grid gap-4 md:gap-6 lg:gap-8">
+          {/* Cards Grid */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card className="md:col-span-2">
+              <CardHeader className="pb-3">
+                <CardTitle>My Deliveries</CardTitle>
+                <CardDescription className="max-w-lg text-balance leading-relaxed">
+                  Get feedback of my progress
+                </CardDescription>
+              </CardHeader>
+              <CardFooter>
+                <Button>Get feedback</Button>
+              </CardFooter>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardDescription>This Week</CardDescription>
+                <CardTitle className="text-4xl">M 0.00</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-xs text-muted-foreground">
+                  +25% from last week
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Progress value={25} aria-label="25% increase" />
+              </CardFooter>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardDescription>This Month</CardDescription>
+                <CardTitle className="text-4xl">M 0.00</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-xs text-muted-foreground">
+                  +10% from last month
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Progress value={12} aria-label="12% increase" />
+              </CardFooter>
+            </Card>
           </div>
 
-          {/* Display details if a job is selected */}
-          {selectedJob && <Details job={selectedJob} />}
+          {/* Main Content Area */}
+          <div className="grid gap-4 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+              <JobsTable
+                jobs={jobs}
+                jobRequests={jobRequests}
+                onStatusChange={handleStatusChange}
+                onRowClick={handleRowClick}
+                onRequestClick={handleRequestClick}
+              />
+            </div>
+
+            <div className="lg:col-span-1">
+              {selectedJob ? (
+                <Details job={selectedJob} />
+              ) : selectedRequest ? (
+                <RequestDetails request={selectedRequest} />
+              ) : null}
+            </div>
+          </div>
         </main>
       </div>
-      
     </div>
   );
 }
