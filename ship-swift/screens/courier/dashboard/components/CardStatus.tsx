@@ -6,6 +6,12 @@ import TripForm from "./TripForm";
 import { createScheduledTrip } from "@/actions/scheduledTripsActions";
 import ScheduledTrips from "./TripCard";
 import { useUser } from "@clerk/nextjs";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface TripFormData {
   fromLocation: string;
@@ -61,7 +67,21 @@ const CardStatus = () => {
         </CardContent>
       </Card>
       <div className="sm:block md:hidden mylg:block mylg:mt-1 mylg:h-[225px] mylg:overflow-y-auto mylg:no-scrollbar">
-        <ScheduledTrips />
+        <div className="sm:hidden md:block"><ScheduledTrips /></div>
+        <div className="sm:block md:hidden">
+
+
+        </div>
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="item-1">
+            <AccordionTrigger className="text-lg font-semibold">
+              Scheduled Trips
+            </AccordionTrigger>
+            <AccordionContent>
+              <ScheduledTrips />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
     </div>
   );
