@@ -283,7 +283,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
           <p className="text-lg text-gray-700">____________________</p>
         </div>
       ) : (
-        <Card className="overflow-x-auto flex flex-col">
+        <Card className="overflow-hidden flex flex-col">
           <CardHeader className="flex flex-row items-start bg-muted/50">
             <div className="grid gap-0.5">
               <CardTitle className="group flex flex-col gap-2 text-lg">
