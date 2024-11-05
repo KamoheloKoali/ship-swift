@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowRight, CheckCircle, Truck, Package, Users, Star } from "lucide-react"
 import { useInView } from "react-intersection-observer"
+import Link from 'next/link'
 
 export default function ShipSwiftLanding() {
   const [isVisible, setIsVisible] = useState(false)
@@ -34,10 +35,12 @@ export default function ShipSwiftLanding() {
                   Connect with local drivers for fast, reliable parcel deliveries. Ship Swift - Your Community Delivery Network.
                 </p>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                  {/* <Link href="/onboarding"> */}
                   <Button className="inline-flex items-center justify-center text-base font-bold bg-white text-black hover:bg-gray-200">
                     Get Started
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
+                  {/* </Link> */}
                   <Button variant="outline" className="text-base font-bold text-black border-white hover:bg-white hover:text-black">Learn More</Button>
                 </div>
               </div>
