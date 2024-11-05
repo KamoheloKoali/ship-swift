@@ -307,7 +307,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
                 Date: {new Date(job.dateCreated).toLocaleString()}
               </CardDescription>
             </div>
-            <div className="ml-auto flex flex-wrap items-center gap-1">
+            <div className="ml-auto flex flex-wrap md:flex-nowrap items-center gap-1">
               {isClaimed && (
                 <>
                   <Button
@@ -324,7 +324,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
                       <Button
                         size="sm"
                         variant="outline"
-                        className=" h-8 hidden gap-1 md:flex flex-wrap"
+                        className=" h-8 hidden gap-1 md:flex flex-wrap md:flex-nowrap"
                         onClick={() => {
                           window.open(
                             `/track-delivery/${job.approvedRequestId}`,
