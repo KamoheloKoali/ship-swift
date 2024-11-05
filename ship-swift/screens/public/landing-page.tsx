@@ -59,7 +59,7 @@ export default function LandingPage() {
                   4. Receive your delivery
                 </p>
               </div>
-            </div>
+            </div>  
           </div>
         </section>
         <section className="w-full py-12 md:py-24 lg:py-32">
