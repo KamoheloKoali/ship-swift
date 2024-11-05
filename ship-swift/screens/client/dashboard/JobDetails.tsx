@@ -108,9 +108,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
         <div className="font-semibold">Order Details</div>
         <ul className="grid gap-3">
           <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">
-              Item(s)
-            </span>
+            <span className="text-muted-foreground">Item(s)</span>
             <span className="flex-wrap">{job.Description}</span>
           </li>
           <li className="flex items-center justify-between">
@@ -182,7 +180,9 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
           <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">Email</dt>
             <dd>
-              <a href={`mailto:${driver?.email}`} className="flex flex-wrap">{driver?.email}</a>
+              <a href={`mailto:${driver?.email}`} className="flex flex-wrap">
+                {driver?.email}
+              </a>
             </dd>
           </div>
           <div className="flex items-center justify-between">
@@ -210,7 +210,12 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
           <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">Email</dt>
             <dd>
-              <a href={`mailto:${job.client?.email}`} className="flex flex-wrap">{job.client?.email}</a>
+              <a
+                href={`mailto:${job.client?.email}`}
+                className="flex flex-wrap"
+              >
+                {job.client?.email}
+              </a>
             </dd>
           </div>
           <div className="flex items-center justify-between">
@@ -334,7 +339,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
                   )}
                 </>
               )}
-              {job.packageStatus === "collected" && !isJobCompleted && (
+              {job.packageStatus === "collected" && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button size="icon" variant="outline" className="h-8 w-8">
