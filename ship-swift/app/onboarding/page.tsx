@@ -34,6 +34,7 @@ const Page = () => {
     const checkUser = async () => {
       if (!user || !user.userId) {
         setIsLoading(false);
+
         return;
       } // Guard clause to wait for user data
       const [responseFromDriverTable, responseFromClientTable] =
@@ -44,10 +45,7 @@ const Page = () => {
 
       if (responseFromDriverTable && !responseFromClientTable.success) {
         router.push("/driver/dashboard/find-jobs");
-      } else if (
-        responseFromClientTable.success &&
-        !responseFromDriverTable
-      ) {
+      } else if (responseFromClientTable.success && !responseFromDriverTable) {
         console.log(
           "Client is not a courier:  redirecting to client dashboard " +
             responseFromClientTable.data?.Id
