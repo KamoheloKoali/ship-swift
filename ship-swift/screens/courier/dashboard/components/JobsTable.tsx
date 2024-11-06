@@ -1,5 +1,16 @@
 import React, { FC, useState } from "react";
-import { MoreVertical, Check, Package } from "lucide-react";
+import {
+  MoreVertical,
+  Check,
+  Package,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Inbox,
+  UserCircle,
+  PackageCheck,
+  Truck,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -43,6 +54,8 @@ interface TableProps {
   onStatusChange: (jobId: string, newStatus: string) => Promise<void>;
   isLoading?: boolean;
 }
+
+type JobStatusType = (typeof JOB_STATUS)[keyof typeof JOB_STATUS];
 
 export const StatusBadge: FC<{ status: string }> = ({ status }) => (
   <span
@@ -112,39 +125,55 @@ const JobsTable: FC<TableProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<string>(JOB_STATUS.Ongoing);
   if (isLoading) return <LoadingState />;
+
+  const getStatusIcon = (status: JobStatusType) => {
+    switch (status) {
+      case JOB_STATUS.Ongoing:
+        return <Clock className="h-4 w-4" />;
+      case JOB_STATUS.COLLECTED:
+        return <PackageCheck className="h-4 w-4" />;
+      case JOB_STATUS.DELIVERED:
+        return <Truck className="h-4 w-4" />;
+      default:
+        return <Package className="h-4 w-4" />;
+    }
+  };
+
   return (
     <Tabs
       defaultValue={JOB_STATUS.Ongoing}
       onValueChange={(value: string) => setActiveTab(value)}
     >
-      <TabsList className="flex w-full flex-wrap gap-2 p-1 md:flex-nowrap">
-        <div className="flex w-full flex-wrap gap-1 md:flex-nowrap md:gap-0">
-          {Object.values(JOB_STATUS).map((status) => (
-            <TabsTrigger
-              key={status}
-              value={status}
-              className="flex-1 text-sm md:text-base"
-              data-state={activeTab === status ? "active" : "inactive"}
-            >
-              <span className="hidden md:inline">
-                {capitalizeFirstLetter(status)}
+      <TabsList className="flex w-full items-center gap-1 p-1">
+        {Object.values(JOB_STATUS).map((status) => (
+          <TabsTrigger
+            key={status}
+            value={status}
+            className="flex items-center gap-1 flex-1 min-w-0"
+            data-state={activeTab === status ? "active" : "inactive"}
+          >
+            <span className="md:hidden">{getStatusIcon(status)}</span>
+            <span className="hidden md:inline">
+              {capitalizeFirstLetter(status)}
+            </span>
+            <span className="truncate md:hidden">{status.slice(0, 3)}</span>
+            {filterJobsByStatus(jobs, status).length > 0 && (
+              <span className="ml-1 rounded-full bg-primary/20 px-1.5 py-0.5 text-xs">
+                {filterJobsByStatus(jobs, status).length}
               </span>
-              <span className="md:hidden">{status.slice(0, 3)}</span>
-              {filterJobsByStatus(jobs, status).length > 0 && (
-                <span className="ml-1 rounded-full bg-primary/20 px-1.5 py-0.5 text-xs md:ml-2 md:px-2">
-                  {filterJobsByStatus(jobs, status).length}
-                </span>
-              )}
-            </TabsTrigger>
-          ))}
-        </div>
+            )}
+          </TabsTrigger>
+        ))}
 
         <TabsTrigger
-          className="w-full md:w-auto md:ml-auto"
           value="my-requests"
+          className="flex items-center gap-1"
           data-state={activeTab === "my-requests" ? "active" : "inactive"}
         >
-          My Requests
+          <span className="md:hidden">
+            <UserCircle className="h-4 w-4" />
+          </span>
+          <span className="hidden md:inline">My Requests</span>
         </TabsTrigger>
       </TabsList>
 

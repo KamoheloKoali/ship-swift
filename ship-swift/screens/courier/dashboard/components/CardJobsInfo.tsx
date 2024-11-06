@@ -43,7 +43,7 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
     isAccepted: false,
   });
   const [isInitialCheckDone, setIsInitialCheckDone] = useState(false);
-    
+
   // Effects
   useEffect(() => {
     const initializeJobApplication = async () => {
@@ -107,7 +107,7 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
   );
 
   return (
-    <div className="p-4 flex items-center justify-center w-full h-full z-50">
+    <div className="sm:p-0 md:p-1 mylg:p-4 flex items-center justify-center w-full h-full z-50">
       <Card className="w-full max-w-lg bg-white shadow-xl rounded-xl overflow-hidden">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
@@ -125,24 +125,6 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
                 </h3>
                 <p className="text-sm text-gray-500">Sender</p>
               </div>
-            </div>
-            <div className="flex flex-col">
-              <ApplyButton
-                jobId={job.Id}
-                userId={userId || ""}
-                applicationStatus={applicationStatus}
-                setApplicationStatus={setApplicationStatus}
-                setErrorMessage={setErrorMessage}
-              />
-              <RequestButton
-                clientId={job.client.Id}
-                userId={userId || ""}
-                requestStatus={requestStatus}
-                isInitialCheckDone={isInitialCheckDone}
-                isRequestLoading={isRequestLoading}
-                setIsRequestLoading={setIsRequestLoading}
-                setRequestStatus={setRequestStatus}
-              />
             </div>
           </div>
           <div className="mb-4">
@@ -198,6 +180,24 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
                 {formatBudget(job.Budget)}
               </span>
             </div>
+          </div>
+          <div className="flex flex-row gap-4">
+            <RequestButton
+              clientId={job.client.Id}
+              userId={userId || ""}
+              requestStatus={requestStatus}
+              isInitialCheckDone={isInitialCheckDone}
+              isRequestLoading={isRequestLoading}
+              setIsRequestLoading={setIsRequestLoading}
+              setRequestStatus={setRequestStatus}
+            />
+            <ApplyButton
+              jobId={job.Id}
+              userId={userId || ""}
+              applicationStatus={applicationStatus}
+              setApplicationStatus={setApplicationStatus}
+              setErrorMessage={setErrorMessage}
+            />
           </div>
         </CardContent>
       </Card>

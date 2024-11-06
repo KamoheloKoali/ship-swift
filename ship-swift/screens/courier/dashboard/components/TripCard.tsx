@@ -79,51 +79,55 @@ const ScheduledTrips = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 mylg:grid-cols-1 gap-4 w-full mx-auto mt-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 mylg:grid-cols-1 gap-4 w-full mx-auto mt-6">
       {trips.map((trip) => (
         <Card
           key={trip.id}
-          className="bg-white rounded-xl hover:shadow-xl transition-shadow border-0"
+          className="bg-white rounded-xl w-full overflow-hidden"
         >
           <CardContent className="p-6">
-            <div className="flex justify-between items-start">
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">
+            <div className="flex justify-between items-start w-full">
+              <div className="flex-1 min-w-0">
+                {" "}
+                {/* min-w-0 prevents flex item from overflowing */}
+                <div className="flex items-center justify-between w-full">
+                  <h3 className="text-lg font-semibold text-gray-900 truncate mr-2">
                     {trip.fromLocation} → {trip.toLocation}
                   </h3>
                   {trip.status === "SCHEDULED" && (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger className="focus:outline-none">
-                        <MoreVertical className="h-5 w-5 text-gray-500 hover:text-gray-700" />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-40">
-                        <DropdownMenuItem
-                          onClick={() =>
-                            handleStatusUpdate(trip.id, "COMPLETED")
-                          }
-                          className="text-green-600"
-                        >
-                          <Check className="mr-2 h-4 w-4" />
-                          Complete
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            handleStatusUpdate(trip.id, "CANCELLED")
-                          }
-                          className="text-red-600"
-                        >
-                          <Ban className="mr-2 h-4 w-4" />
-                          Cancel
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div className="flex-shrink-0">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger className="focus:outline-none">
+                          <MoreVertical className="h-5 w-5 text-gray-500 hover:text-gray-700" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-40">
+                          <DropdownMenuItem
+                            onClick={() =>
+                              handleStatusUpdate(trip.id, "COMPLETED")
+                            }
+                            className="text-green-600"
+                          >
+                            <Check className="mr-2 h-4 w-4" />
+                            Complete
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              handleStatusUpdate(trip.id, "CANCELLED")
+                            }
+                            className="text-red-600"
+                          >
+                            <Ban className="mr-2 h-4 w-4" />
+                            Cancel
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 mt-2">
+                <p className="text-sm text-gray-600 mt-2 break-words overflow-hidden">
                   {trip.routeDetails}
                 </p>
-                <div className="flex items-center justify-between mt-4">
+                <div className="flex flex-wrap items-center justify-between mt-4 gap-2">
                   <div className="flex items-center space-x-4">
                     <span className="text-sm text-gray-500">
                       {formatDate(trip.tripDate)}

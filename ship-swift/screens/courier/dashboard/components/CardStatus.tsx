@@ -67,21 +67,21 @@ const CardStatus = () => {
         </CardContent>
       </Card>
       <div className="sm:block md:hidden mylg:block mylg:mt-1 mylg:h-[225px] mylg:overflow-y-auto mylg:no-scrollbar">
-        <div className="sm:hidden md:block"><ScheduledTrips /></div>
-        <div className="sm:block md:hidden">
-
-
+        <div className="hidden md:block">
+          <ScheduledTrips />
         </div>
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1">
-            <AccordionTrigger className="text-lg font-semibold">
-              Scheduled Trips
-            </AccordionTrigger>
-            <AccordionContent>
-              <ScheduledTrips />
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+        <div className="block md:hidden">
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="item-1" className="border-none">
+              <AccordionTrigger className="flex justify-center text-lg font-semibold">
+                Scheduled Trips
+              </AccordionTrigger>
+              <AccordionContent>
+                <ScheduledTrips />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
       </div>
     </div>
   );
