@@ -63,6 +63,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
   const router = useRouter();
   const [isJobCompleted, setIsJobCompleted] = useState(false);
   const [isGettingContact, setIsGettingContact] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
 
   // Move the status check to useEffect to avoid infinite re-renders
   useEffect(() => {
@@ -91,14 +92,17 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
   };
 
   const handleJobComplete = async (id: string) => {
+    setIsCompleting(true);
     const updatedJob = await updateJobStatus(id, "delivered");
     if (updatedJob?.Id) {
-      setIsJobCompleted(true);
+      router.refresh();
+      setIsCompleting(false);
     } else {
       toast({
-        description: "An unexpected error occured",
+        description: "An unexpected error occured, please try again later.",
         variant: "destructive",
       });
+      setIsCompleting(false);
     }
   };
 
@@ -258,7 +262,16 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
       >
         <p>Payment Method</p>
         {isJobCompleted && (
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              toast({
+                title: "Feature not yet implemented",
+                description: "This feature is not yet implemented",
+              });
+            }}
+          >
             <HandCoins className="h-4 w-4" /> Release payment
           </Button>
         )}
@@ -360,8 +373,14 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button size="icon" variant="outline" className="h-8 w-8">
-                      <MoreVertical className="h-3.5 w-3.5" />
-                      <span className="sr-only">More</span>
+                      {isCompleting ? (
+                        <Loader2 className="animate-spin h-4 w-4" />
+                      ) : (
+                        <>
+                          <MoreVertical className="h-3.5 w-3.5" />
+                          <span className="sr-only">More</span>
+                        </>
+                      )}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -398,11 +417,14 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
                 <div className="">
                   {requests.length > 0 ? (
                     requests.map((driver: any) => (
-                      <DriverProfile
-                        key={driver.Id}
-                        driver={driver}
-                        job={job}
-                      />
+                      <>
+                        <DriverProfile
+                          key={driver.Id}
+                          driver={driver}
+                          job={job}
+                        />
+                        <Separator className="my-2" />
+                      </>
                     ))
                   ) : (
                     <div className="w-full text-center">No Applicants</div>

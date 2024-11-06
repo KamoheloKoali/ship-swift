@@ -153,7 +153,7 @@ export async function approveJobRequest(data: {
 
   // Check if all operations were successful
   if (jobRequest.Id && courierJob.Id && contact.success && setActiveJob) {
-    return "success";
+    return 0;
   }
-  return "unsuccessful";
+  return 1;
 }

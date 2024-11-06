@@ -32,15 +32,11 @@ const Page = () => {
   useEffect(() => {
     // router.push("/client/dashboard/deliver");
     const checkUser = async () => {
-      if (!user || !user.userId) {
-        setIsLoading(false);
-
-        return;
-      } // Guard clause to wait for user data
+      // Guard clause to wait for user data
       const [responseFromDriverTable, responseFromClientTable] =
         await Promise.all([
-          checkDriverRole(user.userId),
-          getClientById(user.userId),
+          checkDriverRole(user.userId || ""),
+          getClientById(user.userId || ""),
         ]);
 
       if (responseFromDriverTable && !responseFromClientTable.success) {

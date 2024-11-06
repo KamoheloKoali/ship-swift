@@ -23,9 +23,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 interface TableProps {
   jobs: any[] | undefined;
   onRowClick: (job: any) => void;
+  Clicked: any;
 }
 
-const JobsTable: FC<TableProps> = ({ jobs, onRowClick }: TableProps) => {
+const JobsTable: FC<TableProps> = ({
+  jobs,
+  onRowClick,
+  Clicked,
+}: TableProps) => {
   // Define the mapping of tab values to packageStatus
   const statusMap: { [key: string]: string } = {
     unclaimed: "unclaimed",
@@ -46,11 +51,26 @@ const JobsTable: FC<TableProps> = ({ jobs, onRowClick }: TableProps) => {
 
   return (
     <Tabs defaultValue="ongoing">
-      <div className="flex items-center">
+      <div className="flex flex-wrap items-center">
         <TabsList>
-          <TabsTrigger value="ongoing">Ongoing</TabsTrigger>
-          <TabsTrigger value="unclaimed">Unclaimed</TabsTrigger>
-          <TabsTrigger value="delivered">Delivered</TabsTrigger>
+          <TabsTrigger className="flex gap-1 md:block " value="unclaimed">
+            Unclaimed
+            <span className="md:ml-2 md:bg-primary/20 md:px-2 md:py-0.5 rounded-full text-xs">
+              {filterJobs("unclaimed")?.length}
+            </span>
+          </TabsTrigger>
+          <TabsTrigger value="ongoing" className="flex gap-1 md:block ">
+            Ongoing
+            <span className="md:ml-2 md:bg-primary/20 md:px-2 md:py-0.5 rounded-full text-xs">
+              {filterJobs("ongoing")?.length}
+            </span>
+          </TabsTrigger>
+          <TabsTrigger value="delivered" className="flex gap-1 md:block ">
+            Delivered
+            <span className="md:ml-2 md:bg-primary/20 md:px-2 md:py-0.5 rounded-full text-xs">
+              {filterJobs("delivered")?.length}
+            </span>
+          </TabsTrigger>
         </TabsList>
       </div>
       <TabsContent value="ongoing">
@@ -78,7 +98,9 @@ const JobsTable: FC<TableProps> = ({ jobs, onRowClick }: TableProps) => {
                 {filterJobs("ongoing")?.map((job) => (
                   <TableRow
                     key={job.Id}
-                    className="bg-accent cursor-pointer"
+                    className={`cursor-pointer ${
+                      Clicked?.Id === job.Id ? "bg-accent" : ""
+                    }`}
                     onClick={() => onRowClick(job)}
                   >
                     <TableCell>
@@ -129,7 +151,9 @@ const JobsTable: FC<TableProps> = ({ jobs, onRowClick }: TableProps) => {
                 {filterJobs("unclaimed")?.map((job) => (
                   <TableRow
                     key={job.Id}
-                    className="bg-accent cursor-pointer"
+                    className={`cursor-pointer ${
+                      Clicked?.Id === job.Id ? "bg-accent" : ""
+                    }`}
                     onClick={() => onRowClick(job)}
                   >
                     <TableCell>
@@ -180,7 +204,9 @@ const JobsTable: FC<TableProps> = ({ jobs, onRowClick }: TableProps) => {
                 {filterJobs("delivered")?.map((job) => (
                   <TableRow
                     key={job.Id}
-                    className="bg-accent cursor-pointer"
+                    className={`cursor-pointer ${
+                      Clicked?.Id === job.Id ? "bg-accent" : ""
+                    }`}
                     onClick={() => onRowClick(job)}
                   >
                     <TableCell>
