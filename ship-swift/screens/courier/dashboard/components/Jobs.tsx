@@ -81,7 +81,7 @@ const Jobs = () => {
     if (error) return <div>Error: {error}</div>;
 
     return (
-      <>
+      <div>
         <Profile driverData={driverData} />
 
         <div className="flex md:hidden justify-start w-full">
@@ -97,10 +97,9 @@ const Jobs = () => {
           onJobSelect={handleJobSelect}
           searchTerm={searchTerm}
         />
-      </>
+      </div>
     );
   };
-
   return (
     <div className="flex flex-row justify-center lg:justify-start">
       <div className="hidden mylg:w-[2.5%] 2xl:w-[10%] lg:block"></div>
