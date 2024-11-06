@@ -27,6 +27,7 @@ import {
 type Props = {
   Submit: (userId: string, user: any, data: any) => void;
   user: any;
+  driverId?: string;
 };
 
 const formSchema = z.object({
@@ -45,7 +46,7 @@ const formSchema = z.object({
   }),
 });
 
-export default function GetDriverInfoForm({ user, Submit }: Props) {
+export default function GetDriverInfoForm({ user, Submit, driverId }: Props) {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formSuccess, setFormSuccess] = useState(false);
   const [formSubmitting, setFormSubmitting] = useState(false);
@@ -73,7 +74,8 @@ export default function GetDriverInfoForm({ user, Submit }: Props) {
       licenseExpiry: values.LicenseExpirationDate?.toISOString(),
       discExpiry: values.DiscExpiryDate?.toISOString(),
     };
-    Submit(user.id, user, formData);
+    if (driverId && driverId.length > 0) Submit(driverId, user, formData);
+    else Submit(user.id, user, formData);
   }
 
   return (
