@@ -95,9 +95,12 @@ export default function MyJobs() {
 
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <div className="flex p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
-          <Button className="mb-4 flex items-center border" onClick={() => {
-            router.push("/client/job-post");
-          }}>
+          <Button
+            className="mb-4 flex items-center"
+            onClick={() => {
+              router.push("/client/job-post");
+            }}
+          >
             <PlusCircle className="mr-2 h-4 w-4" />
             <span>New Job</span>
           </Button>

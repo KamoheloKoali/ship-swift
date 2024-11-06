@@ -108,9 +108,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
         <div className="font-semibold">Order Details</div>
         <ul className="grid gap-3">
           <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">
-              Item(s)
-            </span>
+            <span className="text-muted-foreground">Item(s)</span>
             <span className="flex-wrap">{job.Description}</span>
           </li>
           <li className="flex items-center justify-between">
@@ -179,10 +177,12 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
               {driver?.firstName} {driver?.lastName}
             </dd>
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between">
             <dt className="text-muted-foreground">Email</dt>
             <dd>
-              <a href={`mailto:${driver?.email}`} className="flex flex-wrap">{driver?.email}</a>
+              <a href={`mailto:${driver?.email}`} className="flex flex-wrap">
+                {driver?.email}
+              </a>
             </dd>
           </div>
           <div className="flex items-center justify-between">
@@ -210,7 +210,12 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
           <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">Email</dt>
             <dd>
-              <a href={`mailto:${job.client?.email}`} className="flex flex-wrap">{job.client?.email}</a>
+              <a
+                href={`mailto:${job.client?.email}`}
+                className="flex flex-wrap"
+              >
+                {job.client?.email}
+              </a>
             </dd>
           </div>
           <div className="flex items-center justify-between">
@@ -278,7 +283,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
           <p className="text-lg text-gray-700">____________________</p>
         </div>
       ) : (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden flex flex-col">
           <CardHeader className="flex flex-row items-start bg-muted/50">
             <div className="grid gap-0.5">
               <CardTitle className="group flex flex-col gap-2 text-lg">
@@ -302,7 +307,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
                 Date: {new Date(job.dateCreated).toLocaleString()}
               </CardDescription>
             </div>
-            <div className="ml-auto flex items-center gap-1">
+            <div className="ml-auto flex flex-wrap md:flex-nowrap items-center gap-1">
               {isClaimed && (
                 <>
                   <Button
@@ -315,26 +320,43 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
                     <span className="sr-only">Copy Order ID</span>
                   </Button>
                   {!isJobCompleted && isClaimed && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-8 gap-1"
-                      onClick={() => {
-                        window.open(
-                          `/track-delivery/${job.approvedRequestId}`,
-                          "_blank"
-                        );
-                      }}
-                    >
-                      <Truck className="h-3.5 w-3.5" />
-                      <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                        View Map
-                      </span>
-                    </Button>
+                    <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className=" h-8 hidden gap-1 md:flex flex-wrap md:flex-nowrap"
+                        onClick={() => {
+                          window.open(
+                            `/track-delivery/${job.approvedRequestId}`,
+                            "_blank"
+                          );
+                        }}
+                      >
+                        <Truck className=" h-3.5 w-3.5" />
+                        <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
+                          View Map
+                        </span>
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className=" h-8 flex gap-1 md:hidden flex-wrap"
+                        onClick={() => {
+                          window.open(
+                            `/track-delivery/${job.approvedRequestId}`,
+                            "_blank"
+                          );
+                        }}
+                      >
+                        <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
+                          Map
+                        </span>
+                      </Button>
+                    </>
                   )}
                 </>
               )}
-              {job.packageStatus === "collected" && !isJobCompleted && (
+              {job.packageStatus === "collected" && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button size="icon" variant="outline" className="h-8 w-8">

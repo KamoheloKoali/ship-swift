@@ -10,6 +10,10 @@ const isPublicRoute = createRouteMatcher([
   "/sign-up(.*)",
   "/track-delivery(.*)", // Make /track-delivery/[deliveryId] public
   "/onboarding(.*)", // Make onboarding page public
+  "/",
+  "/about",
+  "/features",
+  "/how-it-works",
 ]);
 
 export default clerkMiddleware(async (auth, request) => {
