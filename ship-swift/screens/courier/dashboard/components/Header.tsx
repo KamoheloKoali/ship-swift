@@ -74,12 +74,9 @@ export default function Header() {
 
   return (
     <header className="w-full bg-white mb-16">
-      {/* Main Navigation */}
-      <nav className="container mx-auto p-4 border border-red-500">
-        {/* Row 1: Logo and Navigation Menu for large screens */}
+      <nav className="container mx-auto p-4 border-b-2 border-slate-200">
         <div className="hidden lg:flex items-center justify-between">
-          {/* Left side: Logo and Navigation Menu */}
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-4">
             {/* Logo */}
             <div className="font-bold text-lg text-gray-800">Ship Swift</div>
 
@@ -90,16 +87,14 @@ export default function Header() {
               hasActiveJobs={hasActiveJobs}
             />
           </div>
-
-          {/* Right side: Search Bar and User Button */}
-          <div className="flex border border-red-500 justify-end w-[20%]  sm:hidden md:block">
-            {/* User Button (Clerk) */}
+          {/* User Button (Clerk) - Only visible on large screens */}
+          <div className="lg:flex justify-end w-[20%]">
             <UserButton />
           </div>
         </div>
 
         {/* For Small Screens: Logo and Hamburger Menu */}
-        <div className="flex items-center justify-between lg:hidden border border-green-500">
+        <div className="flex items-center justify-between lg:hidden">
           <div className="flex items-center space-x-4">
             {/* Logo */}
             <div className="font-bold text-lg text-gray-800">Ship Swift</div>
@@ -109,12 +104,6 @@ export default function Header() {
               </div>
             )}
           </div>
-
-          <div className="flex justify-end w-[20%]  sm:block lg:hidden">
-            {/* User Button (Clerk) */}
-            <UserButton />
-          </div>
-
           {/* Menu Button for small screens */}
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
@@ -135,6 +124,10 @@ export default function Header() {
                 isDriver={isDriver}
                 hasActiveJobs={hasActiveJobs}
               />
+              {/* User Button (Clerk) - Only visible on small screens in Sheet */}
+              <div className="lg:hidden flex justify-end w-[20%]">
+                <UserButton />
+              </div>
             </SheetContent>
           </Sheet>
         </div>
