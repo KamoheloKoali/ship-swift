@@ -12,6 +12,7 @@ import React, { useState } from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@clerk/nextjs";
 import { approveJobRequest } from "@/actions/jobRequestActions";
+import { useRouter } from "next/navigation";
 
 type Props = {
   driver: any;
@@ -23,6 +24,7 @@ const DriverProfile = ({ driver, job }: Props) => {
   const [isError, setIsError] = useState(false);
   const { userId } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const hire = async () => {
     setIsLoading(true);
     const response = await approveJobRequest({
@@ -30,9 +32,9 @@ const DriverProfile = ({ driver, job }: Props) => {
       clientId: userId || "",
       courierJobId: job.Id,
     });
-    if (response === "success") {
-      setIsHired(true);
-    } else {
+    if (response === 0) {
+      router.refresh();
+    } else if (response === 1) {
       setIsError(true);
     }
     setIsLoading(false);
@@ -58,7 +60,9 @@ const DriverProfile = ({ driver, job }: Props) => {
           <p className="text-sm text-gray-500">
             Professional Driver | 5+ Years Experience
           </p>
-          <p className="text-sm text-gray-500">New York City</p>
+          <p className="text-sm text-gray-500">
+            {driver.location ? driver.location : "Location Not Available"}
+          </p>
         </div>
 
         <div className="">
@@ -111,18 +115,40 @@ const DriverProfile = ({ driver, job }: Props) => {
           )}
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          <Badge variant="secondary">City Driving</Badge>
-          <Badge variant="secondary">Highway Driving</Badge>
-          <Badge variant="secondary">GPS Navigation</Badge>
-          <Badge variant="secondary">Customer Service</Badge>
+        <div className="flex flex-wrap">
+          <dl className="grid gap-3  w-full">
+            <div className="flex items-center justify-between">
+              <dt className="text-muted-foreground">Courier</dt>
+              <dd className="flex flex-wrap">
+                {driver?.firstName} {driver?.lastName}
+              </dd>
+            </div>
+            <div className="flex flex-wrap items-center justify-between">
+              <dt className="text-muted-foreground">Email</dt>
+              <dd>
+                <a href={`mailto:${driver?.email}`} className="flex flex-wrap">
+                  {driver?.email}
+                </a>
+              </dd>
+            </div>
+            <div className="flex items-center justify-between">
+              <dt className="text-muted-foreground">Vehicle</dt>
+              <dd className="flex flex-wrap">{driver.vehicleType}</dd>
+            </div>
+            <div className="flex items-center justify-between">
+              <dt className="text-muted-foreground">Phone</dt>
+              <dd>
+                <a href={`tel:${driver.phoneNumber}`}>{driver.phoneNumber}</a>
+              </dd>
+            </div>
+          </dl>
         </div>
 
-        <p className="text-sm">
+        {/* <p className="text-sm">
           Experienced driver with a perfect safety record. Specializing in
           efficient city and highway deliveries. Known for punctuality and
           excellent customer service.
-        </p>
+        </p> */}
       </div>
     </div>
   );

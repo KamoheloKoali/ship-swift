@@ -100,12 +100,35 @@ export const getUnverifiedDrivers = async () => {
 
 export const updateDriverVerification = async (
   driverId: string,
-  isVerified: boolean = true,
+  isVerified: boolean = true
 ) => {
   try {
     const updatedDriver = await prisma.drivers.update({
       where: { Id: driverId },
       data: { isVerified: isVerified },
+    });
+    return updatedDriver;
+  } catch (error) {
+    console.error("Error updating driver verification:", error);
+    throw error;
+  }
+};
+
+export const VerifyDriver = async (
+  driverId: string,
+  data: {
+    VIN: string;
+    plateNumber: string;
+    discExpiry: string;
+    idNumber: string;
+    licenseNumber: string;
+    licenseExpiry: string;
+  }
+) => {
+  try {
+    const updatedDriver = await prisma.drivers.update({
+      where: { Id: driverId },
+      data: { isVerified: true, ...data },
     });
     return updatedDriver;
   } catch (error) {
@@ -144,7 +167,7 @@ export const getAllDrivers = async () => {
 
 export const updateDriver = async (
   driverId: string,
-  driverData: Partial<any>,
+  driverData: Partial<any>
 ) => {
   try {
     const updatedDriver = await prisma.drivers.update({
