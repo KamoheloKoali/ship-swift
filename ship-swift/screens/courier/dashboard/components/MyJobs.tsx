@@ -55,7 +55,7 @@ export default function MyJobs() {
       if (userId) {
         const requests = await getUnapprovedJobRequests(userId);
         setJobRequests(requests);
-        console.log(requests);
+        console.log(requests[0].CourierJob.collectionDate);
       }
     };
 

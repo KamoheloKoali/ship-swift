@@ -36,7 +36,7 @@ export default function RequestDetails({ request }: RequestDetailsProps) {
             <CardDescription>
               Request ID: {request.Id}
               <br />
-              Date Created: {new Date(request.dateCreated).toLocaleString()}
+              Date Created: {new Date(request.CourierJob.dateCreated).toLocaleString()}
             </CardDescription>
           </div>
         </CardHeader>
@@ -59,6 +59,10 @@ export default function RequestDetails({ request }: RequestDetailsProps) {
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Dropoff Location</span>
                 <span>{request.CourierJob.DropOff}</span>
+              </li>
+              <li className="flex items-center justify-between">
+                <span className="text-muted-foreground">Collection Date</span>
+                <span>{new Date(request.CourierJob.collectionDate).toLocaleString()}</span>
               </li>
             </ul>
             <div className="grid gap-3">

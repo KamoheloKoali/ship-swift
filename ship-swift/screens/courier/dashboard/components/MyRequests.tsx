@@ -30,8 +30,9 @@ export interface JobRequest {
       firstName: string;
       lastName: string;
     };
+    dateCreated: string;
+    collectionDate: string;
   };
-  dateCreated: string;
 }
 
 interface MyRequestsProps {
