@@ -4,8 +4,8 @@ import PublicNavBar from "./components/PublicNavBar";
 import PublicFooter from "./components/PublicFooter";
 
 export const metadata: Metadata = {
-  title: "Ship-swift",
-  description: "Ship purcels swiftly",
+  title: "Ship Swift",
+  description: "Ship parcels swiftly",
 };
 
 export default function PublicLayout({
