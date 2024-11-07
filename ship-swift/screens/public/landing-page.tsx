@@ -55,7 +55,7 @@ export default function ShipSwiftLanding() {
                   deliveries. Ship Swift - Your Community Delivery Network.
                 </p>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Link href="/onboarding">
+                  <Link href="/sign-up">
                     <Button className="inline-flex items-center justify-center text-base font-bold bg-white text-black hover:bg-gray-200">
                       Get Started
                       <ArrowRight className="ml-2 h-4 w-4" />
