@@ -29,7 +29,8 @@ export default function ShipSwiftLanding() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex-1">
+      <main className="flex-1
+       border">
         <section
           className="relative w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: 'url("/assets/public/hero-1.jpeg")' }}
@@ -304,10 +305,12 @@ export default function ShipSwiftLanding() {
                 community-driven parcel delivery.
               </p>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
+              <Link href="/sign-up">
                 <Button className="inline-flex items-center justify-center text-base font-bold">
                   Sign Up Now
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
+                </Link>
                 <Button variant="outline" className="text-base font-bold">
                   Contact Sales
                 </Button>
