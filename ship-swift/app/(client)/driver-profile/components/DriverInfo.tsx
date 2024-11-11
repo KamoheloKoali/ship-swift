@@ -1,14 +1,8 @@
 import { Driver } from '@/types/driver';
 import { 
-    Car,
     Mail,
     Phone,
-    MapPin,
-    Calendar,
-    FileText,
-    Shield,
-    User,
-    Loader2
+    MapPin
   } from 'lucide-react';
 
 interface VehicleTabProps {
