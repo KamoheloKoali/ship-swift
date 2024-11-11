@@ -12,13 +12,13 @@ const ParamsSchema = z.object({
 
 export async function GET(
   request: Request,
-  { params }: { params: { driverId: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
-    // Define a fixed driver ID
-    const driverId = params.driverId;
+    // Extract id from params and use it directly
+    const driverId = params.id;
+    console.log("Received driverId:", driverId); // Debug log
 
-    // Fetch driver with only specified fields
     const driver = await prisma.drivers.findUnique({
       where: {
         Id: driverId,
@@ -46,16 +46,20 @@ export async function GET(
       },
     });
 
-    // If driver is not found, return a 404 response
     if (!driver) {
-      return NextResponse.json({ error: "Driver not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Driver not found" }, 
+        { status: 404 }
+      );
     }
 
-    // Return the driver data in a 200 response
     return NextResponse.json(driver);
   } catch (error) {
-    console.error("Error fetching driver data:", error);
-    return NextResponse.json({ error: "Failed to fetch driver data" }, { status: 500 });
+    console.error("API Error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch driver" }, 
+      { status: 500 }
+    );
   }
 }
 
