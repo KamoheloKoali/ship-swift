@@ -49,6 +49,7 @@ model Drivers {
   licensePhotoUrl String?
   location        String?
   isVerified      Boolean          @default(false)
+  isOnline        Boolean          @default(false)
   activeJobs      ActiveJobs[]
   Contacts        Contacts[]
   driveRequests   DriverRequests[]
@@ -172,6 +173,11 @@ model ScheduledTrips {
   updatedAt    DateTime   @updatedAt
   status       TripStatus @default(SCHEDULED)
   driver       Drivers    @relation(fields: [driverId], references: [Id])
+}
+
+model FCMTokens {
+  userId String @id
+  token  String
 }
 
 enum TripStatus {

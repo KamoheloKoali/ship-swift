@@ -4,6 +4,7 @@ import ClientNavBar from "./client/components/ClientNavBar";
 import { useEffect, useState } from "react";
 import { Truck } from "lucide-react";
 import { getUserRoleById } from "../utils/getUserRole";
+import NotificationButton from "@/screens/notifications/PushNotifications/NotificationButton";
 
 export default function ClientLayout({
   children,
@@ -35,6 +36,9 @@ export default function ClientLayout({
         <>
           <ClientNavBar />
           {children}
+          <div className="fixed bottom-4 right-4">
+            <NotificationButton />
+          </div>
         </>
       ) : (
         <div className="w-screen h-screen flex justify-center items-center">
