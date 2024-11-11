@@ -39,7 +39,6 @@ model Drivers {
   vehicleType     String?
   dateCreated     DateTime         @default(now())
   dateUpdated     DateTime         @updatedAt
-  VIN             String?
   idNumber        String?
   licenseExpiry   String?
   licenseNumber   String?
@@ -49,7 +48,8 @@ model Drivers {
   licensePhotoUrl String?
   location        String?
   isVerified      Boolean          @default(false)
-  reviews         Review[]         
+  isOnline        Boolean          @default(false)
+  VIN             String?
   rating          Float?
   activeJobs      ActiveJobs[]
   Contacts        Contacts[]
@@ -59,17 +59,16 @@ model Drivers {
   Messages        Messages[]
   scheduledTrips  ScheduledTrips[]
   clientRequests  clientRequests[]
-  isOnline         Boolean          @default(false)
+  reviews         Review[]         @relation("DriversToReview")
 }
 
 model Review {
-  id        String   @id
-  driverId  String   
+  id        String    @id
+  driverId  String
   content   String?
-  rating    Int      
-  createdAt DateTime @default(now())
-
-  Drivers Drivers[]
+  rating    Int
+  createdAt DateTime  @default(now())
+  Drivers   Drivers[] @relation("DriversToReview")
 }
 
 model CourierJobs {
