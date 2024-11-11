@@ -1,56 +1,112 @@
-// app/components/NotificationButton.js
 "use client";
 
 import { createFCMToken } from "@/actions/FCMTokenActions";
+import { saveDeviceToken } from "@/actions/knock";
+import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { messaging } from "@/lib/firebase";
-import { currentUser } from "@clerk/nextjs/server";
+import { useUser } from "@clerk/nextjs";
 import { getToken } from "firebase/messaging";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
-function requestPermission() {
+export default function NotificationButton() {
+  const { user } = useUser();
+  const [isRequestingPermission, setIsRequestingPermission] = useState(false);
+  const [showNotificationButton, setShowNotificationButton] = useState(false);
+
+  useEffect(() => {
+    const checkTokenStatus = async () => {
+      if (!user) return;
+
+      try {
+        // Check if notification permission is already granted
+        const permission = Notification.permission;
+
+        // Check if we have a valid token in Firebase
+        const currentToken = await getToken(messaging, {
+          vapidKey: String(process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY),
+        });
+
+        console.log("token" + currentToken);
+        getRegistrationToken();
+        // Show button if:
+        // 1. Permission not granted OR
+        // 2. No current token exists
+        setShowNotificationButton(!currentToken || permission !== "granted");
+      } catch (error) {
+        console.error("Error checking token status:", error);
+        setShowNotificationButton(true);
+      }
+    };
+
+    checkTokenStatus();
+  }, [user]);
+
+  function requestPermission() {
+    setIsRequestingPermission(true);
     console.log("Requesting notification permission...");
     Notification.requestPermission().then((permission) => {
-        if (permission === "granted") {
-            console.log("Notification permission granted.");
-            getRegistrationToken(); // Proceed if permission is granted
-        } else {
-            console.log("Notification permission denied.");
-        }
+      if (permission === "granted") {
+        toast({
+          title: "Notification permission granted",
+          description: "You will now receive notifications.",
+        });
+        getRegistrationToken();
+      } else {
+        toast({
+          title: "Notification permission denied",
+          description: "You will not receive notifications.",
+          variant: "destructive",
+        });
+      }
+      setIsRequestingPermission(false);
     });
-}
+  }
 
-async function getRegistrationToken() {
-    const vapidKey = String(process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY); // Replace with your VAPID key
-    const  user  = await currentUser()
+  async function getRegistrationToken() {
+    const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
+    
+    if (!vapidKey) {
+        console.error('VAPID key is missing');
+        return;
+    }
 
     if (!user) return;
 
     try {
-        const currentToken = await getToken(messaging, { vapidKey });
+        const currentToken = await getToken(messaging, {
+            vapidKey: vapidKey
+        });
+        
         if (currentToken) {
-            console.log("Generated FCM Token:", currentToken);
-            // Send token to your server for later use
-            const response = await createFCMToken({userId: user.id, token: currentToken});
+            const response = await createFCMToken({
+                userId: user.id,
+                token: currentToken,
+            });
+
+            await saveDeviceToken(user.id, currentToken);
 
             if (!response.success) {
                 toast({
                     title: "Error",
                     description: "Error creating FCMToken",
                     variant: "destructive",
-                })
+                });
             }
-        } else {
-            console.log("No registration token available. Request permission to generate one.");
         }
     } catch (error) {
-    console.error("Error retrieving token:", error);
-}
+        console.error("Error retrieving token:", error);
+    }
 }
 
-export default function NotificationButton() {
-    return (
-        <button onClick={requestPermission}>
-      Enable Notifications
-    </button>
-  );
+  return showNotificationButton ? (
+    <Button onClick={requestPermission}>
+      {isRequestingPermission ? 
+        <Loader2 className="animate-spin h-4 w-4"/> : 
+        <>Enable Notifications</>
+      }
+    </Button>
+  ) : null;
+  
 }

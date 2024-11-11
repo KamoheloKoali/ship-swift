@@ -19,6 +19,7 @@ import { useAuth } from "@clerk/nextjs";
 import { getUserRoleById } from "@/app/utils/getUserRole";
 import { getAllActiveJobsByDriverId } from "@/actions/activeJobsActions";
 import NotificationFeed from "@/screens/notifications/InApp/NotificationFeed";
+import SwitchUser from "@/screens/global/switch-user";
 
 export default function Header() {
   const { userId } = useAuth();
@@ -89,6 +90,7 @@ export default function Header() {
             />
             
           </div>
+          <SwitchUser />
           {/* User Button (Clerk) - Only visible on large screens */}
           <div className="flex gap-2">
               <NotificationFeed />

@@ -27,7 +27,7 @@ if (typeof window !== "undefined") {
   app = initializeApp(firebaseConfig);
   analytics = getAnalytics(app);
   // Initialize Firebase Cloud Messaging and get a reference to the service
-  const messaging = getMessaging(app);
+   messaging = getMessaging(app);
 }
 
 

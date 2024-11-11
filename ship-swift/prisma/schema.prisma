@@ -39,7 +39,7 @@ model Drivers {
   vehicleType     String?
   dateCreated     DateTime         @default(now())
   dateUpdated     DateTime         @updatedAt
-  VIN             String?
+  vehicleRegistrationNo String?
   idNumber        String?
   licenseExpiry   String?
   licenseNumber   String?

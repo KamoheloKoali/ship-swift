@@ -14,6 +14,7 @@ import {
 import NavMenu from "@/screens/courier/dashboard/components/HeaderMenu";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import NotificationFeed from "@/screens/notifications/InApp/NotificationFeed";
+import SwitchUser from "@/screens/global/switch-user";
 
 export default function ClientNavBar() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -35,6 +36,10 @@ export default function ClientNavBar() {
 
             {/* Navigation Menu for larger screens */}
             <NavMenu items={menuItems} />
+          </div>
+
+          <div>
+            <SwitchUser />
           </div>
 
           {/* Right side: Search Bar and User Button */}
