@@ -13,7 +13,7 @@ import {
   updateScheduledTrip,
 } from "@/actions/scheduledTripsActions";
 
-interface ScheduledTrip {
+export interface ScheduledTrip {
   id: string;
   fromLocation: string;
   toLocation: string;
