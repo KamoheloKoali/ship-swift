@@ -6,7 +6,7 @@ export default function HowItWorks() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-100">
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-100 flex justify-center items-center">
           <div className="container px-4 md:px-6">
             <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-center mb-8">
               How ShipSwift Works
@@ -17,7 +17,7 @@ export default function HowItWorks() {
           </div>
         </section>
         
-        <section className="w-full py-12 md:py-24 lg:py-32">
+        <section className="w-full py-12 md:py-24 lg:py-32 flex justify-center items-center">
           <div className="container px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">For Drivers</h2>
             <div className="grid gap-10 sm:grid-cols-2 md:gap-16">
@@ -53,7 +53,7 @@ export default function HowItWorks() {
           </div>
         </section>
         
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-100">
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-100 flex justify-center items-center">
           <div className="container px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">For Users</h2>
             <div className="grid gap-10 sm:grid-cols-2 md:gap-16">
@@ -89,7 +89,7 @@ export default function HowItWorks() {
           </div>
         </section>
         
-        <section className="w-full py-12 md:py-24 lg:py-32">
+        <section className="w-full py-12 md:py-24 lg:py-32 flex justify-center items-center">
           <div className="container px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">Frequently Asked Questions</h2>
             <Accordion type="single" collapsible className="w-full max-w-3xl mx-auto">
@@ -121,7 +121,7 @@ export default function HowItWorks() {
           </div>
         </section>
         
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-black text-white">
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-black text-white flex justify-center items-center">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center space-y-4 text-center">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Ready to Get Started?</h2>
@@ -138,23 +138,8 @@ export default function HowItWorks() {
           </div>
         </section>
       </main>
-      <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-        <p className="text-xs text-gray-500 dark:text-gray-400">© 2024 ShipSwift. All rights reserved.</p>
-        <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-          <a className="text-xs hover:underline underline-offset-4" href="#">
-            Terms of Service
-          </a>
-          <a className="text-xs hover:underline underline-offset-4" href="#">
-            Privacy Policy
-          </a>
-          <a className="text-xs hover:underline underline-offset-4" href="#">
-            Cookie Policy
-          </a>
-          <a className="text-xs hover:underline underline-offset-4" href="#">
-            Contact Us
-          </a>
-        </nav>
-      </footer>
+
+      {/* cleared the foooter*/}
     </div>
   )
 }
