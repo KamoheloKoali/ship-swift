@@ -1,7 +1,7 @@
 "use client";
 
 import { createFCMToken } from "@/actions/FCMTokenActions";
-import { saveDeviceToken } from "@/actions/knock";
+import { saveDeviceToken } from "@/lib/knock";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { messaging } from "@/lib/firebase";
@@ -27,9 +27,6 @@ export default function NotificationButton() {
         const currentToken = await getToken(messaging, {
           vapidKey: String(process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY),
         });
-
-        console.log("token" + currentToken);
-        getRegistrationToken();
         // Show button if:
         // 1. Permission not granted OR
         // 2. No current token exists

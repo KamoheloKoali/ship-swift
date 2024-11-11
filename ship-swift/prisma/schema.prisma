@@ -39,7 +39,6 @@ model Drivers {
   vehicleType     String?
   dateCreated     DateTime         @default(now())
   dateUpdated     DateTime         @updatedAt
-  vehicleRegistrationNo String?
   idNumber        String?
   licenseExpiry   String?
   licenseNumber   String?
@@ -50,6 +49,8 @@ model Drivers {
   location        String?
   isVerified      Boolean          @default(false)
   isOnline        Boolean          @default(false)
+  VIN             String?
+  rating          Float?
   activeJobs      ActiveJobs[]
   Contacts        Contacts[]
   driveRequests   DriverRequests[]
@@ -58,6 +59,7 @@ model Drivers {
   Messages        Messages[]
   scheduledTrips  ScheduledTrips[]
   clientRequests  clientRequests[]
+  Review          Review[]
 }
 
 model CourierJobs {
@@ -173,6 +175,15 @@ model ScheduledTrips {
   updatedAt    DateTime   @updatedAt
   status       TripStatus @default(SCHEDULED)
   driver       Drivers    @relation(fields: [driverId], references: [Id])
+}
+
+model Review {
+  id        String    @id
+  driverId  String
+  content   String?
+  rating    Int
+  createdAt DateTime  @default(now())
+  Drivers   Drivers[]
 }
 
 model FCMTokens {
