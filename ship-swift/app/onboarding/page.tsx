@@ -1,80 +1,182 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardTitle } from "@/components/ui/card";
-
-import {
-  Tooltip,
-  TooltipProvider,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Truck, User } from "lucide-react";
-import RegHeader from "@/screens/courier/registration/components/RegHeader";
+import { Card, CardContent } from "@/components/ui/card";
+import { Building2, Loader2, Package, ShoppingBag, Truck } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { getDriverByID } from "@/actions/driverActions";
+import { getClientById } from "@/actions/clientActions";
+import { checkDriverRole } from "@/actions/protectActions";
+import { getUserRoleById } from "../utils/getUserRole";
 
 const Page = () => {
+  const router = useRouter();
+  const user = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<"client" | "courier" | null>(
+    null
+  );
+
+  const handleCreateAccount = () => {
+    setIsRedirecting(true);
+    if (selectedRole === "client") {
+      router.push("/onboarding/client");
+    } else if (selectedRole === "courier") {
+      router.push("/onboarding/driver/registration");
+    }
+    // If no role is selected, we don't redirect
+  };
+
+  useEffect(() => {
+    // router.push("/client/dashboard/deliver");
+    const checkUser = async () => {
+      // Guard clause to wait for user data
+      const [
+        userRole,
+        // responseFromDriverTable, responseFromClientTable
+      ] = await Promise.all([
+        getUserRoleById(),
+        // checkDriverRole(user.userId || ""),
+        // getClientById(user.userId || ""),
+      ]);
+      if (userRole.success) {
+        if (userRole.data?.client) {
+          router.push("/client");
+        } else if (userRole.data?.driver) {
+          router.push("/driver/dashboard/find-jobs");
+        }
+      }
+
+      // if (responseFromDriverTable && !responseFromClientTable.success) {
+      //   router.push("/driver/dashboard/find-jobs");
+      // } else if (responseFromClientTable.success && !responseFromDriverTable) {
+      //   console.log(
+      //     "Client is not a courier:  redirecting to client dashboard " +
+      //       responseFromClientTable.data?.Id
+      //   );
+      //   router.push("/client");
+      // }
+      else {
+        setIsLoading(false);
+      }
+    };
+
+    checkUser();
+  }, [user, router]); // Add `user` to the dependency array
+
   return (
     <>
-    <div>
-      <RegHeader/>
-    </div>
-    <div className="flex flex-col lg:flex-row sm:flex-col justify-center items-center p-6 sm:p-2 lg:p-12 space-y-6 lg:space-y-0 lg:space-x-6 min-h-screen bg-slate-300">
-      
-      {/* Client Card */}
-      <Card className="flex flex-col items-center justify-center w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-xs xl:max-w-sm bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out rounded-lg p-6 sm:p-8">
-        <div className="flex items-center space-x-3 mb-4">
-          <User className="text-black" size="32" />
-          <CardTitle className="text-xl sm:text-2xl font-bold text-center">
-            I am a client
-          </CardTitle>
+      {isLoading ? (
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-30 backdrop-blur-md">
+          {/* Animated Delivery Truck */}
+          <Truck className="animate-truck" width="100" height="100" />
+          <p className="text-lg text-gray-700">____________________</p>
         </div>
-        <p className="text-gray-500 text-center mb-6">
-          Looking for a reliable service? Apply as a client today!
-        </p>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link href={"/"} passHref className="w-full m-4">
-                <Button className=" w-full text-white font-semibold rounded-lg">
-                  Apply
-                </Button>
+      ) : (
+        <>
+          <div className="min-h-screen flex flex-col items-center justify-center p-4">
+            <div className="fixed top-6 left-6">
+              <Link
+                href="/"
+                className="text-xl font-bold flex items-center gap-2"
+              >
+                <Truck className="w-6 h-6" />
+                Ship Swift
               </Link>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Click to apply as a client</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </Card>
+            </div>
 
-      {/* Courier Card */}
-      <Card className="flex flex-col items-center justify-center w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-xs xl:max-w-sm bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out rounded-lg p-6 sm:p-8">
-        <div className="flex items-center space-x-3 mb-4">
-          <Truck className="text-black" size="32" />
-          <CardTitle className="text-xl sm:text-2xl font-bold text-center">
-            I am a courier
-          </CardTitle>
-        </div>
-        <p className="text-gray-500 text-center mb-6">
-          Ready to deliver packages? Apply as a courier now!
-        </p>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link href={"/onboarding/driver-onboarding/registration"} passHref className="w-full m-4">
-                <Button className="w-full text-white font-semibold rounded-lg">
-                  Apply
+            <div className="max-w-2xl w-full space-y-8">
+              <h1 className="text-3xl md:text-4xl font-bold text-center">
+                Join Ship Swift as a client or courier
+              </h1>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <Card
+                  className={`relative cursor-pointer transition-colors ${
+                    selectedRole === "client"
+                      ? "border-primary"
+                      : "hover:border-primary"
+                  }`}
+                >
+                  <CardContent className="p-6">
+                    <input
+                      type="radio"
+                      name="role"
+                      id="client"
+                      className="peer absolute right-4 top-4"
+                      checked={selectedRole === "client"}
+                      onChange={() => setSelectedRole("client")}
+                    />
+                    <label
+                      htmlFor="client"
+                      className="block space-y-4 cursor-pointer"
+                    >
+                      <Package className="w-8 h-8" />
+                      <h2 className="text-xl font-semibold">
+                        I need something shipped
+                      </h2>
+                      <p className="text-muted-foreground text-sm">
+                        Post jobs for item collection or delivery and get
+                        connected with reliable couriers
+                      </p>
+                    </label>
+                  </CardContent>
+                </Card>
+
+                <Card
+                  className={`relative cursor-pointer transition-colors ${
+                    selectedRole === "courier"
+                      ? "border-primary"
+                      : "hover:border-primary"
+                  }`}
+                >
+                  <CardContent className="p-6">
+                    <input
+                      type="radio"
+                      name="role"
+                      id="courier"
+                      className="peer absolute right-4 top-4"
+                      checked={selectedRole === "courier"}
+                      onChange={() => setSelectedRole("courier")}
+                    />
+                    <label
+                      htmlFor="courier"
+                      className="block space-y-4 cursor-pointer"
+                    >
+                      <Truck className="w-8 h-8" />
+                      <h2 className="text-xl font-semibold">
+                        I want to be a courier
+                      </h2>
+                      <p className="text-muted-foreground text-sm">
+                        Find and complete shipping jobs in your area and earn
+                        money as a delivery partner
+                      </p>
+                    </label>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="flex justify-center gap-4">
+                <Button
+                  size="lg"
+                  className="w-full max-w-sm"
+                  onClick={handleCreateAccount}
+                  disabled={!selectedRole}
+                >
+                  {isRedirecting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    "Create Account"
+                  )}
                 </Button>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Click to apply as a courier</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </Card>
-    </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 };

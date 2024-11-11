@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 
 type Props = {
   Contacts: any;
-  role: Boolean;
+  role: boolean;
 };
 
 const ListContacts = ({ role, Contacts }: Props) => {
@@ -26,7 +26,7 @@ const ListContacts = ({ role, Contacts }: Props) => {
         let fullName: string;
         if (role) {
           const driverData = await getDriverByID(newContact.driverId); // Fetch driver by driverId
-          fullName = driverData.Id
+          fullName = driverData?.Id
             ? `${driverData.firstName} ${driverData.lastName}`
             : "Unknown Driver";
         } else {

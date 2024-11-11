@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import useDriverDetails from "@/screens/courier/registration/utils/DriverDetails";
 import Loading from "@/screens/courier/registration/ui/Loading";
+import Image from "next/image";
 
 interface ImageDisplayProps {
   url: string | null | undefined;
@@ -22,10 +23,12 @@ interface ImageDisplayProps {
 
 const ImageDisplay: React.FC<ImageDisplayProps> = ({ url, alt }) =>
   url ? (
-    <img
+    <Image
       src={url}
       alt={alt}
       className="w-full h-40 object-cover rounded-md shadow-sm"
+      width={500}
+      height={500}
     />
   ) : (
     <div className="w-full h-40 bg-gray-100 flex items-center justify-center rounded-md">
@@ -36,6 +39,11 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ url, alt }) =>
 export default function DriverDetailsForm(): JSX.Element {
   const { driverData, loading, error, handleConfirm, handleEdit } =
     useDriverDetails();
+
+// const addUserRole = async () => {
+//   const newRole = await createUserRole({ userId: driverData.Id, driver: true, client: false });
+//   console.log(newRole);
+// };
 
   if (loading)
     return (
@@ -226,12 +234,13 @@ export default function DriverDetailsForm(): JSX.Element {
         >
           Edit
         </Button>
+
         <Button
           className="w-full md:w-1/2 ml-2 bg-black text-white hover:bg-gray-800"
           onClick={handleConfirm}
           disabled={driverData.isVerified || loading}
         >
-          {driverData.isVerified ? "Verified" : "Confirm"}
+          {driverData.isVerified ? "Verified" : "Proceed"}
         </Button>
       </CardFooter>
     </Card>

@@ -67,6 +67,13 @@ export const updateDriverRequest = async (
       where: { Id: requestId },
       data: requestData,
     });
+
+    await prisma.contacts.create({
+      data: {
+        clientId: requestData.receiverId,
+        driverId: requestData.senderId,
+      },
+    });
     return { success: true, data: updatedRequest };
   } catch (error) {
     return { success: false, error: "Error updating driver request" };
@@ -81,5 +88,59 @@ export const deleteDriverRequest = async (requestId: string) => {
     return { success: true, data: deletedRequest };
   } catch (error) {
     return { success: false, error: "Error deleting driver request" };
+  }
+};
+
+export const createDriverRequestV1 = async (requestData: {
+  receiverId: string;
+  senderId: string;
+}) => {
+  try {
+    // First verify the sender (Driver) exists
+    const senderExists = await prisma.drivers.findUnique({
+      where: { Id: requestData.senderId },
+    });
+
+    if (!senderExists) {
+      return {
+        success: false,
+        error: "Driver not found",
+      };
+    }
+
+    // Then verify the receiver (Client) exists
+    const receiverExists = await prisma.clients.findUnique({
+      where: { Id: requestData.receiverId },
+    });
+
+    if (!receiverExists) {
+      return {
+        success: false,
+        error: "Client not found",
+      };
+    }
+
+    // If both exist, create the request
+    const newRequest = await prisma.driverRequests.create({
+      data: {
+        receiverId: requestData.receiverId,
+        senderId: requestData.senderId,
+        isPending: true,
+      },
+    });
+
+    return { success: true, data: newRequest };
+  } catch (error) {
+    console.error("Error creating driver request:", error);
+    if (error instanceof Error && "code" in error && error.code === "P2003") {
+      return {
+        success: false,
+        error: "Invalid sender or receiver ID",
+      };
+    }
+    return {
+      success: false,
+      error: "Error creating driver request",
+    };
   }
 };

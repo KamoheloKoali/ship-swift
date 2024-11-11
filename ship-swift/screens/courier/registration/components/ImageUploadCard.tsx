@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { z } from "zod";
 import { Upload, Image as ImageIcon } from "lucide-react";
+import Image from "next/image";
 
 interface ImageUploadCardProps {
   folder: string;
@@ -62,10 +63,12 @@ export default function ImageUploadCard({
       <CardContent className="p-4">
         <div className="relative">
           {imageUrl ? (
-            <img
+            <Image
               src={imageUrl}
               alt="Document Preview"
               className="w-full h-48 object-cover rounded-md"
+              width={320}
+              height={320}
             />
           ) : (
             <div className="border-2 border-dashed border-gray-300 rounded-md h-48 flex flex-col items-center justify-center bg-gray-50">

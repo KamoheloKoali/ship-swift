@@ -14,8 +14,10 @@ const ConversationsPage = async ({
 }: {
   params: { conversationId: string };
 }) => {
-  const contact = await getcontactById(params.conversationId);
-  const userRole = await getUserRoleById();
+  const [contact, userRole] = await Promise.all([
+    getcontactById(params.conversationId),
+    getUserRoleById(),
+  ]);
 
   const driver = await getDriverByID(contact.data?.driverId || "");
   const client = await getClientById(contact.data?.clientId || "");
