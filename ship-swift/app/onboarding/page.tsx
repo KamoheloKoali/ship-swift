@@ -8,6 +8,8 @@ import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { getDriverByID } from "@/actions/driverActions";
 import { getClientById } from "@/actions/clientActions";
+import { checkDriverRole } from "@/actions/protectActions";
+import { getUserRoleById } from "../utils/getUserRole";
 
 const Page = () => {
   const router = useRouter();
@@ -31,28 +33,33 @@ const Page = () => {
   useEffect(() => {
     // router.push("/client/dashboard/deliver");
     const checkUser = async () => {
-      if (!user || !user.userId) {
-        setIsLoading(false);
-        return;
-      } // Guard clause to wait for user data
-      const [responseFromDriverTable, responseFromClientTable] =
-        await Promise.all([
-          getDriverByID(user.userId),
-          getClientById(user.userId),
-        ]);
+      // Guard clause to wait for user data
+      const [
+        userRole,
+        // responseFromDriverTable, responseFromClientTable
+      ] = await Promise.all([
+        getUserRoleById(),
+        // checkDriverRole(user.userId || ""),
+        // getClientById(user.userId || ""),
+      ]);
+      if (userRole.success) {
+        if (userRole.data?.client) {
+          router.push("/client");
+        } else if (userRole.data?.driver) {
+          router.push("/driver/dashboard/find-jobs");
+        }
+      }
 
-      if (responseFromDriverTable && !responseFromClientTable.success) {
-        router.push("/driver/dashboard/find-jobs");
-      } else if (
-        responseFromClientTable.success &&
-        !responseFromDriverTable?.idNumber
-      ) {
-        console.log(
-          "Client is not a courier:  redirecting to client dashboard " +
-            responseFromClientTable.data?.Id
-        );
-        router.push("/client");
-      } else {
+      // if (responseFromDriverTable && !responseFromClientTable.success) {
+      //   router.push("/driver/dashboard/find-jobs");
+      // } else if (responseFromClientTable.success && !responseFromDriverTable) {
+      //   console.log(
+      //     "Client is not a courier:  redirecting to client dashboard " +
+      //       responseFromClientTable.data?.Id
+      //   );
+      //   router.push("/client");
+      // }
+      else {
         setIsLoading(false);
       }
     };

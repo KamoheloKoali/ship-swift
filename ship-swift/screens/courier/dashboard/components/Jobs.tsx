@@ -81,7 +81,7 @@ const Jobs = () => {
     if (error) return <div>Error: {error}</div>;
 
     return (
-      <>
+      <div>
         <Profile driverData={driverData} />
 
         <div className="flex md:hidden justify-start w-full">
@@ -97,10 +97,9 @@ const Jobs = () => {
           onJobSelect={handleJobSelect}
           searchTerm={searchTerm}
         />
-      </>
+      </div>
     );
   };
-
   return (
     <div className="flex flex-row justify-center lg:justify-start">
       <div className="hidden mylg:w-[2.5%] 2xl:w-[10%] lg:block"></div>
@@ -109,7 +108,7 @@ const Jobs = () => {
         <div className="w-[98%] md:w-[80%] mylg:w-[72%]">{renderContent()}</div>
 
         <div className="relative hidden mylg:block h-full w-[28%] bg-muted/80">
-          <div className="fixed top-[138px] w-[26.5%] sideScreen:w-[22.5%]">
+          <div className="fixed top-[160px] w-[26.5%] sideScreen:w-[22.5%]">
             <CardStatus />
             <CardJobsInfo job={selectedJob} isOpen={isModalOpen} />
           </div>

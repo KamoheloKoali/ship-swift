@@ -4,16 +4,7 @@ import {
   ChevronRight,
   Copy,
   CreditCard,
-  MoreVertical,
-  Truck,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Pagination,
   PaginationContent,
@@ -67,6 +58,10 @@ interface JobDetailsProps {
 }
 
 export default function Details({ job }: JobDetailsProps) {
+  function removeCommas(value: string) {
+    return String(value).replace(/,/g, "");
+  }
+
   return (
     <div>
       <Card className="overflow-hidden">
@@ -96,32 +91,18 @@ export default function Details({ job }: JobDetailsProps) {
               )}
             </CardDescription>
           </div>
-          <div className="ml-auto flex items-center gap-1">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button size="icon" variant="outline" className="h-8 w-8">
-                  <MoreVertical className="h-3.5 w-3.5" />
-                  <span className="sr-only">More</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>Edit</DropdownMenuItem>
-                <DropdownMenuItem>Export</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-red-600">
-                  Cancel
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
         </CardHeader>
         <CardContent className="p-6 text-sm">
           <div className="grid gap-3">
             <div className="font-semibold">Delivery Details</div>
             <ul className="grid gap-3">
               <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Budget</span>
+                <span className="text-muted-foreground">Fee</span>
                 <span>M {job.CourierJob.Budget}</span>
+              </li>
+              <li className="flex items-center justify-between">
+                <span className="text-muted-foreground">Items</span>
+                <span>{job.CourierJob.Description}</span>
               </li>
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Parcel Size</span>
@@ -136,6 +117,9 @@ export default function Details({ job }: JobDetailsProps) {
                   <span>{job.CourierJob.PickUp}</span>
                   <span>{job.CourierJob.districtPickUp}</span>
                   <span>Phone: {job.CourierJob.pickupPhoneNumber}</span>
+                  <span>
+                    Collection Date: {new Date(job.CourierJob.collectionDate).toLocaleString()}
+                  </span>
                 </address>
               </div>
               <div className="grid gap-3">
@@ -196,7 +180,7 @@ export default function Details({ job }: JobDetailsProps) {
                 </div>
                 <div className="flex items-center justify-between">
                   <dt className="text-muted-foreground">Vehicle Type</dt>
-                  <dd>{job.Driver.vehicleType}</dd>
+                  <dd>{removeCommas(job.Driver.vehicleType)}</dd>
                 </div>
               </dl>
             </div>
@@ -216,10 +200,6 @@ export default function Details({ job }: JobDetailsProps) {
           </div>
         </CardContent>
         <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
-          <div className="text-xs text-muted-foreground">
-            Collection Date:{" "}
-            {new Date(job.CourierJob.collectionDate).toLocaleString()}
-          </div>
           <Pagination className="ml-auto mr-0 w-auto">
             <PaginationContent>
               <PaginationItem>

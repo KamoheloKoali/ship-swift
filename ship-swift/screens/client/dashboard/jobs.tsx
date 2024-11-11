@@ -39,8 +39,11 @@ export default function MyJobs() {
     const fetchJobs = async () => {
       setLoading(true); // Start loading
       const response = await getAllJobsFiltered(userId || "");
-      if (response.success) {
+      if (response.success && response.data) {
         const data = response.data;
+        if (data.length > 0) {
+          handleRowClick(data[0]);
+        }
         setJobs(data);
       } else {
         setError(response.error);
@@ -95,9 +98,12 @@ export default function MyJobs() {
 
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <div className="flex p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
-          <Button className="mb-4 flex items-center border" onClick={() => {
-            router.push("/client/job-post");
-          }}>
+          <Button
+            className="mb-4 flex items-center"
+            onClick={() => {
+              router.push("/client/job-post");
+            }}
+          >
             <PlusCircle className="mr-2 h-4 w-4" />
             <span>New Job</span>
           </Button>
@@ -105,7 +111,11 @@ export default function MyJobs() {
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
           <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
             {/* Render the table only when loading is false */}
-            <JobsTable jobs={jobs} onRowClick={handleRowClick} />
+            <JobsTable
+              jobs={jobs}
+              onRowClick={handleRowClick}
+              Clicked={selectedJob}
+            />
           </div>
 
           {/* Display details if a job is selected */}

@@ -91,32 +91,32 @@ export const deleteDriverRequest = async (requestId: string) => {
   }
 };
 
-export const createDriverRequest1 = async (requestData: {
+export const createDriverRequestV1 = async (requestData: {
   receiverId: string;
   senderId: string;
 }) => {
   try {
     // First verify the sender (Driver) exists
     const senderExists = await prisma.drivers.findUnique({
-      where: { Id: requestData.senderId }
+      where: { Id: requestData.senderId },
     });
 
     if (!senderExists) {
-      return { 
-        success: false, 
-        error: "Driver not found" 
+      return {
+        success: false,
+        error: "Driver not found",
       };
     }
 
     // Then verify the receiver (Client) exists
     const receiverExists = await prisma.clients.findUnique({
-      where: { Id: requestData.receiverId }
+      where: { Id: requestData.receiverId },
     });
 
     if (!receiverExists) {
-      return { 
-        success: false, 
-        error: "Client not found" 
+      return {
+        success: false,
+        error: "Client not found",
       };
     }
 
@@ -132,15 +132,15 @@ export const createDriverRequest1 = async (requestData: {
     return { success: true, data: newRequest };
   } catch (error) {
     console.error("Error creating driver request:", error);
-    if (error instanceof Error && 'code' in error && error.code === 'P2003') {
-      return { 
-        success: false, 
-        error: "Invalid sender or receiver ID" 
+    if (error instanceof Error && "code" in error && error.code === "P2003") {
+      return {
+        success: false,
+        error: "Invalid sender or receiver ID",
       };
     }
-    return { 
-      success: false, 
-      error: "Error creating driver request" 
+    return {
+      success: false,
+      error: "Error creating driver request",
     };
   }
 };

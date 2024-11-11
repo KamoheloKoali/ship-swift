@@ -63,6 +63,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
   const router = useRouter();
   const [isJobCompleted, setIsJobCompleted] = useState(false);
   const [isGettingContact, setIsGettingContact] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
 
   // Move the status check to useEffect to avoid infinite re-renders
   useEffect(() => {
@@ -91,14 +92,17 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
   };
 
   const handleJobComplete = async (id: string) => {
+    setIsCompleting(true);
     const updatedJob = await updateJobStatus(id, "delivered");
     if (updatedJob?.Id) {
-      setIsJobCompleted(true);
+      router.refresh();
+      setIsCompleting(false);
     } else {
       toast({
-        description: "An unexpected error occured",
+        description: "An unexpected error occured, please try again later.",
         variant: "destructive",
       });
+      setIsCompleting(false);
     }
   };
 
@@ -108,9 +112,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
         <div className="font-semibold">Order Details</div>
         <ul className="grid gap-3">
           <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">
-              Item(s)
-            </span>
+            <span className="text-muted-foreground">Item(s)</span>
             <span className="flex-wrap">{job.Description}</span>
           </li>
           <li className="flex items-center justify-between">
@@ -179,10 +181,12 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
               {driver?.firstName} {driver?.lastName}
             </dd>
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between">
             <dt className="text-muted-foreground">Email</dt>
             <dd>
-              <a href={`mailto:${driver?.email}`} className="flex flex-wrap">{driver?.email}</a>
+              <a href={`mailto:${driver?.email}`} className="flex flex-wrap">
+                {driver?.email}
+              </a>
             </dd>
           </div>
           <div className="flex items-center justify-between">
@@ -210,7 +214,12 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
           <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">Email</dt>
             <dd>
-              <a href={`mailto:${job.client?.email}`} className="flex flex-wrap">{job.client?.email}</a>
+              <a
+                href={`mailto:${job.client?.email}`}
+                className="flex flex-wrap"
+              >
+                {job.client?.email}
+              </a>
             </dd>
           </div>
           <div className="flex items-center justify-between">
@@ -253,7 +262,16 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
       >
         <p>Payment Method</p>
         {isJobCompleted && (
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              toast({
+                title: "Feature not yet implemented",
+                description: "This feature is not yet implemented",
+              });
+            }}
+          >
             <HandCoins className="h-4 w-4" /> Release payment
           </Button>
         )}
@@ -278,7 +296,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
           <p className="text-lg text-gray-700">____________________</p>
         </div>
       ) : (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden flex flex-col">
           <CardHeader className="flex flex-row items-start bg-muted/50">
             <div className="grid gap-0.5">
               <CardTitle className="group flex flex-col gap-2 text-lg">
@@ -302,7 +320,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
                 Date: {new Date(job.dateCreated).toLocaleString()}
               </CardDescription>
             </div>
-            <div className="ml-auto flex items-center gap-1">
+            <div className="ml-auto flex flex-wrap md:flex-nowrap items-center gap-1">
               {isClaimed && (
                 <>
                   <Button
@@ -315,31 +333,54 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
                     <span className="sr-only">Copy Order ID</span>
                   </Button>
                   {!isJobCompleted && isClaimed && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-8 gap-1"
-                      onClick={() => {
-                        window.open(
-                          `/track-delivery/${job.approvedRequestId}`,
-                          "_blank"
-                        );
-                      }}
-                    >
-                      <Truck className="h-3.5 w-3.5" />
-                      <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                        View Map
-                      </span>
-                    </Button>
+                    <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className=" h-8 hidden gap-1 md:flex flex-wrap md:flex-nowrap"
+                        onClick={() => {
+                          window.open(
+                            `/track-delivery/${job.approvedRequestId}`,
+                            "_blank"
+                          );
+                        }}
+                      >
+                        <Truck className=" h-3.5 w-3.5" />
+                        <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
+                          View Map
+                        </span>
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className=" h-8 flex gap-1 md:hidden flex-wrap"
+                        onClick={() => {
+                          window.open(
+                            `/track-delivery/${job.approvedRequestId}`,
+                            "_blank"
+                          );
+                        }}
+                      >
+                        <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
+                          Map
+                        </span>
+                      </Button>
+                    </>
                   )}
                 </>
               )}
-              {job.packageStatus === "collected" && !isJobCompleted && (
+              {job.packageStatus === "collected" && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button size="icon" variant="outline" className="h-8 w-8">
-                      <MoreVertical className="h-3.5 w-3.5" />
-                      <span className="sr-only">More</span>
+                      {isCompleting ? (
+                        <Loader2 className="animate-spin h-4 w-4" />
+                      ) : (
+                        <>
+                          <MoreVertical className="h-3.5 w-3.5" />
+                          <span className="sr-only">More</span>
+                        </>
+                      )}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -376,11 +417,14 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
                 <div className="">
                   {requests.length > 0 ? (
                     requests.map((driver: any) => (
-                      <DriverProfile
-                        key={driver.Id}
-                        driver={driver}
-                        job={job}
-                      />
+                      <>
+                        <DriverProfile
+                          key={driver.Id}
+                          driver={driver}
+                          job={job}
+                        />
+                        <Separator className="my-2" />
+                      </>
                     ))
                   ) : (
                     <div className="w-full text-center">No Applicants</div>

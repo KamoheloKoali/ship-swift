@@ -1,9 +1,9 @@
-"use client"
+"use client";
+import { uploadImage } from "@/screens/client/registration/utils/upload";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
-import { uploadImage } from "../../registration/utils/Upload";
 
 const PhotoCapture: React.FC = () => {
   const router = useRouter();
@@ -47,6 +47,8 @@ const PhotoCapture: React.FC = () => {
     }
   };
 
+
+  // Capture photo from video stream
   const capturePhoto = () => {
     if (videoRef.current?.srcObject) {
       try {
@@ -73,6 +75,7 @@ const PhotoCapture: React.FC = () => {
     }
   };
 
+  // Upload photo to S3
   const uploadPhoto = async () => {
     if (!photo) {
       setError("No photo to upload");
@@ -87,12 +90,12 @@ const PhotoCapture: React.FC = () => {
     setError(null);
     try {
       const blob = dataURItoBlob(photo);
-      const file = new File([blob], `courier_${Date.now()}.png`, {
+      const file = new File([blob], `client_${Date.now()}.png`, {
         type: "image/png",
       });
-      await uploadImage(file, "driver-photo-rt", userId);
+      await uploadImage(file, "client-photo-rt", userId);
 
-      router.push("/onboarding/driver/details");
+      router.push("/client");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to upload photo");
       console.error("Photo upload error:", err);
@@ -101,6 +104,7 @@ const PhotoCapture: React.FC = () => {
     }
   };
 
+  // Convert data URI to Blob
   const dataURItoBlob = (dataURI: string) => {
     try {
       const byteString = atob(dataURI.split(",")[1]);
@@ -158,7 +162,7 @@ const PhotoCapture: React.FC = () => {
               uploadPhoto();
               stopCamera();
             }}
-            className="bg-black text-white px-6 py-2 rounded-lg hover:bg-slate-500 transition w-full max-w-xs disabled:opacity-50"
+            className="bg-white text-black px-6 py-2 rounded-lg hover:bg-slate-500 transition w-full max-w-xs disabled:opacity-50"
             disabled={isLoading}
           >
             {isLoading ? "Uploading..." : "Upload Photo"}

@@ -8,18 +8,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import ImageUploadCard from "@/screens/courier/registration/components/ImageUploadCard";
 import { CheckCircle, Loader2 } from "lucide-react";
-import useDriverRegistration from "@/screens/courier/registration/utils/DriverRegistration";
 import { z } from "zod";
 import useclientRegistration from "@/screens/client/registration/utils/clientRegistration";
 import { PhoneInput, ValidationResult } from "@/screens/global/phone-input";
 
 // Zod schema for validation
 const clientRegistrationSchema = z.object({
-  idDocuments: z.instanceof(File, { message: "Identity document is required" })
+  idDocuments: z.instanceof(File, { message: "Identity document is required" }),
 });
 
 export default function ClientRegistrationForm() {
@@ -33,8 +31,9 @@ export default function ClientRegistrationForm() {
     handleInputChange,
     handleUpload,
   } = useclientRegistration();
-  const [phoneValidation, setPhoneValidation] = useState<ValidationResult | null>(null);
-  
+  const [phoneValidation, setPhoneValidation] =
+    useState<ValidationResult | null>(null);
+
   // State to manage validation errors
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -42,13 +41,15 @@ export default function ClientRegistrationForm() {
     try {
       // Validate file upload
       clientRegistrationSchema.parse({ idDocuments: files["id-documents"] });
-  
+
       // Validate phone number
       if (!phoneValidation?.success) {
-        setErrors({ phoneNumber: phoneValidation?.error || "Invalid phone number" });
+        setErrors({
+          phoneNumber: phoneValidation?.error || "Invalid phone number",
+        });
         return;
       }
-  
+
       await handleUpload();
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -104,23 +105,25 @@ export default function ClientRegistrationForm() {
           />
         </div>
         <div className="mt-6 grid gap-4 ">
-        <div>
-  <PhoneInput
-    value={formData.phoneNumber}
-    onValueChange={({ phoneNumber, validation }) => {
-      setPhoneValidation(validation);
-      handleInputChange({
-        target: {
-          name: 'phoneNumber',
-          value: phoneNumber as string
-        }
-      } as React.ChangeEvent<HTMLInputElement>);
-    }}
-  />
-  {phoneValidation && !phoneValidation.success && (
-    <p className="text-red-500 text-sm mt-1">{phoneValidation.error}</p>
-  )}
-</div>
+          <div>
+            <PhoneInput
+              value={formData.phoneNumber}
+              onValueChange={({ phoneNumber, validation }) => {
+                setPhoneValidation(validation);
+                handleInputChange({
+                  target: {
+                    name: "phoneNumber",
+                    value: phoneNumber as string,
+                  },
+                } as React.ChangeEvent<HTMLInputElement>);
+              }}
+            />
+            {phoneValidation && !phoneValidation.success && (
+              <p className="text-red-500 text-sm mt-1">
+                {phoneValidation.error}
+              </p>
+            )}
+          </div>
         </div>
         <Button
           onClick={handleSubmit}

@@ -6,6 +6,9 @@ import {
 } from "@/actions/driverActions";
 import { useRouter } from "next/navigation";
 
+import { createUserRole, updateUserRole, getUserRole, deleteUserRole } from '@/actions/roleAction';
+import { ArrowLeftToLine } from "lucide-react";
+
 interface DriverData {
   Id: string;
   email: string;
@@ -63,14 +66,23 @@ export default function useDriverDetails() {
   }, [userId]);
 
   const handleConfirm = async () => {
-    if (driverData) {
+    if (driverData && userId) {
       try {
         setLoading(true);
         const updatedDriver = await updateDriverVerification(
           driverData.Id,
-          true
+          false,
         );
         setDriverData(updatedDriver as DriverData);
+        
+        const createRole = await createUserRole({ userId, driver: true, client: false });
+        if (createRole) {
+          console.log("User role created successfully");
+        } else {
+          console.log("User role creation failed");
+        }
+
+        alert("Thank you for the submission of your documents. They will be verified shortly.");
         router.push("/driver/dashboard/find-jobs");
       } catch (err) {
         setError("Failed to verify driver");
@@ -80,7 +92,6 @@ export default function useDriverDetails() {
       }
     }
   };
-
   const handleEdit = () => {
     router.push("/onboarding/driver-onboarding/registration");
   };

@@ -14,10 +14,6 @@ export default function CardJobsLoad() {
                 <Skeleton className="h-3 w-16" />
               </div>
             </div>
-            <div className="flex flex-col w-full max-w-[200px]">
-              <Skeleton className="h-10 w-full rounded-md mb-2" />
-              <Skeleton className="h-10 w-full rounded-md" />
-            </div>
           </div>
           <Skeleton className="h-6 w-3/4 mb-2" />
           <Skeleton className="h-4 w-full mb-4" />
@@ -30,6 +26,11 @@ export default function CardJobsLoad() {
             ))}
           </div>
           <Skeleton className="h-16 w-full rounded-lg" />
+
+          <div className="flex flex-row w-full gap-4 pt-4">
+            <Skeleton className="h-10 w-full rounded-md mb-2" />
+            <Skeleton className="h-10 w-full rounded-md" />
+          </div>
         </CardContent>
       </Card>
     </div>

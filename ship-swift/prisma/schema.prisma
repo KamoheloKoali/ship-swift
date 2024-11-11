@@ -19,6 +19,7 @@ model clients {
   dateCreated    DateTime         @default(now())
   dateUpdated    DateTime         @updatedAt
   isVerified     Boolean          @default(false)
+  selfieImage    String?          @default("")
   activeJobs     ActiveJobs[]
   Contacts       Contacts[]
   courierJobs    CourierJobs[]

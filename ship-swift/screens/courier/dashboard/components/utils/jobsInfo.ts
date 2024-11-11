@@ -4,7 +4,7 @@ import { handleApply, handleApplied } from "../utils/jobRequests";
 import { getcontact } from "@/actions/contactsActions";
 import { createMessage } from "@/actions/messagesActions";
 import {
-  createDriverRequest1,
+  createDriverRequestV1,
   getDriverRequest,
 } from "@/actions/driverRequest";
 
@@ -127,11 +127,15 @@ export async function checkRequest(
 ): Promise<{ isPending: boolean; isAccepted: boolean }> {
   try {
     const isRequested = await getDriverRequest(driverId, clientId);
-    
+
     // Add more detailed logging to debug the response
-    console.log('Request check response:', isRequested);
-    
-    if (isRequested.success && isRequested.data && isRequested.data.length > 0) {
+    console.log("Request check response:", isRequested);
+
+    if (
+      isRequested.success &&
+      isRequested.data &&
+      isRequested.data.length > 0
+    ) {
       const request = isRequested.data[0];
       // Ensure we're explicitly checking boolean values
       return {
@@ -141,7 +145,7 @@ export async function checkRequest(
     }
     return { isPending: false, isAccepted: false };
   } catch (error) {
-    console.error('Error checking request status:', error);
+    console.error("Error checking request status:", error);
     // Return the last known state instead of false values on error
     return { isPending: false, isAccepted: false };
   }
@@ -155,7 +159,7 @@ export async function createRequest(
     receiverId: clientId,
     senderId: driverId,
   };
-  const response = await createDriverRequest1(contactData);
+  const response = await createDriverRequestV1(contactData);
   console.log("createRequest response:", response);
   return response.success;
 }

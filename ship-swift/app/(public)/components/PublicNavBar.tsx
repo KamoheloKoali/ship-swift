@@ -69,12 +69,12 @@ function PublicNavBar() {
 
         {/* Auth Buttons */}
         <div className="flex items-center space-x-2">
-          <Link href="/login">
+          <Link href="/sign-in">
             <Button variant="ghost" className="text-sm font-medium">
               Log in
             </Button>
           </Link>
-          <Link href="/signup">
+          <Link href="/sign-up">
             <Button className="text-sm font-medium">
               Sign up
             </Button>

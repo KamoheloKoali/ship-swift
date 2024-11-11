@@ -60,6 +60,18 @@ const JobsRequestsTable: React.FC<JobsRequestsTableProps> = ({
         const result: JobsResponse = await getAllJobs();
         if (result.success && result.data) {
           setJobs(result.data);
+
+          const sortedJobs = [...result.data].sort(
+            (a, b) =>
+              new Date(b.dateCreated).getTime() -
+              new Date(a.dateCreated).getTime()
+          );
+
+          // If you want to select the first job as the default, you can do it here
+          if (sortedJobs.length > 0) {
+            setSelectedJob(sortedJobs[0]);
+            onJobSelect(sortedJobs[0]);
+          }
         } else {
           setError(result.error || "Failed to fetch jobs");
         }
