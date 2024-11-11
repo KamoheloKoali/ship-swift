@@ -21,7 +21,7 @@ interface DriverData {
   dateCreated: Date;
   dateUpdated: Date;
   discPhotoUrl: string | null;
-  VIN: string | null;
+  vehicleRegistrationNo: string | null;
   discExpiry: string | null;
   idNumber: string | null;
   licensePhotoUrl: string | null;
