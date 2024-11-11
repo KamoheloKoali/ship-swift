@@ -5,9 +5,9 @@ import { v4 as uuid } from "uuid";
 import React from "react";
 
 const Page = ({ params }: { params: { roomId: string } }) => {
-  const { fullName, callReceiverId } = useUser();
+  const { fullName } = useUser();
   const roomId = params.roomId;
-  let myCall: any = async (element: any) => {
+  const myCall: any = async (element: any) => {
     // generate Kit Token
     const appID = parseInt(process.env.NEXT_PUBLIC_ZEGO_APP_ID!);
     const serverSecret = process.env.NEXT_PUBLIC_ZEGO_SERVER_SECRECT!;

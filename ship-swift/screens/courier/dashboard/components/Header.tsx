@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { UserButton } from "@clerk/nextjs";
@@ -13,18 +13,53 @@ import {
 } from "@/components/ui/sheet";
 import NavMenu from "./HeaderMenu";
 import { Bars3Icon } from "@heroicons/react/24/outline";
+import LocationTracker from "@/screens/track-delivery/LocationTracker";
+import { createLocation } from "@/actions/locationAction";
+import { useAuth } from "@clerk/nextjs";
+import { getUserRoleById } from "@/app/utils/getUserRole";
+import { getAllActiveJobsByDriverId } from "@/actions/activeJobsActions";
 
 export default function Header() {
+  const { userId } = useAuth();
+  const [isDriver, setIsDriver] = useState(false);
+  const [hasActiveJobs, setHasActiveJobs] = useState(false);
+
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  useEffect(() => {
+    const isDriver = async () => {
+      const [response, activeJobs] = await Promise.all([
+        getUserRoleById(),
+        getAllActiveJobsByDriverId(userId || ""),
+      ]);
+      if (response.data?.driver && activeJobs && activeJobs?.length > 0) {
+        setIsDriver(true);
+        setHasActiveJobs(true);
+      }
+    };
+    isDriver();
+  }, []);
+  const updateLocation = async (lat: number, lng: number, accuracy: number) => {
+    const response = await createLocation({
+      driverId: userId || "",
+      latitude: lat,
+      longitude: lng,
+      accuracy: accuracy,
+    });
+    if (response.success) {
+      console.log("Location created successfully");
+    } else {
+      console.log("Error creating location: " + response.error);
+    }
+  };
 
   const menuItems = [
     {
-      label: "Find Jobs", 
+      label: "Find Jobs",
       href: "/driver/dashboard/find-jobs",
-
     },
     {
-      label: "My Jobs", href: "/driver/dashboard/myjobs" 
+      label: "My Jobs",
+      href: "/driver/dashboard/my-jobs",
     },
     {
       label: "Manage Finances",
@@ -39,29 +74,21 @@ export default function Header() {
 
   return (
     <header className="w-full bg-white mb-16">
-      {/* Main Navigation */}
-      <nav className="container mx-auto p-4">
-        {/* Row 1: Logo and Navigation Menu for large screens */}
+      <nav className="container mx-auto p-4 border-b-2 border-slate-200">
         <div className="hidden lg:flex items-center justify-between">
-          {/* Left side: Logo and Navigation Menu */}
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-4">
             {/* Logo */}
             <div className="font-bold text-lg text-gray-800">Ship Swift</div>
 
             {/* Navigation Menu for larger screens */}
-            <NavMenu items={menuItems} />
-          </div>
-
-          {/* Right side: Search Bar and User Button */}
-          <div className="flex items-center space-x-4 w-[20%]">
-            {/* Search Bar */}
-            <Input
-              type="text"
-              placeholder="Search..."
-              className="w-full max-w-lg border-gray-300"
+            <NavMenu
+              items={menuItems}
+              isDriver={isDriver}
+              hasActiveJobs={hasActiveJobs}
             />
-
-            {/* User Button (Clerk) */}
+          </div>
+          {/* User Button (Clerk) - Only visible on large screens */}
+          <div className="lg:flex justify-end w-[20%]">
             <UserButton />
           </div>
         </div>
@@ -71,8 +98,12 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             {/* Logo */}
             <div className="font-bold text-lg text-gray-800">Ship Swift</div>
+            {isDriver && hasActiveJobs && (
+              <div className="md:hidden">
+                <LocationTracker updateLocation={updateLocation} />
+              </div>
+            )}
           </div>
-
           {/* Menu Button for small screens */}
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
@@ -88,22 +119,17 @@ export default function Header() {
               </SheetHeader>
 
               {/* Navigation Menu in Sheet */}
-              <NavMenu items={menuItems} />
+              <NavMenu
+                items={menuItems}
+                isDriver={isDriver}
+                hasActiveJobs={hasActiveJobs}
+              />
+              {/* User Button (Clerk) - Only visible on small screens in Sheet */}
+              <div className="lg:hidden flex justify-end w-[20%]">
+                <UserButton />
+              </div>
             </SheetContent>
           </Sheet>
-        </div>
-
-        {/* Row 2: Search Bar and User Button on Small Screens */}
-        <div className="flex items-center space-x-4 mt-2 lg:hidden">
-          {/* Search Bar */}
-          <Input
-            type="text"
-            placeholder="Search..."
-            className="w-full max-w-lg border-gray-300"
-          />
-
-          {/* User Button (Clerk) */}
-          <UserButton />
         </div>
       </nav>
     </header>

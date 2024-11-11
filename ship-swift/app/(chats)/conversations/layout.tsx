@@ -13,10 +13,12 @@ type Props = React.PropsWithChildren<{}>;
 
 const ConversationsLayout = async ({ children }: Props) => {
   try {
-    const user = await currentUser();
-    const userRole = await getUserRoleById();
+    const [user, userRole] = await Promise.all([
+      currentUser(),
+      getUserRoleById(),
+    ]);
     const role = userRole.data?.client;
-    let contacts: any = [];
+    const contacts: any = [];
     let contactsWithNames;
     const allContacts = await getAllcontacts();
     allContacts.data?.map((contact) => {
@@ -30,10 +32,10 @@ const ConversationsLayout = async ({ children }: Props) => {
         contactsWithNames = await Promise.all(
           contacts.map(async (request: any) => {
             const driverData = await getDriverByID(request.driverId); // Fetch driver by senderId
-            const fullName = driverData.Id
+            const fullName = driverData?.Id
               ? `${driverData.firstName} ${driverData.lastName}`
               : "Unknown Driver";
-            const photoUrl = driverData.photoUrl;
+            const photoUrl = driverData?.photoUrl;
             return {
               ...request,
               fullName, // Add fullName to the request
@@ -46,7 +48,7 @@ const ConversationsLayout = async ({ children }: Props) => {
       if (Array.isArray(contacts) && contacts.length > 0) {
         contactsWithNames = await Promise.all(
           contacts.map(async (request: any) => {
-            const clientData = await getClientById(request.sclientId); // Fetch client by senderId
+            const clientData = await getClientById(request.clientId); // Fetch client by senderId
             const fullName = clientData.success
               ? `${clientData.data?.firstName} ${clientData.data?.lastName}`
               : "Unknown Client";

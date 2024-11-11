@@ -2,6 +2,13 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
+  PhoneInput,
+  phoneNumberSchema,
+  ValidationResult,
+} from "@/screens/global/phone-input";
+
+import type { E164Number } from "libphonenumber-js";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -39,6 +46,7 @@ export default function DriverRegistrationForm() {
     handleInputChange,
     handleUpload,
   } = useDriverRegistration();
+  const [phoneValidation, setPhoneValidation] = useState<ValidationResult | null>(null);
 
   // State to manage validation errors
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -61,7 +69,7 @@ export default function DriverRegistrationForm() {
             formattedErrors[err.path[0].toString()] = err.message;
           }
         });
-        setErrors(formattedErrors); // Set validation errors
+        setErrors(formattedErrors);
       }
     }
   };
@@ -93,10 +101,10 @@ export default function DriverRegistrationForm() {
   return (
     <Card className="w-full max-w-4xl mx-auto bg-white rounded-none">
       <CardHeader className="bg-gray-50 border-b border-gray-200">
-        <CardTitle className="text-3xl font-bold text-gray-900">
-          Profile Verification
+        <CardTitle className="text-3xl text-center font-bold text-gray-900">
+          Profile Registration Form
         </CardTitle>
-        <CardDescription className="text-lg text-gray-600">
+        <CardDescription className="text-lg text-center text-gray-600">
           Upload the required documents and provide additional information to be
           verified and start working with us.
         </CardDescription>
@@ -130,12 +138,26 @@ export default function DriverRegistrationForm() {
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <div>
-            <Input
+            {/* <Input
               name="phoneNumber"
               placeholder="Phone Number"
               value={formData.phoneNumber}
               onChange={handleInputChange}
               required
+            /> */}
+            <PhoneInput
+              value={formData.phoneNumber}
+              placeholder="Phone Number"
+              onValueChange={({ phoneNumber, validation }) => {
+                setPhoneValidation(validation)
+                handleInputChange({
+                  target: {
+                    name: "phoneNumber",
+                    value: phoneNumber as string
+                  } 
+                } as React.ChangeEvent<HTMLInputElement>) 
+              }
+            }
             />
             {errors.phoneNumber && (
               <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>

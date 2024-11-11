@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Search, X, Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -22,66 +22,87 @@ interface JobsMenuProps {
   onSortChange: (sortType: string) => void;
 }
 
-const JobsMenu: React.FC<JobsMenuProps> = ({ onSortChange }) => {
-  console.log("Rendering JobsMenu");
+interface JobsMenuProps {
+  onSortChange: (sortType: string) => void;
+  onSearch: (searchTerm: string) => void;
+}
+
+const JobsMenu: React.FC<JobsMenuProps> = ({ onSortChange, onSearch }) => {
   const [activeTab, setActiveTab] = useState<string>("mostRecent");
-  const [showSearchBar, setShowSearchBar] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [showMobileSearch, setShowMobileSearch] = useState(false);
 
   const handleSortChange = (sortType: string) => {
     setActiveTab(sortType);
     onSortChange(sortType);
-
-    if (sortType === "searchLocation") {
-      setShowSearchBar(!showSearchBar);
-    } else {
-      setShowSearchBar(false);
-    }
   };
 
-  const renderNavItem = (label: string, sortType: string) => (
-    <NavigationMenuItem>
-      <NavigationMenuLink
-        onClick={() => handleSortChange(sortType)}
-        className={`hover:text-black py-2 cursor-pointer font-medium ${
-          activeTab === sortType
-            ? "text-black border-b-2 border-black"
-            : "text-gray-500"
-        }`}
-      >
-        {label}
-      </NavigationMenuLink>
-    </NavigationMenuItem>
-  );
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    onSearch(term);
+  };
 
-  const renderMobileMenuItem = (label: string, sortType: string) => (
-    <DropdownMenuItem onSelect={() => handleSortChange(sortType)}>
-      {label}
-    </DropdownMenuItem>
-  );
+  const clearSearch = () => {
+    setSearchTerm("");
+    onSearch("");
+    setShowMobileSearch(false);
+  };
 
   return (
     <div className="mb-8">
       {/* Desktop Navigation */}
       <div className="hidden md:block">
         <NavigationMenu className="w-full">
-          <NavigationMenuList className="flex flex-wrap items-center justify-start space-x-4 space-y-2 sm:space-y-0">
-            {renderNavItem("Most Recent", "mostRecent")}
-            {renderNavItem("Highest Paying", "highestPaying")}
-            {renderNavItem("Search Location", "searchLocation")}
+          <NavigationMenuList className="flex flex-wrap items-center justify-between space-x-4 space-y-2 sm:space-y-0">
+            <div className="flex items-center space-x-4">
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  onClick={() => handleSortChange("mostRecent")}
+                  className={`hover:text-black py-2 cursor-pointer font-medium ${
+                    activeTab === "mostRecent"
+                      ? "text-black border-b-2 border-black"
+                      : "text-gray-500"
+                  }`}
+                >
+                  Most Recent
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  onClick={() => handleSortChange("highestPaying")}
+                  className={`hover:text-black py-2 cursor-pointer font-medium ${
+                    activeTab === "highestPaying"
+                      ? "text-black border-b-2 border-black"
+                      : "text-gray-500"
+                  }`}
+                >
+                  Highest Paying
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            </div>
 
-            {activeTab === "searchLocation" && (
-              <NavigationMenuItem className="flex items-center ml-2 flex-grow">
+            <NavigationMenuItem className="flex items-center ml-2 flex-grow max-w-sm">
+              <div className="relative w-full">
                 <Input
                   type="text"
-                  placeholder="Search..."
+                  placeholder="Search locations..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="max-w-sm"
+                  onChange={handleSearchChange}
+                  className="w-full pr-8"
                 />
-              </NavigationMenuItem>
-            )}
+                {searchTerm && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                    onClick={clearSearch}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>
@@ -96,8 +117,14 @@ const JobsMenu: React.FC<JobsMenuProps> = ({ onSortChange }) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              {renderMobileMenuItem("Most Recent", "mostRecent")}
-              {renderMobileMenuItem("Highest Paying", "highestPaying")}
+              <DropdownMenuItem onSelect={() => handleSortChange("mostRecent")}>
+                Most Recent
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() => handleSortChange("highestPaying")}
+              >
+                Highest Paying
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <Button
@@ -114,22 +141,21 @@ const JobsMenu: React.FC<JobsMenuProps> = ({ onSortChange }) => {
           <div className="relative mt-4">
             <Input
               type="text"
-              placeholder="Search..."
+              placeholder="Search locations..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchChange}
               className="pr-8"
             />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-2 top-1/2 transform -translate-y-1/2"
-              onClick={() => {
-                setSearchTerm("");
-                setShowMobileSearch(false);
-              }}
-            >
-              <X className="h-4 w-4" />
-            </Button>
+            {searchTerm && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                onClick={clearSearch}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         )}
       </div>

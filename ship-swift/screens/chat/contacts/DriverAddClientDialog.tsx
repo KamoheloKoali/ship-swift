@@ -51,7 +51,7 @@ const DriverAddClient = (props: Props) => {
 
     try {
       console.log(email);
-      let receiverResponse = await getAllClients();
+      const receiverResponse = await getAllClients();
       console.log(receiverResponse);
 
       // Check if the API call to get all clients succeeded
@@ -80,10 +80,10 @@ const DriverAddClient = (props: Props) => {
       const receiverId = String(receiver[0].Id); // Ensure receiverId is a string
 
       // Check if a request between sender and receiver already exists
-      // Check if a request between sender and receiver already exists
-      const checkRequestInClient = await getClientRequest(senderId, receiverId);
-      const checkRequestInDriver = await getDriverRequest(receiverId, senderId);
-
+      const [checkRequestInClient, checkRequestInDriver] = await Promise.all([
+        getClientRequest(senderId, receiverId),
+        getDriverRequest(receiverId, senderId),
+      ]);
       if (checkRequestInDriver?.success) {
         console.log(
           "Request already sent, request: " + checkRequestInDriver?.data

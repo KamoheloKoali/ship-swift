@@ -7,8 +7,14 @@ import { getDriverByID } from "@/actions/driverActions";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { deleteDriverRequest } from "@/actions/driverRequest";
-import { deleteClientRequest } from "@/actions/clientRequest";
+import {
+  deleteDriverRequest,
+  updateDriverRequest,
+} from "@/actions/driverRequest";
+import {
+  deleteClientRequest,
+  updateClientRequest,
+} from "@/actions/clientRequest";
 import { createcontact, getcontact } from "@/actions/contactsActions";
 import { getUserRoleById } from "@/app/utils/getUserRole";
 import { useRouter } from "next/navigation";
@@ -17,7 +23,7 @@ import { getClientById } from "@/actions/clientActions";
 type Props = {
   incomingRequestsWithNames: any;
   outgoingRequestsWithNames: any;
-  role: Boolean;
+  role: boolean;
 };
 
 const ListContacts = ({
@@ -38,14 +44,16 @@ const ListContacts = ({
     useState(false);
 
   // Handler functions moved outside of useEffect
-  const handleAccept = async (requestId: string) => {
+  const handleAccept = async (requestId: string, requestData: any) => {
     setIsSubmitting(true);
     try {
       if (role) {
-        await supabase
-          .from("DriverRequests")
-          .update({ isAccepted: true, isPending: false })
-          .eq("Id", requestId);
+        await updateDriverRequest(requestId, {
+          senderId: requestData.senderId,
+          receiverId: requestData.receiverId,
+          isAccepted: true,
+          isPending: false,
+        });
         setIncomingRequests((prevRequests) =>
           prevRequests.map((request) =>
             request.Id === requestId
@@ -54,10 +62,12 @@ const ListContacts = ({
           )
         );
       } else {
-        await supabase
-          .from("clientRequests")
-          .update({ isAccepted: true, isPending: false })
-          .eq("Id", requestId);
+        await updateClientRequest(requestId, {
+          senderId: requestData.senderId,
+          receiverId: requestData.receiverId,
+          isAccepted: true,
+          isPending: false,
+        });
         setIncomingRequests((prevRequests) =>
           prevRequests.map((request) =>
             request.Id === requestId
@@ -146,7 +156,10 @@ const ListContacts = ({
         clientId,
         driverId,
       });
-      if (!createContactResponse.success) {
+      if (
+        !createContactResponse.success &&
+        createContactResponse.error !== "contact already exists"
+      ) {
         toast.error("An unexpected error occurred");
         return;
       } else {
@@ -166,7 +179,7 @@ const ListContacts = ({
         let fullName: string;
         if (role) {
           const driverData = await getDriverByID(newRequest.senderId); // Fetch driver by senderId
-          fullName = driverData.Id
+          fullName = driverData?.Id
             ? `${driverData.firstName} ${driverData.lastName}`
             : "Unknown Driver";
         } else {
@@ -218,7 +231,7 @@ const ListContacts = ({
     };
   }, [supabase, userId, role]);
 
-  let contacts: any = [];
+  const contacts: any = [];
 
   incomingRequests.map((request) => {
     request.isAccepted && contacts.push(request);
@@ -332,7 +345,7 @@ const ListContacts = ({
                         ) : (
                           <Button
                             size="sm"
-                            onClick={() => handleAccept(request.Id)}
+                            onClick={() => handleAccept(request.Id, request)}
                           >
                             Accept
                           </Button>

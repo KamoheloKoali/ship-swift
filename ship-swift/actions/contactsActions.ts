@@ -7,17 +7,22 @@ export const createcontact = async (contactData: {
   clientId: string;
   driverId: string;
 }) => {
-  // try {
-  const newcontact = await prisma.contacts.create({
-    data: {
-      clientId: contactData.clientId,
-      driverId: contactData.driverId,
-      isConversating: true,
-    },
-  });
-  console.log(newcontact);
-  if (newcontact.Id) return { success: true, data: newcontact };
-  else return { success: false };
+  const contact = await getcontact(contactData.clientId, contactData.driverId);
+
+  if (contact.error === "contact not found") {
+    // try {
+    const newcontact = await prisma.contacts.create({
+      data: {
+        clientId: contactData.clientId,
+        driverId: contactData.driverId,
+        isConversating: true,
+      },
+    });
+    if (newcontact.Id) return { success: true, data: newcontact };
+    else return { success: false };
+  } else {
+    return { success: false, error: "contact already exists" };
+  }
   // } catch (error) {
   //   return { success: false, error: "Error creating contact" };
   // }
@@ -56,6 +61,20 @@ export const getcontact = async (clientId: string, driverId: string) => {
 export const getAllcontacts = async () => {
   const contacts = await prisma.contacts.findMany(); // Remove where clause to get all contacts
   if (contacts.length > 0) {
+    return { success: true, data: contacts };
+  } else {
+    return { success: false, error: "No contacts found" };
+  }
+};
+
+export const getContactByDriverAndClientId = async (
+  driverId: string,
+  clientId: string
+) => {
+  const contacts = await prisma.contacts.findFirst({
+    where: { driverId: driverId, clientId: clientId },
+  }); // Remove where clause to get all contacts
+  if (contacts?.Id) {
     return { success: true, data: contacts };
   } else {
     return { success: false, error: "No contacts found" };
