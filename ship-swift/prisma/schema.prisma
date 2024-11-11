@@ -49,6 +49,8 @@ model Drivers {
   licensePhotoUrl String?
   location        String?
   isVerified      Boolean          @default(false)
+  reviews         Review[]         
+  rating          Float?
   activeJobs      ActiveJobs[]
   Contacts        Contacts[]
   driveRequests   DriverRequests[]
@@ -57,6 +59,16 @@ model Drivers {
   Messages        Messages[]
   scheduledTrips  ScheduledTrips[]
   clientRequests  clientRequests[]
+}
+
+model Review {
+  id        String   @id
+  driverId  String   
+  content   String?
+  rating    Int      
+  createdAt DateTime @default(now())
+
+  Drivers Drivers[]
 }
 
 model CourierJobs {
