@@ -18,7 +18,7 @@ import SwitchUser from "@/screens/global/switch-user";
 export default function ClientNavBar() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
-  const menuItems = [{ label: "Messages", href: "/conversations" }];
+  const menuItems = [{ label: "Messages", href: "/conversations" }, { label: "Scheduled Trips", href: "/client/trips" }];
 
   return (
     <header className="w-full bg-white mb-16">
