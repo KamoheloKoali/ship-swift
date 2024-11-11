@@ -49,7 +49,7 @@ model Drivers {
   location        String?
   isVerified      Boolean          @default(false)
   isOnline        Boolean          @default(false)
-  VIN             String?
+  vehicleRegistrationNo            String?
   rating          Float?
   activeJobs      ActiveJobs[]
   Contacts        Contacts[]
