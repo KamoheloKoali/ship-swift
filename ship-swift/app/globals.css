@@ -116,3 +116,13 @@
     animation: none;
   }
 }
+
+.video-3d-effect {
+  transform-style: preserve-3d;
+  perspective: 1000px; /* Adjust perspective depth as desired */
+  transition: transform 0.5s ease-in-out;
+}
+
+.video-3d-rotate {
+  transform: rotateY(15deg) rotateX(5deg); /* Adjust rotation angles as desired */
+}
