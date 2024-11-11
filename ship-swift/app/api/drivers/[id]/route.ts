@@ -15,7 +15,6 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Extract id from params and use it directly
     const driverId = params.id;
     console.log("Received driverId:", driverId); // Debug log
 
@@ -43,6 +42,13 @@ export async function GET(
         licensePhotoUrl: true,
         location: true,
         isVerified: true,
+        Review: {
+          select: {
+            rating: true,
+            content: true,
+            createdAt: true,
+          },
+        },
       },
     });
 

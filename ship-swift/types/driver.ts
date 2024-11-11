@@ -63,6 +63,7 @@ interface ActiveJob {
     licensePhotoUrl?: string;
     location?: string;
     isVerified: boolean;
+    reviews?: Review[];
     
     // Related entities
     activeJobs?: ActiveJob[];
@@ -113,9 +114,17 @@ interface ActiveJob {
   export const TABS: TabConfig[] = [
     { id: 'vehicle', label: 'Vehicle' },
     { id: 'documents', label: 'Documents' },
-    { id: 'activity', label: 'Activity' }
+    { id: 'activity', label: 'Activity' },
+    { id: 'reviews', label: 'Reviews' }
   ];
   
   // Utility types
   export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
   export type DriverUpdatePayload = Partial<Omit<Driver, 'Id' | 'dateCreated' | 'dateUpdated'>>;
+
+  export interface Review {
+    id: string;
+    rating: number;
+    content?: string | null;
+    createdAt: Date;
+  }

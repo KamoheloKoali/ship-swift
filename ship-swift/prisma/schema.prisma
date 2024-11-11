@@ -59,16 +59,19 @@ model Drivers {
   Messages        Messages[]
   scheduledTrips  ScheduledTrips[]
   clientRequests  clientRequests[]
-  reviews         Review[]         @relation("DriversToReview")
+
+  Review Review[]
 }
 
 model Review {
-  id        String    @id
+  id        String   @id
   driverId  String
   content   String?
   rating    Int
-  createdAt DateTime  @default(now())
-  Drivers   Drivers[] @relation("DriversToReview")
+  createdAt DateTime @default(now())
+  driver    Drivers  @relation(fields: [driverId], references: [Id])
+
+  @@index([driverId])
 }
 
 model CourierJobs {

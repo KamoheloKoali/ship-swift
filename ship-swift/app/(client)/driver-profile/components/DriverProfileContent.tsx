@@ -8,6 +8,7 @@ import { VehicleTab } from './VehicleTab';
 import { DocumentsTab } from './DocumentsTab';
 import { ActivityTab } from './ActivityTab';
 import DriverInfo from './DriverInfo';
+import { ReviewSection } from './ReviewSection';
 
 interface DriverProfileContentProps {
   loading: boolean;
@@ -60,7 +61,7 @@ export function DriverProfileContent({ loading, error, driver }: DriverProfileCo
         <Card className="md:col-span-2">
           <CardContent className="pt-6">
             <Tabs defaultValue="vehicle">
-              <TabsList className="grid grid-cols-3 gap-4">
+              <TabsList className="grid grid-cols-4 gap-4">
                 {TABS.map(tab => (
                   <TabsTrigger key={tab.id} value={tab.id}>
                     {tab.label}
@@ -78,6 +79,13 @@ export function DriverProfileContent({ loading, error, driver }: DriverProfileCo
 
               <TabsContent value="activity" className="mt-4">
                 <ActivityTab driver={driver} />
+              </TabsContent>
+
+              <TabsContent value="reviews" className="mt-4">
+                <ReviewSection 
+                  driverId={driver.Id} 
+                  reviews={driver.reviews || []} 
+                />
               </TabsContent>
             </Tabs>
           </CardContent>
