@@ -32,7 +32,7 @@ const DriverProfile = ({ driver, job }: Props) => {
       clientId: userId || "",
       courierJobId: job.Id,
     });
-    if (response === 0) {
+    if (response === 0 || response === 2) {
       router.refresh();
     } else if (response === 1) {
       setIsError(true);

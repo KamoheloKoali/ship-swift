@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sheet";
 import NavMenu from "@/screens/courier/dashboard/components/HeaderMenu";
 import { Bars3Icon } from "@heroicons/react/24/outline";
+import NotificationFeed from "@/screens/notifications/InApp/NotificationFeed";
 
 export default function ClientNavBar() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -39,7 +40,10 @@ export default function ClientNavBar() {
           {/* Right side: Search Bar and User Button */}
           <div className="flex justify-end space-x-4 w-[20%]">
             {/* User Button (Clerk) */}
-            <UserButton showName />
+            <div className="flex gap-2">
+              <NotificationFeed />
+              <UserButton />
+            </div>
           </div>
         </div>
 
@@ -47,17 +51,26 @@ export default function ClientNavBar() {
         <div className="flex items-center justify-between lg:hidden">
           <div className="flex items-center space-x-4">
             {/* Logo */}
-          <UserButton userProfileMode="navigation" userProfileUrl="/profile" />
+            <UserButton
+              userProfileMode="navigation"
+              userProfileUrl="/profile"
+            />
             <div className="font-bold text-lg text-gray-800">Ship Swift</div>
           </div>
 
           {/* Menu Button for small screens */}
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <div className="flex gap-2">
+                <NotificationFeed />
             <SheetTrigger asChild>
-              <button className="bg-white" onClick={() => setIsSheetOpen(true)}>
-                <Bars3Icon className="h-6 w-6 text-gray-800" />
-              </button>
+                <button
+                className="bg-white"
+                  onClick={() => setIsSheetOpen(true)}
+                >
+                  <Bars3Icon className="h-6 w-6 text-gray-800" />
+                </button>
             </SheetTrigger>
+              </div>
 
             {/* Sheet Content */}
             <SheetContent side="left" className="bg-white p-4">

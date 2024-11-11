@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import "@/app/globals.css";
 import ClientNavBar from "./client/components/ClientNavBar";
 import { useEffect, useState } from "react";
@@ -31,8 +31,16 @@ export default function ClientLayout({
           <p className="text-lg text-gray-700">____________________</p>
         </div>
       )}
-      {isClient ? <><ClientNavBar />
-      {children}</> : <div className="w-screen h-screen flex justify-center items-center">Only clients allowed here</div>}
+      {isClient ? (
+        <>
+          <ClientNavBar />
+          {children}
+        </>
+      ) : (
+        <div className="w-screen h-screen flex justify-center items-center">
+          Only clients allowed here
+        </div>
+      )}
     </div>
   );
 }
