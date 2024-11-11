@@ -18,6 +18,7 @@ import { createLocation } from "@/actions/locationAction";
 import { useAuth } from "@clerk/nextjs";
 import { getUserRoleById } from "@/app/utils/getUserRole";
 import { getAllActiveJobsByDriverId } from "@/actions/activeJobsActions";
+import SwitchUser from "@/screens/global/switch-user";
 
 export default function Header() {
   const { userId } = useAuth();
@@ -87,6 +88,7 @@ export default function Header() {
               hasActiveJobs={hasActiveJobs}
             />
           </div>
+          <SwitchUser />
           {/* User Button (Clerk) - Only visible on large screens */}
           <div className="lg:flex justify-end w-[20%]">
             <UserButton />

@@ -181,6 +181,18 @@ export const updateDriver = async (
   }
 };
 
+export const updateOnlineStatus = async (driverId: string, isOnline: boolean) => {
+  try {
+    const updatedDriver = await prisma.drivers.update({
+      where: { Id: driverId },
+      data: { isOnline: isOnline },
+    });
+    return { success: true, data: updatedDriver };
+  } catch (error) {
+    return { success: false, error: "Error updating driver" };
+  }
+};
+
 export const deleteDriver = async (driverId: string) => {
   try {
     const deletedDriver = await prisma.drivers.delete({

@@ -59,6 +59,7 @@ model Drivers {
   Messages        Messages[]
   scheduledTrips  ScheduledTrips[]
   clientRequests  clientRequests[]
+  isOnline         Boolean          @default(false)
 }
 
 model Review {
