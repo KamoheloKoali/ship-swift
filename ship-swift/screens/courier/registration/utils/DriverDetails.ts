@@ -52,7 +52,17 @@ export default function useDriverDetails() {
       if (userId) {
         try {
           const driver = await getDriverByID(userId);
-          setDriverData(driver as DriverData);
+          if (driver) {
+            setDriverData({
+              ...driver,
+              vehicleRegistrationNo: (driver as any).vehicleRegistrationNo ?? null,
+              Contacts: [],
+              Messages: [],
+              clientRequests: []
+            } as DriverData);
+          } else {
+            setDriverData(null);
+          }
         } catch (err) {
           setError("Failed to fetch driver data");
           console.error(err);
@@ -60,9 +70,7 @@ export default function useDriverDetails() {
           setLoading(false);
         }
       }
-    };
-
-    fetchDriverData();
+    };    fetchDriverData();
   }, [userId]);
 
   const handleConfirm = async () => {
@@ -73,7 +81,13 @@ export default function useDriverDetails() {
           driverData.Id,
           false,
         );
-        setDriverData(updatedDriver as DriverData);
+        setDriverData({
+          ...updatedDriver,
+          vehicleRegistrationNo: (updatedDriver as any).vehicleRegistrationNo ?? null,
+          Contacts: [],
+          Messages: [],
+          clientRequests: []
+        } as DriverData);
         
         const createRole = await createUserRole({ userId, driver: true, client: false });
         if (createRole) {
