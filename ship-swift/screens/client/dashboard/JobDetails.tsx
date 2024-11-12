@@ -203,9 +203,10 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
           <div>
             <Link href={`/driver-profile/${driver.Id}`}>
               <Button
+              className="w-full"
                 variant="outline"
                 size="sm">
-                Profile
+                Courier Profile
               </Button>
             </Link>
 
