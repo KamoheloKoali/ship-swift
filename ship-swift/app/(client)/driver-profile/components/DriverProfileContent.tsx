@@ -1,19 +1,19 @@
-import { Driver } from '@/types/driver';
-import { Loader2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { TABS } from '@/types/driver';
-import { VehicleTab } from './VehicleTab';
-import { DocumentsTab } from './DocumentsTab';
-import { ActivityTab } from './ActivityTab';
-import DriverInfo from './DriverInfo';
-import { ReviewSection } from './ReviewSection';
+import { Driver } from '@/types/driver'
+import { Loader2 } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Badge } from "@/components/ui/badge"
+import { TABS } from '@/types/driver'
+import { VehicleTab } from './VehicleTab'
+import { DocumentsTab } from './DocumentsTab'
+import { ActivityTab } from './ActivityTab'
+import DriverInfo from './DriverInfo'
+import { ReviewSection } from './ReviewSection'
 
 interface DriverProfileContentProps {
-  loading: boolean;
-  error?: { message: string };
-  driver: Driver | null;
+  loading: boolean
+  error?: { message: string }
+  driver: Driver | null
 }
 
 export function DriverProfileContent({ loading, error, driver }: DriverProfileContentProps) {
@@ -22,7 +22,7 @@ export function DriverProfileContent({ loading, error, driver }: DriverProfileCo
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -30,15 +30,15 @@ export function DriverProfileContent({ loading, error, driver }: DriverProfileCo
       <div className="text-center text-red-500">
         Error: {error.message}
       </div>
-    );
+    )
   }
 
   if (!driver) {
-    return <div>Driver not found</div>;
+    return <div>Driver not found</div>
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
+    <div className="container mx-auto p-6 max-w-4xl space-y-6">
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">Driver Profile</h1>
@@ -61,8 +61,8 @@ export function DriverProfileContent({ loading, error, driver }: DriverProfileCo
         <Card className="md:col-span-2">
           <CardContent className="pt-6">
             <Tabs defaultValue="vehicle">
-              <TabsList className="grid grid-cols-4 gap-4">
-                {TABS.map(tab => (
+              <TabsList className="grid grid-cols-3 gap-4">
+                {TABS.filter(tab => tab.id !== 'reviews').map(tab => (
                   <TabsTrigger key={tab.id} value={tab.id}>
                     {tab.label}
                   </TabsTrigger>
@@ -80,14 +80,19 @@ export function DriverProfileContent({ loading, error, driver }: DriverProfileCo
               <TabsContent value="activity" className="mt-4">
                 <ActivityTab driver={driver} />
               </TabsContent>
-
-              <TabsContent value="reviews" className="mt-4">
-                <ReviewSection  />
-              </TabsContent>
             </Tabs>
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Reviews</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ReviewSection />
+        </CardContent>
+      </Card>
     </div>
-  );
+  )
 }
