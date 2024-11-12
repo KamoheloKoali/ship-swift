@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
@@ -9,11 +9,7 @@ import { ReviewForm } from './ReviewForm'
 import { ReviewList } from './ReviewSection/components/ReviewList'
 import { Spinner } from '@/components/spinner'
 
-interface ReviewSectionProps {
-  onReviewSubmitted?: () => void
-}
-
-export function ReviewSection({ onReviewSubmitted }: ReviewSectionProps) {
+export function ReviewSection() {
   const [showReviewForm, setShowReviewForm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null)
@@ -22,55 +18,6 @@ export function ReviewSection({ onReviewSubmitted }: ReviewSectionProps) {
   const driverId = Array.isArray(params?.id) ? params.id[0] : params?.id
 
   const { reviews, isLoading, addReview, removeReview } = useDriverReviews(driverId)
-
-  const handleSubmitReview = useCallback(
-    async (reviewData: { rating: number, content?: string }) => {
-      if (!driverId) {
-        toast({
-          title: "Error",
-          description: "Driver ID is required",
-          variant: "destructive",
-        })
-        return
-      }
-
-      setIsSubmitting(true)
-      try {
-        const response = await fetch(`/api/drivers/${driverId}/reviews`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(reviewData),
-        })
-
-        const data = await response.json()
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to submit review')
-        }
-
-        toast({
-          title: "Success",
-          description: "Review submitted successfully",
-        })
-
-        setShowReviewForm(false)
-        onReviewSubmitted?.()
-        addReview(data)
-      } catch (error) {
-        console.error('Error submitting review:', error)
-        toast({
-          title: "Error",
-          description: error instanceof Error ? error.message : 'Failed to submit review',
-          variant: "destructive",
-        })
-      } finally {
-        setIsSubmitting(false)
-      }
-    },
-    [driverId, toast, onReviewSubmitted, addReview]
-  )
 
   const handleDeleteReview = async (reviewId: string) => {
     setDeletingReviewId(reviewId)
@@ -127,7 +74,6 @@ export function ReviewSection({ onReviewSubmitted }: ReviewSectionProps) {
       {showReviewForm && (
         <ReviewForm
           driverId={driverId}
-          onSubmit={handleSubmitReview}
           onClose={handleCloseForm}
           isSubmitting={isSubmitting}
         />
@@ -143,7 +89,7 @@ export function ReviewSection({ onReviewSubmitted }: ReviewSectionProps) {
       <ReviewList
         reviews={reviews}
         isLoading={isLoading}
-        isError={false} // or set this based on your error state
+        isError={false}
         onDeleteReview={handleDeleteReview}
         deletingReviewId={deletingReviewId}
       />

@@ -16,7 +16,7 @@ export const ReviewList = ({ reviews, isLoading, isError, onDeleteReview, deleti
   const parentRef = useRef<HTMLDivElement>(null)
 
   const rowVirtualizer = useVirtualizer({
-    count: isLoading ? 3 : reviews.length,
+    count: isLoading ? 5 : reviews.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 100,
     overscan: 5,
@@ -33,7 +33,7 @@ export const ReviewList = ({ reviews, isLoading, isError, onDeleteReview, deleti
   return (
     <div 
       ref={parentRef}
-      className="space-y-4 max-h-[400px] overflow-y-auto pr-4 -mr-4"
+      className="space-y-4 max-h-[500px] overflow-y-auto pr-4 -mr-4"
       aria-live="polite"
       aria-busy={isLoading}
     >

@@ -8,8 +8,6 @@ interface ReviewFormProps {
 
   driverId: string;
 
-  onSubmit: (reviewData: { rating: number; content?: string }) => Promise<any>;
-
   onClose: () => void;
 
   isSubmitting: boolean;
@@ -17,7 +15,7 @@ interface ReviewFormProps {
 }
 
 
-export function ReviewForm({ driverId, onClose, onSubmit }: ReviewFormProps) {
+export function ReviewForm({ driverId, onClose }: ReviewFormProps) {
   const [rating, setRating] = useState(0);
   const [content, setContent] = useState('');  // Changed from 'comment' to match API schema
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,7 +68,6 @@ export function ReviewForm({ driverId, onClose, onSubmit }: ReviewFormProps) {
         description: "Review submitted successfully",
       });
 
-      onSubmit?.({ rating, content });
       onClose();
     } catch (error) {
       console.error('Error submitting review:', error);
