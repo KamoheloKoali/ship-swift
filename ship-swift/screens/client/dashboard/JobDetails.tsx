@@ -36,6 +36,8 @@ import { useRouter } from "next/navigation";
 import { updateJobStatus } from "@/actions/courierJobsActions";
 import { getContactByDriverAndClientId } from "@/actions/contactsActions";
 import MapComponent from "@/screens/global/PickUpDropOffLoc";
+import Link from "next/link";
+import DriverLocation from "./DriverLocation";
 
 interface SideCardProps {
   job: {
@@ -311,7 +313,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
               <CardTitle className="group flex flex-col gap-2 text-lg">
                 <div className="text-2xl flex flex-wrap">{job.Title}</div>
                 <div>
-                  Order: {job.Id}
+                  Order Id: {job.Id}
                   {!isClaimed && (
                     <Button
                       size="icon"
@@ -328,6 +330,14 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
               <CardDescription>
                 Date: {new Date(job.dateCreated).toLocaleString()}
               </CardDescription>
+              {!isJobCompleted && isClaimed && (
+                    <>
+                    <p className="text-sm text-muted-foreground">Driver's location:</p>
+                    <Link prefetch={true} href={`/track-delivery/${job.approvedRequestId}`} target="_blank">
+                    <DriverLocation params={{deliveryId: job.Id}} job={job} />
+                    </Link>
+                    </>
+                  )}
             </div>
             <div className="ml-auto flex flex-wrap md:flex-nowrap items-center gap-1">
               {isClaimed && (
@@ -341,41 +351,6 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
                     <Copy className="h-3 w-3" />
                     <span className="sr-only">Copy Order ID</span>
                   </Button>
-                  {!isJobCompleted && isClaimed && (
-                    <>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className=" h-8 hidden gap-1 md:flex flex-wrap md:flex-nowrap"
-                        onClick={() => {
-                          window.open(
-                            `/track-delivery/${job.approvedRequestId}`,
-                            "_blank"
-                          );
-                        }}
-                      >
-                        <Truck className=" h-3.5 w-3.5" />
-                        <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                          View Map
-                        </span>
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        className=" h-8 flex gap-1 md:hidden flex-wrap"
-                        onClick={() => {
-                          window.open(
-                            `/track-delivery/${job.approvedRequestId}`,
-                            "_blank"
-                          );
-                        }}
-                      >
-                        <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                          Map
-                        </span>
-                      </Button>
-                    </>
-                  )}
                 </>
               )}
               {job.packageStatus === "collected" && (
