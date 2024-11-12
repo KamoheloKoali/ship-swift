@@ -21,9 +21,11 @@ model clients {
   isVerified     Boolean          @default(false)
   selfieImage    String?          @default("")
   activeJobs     ActiveJobs[]
+  ClientReview   ClientReview[]
   Contacts       Contacts[]
   courierJobs    CourierJobs[]
   driverRequests DriverRequests[]
+  DriverReview   DriverReview[]
   Messages       Messages[]
   clientRequests clientRequests[]
 }
@@ -52,14 +54,15 @@ model Drivers {
   rating                Float?
   vehicleRegistrationNo String?
   activeJobs            ActiveJobs[]
+  ClientReview          ClientReview[]
   Contacts              Contacts[]
   driveRequests         DriverRequests[]
+  DriverReview          DriverReview[]
   JobRequests           JobRequest[]
   Location              Location[]
   Messages              Messages[]
   scheduledTrips        ScheduledTrips[]
   clientRequests        clientRequests[]
-  Review                Review[]         @relation("DriversToReview")
 }
 
 model CourierJobs {
@@ -177,18 +180,35 @@ model ScheduledTrips {
   driver       Drivers    @relation(fields: [driverId], references: [Id])
 }
 
-model Review {
-  id        String    @id
-  driverId  String
-  content   String?
-  rating    Int
-  createdAt DateTime  @default(now())
-  Drivers   Drivers[] @relation("DriversToReview")
-}
-
 model FCMTokens {
   userId String @id
   token  String
+}
+
+model ClientReview {
+  id        String   @id
+  content   String?
+  rating    Int
+  createdAt DateTime @default(now())
+  clientId  String
+  driverId  String
+  clients   clients  @relation(fields: [clientId], references: [Id])
+  Drivers   Drivers  @relation(fields: [driverId], references: [Id])
+
+  @@index([driverId])
+}
+
+model DriverReview {
+  id        String   @id
+  content   String?
+  rating    Int
+  createdAt DateTime @default(now())
+  driverId  String
+  clientId  String
+  clients   clients  @relation(fields: [clientId], references: [Id])
+  Drivers   Drivers  @relation(fields: [driverId], references: [Id])
+
+  @@index([driverId])
 }
 
 enum TripStatus {
