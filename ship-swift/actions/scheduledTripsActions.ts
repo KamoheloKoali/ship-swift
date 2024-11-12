@@ -114,7 +114,7 @@ export const getScheduledTripsWithDriver = async () => {
         },
       },
       orderBy: {
-        tripDate: "desc",
+        tripDate: "asc",
       },
     });
 

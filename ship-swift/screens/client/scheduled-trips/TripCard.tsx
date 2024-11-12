@@ -1,13 +1,17 @@
 "use client";
 import { useState } from "react";
-import { useScheduledTrips } from "@/screens/client/utils/useScheduledTrips"; // Import the custom hook
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"; // Import Avatar from ShadCN
-import { Card, CardHeader, CardFooter } from "@/components/ui/card"; // ShadCN Card components
+import { useScheduledTrips } from "@/screens/client/utils/useScheduledTrips";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Card, CardHeader, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Calendar } from "lucide-react";
+import DropdownMenuComponent from "./DropDownMenu";
+import { useAuth } from "@clerk/nextjs";
 
 type Driver = {
   firstName: string;
   lastName: string;
-  photoUrl: string | null; // photoUrl can be null if no photo is available
+  photoUrl: string | null;
   vehicleType: string | null;
   isVerified: boolean;
 };
@@ -16,20 +20,29 @@ type Trip = {
   id: string;
   fromLocation: string;
   toLocation: string;
-  tripDate: string;
-  status: string;
+  tripDate: Date; // Changed from string to Date
   driver: Driver;
   routeDetails: string;
 };
 
-const TripCard = () => {
-  const trips = useScheduledTrips(); // Use the hook to get the trips
-  const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
+const formatDate = (date: Date) => {
+  return date.toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
 
-  const handleTripClick = (trip: Trip) => {
-    // Handle click on a trip to show detailed view
-    setSelectedTrip(trip);
-  };
+const removeCommas = (text: string | null) => {
+  return text ? text.replace(/,/g, "") : "No vehicle type specified";
+};
+
+const TripCard = () => {
+  const { userId } = useAuth();
+  const trips = useScheduledTrips();
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -38,94 +51,79 @@ const TripCard = () => {
       </h2>
 
       {trips.length === 0 ? (
-        <p className="text-center text-lg text-gray-500">No scheduled trips available</p>
+        <div className="text-center p-8 bg-white rounded-lg shadow">
+          <p className="text-lg text-gray-500">No scheduled trips available</p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {trips.map((trip) => (
             <Card
               key={trip.id}
-              className="transition-all duration-300 transform hover:scale-105 shadow-xl rounded-lg border border-gray-300"
+              className="transition-all duration-300 transform hover:scale-105 hover:shadow-2xl rounded-xl border border-gray-200 overflow-hidden"
             >
-              <CardHeader className="p-4 bg-gray-800 text-white rounded-t-lg">
-                <h3 className="text-xl font-semibold">
-                  {trip.fromLocation} to {trip.toLocation}
-                </h3>
-                <p className="text-sm">
-                  {new Date(trip.tripDate).toLocaleDateString()}
-                </p>
+              <CardHeader className="p-4 bg-black text-white">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <div className="flex items-center space-x-2 mb-2">
+                      <MapPin className="w-4 h-4" />
+                      <div className="flex-1">
+                        <p className="text-sm opacity-90">From</p>
+                        <p className="font-medium">{trip.fromLocation}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <MapPin className="w-4 h-4" />
+                      <div className="flex-1">
+                        <p className="text-sm opacity-90">To</p>
+                        <p className="font-medium">{trip.toLocation}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-end">
+                    <DropdownMenuComponent
+                      driverId={trip.driver.Id}
+                    />
+                  </div>
+                </div>
               </CardHeader>
 
-              <div className="p-4 text-gray-800">
-                <p className="text-md mb-2 font-medium">Status: {trip.status}</p>
+              <div className="p-4 space-y-4">
+                <div className="flex flex-row text-sm text-gray-600">
+                  <Calendar className="w-4 h-4" /> {formatDate(trip.tripDate)}
+                </div>
+
                 <div className="flex items-center space-x-4">
-                  <Avatar>
+                  <Avatar className="h-12 w-12 ring-2 ring-blue-100">
                     <AvatarImage
                       src={trip.driver.photoUrl || undefined}
                       alt={`${trip.driver.firstName} ${trip.driver.lastName}`}
                     />
-                    <AvatarFallback>
+                    <AvatarFallback className="bg-blue-100 text-blue-600">
                       {`${trip.driver.firstName[0]}${trip.driver.lastName[0]}`}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
-                    <p className="font-semibold">
-                      {trip.driver.firstName} {trip.driver.lastName}
-                    </p>
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2">
+                      <p className="font-semibold text-gray-900">
+                        {trip.driver.firstName} {trip.driver.lastName}
+                      </p>
+                      {trip.driver.isVerified && (
+                        <Badge
+                          variant="secondary"
+                          className="bg-green-100 text-green-800"
+                        >
+                          Verified
+                        </Badge>
+                      )}
+                    </div>
                     <p className="text-sm text-gray-600">
-                      {trip.driver.vehicleType || "No vehicle type specified"}
-                    </p>
-                    <p className="text-sm">
-                      {trip.driver.isVerified ? "Verified" : "Not Verified"}
+                      {removeCommas(trip.driver.vehicleType)}
                     </p>
                   </div>
                 </div>
               </div>
-
-              <CardFooter className="p-4 bg-gray-100 rounded-b-lg text-right">
-                <button
-                  onClick={() => handleTripClick({ ...trip, tripDate: trip.tripDate.toISOString() })}
-                  className="text-blue-600 hover:text-blue-800 focus:outline-none"
-                >
-                  View Details
-                </button>
-              </CardFooter>
             </Card>
-          ))}
-        </div>
-      )}
-
-      {/* Show detailed trip information if selected */}
-      {selectedTrip && (
-        <div className="mt-6 max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Trip Details</h3>
-          <p className="text-lg">From: {selectedTrip.fromLocation}</p>
-          <p className="text-lg">To: {selectedTrip.toLocation}</p>
-          <p className="text-lg">Route: {selectedTrip.routeDetails}</p>
-          <p className="text-lg">
-            Scheduled for: {new Date(selectedTrip.tripDate).toLocaleString()}
-          </p>
-          <p className="text-lg">Status: {selectedTrip.status}</p>
-          <div className="mt-4">
-            <h4 className="text-xl font-semibold text-gray-800">Driver Info</h4>
-            <p className="text-lg">
-              {selectedTrip.driver.firstName} {selectedTrip.driver.lastName}
-            </p>
-            <p className="text-lg">
-              Vehicle Type: {selectedTrip.driver.vehicleType || "N/A"}
-            </p>
-            <p className="text-lg">
-              {selectedTrip.driver.isVerified ? "Verified" : "Not Verified"}
-            </p>
-            <Avatar className="mt-4">
-              <AvatarImage
-                src={selectedTrip.driver.photoUrl || undefined}
-                alt={`${selectedTrip.driver.firstName} ${selectedTrip.driver.lastName}`}
-              />
-              <AvatarFallback>
-                {`${selectedTrip.driver.firstName[0]}${selectedTrip.driver.lastName[0]}`}
-              </AvatarFallback>
-            </Avatar>
-          </div>
+          ))}{" "}
         </div>
       )}
     </div>

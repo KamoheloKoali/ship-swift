@@ -1,10 +1,10 @@
 "use client";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
+import { useSearchParams } from "next/navigation";
 import type { E164Number } from "libphonenumber-js/core";
 import {
   Popover,
@@ -23,13 +23,18 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { PhoneInput, phoneNumberSchema, ValidationResult } from "@/screens/global/phone-input";
-import { z } from "zod"
+import {
+  PhoneInput,
+  phoneNumberSchema,
+  ValidationResult,
+} from "@/screens/global/phone-input";
+import { z } from "zod";
 import { createJob } from "@/actions/courierJobsActions";
 import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { getClientById } from "@/actions/clientActions";
+import { createJobAndDirectRequest } from "@/screens/client/utils/directRequests";
 
 const packageSizes = [
   {
@@ -98,44 +103,64 @@ const packageSizes = [
 ];
 
 export default function PostJobWizard() {
-  const [step, setStep] = useState(1)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const router = useRouter()
-  const {userId} = useAuth()
+  const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+  const { userId } = useAuth();
+  const searchParams = useSearchParams();
+  const driverId = searchParams.get("driverId");
   const formSchema = z.object({
     packageSize: z.number().min(1).max(5),
-    title: z.string().min(10, "Title must be at least 10 characters long").max(100, "Title must not exceed 100 characters"),
-    description: z.string().min(5, "Description must be at least 5 characters long").max(1000, "Description must not exceed 1000 characters"),
+    title: z
+      .string()
+      .min(10, "Title must be at least 10 characters long")
+      .max(100, "Title must not exceed 100 characters"),
+    description: z
+      .string()
+      .min(5, "Description must be at least 5 characters long")
+      .max(1000, "Description must not exceed 1000 characters"),
     budget: z.string(),
-    pickUp: z.string().min(5, "Pickup address must be at least 5 characters long"),
-    dropOff: z.string().min(5, "Dropoff address must be at least 5 characters long"),
-    districtPickup: z.string().min(2, "District pickup must be at least 2 characters long"),
-    districtDropoff: z.string().min(2, "District dropoff must be at least 2 characters long"),
+    pickUp: z
+      .string()
+      .min(5, "Pickup address must be at least 5 characters long"),
+    dropOff: z
+      .string()
+      .min(5, "Dropoff address must be at least 5 characters long"),
+    districtPickup: z
+      .string()
+      .min(2, "District pickup must be at least 2 characters long"),
+    districtDropoff: z
+      .string()
+      .min(2, "District dropoff must be at least 2 characters long"),
     parcelSize: z.string(),
     pickupPhoneNumber: phoneNumberSchema,
     dropoffPhoneNumber: phoneNumberSchema,
     dropoffEmail: z.string().email("Invalid email address"),
-    collectionDate: z.date().min(new Date(), "Collection date must be in the future"),
-  })
-  
-  type FormData = z.infer<typeof formSchema>
-    const [formData, setFormData] = useState<FormData>({
-      packageSize: 1,
-      title: '',
-      description: '',
-      budget: '',
-      pickUp: '',
-      dropOff: '',
-      districtPickup: '',
-      districtDropoff: '',
-      parcelSize: '',
-      pickupPhoneNumber: '' as E164Number,
-      dropoffPhoneNumber: '' as E164Number,
-      dropoffEmail: '',
-      collectionDate: null as unknown as Date,
-    })
-  
-    const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({})
+    collectionDate: z
+      .date()
+      .min(new Date(), "Collection date must be in the future"),
+  });
+
+  type FormData = z.infer<typeof formSchema>;
+  const [formData, setFormData] = useState<FormData>({
+    packageSize: 1,
+    title: "",
+    description: "",
+    budget: "",
+    pickUp: "",
+    dropOff: "",
+    districtPickup: "",
+    districtDropoff: "",
+    parcelSize: "",
+    pickupPhoneNumber: "" as E164Number,
+    dropoffPhoneNumber: "" as E164Number,
+    dropoffEmail: "",
+    collectionDate: null as unknown as Date,
+  });
+
+  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>(
+    {}
+  );
 
   const totalSteps = 6;
   const exampleTitles = [
@@ -144,74 +169,85 @@ export default function PostJobWizard() {
     "Urgent: Package delivery needed from Moshoeshoe 2 to Maputsoe",
   ];
 
-  
-
   const validateStep = (stepNumber: number) => {
-    let stepSchema: z.ZodType<any>
+    let stepSchema: z.ZodType<any>;
     switch (stepNumber) {
       case 1:
-        stepSchema = formSchema.pick({ packageSize: true })
-        break
+        stepSchema = formSchema.pick({ packageSize: true });
+        break;
       case 2:
-        stepSchema = formSchema.pick({ title: true })
-        break
+        stepSchema = formSchema.pick({ title: true });
+        break;
       case 3:
-        stepSchema = formSchema.pick({ description: true })
-        break
+        stepSchema = formSchema.pick({ description: true });
+        break;
       case 4:
-        stepSchema = formSchema.pick({ pickUp: true, dropOff: true, districtPickup: true, districtDropoff: true })
-        break
+        stepSchema = formSchema.pick({
+          pickUp: true,
+          dropOff: true,
+          districtPickup: true,
+          districtDropoff: true,
+        });
+        break;
       case 5:
-        stepSchema = formSchema.pick({ pickupPhoneNumber: true, dropoffPhoneNumber: true, dropoffEmail: true })
-        break
+        stepSchema = formSchema.pick({
+          pickupPhoneNumber: true,
+          dropoffPhoneNumber: true,
+          dropoffEmail: true,
+        });
+        break;
       case 6:
-        stepSchema = formSchema.pick({ collectionDate: true })
-        break
+        stepSchema = formSchema.pick({ collectionDate: true });
+        break;
       default:
-        return true
+        return true;
     }
 
     try {
-      stepSchema.parse(formData)
-      setErrors({})
-      return true
+      stepSchema.parse(formData);
+      setErrors({});
+      return true;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const newErrors: Partial<Record<keyof FormData, string>> = {}
+        const newErrors: Partial<Record<keyof FormData, string>> = {};
         error.errors.forEach((err) => {
           if (err.path) {
-            newErrors[err.path[0] as keyof FormData] = err.message
+            newErrors[err.path[0] as keyof FormData] = err.message;
           }
-        })
-        setErrors(newErrors)
+        });
+        setErrors(newErrors);
       }
-      return false
+      return false;
     }
-  }
+  };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-  }
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-  const handlePhoneChange = (type: 'pickup' | 'dropoff') => (value: E164Number, validation: ValidationResult) => {
-    setFormData(prevData => ({
-      ...prevData,
-      [`${type}PhoneNumber`]: value
-    }))
-    if (!validation.success) {
-      setErrors(prevErrors => ({
-        ...prevErrors,
-        [`${type}PhoneNumber`]: validation.error
-      }))
-    } else {
-      setErrors(prevErrors => {
-        const newErrors = { ...prevErrors }
-        delete newErrors[`${type}PhoneNumber` as keyof FormData]
-        return newErrors
-      })
-    }
-  }
+  const handlePhoneChange =
+    (type: "pickup" | "dropoff") =>
+    (value: E164Number, validation: ValidationResult) => {
+      setFormData((prevData) => ({
+        ...prevData,
+        [`${type}PhoneNumber`]: value,
+      }));
+      if (!validation.success) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [`${type}PhoneNumber`]: validation.error,
+        }));
+      } else {
+        setErrors((prevErrors) => {
+          const newErrors = { ...prevErrors };
+          delete newErrors[`${type}PhoneNumber` as keyof FormData];
+          return newErrors;
+        });
+      }
+    };
 
   const handleNext = async () => {
     if (validateStep(step)) {
@@ -220,26 +256,27 @@ export default function PostJobWizard() {
       } else {
         setIsSubmitting(true);
         // check if user is verified
-        const client = await getClientById(userId || "")
+        const client = await getClientById(userId || "");
         if (!client.data?.isVerified) {
           setIsSubmitting(false);
           toast({
             title: "You must be verified to post a job",
-            description: "Please wait until your account is verified to post a job",
+            description:
+              "Please wait until your account is verified to post a job",
             variant: "destructive", // Use the 'destructive' variant for error messages
-          })
-          return
+          });
+          return;
         }
         // submit form data
         const formDataToSubmit = new FormData();
         Object.entries(formData).forEach(([key, value]) => {
-          if (typeof value === 'string' || value instanceof Blob) {
+          if (typeof value === "string" || value instanceof Blob) {
             formDataToSubmit.append(key, value);
-          } else if (typeof value === 'number' || value instanceof Date) {
+          } else if (typeof value === "number" || value instanceof Date) {
             formDataToSubmit.append(key, value.toString());
           }
         });
-        formDataToSubmit.append('clientId', userId || "");
+        formDataToSubmit.append("clientId", userId || "");
 
         const response = await createJob(formDataToSubmit);
 
@@ -265,6 +302,46 @@ export default function PostJobWizard() {
     }
   };
 
+  const handleDirectRequest = async () => {
+    if (driverId) {
+      const formDataToSubmit = new FormData();
+
+      // Log formData and userId for debugging purposes
+      console.log(formData);
+      console.log(userId);
+
+      // Add form data entries to FormData
+      Object.entries(formData).forEach(([key, value]) => {
+        if (typeof value === "string" || value instanceof Blob) {
+          formDataToSubmit.append(key, value);
+        } else if (typeof value === "number" || value instanceof Date) {
+          formDataToSubmit.append(key, value.toString());
+        }
+      });
+
+      // Append userId (clientId) to the form data
+      formDataToSubmit.append("clientId", userId || "");
+
+      // Call createJobAndDirectRequest with the updated formDataToSubmit
+      const response = await createJobAndDirectRequest(
+        formDataToSubmit,
+        userId || "",
+        driverId
+      );
+
+      if (response.success) {
+        toast({
+          description: "Job created successfully!",
+        });
+        router.push("/client");
+      } else {
+        toast({
+          description: response.error,
+          variant: "destructive",
+        });
+      }
+    }
+  };
   const renderStep = () => {
     switch (step) {
       case 1:
@@ -291,7 +368,10 @@ export default function PostJobWizard() {
                       ...formData,
                       packageSize: size.id,
                       budget: size.price.toString(),
-                      parcelSize: size.name.toLowerCase().replace(/\s/g, "").replace("-", ""),
+                      parcelSize: size.name
+                        .toLowerCase()
+                        .replace(/\s/g, "")
+                        .replace("-", ""),
                     })
                   }
                 >
@@ -327,13 +407,11 @@ export default function PostJobWizard() {
           <div className="space-y-6">
             <div className="space-y-2">
               <h1 className="text-4xl font-semibold tracking-tight">
-
                 Let's start with a strong title.
               </h1>
               <p className="text-lg text-muted-foreground">
-                This helps your job post stand out to the right couriers.
-
-                It's the first thing they'll see, so make it count!
+                This helps your job post stand out to the right couriers. It's
+                the first thing they'll see, so make it count!
               </p>
             </div>
             <Input
@@ -343,7 +421,9 @@ export default function PostJobWizard() {
               className="text-lg py-6"
               placeholder="Write a title for your job post"
             />
-            {errors.title && <p className="text-sm text-red-500">{errors.title}</p>}
+            {errors.title && (
+              <p className="text-sm text-red-500">{errors.title}</p>
+            )}
             <div className="space-y-4">
               <h2 className="text-sm font-medium">Example titles</h2>
               <ul className="space-y-3">
@@ -378,7 +458,9 @@ export default function PostJobWizard() {
               className="min-h-[200px]"
               placeholder="List the items for delivery, e.g., 2 Hisense TVs, 1 laptop, etc."
             />
-            {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
+            {errors.description && (
+              <p className="text-sm text-red-500">{errors.description}</p>
+            )}
           </div>
         );
       case 4:
@@ -400,14 +482,18 @@ export default function PostJobWizard() {
                 onChange={handleInputChange}
                 placeholder="Enter pickup address... e.g., letamong, Maqhaka, Berea, Lesotho"
               />
-              {errors.pickUp && <p className="text-sm text-red-500">{errors.pickUp}</p>}
+              {errors.pickUp && (
+                <p className="text-sm text-red-500">{errors.pickUp}</p>
+              )}
               <Input
                 name="districtPickup"
                 value={formData.districtPickup}
                 onChange={handleInputChange}
                 placeholder="Enter pickup district/province... e.g., Berea"
               />
-              {errors.districtPickup && <p  className="text-sm text-red-500">{errors.districtPickup}</p>}
+              {errors.districtPickup && (
+                <p className="text-sm text-red-500">{errors.districtPickup}</p>
+              )}
             </div>
             <div className="space-y-4">
               <h2 className="text-xl font-semibold">Dropoff Location</h2>
@@ -417,19 +503,23 @@ export default function PostJobWizard() {
                 onChange={handleInputChange}
                 placeholder="Enter dropoff address... e.g., Moshoeshoe 2 masoleng, Maseru, Lesotho"
               />
-              {errors.dropOff && <p className="text-sm text-red-500">{errors.dropOff}</p>}
+              {errors.dropOff && (
+                <p className="text-sm text-red-500">{errors.dropOff}</p>
+              )}
               <Input
                 name="districtDropoff"
                 value={formData.districtDropoff}
                 onChange={handleInputChange}
                 placeholder="Enter dropoff district/province... e.g., Maseru"
               />
-              {errors.districtDropoff && <p className="text-sm text-red-500">{errors.districtDropoff}</p>}
+              {errors.districtDropoff && (
+                <p className="text-sm text-red-500">{errors.districtDropoff}</p>
+              )}
             </div>
           </div>
         );
-        case 5:
-          return (
+      case 5:
+        return (
           <div className="space-y-6">
             <div className="space-y-2">
               <h1 className="text-4xl font-semibold tracking-tight">
@@ -443,20 +533,45 @@ export default function PostJobWizard() {
               <h2 className="text-xl font-semibold">Pickup Contact</h2>
               <PhoneInput
                 value={formData.pickupPhoneNumber}
-                onChange={(value) => handlePhoneChange('pickup')(value as E164Number, { success: true })}
-                onValueChange={({ phoneNumber, validation }) => handlePhoneChange('pickup')(phoneNumber as E164Number, validation)}
+                onChange={(value) =>
+                  handlePhoneChange("pickup")(value as E164Number, {
+                    success: true,
+                  })
+                }
+                onValueChange={({ phoneNumber, validation }) =>
+                  handlePhoneChange("pickup")(
+                    phoneNumber as E164Number,
+                    validation
+                  )
+                }
               />
-              {errors.pickupPhoneNumber && <p className="text-sm text-red-500">{errors.pickupPhoneNumber}</p>}
-
+              {errors.pickupPhoneNumber && (
+                <p className="text-sm text-red-500">
+                  {errors.pickupPhoneNumber}
+                </p>
+              )}
             </div>
             <div className="space-y-4">
               <h2 className="text-xl font-semibold">Dropoff Contact</h2>
               <PhoneInput
                 value={formData.dropoffPhoneNumber}
-                onChange={(value) => handlePhoneChange('dropoff')(value as E164Number, { success: true })}
-                onValueChange={({ phoneNumber, validation }) => handlePhoneChange('dropoff')(phoneNumber as E164Number, validation)}
+                onChange={(value) =>
+                  handlePhoneChange("dropoff")(value as E164Number, {
+                    success: true,
+                  })
+                }
+                onValueChange={({ phoneNumber, validation }) =>
+                  handlePhoneChange("dropoff")(
+                    phoneNumber as E164Number,
+                    validation
+                  )
+                }
               />
-              {errors.dropoffPhoneNumber && <p className="text-sm text-red-500">{errors.dropoffPhoneNumber}</p>}
+              {errors.dropoffPhoneNumber && (
+                <p className="text-sm text-red-500">
+                  {errors.dropoffPhoneNumber}
+                </p>
+              )}
 
               <Input
                 name="dropoffEmail"
@@ -467,7 +582,7 @@ export default function PostJobWizard() {
               />
             </div>
           </div>
-        )
+        );
       case 6:
         return (
           <div className="space-y-6">
@@ -501,19 +616,23 @@ export default function PostJobWizard() {
                   mode="single"
                   selected={formData.collectionDate || undefined}
                   onSelect={(date) =>
-                    setFormData({ ...formData, collectionDate: date || new Date() })
+                    setFormData({
+                      ...formData,
+                      collectionDate: date || new Date(),
+                    })
                   }
                   initialFocus
                 />
               </PopoverContent>
             </Popover>
-            {errors.collectionDate && <p className="text-sm text-red-500">{errors.collectionDate}</p>}
+            {errors.collectionDate && (
+              <p className="text-sm text-red-500">{errors.collectionDate}</p>
+            )}
           </div>
         );
       default:
         return null;
     }
-
   };
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -540,13 +659,30 @@ export default function PostJobWizard() {
             Back
           </Button>
           <Button
-            onClick={handleNext}
+            onClick={
+              step === totalSteps && driverId ? handleDirectRequest : handleNext
+            }
             disabled={
               (step === 1 && !formData.packageSize) ||
-              (step === 2 && !formData.title) || isSubmitting
+              (step === 2 && !formData.title) ||
+              isSubmitting
             }
           >
-            {step === totalSteps ? isSubmitting ? <Loader2 className="animate-spin h-4 w-4" /> : "Post Job" : "Next"}
+            {step === totalSteps ? (
+              driverId ? (
+                isSubmitting ? (
+                  <Loader2 className="animate-spin h-4 w-4" />
+                ) : (
+                  "Direct Request"
+                )
+              ) : isSubmitting ? (
+                <Loader2 className="animate-spin h-4 w-4" />
+              ) : (
+                "Post Job"
+              )
+            ) : (
+              "Next"
+            )}
           </Button>
         </div>
       </div>
@@ -554,8 +690,8 @@ export default function PostJobWizard() {
   );
 }
 
-
-{/*
+{
+  /*
   {
     "packageSize": 2,
     "title": "Need courier for same-day delivery in Maseru",
@@ -571,4 +707,5 @@ export default function PostJobWizard() {
     "dropoffEmail": "kamohelokoali201@gmail.com",
     "collectionDate": "2024-11-20T10:00:00.000Z"
 }
-  */}
+  */
+}
