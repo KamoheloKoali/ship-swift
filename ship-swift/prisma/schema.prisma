@@ -29,35 +29,37 @@ model clients {
 }
 
 model Drivers {
-  Id              String           @id
-  email           String           @unique
-  phoneNumber     String?
-  firstName       String
-  lastName        String
-  photoUrl        String
-  idPhotoUrl      String
-  vehicleType     String?
-  dateCreated     DateTime         @default(now())
-  dateUpdated     DateTime         @updatedAt
-  VIN             String?
-  idNumber        String?
-  licenseExpiry   String?
-  licenseNumber   String?
-  plateNumber     String?
-  discExpiry      String?
-  discPhotoUrl    String?
-  licensePhotoUrl String?
-  location        String?
-  isVerified      Boolean          @default(false)
-  activeJobs      ActiveJobs[]
-  Contacts        Contacts[]
-  driveRequests   DriverRequests[]
-  JobRequests     JobRequest[]
-  Location        Location[]
-  Messages        Messages[]
-  scheduledTrips  ScheduledTrips[]
-  clientRequests  clientRequests[]
-  isOnline         Boolean          @default(false)
+  Id                    String           @id
+  email                 String           @unique
+  phoneNumber           String?
+  firstName             String
+  lastName              String
+  photoUrl              String
+  idPhotoUrl            String
+  vehicleType           String?
+  dateCreated           DateTime         @default(now())
+  dateUpdated           DateTime         @updatedAt
+  idNumber              String?
+  licenseExpiry         String?
+  licenseNumber         String?
+  plateNumber           String?
+  discExpiry            String?
+  discPhotoUrl          String?
+  licensePhotoUrl       String?
+  location              String?
+  isVerified            Boolean          @default(false)
+  isOnline              Boolean          @default(false)
+  rating                Float?
+  vehicleRegistrationNo String?
+  activeJobs            ActiveJobs[]
+  Contacts              Contacts[]
+  driveRequests         DriverRequests[]
+  JobRequests           JobRequest[]
+  Location              Location[]
+  Messages              Messages[]
+  scheduledTrips        ScheduledTrips[]
+  clientRequests        clientRequests[]
+  Review                Review[]         @relation("DriversToReview")
 }
 
 model CourierJobs {
@@ -173,6 +175,20 @@ model ScheduledTrips {
   updatedAt    DateTime   @updatedAt
   status       TripStatus @default(SCHEDULED)
   driver       Drivers    @relation(fields: [driverId], references: [Id])
+}
+
+model Review {
+  id        String    @id
+  driverId  String
+  content   String?
+  rating    Int
+  createdAt DateTime  @default(now())
+  Drivers   Drivers[] @relation("DriversToReview")
+}
+
+model FCMTokens {
+  userId String @id
+  token  String
 }
 
 enum TripStatus {

@@ -183,10 +183,10 @@ export default function DriverDetailsForm(): JSX.Element {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="VIN">VIN</Label>
+            <Label htmlFor="Vehicle Registration Number">Vehicle Registration Number</Label>
             <Input
-              id="VIN"
-              value={driverData.VIN || ""}
+              id="vehicleRegistrationNo"
+              value={driverData.vehicleRegistrationNo || ""}
               readOnly
               className="bg-gray-50"
             />

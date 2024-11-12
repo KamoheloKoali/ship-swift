@@ -18,6 +18,7 @@ import { createLocation } from "@/actions/locationAction";
 import { useAuth } from "@clerk/nextjs";
 import { getUserRoleById } from "@/app/utils/getUserRole";
 import { getAllActiveJobsByDriverId } from "@/actions/activeJobsActions";
+import NotificationFeed from "@/screens/notifications/InApp/NotificationFeed";
 import SwitchUser from "@/screens/global/switch-user";
 
 export default function Header() {
@@ -87,32 +88,40 @@ export default function Header() {
               isDriver={isDriver}
               hasActiveJobs={hasActiveJobs}
             />
+            
           </div>
           <SwitchUser />
           {/* User Button (Clerk) - Only visible on large screens */}
-          <div className="lg:flex justify-end w-[20%]">
-            <UserButton />
-          </div>
+          <div className="flex gap-2">
+              <NotificationFeed />
+              <UserButton />
+            </div>
         </div>
 
         {/* For Small Screens: Logo and Hamburger Menu */}
         <div className="flex items-center justify-between lg:hidden">
           <div className="flex items-center space-x-4">
             {/* Logo */}
-            <div className="font-bold text-lg text-gray-800">Ship Swift</div>
-            {isDriver && hasActiveJobs && (
-              <div className="md:hidden">
+            <div className="font-bold text-lg text-gray-800 flex gap-2">
+            <UserButton />
+              Ship Swift
+              </div>
+            {isDriver && (
+              <div className="">
                 <LocationTracker updateLocation={updateLocation} />
               </div>
             )}
           </div>
           {/* Menu Button for small screens */}
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+            <div className="flex gap-2">
+            <NotificationFeed />
             <SheetTrigger asChild>
               <button className="bg-white" onClick={() => setIsSheetOpen(true)}>
                 <Bars3Icon className="h-6 w-6 text-gray-800" />
               </button>
             </SheetTrigger>
+            </div>
 
             {/* Sheet Content */}
             <SheetContent side="left" className="bg-white p-4">
@@ -127,9 +136,8 @@ export default function Header() {
                 hasActiveJobs={hasActiveJobs}
               />
               {/* User Button (Clerk) - Only visible on small screens in Sheet */}
-              <div className="lg:hidden flex justify-end w-[20%]">
-                <UserButton />
-              </div>
+              {/* <div className="lg:hidden flex justify-end w-[20%]">
+              </div> */}
             </SheetContent>
           </Sheet>
         </div>

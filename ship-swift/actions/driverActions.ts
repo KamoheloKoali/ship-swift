@@ -18,7 +18,7 @@ export const upsertDriver = async (driverData: {
   licenseExpiry?: string;
   vehicleType: string; // Now required
   plateNumber?: string;
-  VIN?: string;
+  vehicleRegistrationNo?: string;
   discExpiry?: string;
   discPhotoUrl?: string;
   location: string; // Now required
@@ -49,7 +49,7 @@ export const upsertDriver = async (driverData: {
         ...(driverData.discPhotoUrl && {
           discPhotoUrl: driverData.discPhotoUrl,
         }),
-        ...(driverData.VIN && { VIN: driverData.VIN }),
+        ...(driverData.vehicleRegistrationNo && { vehicleRegistrationNo: driverData.vehicleRegistrationNo }),
         ...(driverData.discExpiry && { discExpiry: driverData.discExpiry }),
       },
       create: {
@@ -68,7 +68,7 @@ export const upsertDriver = async (driverData: {
         licenseExpiry: driverData.licenseExpiry,
         plateNumber: driverData.plateNumber,
         discPhotoUrl: driverData.discPhotoUrl,
-        VIN: driverData.VIN,
+        vehicleRegistrationNo: driverData.vehicleRegistrationNo,
         discExpiry: driverData.discExpiry,
       },
     });
@@ -117,7 +117,7 @@ export const updateDriverVerification = async (
 export const VerifyDriver = async (
   driverId: string,
   data: {
-    VIN: string;
+    vehicleRegistrationNo: string;
     plateNumber: string;
     discExpiry: string;
     idNumber: string;

@@ -27,12 +27,23 @@ export default function ShipSwiftLanding() {
     setIsVisible(true);
   }, []);
 
+  // State to track selected tab
+  const [activeTab, setActiveTab] = useState<"sender" | "driver" | "admin">(
+    "sender"
+  );
+
+  // Images for each tab
+  const tabVideos = {
+    sender: "/assets/public/client.mp4",
+    driver: "/assets/public/courier.mp4",
+    admin: "/assets/public/admin.mp4",
+  };
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <main className="flex-1
-       border">
+    <div className="flex justify-center items-center min-h-screen">
+      <main className="flex-1 ">
         <section
-          className="relative w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-cover bg-center bg-no-repeat"
+          className="relative h-screen w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-cover bg-center bg-no-repeat flex justify-center items-center"
           style={{ backgroundImage: 'url("/assets/public/hero-1.jpeg")' }}
         >
           <div
@@ -119,68 +130,32 @@ export default function ShipSwiftLanding() {
             </div>
           </div>
         </section>
-        <section
-          id="features"
-          className="w-full py-12 md:py-24 lg:py-32 bg-muted"
-          ref={ref}
-        >
-          <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12">
-              Why Choose Ship Swift?
-            </h2>
-            <div className="grid gap-6 lg:grid-cols-3">
-              {[
-                {
-                  icon: Truck,
-                  title: "Fast Deliveries",
-                  description:
-                    "Get your parcels delivered quickly with our network of local drivers.",
-                },
-                {
-                  icon: Users,
-                  title: "Community Driven",
-                  description:
-                    "Join a network of trusted drivers and customers in your local area.",
-                },
-                {
-                  icon: CheckCircle,
-                  title: "Reliable Service",
-                  description:
-                    "Track your deliveries in real-time and enjoy our satisfaction guarantee.",
-                },
-              ].map((feature, index) => (
-                <div
-                  key={index}
-                  className={`transition-all duration-500 ${
-                    inView
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-8"
-                  }`}
-                  style={{ transitionDelay: `${index * 200}ms` }}
-                >
-                  <Card>
-                    <CardContent className="flex flex-col items-center space-y-4 p-6">
-                      <feature.icon className="h-12 w-12 text-primary" />
-                      <h3 className="text-xl font-bold">{feature.title}</h3>
-                      <p className="text-center text-muted-foreground">
-                        {feature.description}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+
         <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12">
-              How It Works
-            </h2>
-            <Tabs defaultValue="sender" className="w-full max-w-3xl mx-auto">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="sender">For Senders</TabsTrigger>
-                <TabsTrigger value="driver">For Drivers</TabsTrigger>
+          <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12">
+            How It Works
+          </h2>
+          <div className="container px-4 md:px-6 flex flex-row items-center justify-center">
+            <Tabs defaultValue="sender" className="w-full max-w-4xl mx-auto">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger
+                  value="sender"
+                  onClick={() => setActiveTab("sender")}
+                >
+                  For Client
+                </TabsTrigger>
+                <TabsTrigger
+                  value="driver"
+                  onClick={() => setActiveTab("driver")}
+                >
+                  For Drivers
+                </TabsTrigger>
+                <TabsTrigger
+                  value="admin"
+                  onClick={() => setActiveTab("admin")}
+                >
+                  For Admin
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="sender" className="mt-6 space-y-4">
                 <ol className="space-y-4">
@@ -238,12 +213,105 @@ export default function ShipSwiftLanding() {
                   </li>
                 </ol>
               </TabsContent>
+              <TabsContent value="admin" className="mt-6 space-y-4">
+                <ol className="space-y-4">
+                  <li className="flex items-center space-x-4">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                      -
+                    </div>
+                    <p>Has privileges to manage the entire system</p>
+                  </li>
+                  <li className="flex items-center space-x-4">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                      -
+                    </div>
+                    <p>
+                      Can accepts or declines both client and driver requests
+                    </p>
+                  </li>
+                  <li className="flex items-center space-x-4">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                      -
+                    </div>
+                    <p>Track your delivery in real-time</p>
+                  </li>
+                  <li className="flex items-center space-x-4">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                      -
+                    </div>
+                    <p>Receive your parcel and rate the service</p>
+                  </li>
+                </ol>
+              </TabsContent>
             </Tabs>
+            {/* Video element that changes based on the selected tab */}
+            <video
+              key={activeTab}
+              src={tabVideos[activeTab]}
+              className="w-96 h-96 shadow-2xl rounded-xl lg:relative absolute mt-4 "
+              autoPlay
+              loop
+              muted
+              controls={false}
+            />
+          </div>
+        </section>
+        <section
+          id="features"
+          className="w-full py-12 flex justify-center items-center md:py-24 lg:py-32 bg-muted"
+          ref={ref}
+        >
+          <div className="container px-4 md:px-6">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12">
+              Why Choose Ship Swift?
+            </h2>
+            <div className="grid gap-6 lg:grid-cols-3">
+              {[
+                {
+                  icon: Truck,
+                  title: "Fast Deliveries",
+                  description:
+                    "Get your parcels delivered quickly with our network of local drivers.",
+                },
+                {
+                  icon: Users,
+                  title: "Community Driven",
+                  description:
+                    "Join a network of trusted drivers and customers in your local area.",
+                },
+                {
+                  icon: CheckCircle,
+                  title: "Reliable Service",
+                  description:
+                    "Track your deliveries in real-time and enjoy our satisfaction guarantee.",
+                },
+              ].map((feature, index) => (
+                <div
+                  key={index}
+                  className={`transition-all duration-500 ${
+                    inView
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-8"
+                  }`}
+                  style={{ transitionDelay: `${index * 200}ms` }}
+                >
+                  <Card>
+                    <CardContent className="flex flex-col items-center space-y-4 p-6">
+                      <feature.icon className="h-12 w-12 text-primary" />
+                      <h3 className="text-xl font-bold">{feature.title}</h3>
+                      <p className="text-center text-muted-foreground">
+                        {feature.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
         <section
           id="testimonials"
-          className="w-full py-12 md:py-24 lg:py-32 bg-muted"
+          className="w-full py-12 md:py-24 lg:py-32 flex justify-center items-center bg-white"
         >
           <div className="container px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12">
@@ -294,7 +362,7 @@ export default function ShipSwiftLanding() {
             </div>
           </div>
         </section>
-        <section className="w-full py-12 md:py-24 lg:py-32">
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted flex justify-center items-center">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center space-y-4 text-center">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
@@ -305,11 +373,11 @@ export default function ShipSwiftLanding() {
                 community-driven parcel delivery.
               </p>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
-              <Link href="/sign-up">
-                <Button className="inline-flex items-center justify-center text-base font-bold">
-                  Sign Up Now
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                <Link href="/sign-up">
+                  <Button className="inline-flex items-center justify-center text-base font-bold">
+                    Sign Up Now
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </Link>
                 <Button variant="outline" className="text-base font-bold">
                   Contact Sales
