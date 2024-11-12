@@ -1,22 +1,47 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Star, StarHalf } from "lucide-react";
 import { useCallback } from 'react';
 import { DriverReview } from '@/types/driver';
 import { useToast } from "@/hooks/use-toast"
 import { ReviewForm } from './ReviewForm';
+import { useParams } from 'next/navigation';
 
 interface ReviewSectionProps {
   driverId: string;
-  reviews: DriverReview[];
   onReviewSubmitted?: () => void;
 }
 
-
-export function ReviewSection({ driverId, reviews, onReviewSubmitted }: ReviewSectionProps) {
+export function ReviewSection({ driverId, onReviewSubmitted }: ReviewSectionProps) {
+  const [reviews, setReviews] = useState<DriverReview[]>([]);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+
+  const params = useParams();
+  const driver = params?.id;
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch(`/api/drivers/${driver}/get-reviews`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch reviews');
+        }
+        const data = await response.json();
+        setReviews(data);
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+        toast({
+          title: "Error",
+          description: error instanceof Error ? error.message : 'Failed to fetch reviews',
+          variant: "destructive",
+        });
+      }
+    };
+
+    fetchReviews();
+  }, [driverId, toast]);
 
   const handleSubmitReview = useCallback(async (reviewData: { rating: number, content?: string }) => {
     if (!driverId) {
@@ -30,7 +55,6 @@ export function ReviewSection({ driverId, reviews, onReviewSubmitted }: ReviewSe
 
     setIsSubmitting(true);
     try {
-      console.log('Submitting review:', reviewData);
       const response = await fetch(`/api/drivers/${driverId}/reviews`, {
         method: 'POST',
         headers: {
@@ -52,8 +76,7 @@ export function ReviewSection({ driverId, reviews, onReviewSubmitted }: ReviewSe
 
       setShowReviewForm(false);
       onReviewSubmitted?.();
-      
-      return data;
+      setReviews([...reviews, data]);
     } catch (error) {
       console.error('Error submitting review:', error);
       toast({
@@ -61,11 +84,10 @@ export function ReviewSection({ driverId, reviews, onReviewSubmitted }: ReviewSe
         description: error instanceof Error ? error.message : 'Failed to submit review',
         variant: "destructive",
       });
-      throw error;
     } finally {
       setIsSubmitting(false);
     }
-  }, [driverId, toast, onReviewSubmitted]);
+  }, [driverId, reviews, toast, onReviewSubmitted]);
 
   const handleCloseForm = () => {
     if (!isSubmitting) {
@@ -87,8 +109,8 @@ export function ReviewSection({ driverId, reviews, onReviewSubmitted }: ReviewSe
       </div>
 
       {showReviewForm && (
-        <ReviewForm 
-          driverId={'user_2msxfh6QIiMFhIAbgEog7Qiecc7'} 
+        <ReviewForm
+          driverId={driverId}
           onSubmit={handleSubmitReview}
           onClose={handleCloseForm}
           isSubmitting={isSubmitting}
