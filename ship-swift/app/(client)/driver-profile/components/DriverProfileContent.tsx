@@ -82,10 +82,7 @@ export function DriverProfileContent({ loading, error, driver }: DriverProfileCo
               </TabsContent>
 
               <TabsContent value="reviews" className="mt-4">
-                <ReviewSection 
-                  driverId={driver.Id} 
-                  reviews={driver.reviews || []} 
-                />
+                <ReviewSection  />
               </TabsContent>
             </Tabs>
           </CardContent>

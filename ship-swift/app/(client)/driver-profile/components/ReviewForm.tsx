@@ -55,7 +55,7 @@ export function ReviewForm({ driverId, onClose, onSubmit }: ReviewFormProps) {
         },
         body: JSON.stringify({ 
           rating, 
-          content  // Changed from 'comment' to match API schema
+          content
         }),
       });
 

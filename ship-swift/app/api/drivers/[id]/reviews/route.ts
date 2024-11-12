@@ -24,8 +24,10 @@ export async function POST(
     const user = await currentUser()
 
     const driverId = params.id;
+    console.log('Creating review for driver:', driverId);
+    console.log("Route parameters:", params);
+
     
-    // Check if driver exists
     const driverExists = await prisma.drivers.findUnique({
       where: { Id: driverId },
     });
