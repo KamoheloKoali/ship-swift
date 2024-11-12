@@ -106,7 +106,7 @@ export default function Header() {
             <UserButton />
               Ship Swift
               </div>
-            {isDriver && hasActiveJobs && (
+            {isDriver && (
               <div className="">
                 <LocationTracker updateLocation={updateLocation} />
               </div>
