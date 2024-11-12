@@ -26,53 +26,78 @@ model clients {
   driverRequests DriverRequests[]
   Messages       Messages[]
   clientRequests clientRequests[]
+
+  Review DriverReview[]
+
+  ClientReview ClientReview[]
 }
 
 model Drivers {
-  Id              String           @id
-  email           String           @unique
-  phoneNumber     String?
-  firstName       String
-  lastName        String
-  photoUrl        String
-  idPhotoUrl      String
-  vehicleType     String?
-  dateCreated     DateTime         @default(now())
-  dateUpdated     DateTime         @updatedAt
-  idNumber        String?
-  licenseExpiry   String?
-  licenseNumber   String?
-  plateNumber     String?
-  discExpiry      String?
-  discPhotoUrl    String?
-  licensePhotoUrl String?
-  location        String?
-  isVerified      Boolean          @default(false)
-  isOnline        Boolean          @default(false)
-  VIN             String?
-  rating          Float?
-  activeJobs      ActiveJobs[]
-  Contacts        Contacts[]
-  driveRequests   DriverRequests[]
-  JobRequests     JobRequest[]
-  Location        Location[]
-  Messages        Messages[]
-  scheduledTrips  ScheduledTrips[]
-  clientRequests  clientRequests[]
+  Id                    String           @id
+  email                 String           @unique
+  phoneNumber           String?
+  firstName             String
+  lastName              String
+  photoUrl              String
+  idPhotoUrl            String
+  vehicleType           String?
+  dateCreated           DateTime         @default(now())
+  dateUpdated           DateTime         @updatedAt
+  idNumber              String?
+  licenseExpiry         String?
+  licenseNumber         String?
+  plateNumber           String?
+  discExpiry            String?
+  discPhotoUrl          String?
+  licensePhotoUrl       String?
+  location              String?
+  isVerified            Boolean          @default(false)
+  isOnline              Boolean          @default(false)
+  rating                Float?
+  vehicleRegistrationNo String?
+  activeJobs            ActiveJobs[]
+  Contacts              Contacts[]
+  driveRequests         DriverRequests[]
+  JobRequests           JobRequest[]
+  Location              Location[]
+  Messages              Messages[]
+  scheduledTrips        ScheduledTrips[]
+  clientRequests        clientRequests[]
+  Review                DriverReview[]
 
-  Review Review[]
+  ClientReview ClientReview[]
 }
 
-model Review {
+model DriverReview {
   id        String   @id
-  driverId  String
   content   String?
   rating    Int
   createdAt DateTime @default(now())
+
+  driverId  String
+  driver    Drivers  @relation(fields: [driverId], references: [Id])
+
+  clientId  String
+  client    clients  @relation(fields: [clientId], references: [Id])
+
+  @@index([driverId])
+}
+
+model ClientReview {
+  id        String   @id
+  content   String?
+  rating    Int
+  createdAt DateTime @default(now())
+  
+  clientId  String
+  client    clients  @relation(fields: [clientId], references: [Id])
+
+  driverId  String
   driver    Drivers  @relation(fields: [driverId], references: [Id])
 
   @@index([driverId])
 }
+
 
 model CourierJobs {
   Id                 String       @id @default(uuid())
@@ -187,6 +212,11 @@ model ScheduledTrips {
   updatedAt    DateTime   @updatedAt
   status       TripStatus @default(SCHEDULED)
   driver       Drivers    @relation(fields: [driverId], references: [Id])
+}
+
+model FCMTokens {
+  userId String @id
+  token  String
 }
 
 enum TripStatus {

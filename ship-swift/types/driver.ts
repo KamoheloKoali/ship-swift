@@ -63,7 +63,7 @@ interface ActiveJob {
     licensePhotoUrl?: string;
     location?: string;
     isVerified: boolean;
-    reviews?: Review[];
+    reviews?: DriverReview[];
     
     // Related entities
     activeJobs?: ActiveJob[];
@@ -122,9 +122,21 @@ interface ActiveJob {
   export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
   export type DriverUpdatePayload = Partial<Omit<Driver, 'Id' | 'dateCreated' | 'dateUpdated'>>;
 
-  export interface Review {
+  export interface DriverReview {
     id: string;
-    rating: number;
     content?: string | null;
+    rating: number;
     createdAt: Date;
+    driverId: string;
+    clientId: string;
+    driver?: {
+      Id: string;
+      firstName: string;
+      lastName: string;
+    };
+    client?: {
+      Id: string;
+      firstName: string;
+      lastName: string;
+    };
   }

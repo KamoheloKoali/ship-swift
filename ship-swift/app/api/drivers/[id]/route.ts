@@ -32,7 +32,7 @@ export async function GET(
         vehicleType: true,
         dateCreated: true,
         dateUpdated: true,
-        VIN: true,
+        vehicleRegistrationNo: true,
         idNumber: true,
         licenseExpiry: true,
         licenseNumber: true,
@@ -42,11 +42,21 @@ export async function GET(
         licensePhotoUrl: true,
         location: true,
         isVerified: true,
-        Review: {
+                Review: {
           select: {
+            id: true,
             rating: true,
             content: true,
             createdAt: true,
+            clientId: true,
+            client: {
+              select: {
+                Id: true,
+                firstName: true,
+                lastName: true,
+                photoUrl: true
+              }
+            }
           },
         },
       },
