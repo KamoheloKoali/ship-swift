@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useDriverReviews } from './ReviewSection/hooks/useDriverReviews'
 import { ReviewForm } from './ReviewForm'
 import { ReviewList } from './ReviewSection/components/ReviewList'
+import { Spinner } from '@/components/spinner'
 
 interface ReviewSectionProps {
   onReviewSubmitted?: () => void
@@ -15,6 +16,7 @@ interface ReviewSectionProps {
 export function ReviewSection({ onReviewSubmitted }: ReviewSectionProps) {
   const [showReviewForm, setShowReviewForm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null)
   const { toast } = useToast()
   const params = useParams()
   const driverId = Array.isArray(params?.id) ? params.id[0] : params?.id
@@ -71,6 +73,7 @@ export function ReviewSection({ onReviewSubmitted }: ReviewSectionProps) {
   )
 
   const handleDeleteReview = async (reviewId: string) => {
+    setDeletingReviewId(reviewId)
     try {
       const response = await fetch(`/api/drivers/${driverId}/delete-review`, {
         method: 'DELETE',
@@ -97,6 +100,8 @@ export function ReviewSection({ onReviewSubmitted }: ReviewSectionProps) {
         description: error instanceof Error ? error.message : 'Failed to delete review',
         variant: "destructive",
       })
+    } finally {
+      setDeletingReviewId(null)
     }
   }
 
@@ -128,10 +133,19 @@ export function ReviewSection({ onReviewSubmitted }: ReviewSectionProps) {
         />
       )}
 
+      {isSubmitting && (
+        <div className="flex justify-center items-center py-4">
+          <Spinner className="w-6 h-6 text-primary" />
+          <span className="ml-2 text-sm text-muted-foreground">Submitting review...</span>
+        </div>
+      )}
+
       <ReviewList
         reviews={reviews}
         isLoading={isLoading}
+        isError={false} // or set this based on your error state
         onDeleteReview={handleDeleteReview}
+        deletingReviewId={deletingReviewId}
       />
     </div>
   )

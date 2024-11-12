@@ -3,8 +3,13 @@ import { StarRating } from './StarRating'
 import { DeleteReviewDialog } from './DeleteReviewDialog'
 
 interface ReviewCardProps {
+
   review: DriverReview
+
   onDelete: (reviewId: string) => void
+
+  isDeleting: boolean
+
 }
 
 export const ReviewCard = ({ review, onDelete }: ReviewCardProps) => (
