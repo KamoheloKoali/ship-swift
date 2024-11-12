@@ -21,15 +21,14 @@ model clients {
   isVerified     Boolean          @default(false)
   selfieImage    String?          @default("")
   activeJobs     ActiveJobs[]
+  ClientReview   ClientReview[]
   Contacts       Contacts[]
   courierJobs    CourierJobs[]
+  DirectRequest  DirectRequest[]
   driverRequests DriverRequests[]
+  Review         DriverReview[]
   Messages       Messages[]
   clientRequests clientRequests[]
-
-  Review DriverReview[]
-
-  ClientReview ClientReview[]
 }
 
 model Drivers {
@@ -56,16 +55,16 @@ model Drivers {
   rating                Float?
   vehicleRegistrationNo String?
   activeJobs            ActiveJobs[]
+  ClientReview          ClientReview[]
   Contacts              Contacts[]
+  DirectRequest         DirectRequest[]
   driveRequests         DriverRequests[]
+  Review                DriverReview[]
   JobRequests           JobRequest[]
   Location              Location[]
   Messages              Messages[]
   scheduledTrips        ScheduledTrips[]
   clientRequests        clientRequests[]
-  Review                DriverReview[]
-
-  ClientReview ClientReview[]
 }
 
 model DriverReview {
@@ -73,12 +72,10 @@ model DriverReview {
   content   String?
   rating    Int
   createdAt DateTime @default(now())
-
   driverId  String
-  driver    Drivers  @relation(fields: [driverId], references: [Id])
-
   clientId  String
   client    clients  @relation(fields: [clientId], references: [Id])
+  driver    Drivers  @relation(fields: [driverId], references: [Id])
 
   @@index([driverId])
 }
@@ -88,39 +85,40 @@ model ClientReview {
   content   String?
   rating    Int
   createdAt DateTime @default(now())
-  
   clientId  String
-  client    clients  @relation(fields: [clientId], references: [Id])
-
   driverId  String
+  client    clients  @relation(fields: [clientId], references: [Id])
   driver    Drivers  @relation(fields: [driverId], references: [Id])
 
   @@index([driverId])
 }
 
-
 model CourierJobs {
-  Id                 String       @id @default(uuid())
-  Title              String?      @default("")
-  Description        String?      @default("")
-  Budget             String?      @default("0")
+  Id                 String          @id @default(uuid())
+  Title              String?         @default("")
+  Description        String?         @default("")
+  Budget             String?         @default("80")
   clientId           String
-  DropOff            String?      @default("")
-  districtDropOff    String?      @default("")
-  PickUp             String?      @default("")
-  districtPickUp     String?      @default("")
-  parcelSize         String?      @default("")
-  pickupPhoneNumber  String?      @default("")
-  dropoffPhoneNumber String?      @default("")
-  dropOffEmail       String?      @default("")
-  collectionDate     DateTime     @default(now())
-  dateCreated        DateTime     @default(now())
-  packageStatus      String?      @default("")
-  approvedRequestId  String?      @unique
+  DropOff            String?         @default("")
+  districtDropOff    String?         @default("")
+  PickUp             String?         @default("")
+  districtPickUp     String?         @default("")
+  parcelSize         String?         @default("")
+  pickupPhoneNumber  String?         @default("")
+  dropoffPhoneNumber String?         @default("")
+  dropOffEmail       String?         @default("")
+  collectionDate     DateTime        @default(now())
+  dateCreated        DateTime        @default(now())
+  packageStatus      String?         @default("")
+  approvedRequestId  String?         @unique
+  dimensions         String?         @default("")
+  suitableVehicles   String?         @default("")
+  weight             String?         @default("")
   activeJobs         ActiveJobs[]
-  approvedRequest    JobRequest?  @relation("ApprovedRequest", fields: [approvedRequestId], references: [Id])
-  client             clients      @relation(fields: [clientId], references: [Id])
-  JobRequests        JobRequest[] @relation("CourierJobsToJobRequest")
+  approvedRequest    JobRequest?     @relation("ApprovedRequest", fields: [approvedRequestId], references: [Id])
+  client             clients         @relation(fields: [clientId], references: [Id])
+  DirectRequest      DirectRequest[]
+  JobRequests        JobRequest[]    @relation("CourierJobsToJobRequest")
 }
 
 model DriverRequests {
@@ -217,6 +215,18 @@ model ScheduledTrips {
 model FCMTokens {
   userId String @id
   token  String
+}
+
+model DirectRequest {
+  Id           String      @id
+  courierJobId String
+  clientId     String
+  driverId     String
+  isApproved   Boolean     @default(false)
+  dateCreated  DateTime    @default(now())
+  clients      clients     @relation(fields: [clientId], references: [Id])
+  CourierJobs  CourierJobs @relation(fields: [courierJobId], references: [Id])
+  Drivers      Drivers     @relation(fields: [driverId], references: [Id])
 }
 
 enum TripStatus {

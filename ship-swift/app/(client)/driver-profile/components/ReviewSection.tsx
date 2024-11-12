@@ -2,13 +2,24 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
-import { Star, StarHalf } from "lucide-react"
+import { Star, StarHalf, Trash2 } from "lucide-react"
 import { useCallback } from 'react'
 import { DriverReview } from '@/types/driver'
 import { useToast } from "@/hooks/use-toast"
 import { ReviewForm } from './ReviewForm'
 import { useParams } from 'next/navigation'
 import { Skeleton } from "@/components/ui/skeleton"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 interface ReviewSectionProps {
   onReviewSubmitted?: () => void
@@ -19,6 +30,7 @@ export function ReviewSection({ onReviewSubmitted }: ReviewSectionProps) {
   const [showReviewForm, setShowReviewForm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null)
   const { toast } = useToast()
 
 
@@ -100,6 +112,39 @@ export function ReviewSection({ onReviewSubmitted }: ReviewSectionProps) {
     }
   }, [ reviews, toast, onReviewSubmitted])
 
+  const handleDeleteReview = async (reviewId: string) => {
+    setDeletingReviewId(reviewId)
+    try {
+      const response = await fetch(`/api/drivers/${driver}/delete-review`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ reviewId }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.message || 'Failed to delete review')
+      }
+
+      setReviews(reviews.filter(review => review.id !== reviewId))
+      toast({
+        title: "Success",
+        description: "Review deleted successfully",
+      })
+    } catch (error) {
+      console.error('Error deleting review:', error)
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : 'Failed to delete review',
+        variant: "destructive",
+      })
+    } finally {
+      setDeletingReviewId(null)
+    }
+  }
+
   const handleCloseForm = () => {
     if (!isSubmitting) {
       setShowReviewForm(false)
@@ -128,7 +173,7 @@ export function ReviewSection({ onReviewSubmitted }: ReviewSectionProps) {
         />
       )}
 
-      <div className="space-y-4">
+      <div className="space-y-4 max-h-[400px] overflow-y-auto pr-4 -mr-4">
         {isLoading ? (
           // Skeleton loader for reviews
           [...Array(3)].map((_, index) => (
@@ -162,9 +207,33 @@ export function ReviewSection({ onReviewSubmitted }: ReviewSectionProps) {
                     ))}
                   </div>
                 </div>
-                <span className="text-sm text-gray-500">
-                  {new Date(review.createdAt).toLocaleDateString()}
-                </span>
+                <div className="flex items-center">
+                  <span className="text-sm text-gray-500 mr-2">
+                    {new Date(review.createdAt).toLocaleDateString()}
+                  </span>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sr-only">Delete review</span>
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete the review.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleDeleteReview(review.id)}>
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </div>
               <p className="mt-2 text-gray-600">{review.content || 'No comment'}</p>
             </div>
