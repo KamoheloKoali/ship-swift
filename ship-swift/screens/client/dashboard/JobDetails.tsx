@@ -34,6 +34,7 @@ import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { updateJobStatus } from "@/actions/courierJobsActions";
 import { getContactByDriverAndClientId } from "@/actions/contactsActions";
+import MapComponent from "@/screens/global/PickUpDropOffLoc";
 
 interface SideCardProps {
   job: {
@@ -124,6 +125,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
             <span className="flex flex-wrap">{job.DropOff}</span>
           </li>
         </ul>
+        <MapComponent pickup={job.PickUp} dropoff={job.DropOff} />
       </div>
     </>
   );

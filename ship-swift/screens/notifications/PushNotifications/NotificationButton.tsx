@@ -100,7 +100,7 @@ export default function NotificationButton() {
   return showNotificationButton ? (
     <Button onClick={requestPermission}>
       {isRequestingPermission ? 
-        <Loader2 className="animate-spin h-4 w-4"/> : 
+        null : 
         <>Enable Notifications</>
       }
     </Button>
