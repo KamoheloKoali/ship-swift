@@ -7,6 +7,7 @@ import {
   CreditCard,
   HandCoins,
   Loader2,
+  MapPin,
   MessageSquareDot,
   MoreVertical,
   Truck,
@@ -118,11 +119,17 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
           </li>
           <li className="flex items-center justify-between">
             <span className="text-muted-foreground">Pick Up</span>
-            <span className="flex flex-wrap">{job.PickUp}</span>
+            <span className="flex flex-wrap">
+              {job.PickUp}
+              <MapPin size={16} color="#3500f5" />
+            </span>
           </li>
           <li className="flex items-center justify-between">
             <span className="text-muted-foreground">Drop Off</span>
-            <span className="flex flex-wrap">{job.DropOff}</span>
+            <span className="flex flex-wrap">
+              {job.DropOff}
+              <MapPin size={16} color="#bd0a0a" />
+            </span>
           </li>
         </ul>
         <MapComponent pickup={job.PickUp} dropoff={job.DropOff} />

@@ -98,12 +98,13 @@ export default function NotificationButton() {
 }
 
   return showNotificationButton ? (
-    <Button onClick={requestPermission}>
-      {isRequestingPermission ? 
-        null : 
+    <>
+    {isRequestingPermission ? <Button onClick={requestPermission}>
+       
         <>Enable Notifications</>
+    </Button> :null
       }
-    </Button>
+    </>
   ) : null;
   
 }
