@@ -4,6 +4,7 @@ import {
   ChevronRight,
   Copy,
   CreditCard,
+  MapPin,
 } from "lucide-react";
 import {
   Pagination,
@@ -21,6 +22,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { StatusBadge } from "./JobsTable";
+import MapComponent from "@/screens/global/PickUpDropOffLoc";
 
 interface JobDetailsProps {
   job: {
@@ -114,7 +116,7 @@ export default function Details({ job }: JobDetailsProps) {
               <div className="grid gap-3">
                 <div className="font-semibold">Pickup Information</div>
                 <address className="grid gap-0.5 not-italic text-muted-foreground">
-                  <span>{job.CourierJob.PickUp}</span>
+                  <span>{job.CourierJob.PickUp}<MapPin size={16} color="#3500f5" /></span>
                   <span>{job.CourierJob.districtPickUp}</span>
                   <span>Phone: {job.CourierJob.pickupPhoneNumber}</span>
                   <span>
@@ -125,12 +127,13 @@ export default function Details({ job }: JobDetailsProps) {
               <div className="grid gap-3">
                 <div className="font-semibold">Dropoff Information</div>
                 <address className="grid gap-0.5 not-italic text-muted-foreground">
-                  <span>{job.CourierJob.DropOff}</span>
+                  <span>{job.CourierJob.DropOff}<MapPin size={16} color="#bd0a0a" /></span>
                   <span>{job.CourierJob.districtDropOff}</span>
                   <span>Phone: {job.CourierJob.dropoffPhoneNumber}</span>
                   <span>Email: {job.CourierJob.dropOffEmail}</span>
                 </address>
               </div>
+              <MapComponent pickup={job.CourierJob.PickUp} dropoff={job.CourierJob.DropOff} />
             </div>
             <Separator className="my-4" />
             <div className="grid gap-3">

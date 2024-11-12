@@ -8,6 +8,7 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu"; // Adjust the path as necessary
 import LocationTracker from "@/screens/track-delivery/LocationTracker";
+import Link from "next/link";
 
 // Define the types for the menu items
 type NavItem = {
@@ -56,17 +57,18 @@ const NavMenu: React.FC<NavMenuProps> = ({
                 </NavigationMenuContent>
               </>
             ) : (
-              <NavigationMenuLink
+              <Link
                 href={item.href || "#"}
+                prefetch={true}
                 className="text-gray-800 hover:bg-gray-100 p-2 rounded transition-colors duration-200"
               >
                 {item.label}
-              </NavigationMenuLink>
+              </Link>
             )}
           </NavigationMenuItem>
         ))}
         {isDriver && hasActiveJobs && (
-          <div className="hidden md:block">
+          <div className="hidden lg:flex">
             <LocationTracker updateLocation={updateLocation} />
           </div>
         )}
