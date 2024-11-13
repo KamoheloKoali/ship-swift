@@ -146,7 +146,7 @@ const JobsTable: FC<TableProps> = ({
             renderTable(
               directRequests,
               "Direct Requests",
-              "All unclaimed direct requests."
+              "All unapproved direct requests."
             )}
         </div>
       </TabsContent>

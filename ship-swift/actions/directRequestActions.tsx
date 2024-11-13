@@ -93,6 +93,19 @@ export const getDirectRequestsByClientId = async (
   }
 };
 
+export const getDirectRequestsByCourierJobId = async (
+  courierJobId: string
+): Promise<DirectRequest[]> => {
+  try {
+    const directRequests = await prisma.directRequest.findMany({
+      where: { courierJobId },
+    })
+    return directRequests
+  } catch (error) {
+    console.error("Error fetching direct requests by courier job ID:", error)
+    throw error
+  }
+}
 // Update a DirectRequest by ID
 export const updateDirectRequest = async (
   id: string,

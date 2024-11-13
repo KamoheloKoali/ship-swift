@@ -62,6 +62,7 @@ interface SideCardProps {
     parcelSize?: string;
     Budget?: string;
     collectionDate: string;
+    isDirect?: boolean;
   };
   requests?: Array<any>;
   driver?: any;
@@ -70,12 +71,12 @@ interface SideCardProps {
 export default function Details({ job, requests = [], driver }: SideCardProps) {
   const [isClaimed, setIsClaimed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [jobIsDirect, setJobIsDirect] = useState(false);
   const router = useRouter();
   const [isJobCompleted, setIsJobCompleted] = useState(false);
   const [isGettingContact, setIsGettingContact] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
   const [packageSize, setPackageSize] = useState<string | null>(null);
-
   // Move the status check to useEffect to avoid infinite re-renders
   useEffect(() => {
     setIsClaimed(
@@ -83,7 +84,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
         job.packageStatus === "collected" ||
         job.packageStatus === "delivered"
     );
-    
+
     setIsJobCompleted(job.packageStatus === "delivered");
   }, [job.packageStatus]);
 
@@ -124,67 +125,70 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
     if (job.parcelSize === "smallpackages") {
       setPackageSize("Small Package");
     }
-     if (job.parcelSize === "mediumpackages") {
+    if (job.parcelSize === "mediumpackages") {
       setPackageSize("Medium Package");
-    }  
+    }
     if (job.parcelSize === "largepackages") {
       setPackageSize("Large Package");
-    } 
+    }
     if (job.parcelSize === "extralargepackages") {
       setPackageSize("Extra-Large Package");
-    } 
-    return(
-    <>
-      <div className="grid gap-3">
-        <div className="font-semibold">Order Details</div>
-        <ul className="grid gap-3">
-        <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">Price</span>
-            <span className="flex-wrap">M{job.Budget}.00</span>
-          </li>
-          <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">Item(s)</span>
-            <span className="flex-wrap">{job.Description}</span>
-          </li>
-          <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">Weight</span>
-            <span className="flex-wrap">{job.weight}</span>
-          </li>
-          <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">Dimensions</span>
-            <span className="flex-wrap">{job.dimensions}</span>
-          </li>
-          <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">Suitable Vehicles</span>
-            <span className="flex-wrap">{job.suitableVehicles}</span>
-          </li>
-          <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">Parcel Size</span>
-            <span className="flex-wrap">{packageSize}</span>
-          </li>
-          <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">End Date</span>
-            <span className="flex-wrap">{new Date(job.collectionDate).toLocaleString()}</span>
-          </li>
-          <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">Pick Up</span>
-            <span className="flex flex-wrap">
-              {job.PickUp}
-              <MapPin size={16} color="#3500f5" />
-            </span>
-          </li>
-          <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">Drop Off</span>
-            <span className="flex flex-wrap">
-              {job.DropOff}
-              <MapPin size={16} color="#bd0a0a" />
-            </span>
-          </li>
-        </ul>
-        <MapComponent pickup={job.PickUp} dropoff={job.DropOff} />
-      </div>
-    </>
-  );}
+    }
+    return (
+      <>
+        <div className="grid gap-3">
+          <div className="font-semibold">Order Details</div>
+          <ul className="grid gap-3">
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">Price</span>
+              <span className="flex-wrap">M{job.Budget}.00</span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">Item(s)</span>
+              <span className="flex-wrap">{job.Description}</span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">Weight</span>
+              <span className="flex-wrap">{job.weight}</span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">Dimensions</span>
+              <span className="flex-wrap">{job.dimensions}</span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">Suitable Vehicles</span>
+              <span className="flex-wrap">{job.suitableVehicles}</span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">Parcel Size</span>
+              <span className="flex-wrap">{packageSize}</span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">End Date</span>
+              <span className="flex-wrap">
+                {new Date(job.collectionDate).toLocaleString()}
+              </span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">Pick Up</span>
+              <span className="flex flex-wrap">
+                {job.PickUp}
+                <MapPin size={16} color="#3500f5" />
+              </span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">Drop Off</span>
+              <span className="flex flex-wrap">
+                {job.DropOff}
+                <MapPin size={16} color="#bd0a0a" />
+              </span>
+            </li>
+          </ul>
+          <MapComponent pickup={job.PickUp} dropoff={job.DropOff} />
+        </div>
+      </>
+    );
+  };
 
   const PriceBreakdown = () => (
     <ul className="grid gap-3">
@@ -378,13 +382,19 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
                 Date: {new Date(job.dateCreated).toLocaleString()}
               </CardDescription>
               {!isJobCompleted && isClaimed && (
-                    <>
-                    <p className="text-sm text-muted-foreground">Driver's location:</p>
-                    <Link prefetch={true} href={`/track-delivery/${job.approvedRequestId}`} target="_blank">
-                    <DriverLocation params={{deliveryId: job.Id}} job={job} />
-                    </Link>
-                    </>
-                  )}
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    Driver's location:
+                  </p>
+                  <Link
+                    prefetch={true}
+                    href={`/track-delivery/${job.approvedRequestId}`}
+                    target="_blank"
+                  >
+                    <DriverLocation params={{ deliveryId: job.Id }} job={job} />
+                  </Link>
+                </>
+              )}
             </div>
             <div className="ml-auto flex flex-wrap md:flex-nowrap items-center gap-1">
               {isClaimed && (

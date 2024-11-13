@@ -24,6 +24,7 @@ import {
 import { getDriverByID } from "@/actions/driverActions";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { getDirectRequestsByCourierJobId } from "@/actions/directRequestActions";
 
 export default function MyJobs() {
   const router = useRouter();
@@ -63,15 +64,27 @@ export default function MyJobs() {
   const handleRowClick = async (job: any | undefined) => {
     setRequests([]);
     setIsGettingDrivers(true);
+
     if (job.packageStatus === "unclaimed") {
       const requests = await getJobRequestsByCourierJobId(job.Id);
-      if (requests.length > 0) {
-        let drivers = [];
-        for (let request of requests) {
-          drivers.push(request.Driver);
+      if (job.isDirect) {
+        // Get driver from DirectRequest
+        const directRequest = await getDirectRequestsByCourierJobId(job.id);
+        if (directRequest && directRequest.length > 0 && directRequest[0].driverId) {
+          const driver = await getDriverByID(directRequest[0].driverId);
+          console.log(driver);
+          setRequests([driver]); // Assuming you want to set the direct driver only
         }
-        if (drivers.length > 0) {
-          setRequests(drivers);
+      } else {
+        // Handle non-direct requests
+        if (requests.length > 0) {
+          let drivers = [];
+          for (let request of requests) {
+            drivers.push(request.Driver);
+          }
+          if (drivers.length > 0) {
+            setRequests(drivers);
+          }
         }
       }
     } else if (
@@ -79,9 +92,13 @@ export default function MyJobs() {
       job.packageStatus === "collected" ||
       job.packageStatus === "delivered"
     ) {
-      const driver = await getDriverDetails(job);
-      setDriver(driver);
+      // If the package is claimed, collected, or delivered, fetch the driver based on the job's driverId
+      if (job.driverId) {
+        const driver = await getDriverDetails(job);
+        setDriver(driver);
+      }
     }
+
     setIsGettingDrivers(false);
     setSelectedJob(job);
   };
@@ -100,15 +117,15 @@ export default function MyJobs() {
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <div className="flex p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
           <Link href={"/client/job-post"} prefetch={true}>
-          <Button
-            className="mb-4 flex items-center"
-            // onClick={() => {
-            //   router.push("/client/job-post");
-            // }}
-          >
-            <PlusCircle className="mr-2 h-4 w-4" />
-            <span>New Job</span>
-          </Button>
+            <Button
+              className="mb-4 flex items-center"
+              // onClick={() => {
+              //   router.push("/client/job-post");
+              // }}
+            >
+              <PlusCircle className="mr-2 h-4 w-4" />
+              <span>New Job</span>
+            </Button>
           </Link>
         </div>
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
@@ -129,7 +146,7 @@ export default function MyJobs() {
             </div>
           ) : (
             selectedJob && (
-              <Details job={selectedJob} requests={requests} driver={driver} />
+              <Details job={selectedJob} requests={requests} driver={driver}/>
             )
           )}
         </main>

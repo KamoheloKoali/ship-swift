@@ -80,7 +80,9 @@ export const getAllJobsFiltered = async (clientId: string) => {
   try {
     const jobs = await prisma.courierJobs.findMany({
       where: { clientId: clientId },
-      include: { client: true }, // Include client data if needed
+      include: {
+        client: true, // Always include DirectRequest
+      },
     });
     return { success: true, data: jobs };
   } catch (error) {

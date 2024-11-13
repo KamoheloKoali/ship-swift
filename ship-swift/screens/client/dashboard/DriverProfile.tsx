@@ -27,10 +27,17 @@ const DriverProfile = ({ driver, job }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [isWindow, setIsWindow] = useState(false);
-  
-    useEffect(() => {
-      setIsWindow(typeof window !== "undefined");
-    }, []);
+  const [isJobDirect, setIsJobDirect] = useState(false);
+
+  useEffect(() => {
+    setIsWindow(typeof window !== "undefined");
+  }, []);
+
+  useEffect(() => {
+    if (job.isDirect) {
+      setIsJobDirect(true);
+    }
+  }, [job.isDirect]);
   const hire = async () => {
     setIsLoading(true);
     const response = await approveJobRequest({
@@ -68,7 +75,13 @@ const DriverProfile = ({ driver, job }: Props) => {
           </p>
           <p className="text-sm text-gray-500">
             {driver.location ? driver.location : "Location Not Available"}
-            {isWindow ? <MapComponent initialPosition={{ lat: 51.505, lng: -0.09 }} zoomLevel={13} driverId={driver.Id} /> : null}
+            {isWindow ? (
+              <MapComponent
+                initialPosition={{ lat: 51.505, lng: -0.09 }}
+                zoomLevel={13}
+                driverId={driver.Id}
+              />
+            ) : null}
           </p>
         </div>
 
@@ -89,7 +102,7 @@ const DriverProfile = ({ driver, job }: Props) => {
                 variant="outline"
                 className="w-full sm:w-auto flex items-center gap-2"
                 onClick={hire}
-                disabled={isHired || isError}
+                disabled={isHired || isError || isJobDirect}
               >
                 {isHired ? (
                   <>
@@ -103,8 +116,14 @@ const DriverProfile = ({ driver, job }: Props) => {
                   </>
                 ) : (
                   <>
-                    <Truck className="h-4 w-4" />
-                    <span>Hire</span>
+                    {isJobDirect ? (
+                      <div>Not Approved</div>
+                    ) : (
+                      <>
+                        <Truck className="h-4 w-4" />
+                        <span>Hire</span>
+                      </>
+                    )}
                   </>
                 )}
               </Button>
