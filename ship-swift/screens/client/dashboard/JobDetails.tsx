@@ -56,6 +56,12 @@ interface SideCardProps {
     DropOff: string;
     Title: string;
     Description: string;
+    dimensions?: string;
+    weight?: string;
+    suitableVehicles?: string;
+    parcelSize?: string;
+    Budget?: string;
+    collectionDate: string;
   };
   requests?: Array<any>;
   driver?: any;
@@ -68,6 +74,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
   const [isJobCompleted, setIsJobCompleted] = useState(false);
   const [isGettingContact, setIsGettingContact] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
+  const [packageSize, setPackageSize] = useState<string | null>(null);
 
   // Move the status check to useEffect to avoid infinite re-renders
   useEffect(() => {
@@ -76,6 +83,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
         job.packageStatus === "collected" ||
         job.packageStatus === "delivered"
     );
+    
     setIsJobCompleted(job.packageStatus === "delivered");
   }, [job.packageStatus]);
 
@@ -85,6 +93,8 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
       description: `Copied: ${job.Id}`,
     });
   };
+
+  
 
   const getContact = async () => {
     setIsGettingContact(true);
@@ -110,14 +120,51 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
     }
   };
 
-  const OrderDetails = () => (
+  const OrderDetails = () => {
+    if (job.parcelSize === "smallpackages") {
+      setPackageSize("Small Package");
+    }
+     if (job.parcelSize === "mediumpackages") {
+      setPackageSize("Medium Package");
+    }  
+    if (job.parcelSize === "largepackages") {
+      setPackageSize("Large Package");
+    } 
+    if (job.parcelSize === "extralargepackages") {
+      setPackageSize("Extra-Large Package");
+    } 
+    return(
     <>
       <div className="grid gap-3">
         <div className="font-semibold">Order Details</div>
         <ul className="grid gap-3">
+        <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Price</span>
+            <span className="flex-wrap">M{job.Budget}.00</span>
+          </li>
           <li className="flex items-center justify-between">
             <span className="text-muted-foreground">Item(s)</span>
             <span className="flex-wrap">{job.Description}</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Weight</span>
+            <span className="flex-wrap">{job.weight}</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Dimensions</span>
+            <span className="flex-wrap">{job.dimensions}</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Suitable Vehicles</span>
+            <span className="flex-wrap">{job.suitableVehicles}</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Parcel Size</span>
+            <span className="flex-wrap">{packageSize}</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">End Date</span>
+            <span className="flex-wrap">{new Date(job.collectionDate).toLocaleString()}</span>
           </li>
           <li className="flex items-center justify-between">
             <span className="text-muted-foreground">Pick Up</span>
@@ -137,7 +184,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
         <MapComponent pickup={job.PickUp} dropoff={job.DropOff} />
       </div>
     </>
-  );
+  );}
 
   const PriceBreakdown = () => (
     <ul className="grid gap-3">

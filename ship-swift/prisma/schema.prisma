@@ -24,6 +24,7 @@ model clients {
   ClientReview   ClientReview[]
   Contacts       Contacts[]
   courierJobs    CourierJobs[]
+  DirectRequest  DirectRequest[]
   driverRequests DriverRequests[]
   DriverReview   DriverReview[]
   Messages       Messages[]
@@ -56,6 +57,7 @@ model Drivers {
   activeJobs            ActiveJobs[]
   ClientReview          ClientReview[]
   Contacts              Contacts[]
+  DirectRequest         DirectRequest[]
   driveRequests         DriverRequests[]
   DriverReview          DriverReview[]
   JobRequests           JobRequest[]
@@ -66,27 +68,31 @@ model Drivers {
 }
 
 model CourierJobs {
-  Id                 String       @id @default(uuid())
-  Title              String?      @default("")
-  Description        String?      @default("")
-  Budget             String?      @default("0")
+  Id                 String          @id @default(uuid())
+  Title              String?         @default("")
+  Description        String?         @default("")
+  Budget             String?         @default("80")
   clientId           String
-  DropOff            String?      @default("")
-  districtDropOff    String?      @default("")
-  PickUp             String?      @default("")
-  districtPickUp     String?      @default("")
-  parcelSize         String?      @default("")
-  pickupPhoneNumber  String?      @default("")
-  dropoffPhoneNumber String?      @default("")
-  dropOffEmail       String?      @default("")
-  collectionDate     DateTime     @default(now())
-  dateCreated        DateTime     @default(now())
-  packageStatus      String?      @default("")
-  approvedRequestId  String?      @unique
+  DropOff            String?         @default("")
+  districtDropOff    String?         @default("")
+  PickUp             String?         @default("")
+  districtPickUp     String?         @default("")
+  parcelSize         String?         @default("")
+  pickupPhoneNumber  String?         @default("")
+  dropoffPhoneNumber String?         @default("")
+  dropOffEmail       String?         @default("")
+  collectionDate     DateTime        @default(now())
+  dateCreated        DateTime        @default(now())
+  packageStatus      String?         @default("")
+  dimensions         String?         @default("")
+  weight             String?         @default("")
+  suitableVehicles   String?         @default("")
+  approvedRequestId  String?         @unique
   activeJobs         ActiveJobs[]
-  approvedRequest    JobRequest?  @relation("ApprovedRequest", fields: [approvedRequestId], references: [Id])
-  client             clients      @relation(fields: [clientId], references: [Id])
-  JobRequests        JobRequest[] @relation("CourierJobsToJobRequest")
+  approvedRequest    JobRequest?     @relation("ApprovedRequest", fields: [approvedRequestId], references: [Id])
+  client             clients         @relation(fields: [clientId], references: [Id])
+  DirectRequest      DirectRequest[]
+  JobRequests        JobRequest[]    @relation("CourierJobsToJobRequest")
 }
 
 model DriverRequests {
@@ -209,6 +215,18 @@ model DriverReview {
   Drivers   Drivers  @relation(fields: [driverId], references: [Id])
 
   @@index([driverId])
+}
+
+model DirectRequest {
+  Id           String      @id
+  courierJobId String
+  clientId     String
+  driverId     String
+  isApproved   Boolean     @default(false)
+  dateCreated  DateTime    @default(now())
+  clients      clients     @relation(fields: [clientId], references: [Id])
+  CourierJobs  CourierJobs @relation(fields: [courierJobId], references: [Id])
+  Drivers      Drivers     @relation(fields: [driverId], references: [Id])
 }
 
 enum TripStatus {

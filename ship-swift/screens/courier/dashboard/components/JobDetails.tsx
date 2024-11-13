@@ -43,6 +43,9 @@ interface JobDetailsProps {
       dropOffEmail: string;
       parcelSize: string;
       collectionDate: string;
+      dimensions?: string;
+    weight?: string;
+    suitableVehicles?: string;
     };
     Client: {
       firstName: string;
@@ -107,6 +110,18 @@ export default function Details({ job }: JobDetailsProps) {
                 <span>{job.CourierJob.Description}</span>
               </li>
               <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Weight</span>
+            <span className="flex-wrap">{job.CourierJob.weight}</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Dimensions</span>
+            <span className="flex-wrap">{job.CourierJob.dimensions}</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Suitable Vehicles</span>
+            <span className="flex-wrap">{job.CourierJob.suitableVehicles}</span>
+          </li>
+              <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Parcel Size</span>
                 <span>{job.CourierJob.parcelSize}</span>
               </li>
@@ -120,7 +135,7 @@ export default function Details({ job }: JobDetailsProps) {
                   <span>{job.CourierJob.districtPickUp}</span>
                   <span>Phone: {job.CourierJob.pickupPhoneNumber}</span>
                   <span>
-                    Collection Date: {new Date(job.CourierJob.collectionDate).toLocaleString()}
+                    Collection Date: {new Date(job.CourierJob.collectionDate).toString()}
                   </span>
                 </address>
               </div>

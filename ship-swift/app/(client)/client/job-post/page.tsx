@@ -37,64 +37,64 @@ const packageSizes = [
     name: "Small Packages",
     description:
       "Lightweight and compact, generally small enough to be held in one hand or easily carried by one person.",
-    dimensions: "Up to 12 x 12 x 12 inches (30 x 30 x 30 cm)",
-    weight: "Up to 10 lbs (4.5 kg)",
+    dimensions: "Up to 30 x 30 x 30 cm",
+    weight: "Up to 4.5 kg",
     examples: "Envelopes, small electronics, compact boxes",
     vehicles: "Bicycles, Motorbikes or Scooters, Compact Cars",
     icon: Package,
-    price: 10, // Example fixed price
+    price: 80, // Example fixed price
   },
   {
     id: 2,
     name: "Medium Packages",
     description:
       "Bulkier and heavier than small packages but still manageable by one person with ease.",
-    dimensions: "12 to 24 inches on any side (30 x 60 cm)",
-    weight: "10 - 40 lbs (4.5 - 18 kg)",
+    dimensions: "30 to 60 cm on any side",
+    weight: "4.5 - 18 kg",
     examples: "Shoe boxes, small appliance boxes, parcels",
     vehicles:
       "Motorbikes or Scooters (for lighter medium items), Compact to Mid-sized Cars, Small Vans",
     icon: Box,
-    price: 20, // Example fixed price
+    price: 150, // Example fixed price
   },
   {
     id: 3,
     name: "Large Packages",
     description:
       "Substantially large, requiring two people to carry or a vehicle for transport. These packages might not fit into standard car trunks.",
-    dimensions: "24 to 48 inches on any side (60 x 120 cm)",
-    weight: "40 - 100 lbs (18 - 45 kg)",
+    dimensions: "60 to 120 cm on any side",
+    weight: "18 - 45 kg",
     examples: "Furniture pieces, large appliances, bulkier electronics",
     vehicles:
       "Mid-sized Cars or Large Sedans (only if they fit), Large Vans, Pickup Trucks",
     icon: Truck,
-    price: 40, // Example fixed price
+    price: 250, // Example fixed price
   },
   {
     id: 4,
     name: "Extra-Large Packages",
     description:
       "Oversized packages that are heavy and require specialized handling, often more than two people to load.",
-    dimensions: "Over 48 inches on any side (120 cm and above)",
-    weight: "Over 100 lbs (45 kg)",
+    dimensions: "Over 120 cm on any side",
+    weight: "Over 45 kg",
     examples: "Mattresses, large appliances, large furniture",
     vehicles: "Pickup Trucks, Cargo Vans, Box Trucks",
     icon: Truck,
-    price: 60, // Example fixed price
+    price: 450, // Example fixed price
   },
-  {
-    id: 5,
-    name: "Freight Packages",
-    description:
-      "Industrial or commercial packages, often palletized, requiring forklifts or lift gates.",
-    dimensions:
-      "Typically measured by pallet size (40 x 48 inches, up to 8 feet tall) or crate dimensions.",
-    weight: "Generally over 150 lbs (68 kg)",
-    examples: "Palletized goods, bulk products, industrial supplies",
-    vehicles: "Box Trucks, Freight Trucks",
-    icon: Forklift,
-    price: 100, // Example fixed price
-  },
+  // {
+  //   id: 5,
+  //   name: "Freight Packages",
+  //   description:
+  //     "Industrial or commercial packages, often palletized, requiring forklifts or lift gates.",
+  //   dimensions:
+  //     "Typically measured by pallet size (100 x 120 cm, up to 244 cm tall) or crate dimensions.",
+  //   weight: "Generally over 68 kg",
+  //   examples: "Palletized goods, bulk products, industrial supplies",
+  //   vehicles: "Box Trucks, Freight Trucks",
+  //   icon: Forklift,
+  //   price: 100, // Example fixed price
+  // },
 ];
 
 export default function PostJobWizard() {
@@ -111,6 +111,9 @@ export default function PostJobWizard() {
     dropOff: z.string().min(5, "Dropoff address must be at least 5 characters long"),
     districtPickup: z.string().min(2, "District pickup must be at least 2 characters long"),
     districtDropoff: z.string().min(2, "District dropoff must be at least 2 characters long"),
+    weight: z.string(),
+    dimensions: z.string(),
+    suitableVehicles: z.string(),
     parcelSize: z.string(),
     pickupPhoneNumber: phoneNumberSchema,
     dropoffPhoneNumber: phoneNumberSchema,
@@ -123,7 +126,7 @@ export default function PostJobWizard() {
       packageSize: 1,
       title: '',
       description: '',
-      budget: '',
+      budget: '80',
       pickUp: '',
       dropOff: '',
       districtPickup: '',
@@ -133,6 +136,9 @@ export default function PostJobWizard() {
       dropoffPhoneNumber: '' as E164Number,
       dropoffEmail: '',
       collectionDate: null as unknown as Date,
+      weight: '',
+      dimensions: '',
+      suitableVehicles: '',
     })
   
     const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({})
@@ -292,13 +298,16 @@ export default function PostJobWizard() {
                       packageSize: size.id,
                       budget: size.price.toString(),
                       parcelSize: size.name.toLowerCase().replace(/\s/g, "").replace("-", ""),
+                      weight: size.weight,
+                      dimensions: size.dimensions,
+                      suitableVehicles: size.vehicles,
                     })
                   }
                 >
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <size.icon className="w-8 h-8" />
-                      <span className="text-2xl font-bold">${size.price}</span>
+                      <span className="text-2xl font-bold">M{size.price}.00</span>
                     </div>
                     <h3 className="text-lg font-semibold mb-2">{size.name}</h3>
                     <p className="text-sm text-muted-foreground mb-2">
@@ -473,7 +482,7 @@ export default function PostJobWizard() {
           <div className="space-y-6">
             <div className="space-y-2">
               <h1 className="text-4xl font-semibold tracking-tight">
-                Set collection date
+                Set collection date/End Date
               </h1>
               <p className="text-lg text-muted-foreground">
                 Choose the date when the item should be collected.
@@ -501,7 +510,7 @@ export default function PostJobWizard() {
                   mode="single"
                   selected={formData.collectionDate || undefined}
                   onSelect={(date) =>
-                    setFormData({ ...formData, collectionDate: date || new Date() })
+                    setFormData({ ...formData, collectionDate: date ? new Date(date.setHours(0, 0, 0, 0)) : new Date(new Date().setHours(0, 0, 0, 0)) })
                   }
                   initialFocus
                 />
