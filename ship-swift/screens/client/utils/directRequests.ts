@@ -12,6 +12,9 @@ export const createJobAndDirectRequest = async (
   driverId: string
 ) => {
   try {
+    // Set `isDirect` to true in jobData
+    jobData.append("isDirect", "true");
+
     // Create the job using the createJob action
     const job = await createJob(jobData); // Ensure you're passing the right job data
     if (job.success && job.data) {

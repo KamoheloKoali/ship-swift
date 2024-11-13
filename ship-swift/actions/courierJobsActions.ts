@@ -22,6 +22,7 @@ export const createJob = async (jobData: FormData) => {
       | null;
     const dropOffEmail = jobData.get("dropoffEmail") as string | null;
     const collectionDate = jobData.get("collectionDate") as string | null;
+    const isDirect = jobData.get("isDirect") === "true" ? true : false; // Default to false if not provided
 
     // Ensure none of the required fields are null or undefined
     if (!clientId) {
@@ -45,6 +46,7 @@ export const createJob = async (jobData: FormData) => {
         dropOffEmail: dropOffEmail,
         collectionDate: collectionDate ? new Date(collectionDate) : undefined, // Convert to Date
         packageStatus: "unclaimed",
+        isDirect: isDirect, // Add the isDirect flag to the job data
       },
     });
 
@@ -64,6 +66,7 @@ export const getAllJobs = async () => {
       include: { client: true }, // Include client data if needed
       where: {
         packageStatus: "unclaimed",
+        isDirect: false,
       }
     });
     return { success: true, data: jobs };

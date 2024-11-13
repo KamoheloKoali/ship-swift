@@ -58,36 +58,6 @@ export const useScheduledTrips = () => {
           setTrips((prevTrips) => [...prevTrips, payload.new as ScheduledTrip]);
         }
       )
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "scheduledTrips",
-        },
-        (payload) => {
-          // Handle UPDATE event (Trip status or details changed)
-          setTrips((prevTrips) =>
-            prevTrips.map((trip) =>
-              trip.id === payload.new.id ? { ...trip, ...payload.new } : trip
-            )
-          );
-        }
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "DELETE",
-          schema: "public",
-          table: "scheduledTrips",
-        },
-        (payload) => {
-          // Handle DELETE event (Trip deleted)
-          setTrips((prevTrips) =>
-            prevTrips.filter((trip) => trip.id !== payload.old.id)
-          );
-        }
-      )
       .subscribe();
 
     // Cleanup subscription on unmount

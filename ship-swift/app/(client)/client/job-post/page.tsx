@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { useSearchParams } from "next/navigation";
+import { Send } from "lucide-react";
 import type { E164Number } from "libphonenumber-js/core";
 import {
   Popover,
@@ -673,12 +674,12 @@ export default function PostJobWizard() {
                 isSubmitting ? (
                   <Loader2 className="animate-spin h-4 w-4" />
                 ) : (
-                  "Direct Request"
+                  <Send className="w-8 h-8" />
                 )
               ) : isSubmitting ? (
                 <Loader2 className="animate-spin h-4 w-4" />
               ) : (
-                "Post Job"
+                <Send className="w-12 h-12" />
               )
             ) : (
               "Next"
