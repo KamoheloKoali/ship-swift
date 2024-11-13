@@ -1,5 +1,5 @@
 import React from "react";
-import { Copy, CreditCard, MoreVertical } from "lucide-react";
+import { Copy, CreditCard, MoreVertical, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,8 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { StatusBadge } from "./JobsTable"; // Assuming StatusBadge is relevant for request statuses
+import { StatusBadge } from "./JobsTable";
 import { JobRequest } from "./MyRequests";
+import MapComponent from "@/screens/global/PickUpDropOffLoc"; // Map component
+
 interface RequestDetailsProps {
   request: JobRequest;
 }
@@ -23,7 +25,9 @@ export default function RequestDetails({ request }: RequestDetailsProps) {
           <div className="grid gap-0.5">
             <CardTitle className="group flex items-center gap-2 text-lg">
               {request.CourierJob.Title}
-              <StatusBadge status={request.isApproved ? "Approved" : "Pending"} />
+              <StatusBadge
+                status={request.isApproved ? "Approved" : "Pending"}
+              />
               <Button
                 size="icon"
                 variant="outline"
@@ -36,7 +40,8 @@ export default function RequestDetails({ request }: RequestDetailsProps) {
             <CardDescription>
               Request ID: {request.Id}
               <br />
-              Date Created: {new Date(request.CourierJob.dateCreated).toLocaleString()}
+              Date Created:{" "}
+              {new Date(request.CourierJob.dateCreated).toLocaleString()}
             </CardDescription>
           </div>
         </CardHeader>
@@ -53,35 +58,102 @@ export default function RequestDetails({ request }: RequestDetailsProps) {
                 <span>{request.CourierJob.Description}</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Pickup Location</span>
-                <span>{request.CourierJob.PickUp}</span>
+                <span className="text-muted-foreground">Weight</span>
+                <span>{request.CourierJob.weight}</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Dropoff Location</span>
-                <span>{request.CourierJob.DropOff}</span>
+                <span className="text-muted-foreground">Dimensions</span>
+                <span>{request.CourierJob.dimensions}</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Collection Date</span>
-                <span>{new Date(request.CourierJob.collectionDate).toLocaleString()}</span>
+                <span className="text-muted-foreground">Suitable Vehicles</span>
+                <span>{request.CourierJob.suitableVehicles}</span>
               </li>
             </ul>
-            <div className="grid gap-3">
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="grid gap-3">
+                <div className="font-semibold">Pickup Information</div>
+                <address className="grid gap-0.5 not-italic text-muted-foreground">
+                  <span>
+                    {request.CourierJob.PickUp}{" "}
+                    <MapPin size={16} color="#3500f5" />
+                  </span>
+                  <span>{request.CourierJob.districtPickUp}</span>
+                  <span>Phone: {request.CourierJob.pickupPhoneNumber}</span>
+                  <span>
+                    Collection Date:{" "}
+                    {new Date(
+                      request.CourierJob.collectionDate
+                    ).toLocaleString()}
+                  </span>
+                </address>
+              </div>
+              <div className="grid gap-3">
+                <div className="font-semibold">Dropoff Information</div>
+                <address className="grid gap-0.5 not-italic text-muted-foreground">
+                  <span>
+                    {request.CourierJob.DropOff}{" "}
+                    <MapPin size={16} color="#bd0a0a" />
+                  </span>
+                  <span>{request.CourierJob.districtDropOff}</span>
+                  <span>Phone: {request.CourierJob.dropoffPhoneNumber}</span>
+                  <span>Email: {request.CourierJob.dropOffEmail}</span>
+                </address>
+              </div>
+              <MapComponent
+                pickup={request.CourierJob.PickUp}
+                dropoff={request.CourierJob.DropOff}
+              />
+            </div>
+            <div className="grid gap-3 mt-4">
               <div className="font-semibold">Client Information</div>
               <dl className="grid gap-3">
                 <div className="flex items-center justify-between">
                   <dt className="text-muted-foreground">Name</dt>
                   <dd>
-                    {request.CourierJob.client.firstName} {request.CourierJob.client.lastName}
+                    {request.CourierJob.client.firstName}{" "}
+                    {request.CourierJob.client.lastName}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="text-muted-foreground">Email</dt>
+                  <dd>
+                    <a href={`mailto:${request.CourierJob.client.email}`}>
+                      {request.CourierJob.client.email}
+                    </a>
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="text-muted-foreground">Phone</dt>
+                  <dd>
+                    <a href={`tel:${request.CourierJob.client.phoneNumber}`}>
+                      {request.CourierJob.client.phoneNumber}
+                    </a>
                   </dd>
                 </div>
               </dl>
             </div>
+            <div className="grid gap-3 mt-4">
+              <div className="font-semibold">Payment Information</div>
+              <dl className="grid gap-3">
+                <div className="flex items-center justify-between">
+                  <dt className="flex items-center gap-1 text-muted-foreground">
+                    <CreditCard className="h-4 w-4" />
+                    Payment Status
+                  </dt>
+                  <dd>Pending</dd>{" "}
+                  {/* Adjust this based on actual payment status */}
+                </div>
+              </dl>
+            </div>
+            {request.CourierJob.isDirect ? (
+              <div>
+                <button>Approve</button>
+              </div>
+            ) : null}
           </div>
         </CardContent>
         <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
-          <div className="flex-grow text-muted-foreground">
-            Payment Status: <span>Pending</span> {/* Adjust based on your logic */}
-          </div>
           <Button size="icon" variant="outline">
             <MoreVertical className="h-4 w-4" />
             <span className="sr-only">More Actions</span>

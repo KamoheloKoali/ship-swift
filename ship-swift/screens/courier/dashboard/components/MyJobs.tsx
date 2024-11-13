@@ -22,12 +22,14 @@ import {
   updateActiveJobStatus,
 } from "@/actions/activeJobsActions";
 import { getUnapprovedJobRequests } from "@/actions/jobRequestActions";
+import { getDirectRequestsByDriverId } from "@/actions/directRequestActions";
 
 export default function MyJobs() {
   const [jobs, setJobs] = useState<any[] | undefined>([]);
   const [selectedJob, setSelectedJob] = useState<any | null>(null);
   const [jobRequests, setJobRequests] = useState<any[] | undefined>([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [directRequests, setDirectRequests] = useState<any[] | undefined>([]);
   const [error, setError] = useState<string | null | undefined>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const { userId } = useAuth();
@@ -55,14 +57,22 @@ export default function MyJobs() {
       if (userId) {
         const requests = await getUnapprovedJobRequests(userId);
         setJobRequests(requests);
-        if (requests && requests.length > 0) {
-        console.log(requests[0].CourierJob.collectionDate);
-        }
       }
     };
 
     fetchJobRequests();
-  },[userId]);
+  }, [userId]);
+
+  useEffect(() => {
+    const fetchDirectJobRequests = async () => {
+      if (userId) {
+        const directRequest = await getDirectRequestsByDriverId(userId);
+        setDirectRequests(directRequest);
+      }
+    };
+
+    fetchDirectJobRequests();
+  }, [userId]);
 
   const handleRowClick = (job: any | undefined) => {
     setSelectedJob(job);
@@ -98,57 +108,13 @@ export default function MyJobs() {
 
       <div className="flex flex-col gap-4 p-4 md:py-4 md:px-6 lg:px-8">
         <main className="grid gap-4 md:gap-6 lg:gap-8">
-          {/* Cards Grid */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card className="md:col-span-2">
-              <CardHeader className="pb-3">
-                <CardTitle>My Deliveries</CardTitle>
-                <CardDescription className="max-w-lg text-balance leading-relaxed">
-                  Get feedback of my progress
-                </CardDescription>
-              </CardHeader>
-              <CardFooter>
-                <Button>Get feedback</Button>
-              </CardFooter>
-            </Card>
-
-            <Card className="hidden sm:block">
-              <CardHeader className="pb-2">
-                <CardDescription>This Week</CardDescription>
-                <CardTitle className="text-4xl">M 0.00</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-xs text-muted-foreground">
-                  +25% from last week
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Progress value={25} aria-label="25% increase" />
-              </CardFooter>
-            </Card>
-
-            <Card className="hidden sm:block">
-              <CardHeader className="pb-2">
-                <CardDescription>This Month</CardDescription>
-                <CardTitle className="text-4xl">M 0.00</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-xs text-muted-foreground">
-                  +10% from last month
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Progress value={12} aria-label="12% increase" />
-              </CardFooter>
-            </Card>
-          </div>
-
           {/* Main Content Area */}
           <div className="grid gap-4 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <JobsTable
                 jobs={jobs}
                 jobRequests={jobRequests}
+                directRequests={directRequests}
                 onStatusChange={handleStatusChange}
                 onRowClick={handleRowClick}
                 onRequestClick={handleRequestClick}

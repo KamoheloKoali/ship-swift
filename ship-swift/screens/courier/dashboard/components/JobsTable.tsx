@@ -49,6 +49,7 @@ import MyRequests from "@/screens/courier/dashboard/components/MyRequests";
 interface TableProps {
   jobs: ActiveJob[] | undefined;
   jobRequests: any[] | undefined;
+  directRequests: any[] | undefined;
   onRowClick: (job: ActiveJob) => void;
   onRequestClick: (job: any) => void;
   onStatusChange: (jobId: string, newStatus: string) => Promise<void>;
@@ -118,6 +119,7 @@ const LoadingState: FC = () => (
 const JobsTable: FC<TableProps> = ({
   jobs,
   jobRequests,
+  directRequests,
   onRowClick,
   onRequestClick,
   onStatusChange,
@@ -284,6 +286,7 @@ const JobsTable: FC<TableProps> = ({
       {activeTab === "my-requests" && (
         <MyRequests
           jobRequests={jobRequests || []}
+          directRequests={directRequests || []}
           onRequestClick={onRequestClick}
         />
       )}

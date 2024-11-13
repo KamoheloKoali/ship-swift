@@ -48,7 +48,7 @@ export const createDirectRequest = async (
     console.error("Error creating direct request:", error);
     throw error;
   }
-};// Get a DirectRequest by ID
+}; // Get a DirectRequest by ID
 export const getDirectRequestById = async (
   id: string
 ): Promise<DirectRequest | null> => {
@@ -70,6 +70,13 @@ export const getDirectRequestsByDriverId = async (
   try {
     const directRequests = await prisma.directRequest.findMany({
       where: { driverId },
+      include: {
+        CourierJob: {
+          include: {
+            client: true,
+          },
+        },
+      },
     });
     return directRequests;
   } catch (error) {
@@ -77,7 +84,6 @@ export const getDirectRequestsByDriverId = async (
     throw error;
   }
 };
-
 // Get DirectRequests by Client ID
 export const getDirectRequestsByClientId = async (
   clientId: string
@@ -99,13 +105,13 @@ export const getDirectRequestsByCourierJobId = async (
   try {
     const directRequests = await prisma.directRequest.findMany({
       where: { courierJobId },
-    })
-    return directRequests
+    });
+    return directRequests;
   } catch (error) {
-    console.error("Error fetching direct requests by courier job ID:", error)
-    throw error
+    console.error("Error fetching direct requests by courier job ID:", error);
+    throw error;
   }
-}
+};
 // Update a DirectRequest by ID
 export const updateDirectRequest = async (
   id: string,
