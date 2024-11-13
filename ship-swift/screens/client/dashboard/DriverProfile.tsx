@@ -8,11 +8,12 @@ import {
   Truck,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@clerk/nextjs";
 import { approveJobRequest } from "@/actions/jobRequestActions";
 import { useRouter } from "next/navigation";
+import MapComponent from "@/screens/track-delivery/ReverseGeocoding";
 
 type Props = {
   driver: any;
@@ -25,6 +26,11 @@ const DriverProfile = ({ driver, job }: Props) => {
   const { userId } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const [isWindow, setIsWindow] = useState(false);
+  
+    useEffect(() => {
+      setIsWindow(typeof window !== "undefined");
+    }, []);
   const hire = async () => {
     setIsLoading(true);
     const response = await approveJobRequest({
@@ -32,7 +38,7 @@ const DriverProfile = ({ driver, job }: Props) => {
       clientId: userId || "",
       courierJobId: job.Id,
     });
-    if (response === 0) {
+    if (response === 0 || response === 2) {
       router.refresh();
     } else if (response === 1) {
       setIsError(true);
@@ -62,6 +68,7 @@ const DriverProfile = ({ driver, job }: Props) => {
           </p>
           <p className="text-sm text-gray-500">
             {driver.location ? driver.location : "Location Not Available"}
+            {isWindow ? <MapComponent initialPosition={{ lat: 51.505, lng: -0.09 }} zoomLevel={13} driverId={driver.Id} /> : null}
           </p>
         </div>
 

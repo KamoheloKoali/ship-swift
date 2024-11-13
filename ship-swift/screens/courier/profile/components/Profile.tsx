@@ -114,7 +114,7 @@ const Profile: React.FC<ProfileProps> = ({ driverData }) => {
       />
       <InfoItem
         icon={<Shield className="w-4 h-4 text-primary" />}
-        label="VIN"
+        label="Vehicle Registration No."
         value={driverData?.VIN || ""}
       />
       <InfoItem

@@ -2,6 +2,7 @@
 import { PrismaClient } from "@prisma/client";
 import { createcontact } from "./contactsActions";
 import { createActiveJob } from "./activeJobsActions";
+import notifyAboutJob from "./knock";
 
 const prisma = new PrismaClient();
 
@@ -9,12 +10,30 @@ export async function createJobRequest(data: {
   courierJobId: string;
   driverId: string;
 }) {
+  // send client a notification that there is a new applicant for their job
   const jobRequest = await prisma.jobRequest.create({
     data: {
       courierJobId: data.courierJobId,
       driverId: data.driverId,
     },
+    include: {
+      Driver: true,
+      CourierJob: true,
+    },
   });
+  const Client = await prisma.clients.findUnique({
+    where: {
+      Id: jobRequest.CourierJob.clientId,
+    },
+  });
+  if (jobRequest.Id && Client?.Id) {
+    // send client a notification that there is a new applicant for their job
+    await notifyAboutJob(
+      Client,
+      jobRequest.CourierJob,
+      jobRequest.Driver.firstName || "" + jobRequest.Driver.lastName || "",
+    );
+  }
   return jobRequest;
 }
 
@@ -167,8 +186,12 @@ export async function approveJobRequest(data: {
   ]);
 
   // Check if all operations were successful
-  if (jobRequest.Id && courierJob.Id && contact.success && setActiveJob) {
+  if (jobRequest.Id && courierJob.Id && contact.success && setActiveJob?.Id) {
     return 0;
+  }
+  if (contact.error === "contact already exists") {
+    // check if reason for failure is because parties are already contacts
+    return 2;
   }
   return 1;
 }

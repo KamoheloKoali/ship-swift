@@ -7,6 +7,7 @@ import {
   CreditCard,
   HandCoins,
   Loader2,
+  MapPin,
   MessageSquareDot,
   MoreVertical,
   Truck,
@@ -34,7 +35,13 @@ import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { updateJobStatus } from "@/actions/courierJobsActions";
 import { getContactByDriverAndClientId } from "@/actions/contactsActions";
+<<<<<<< HEAD
 import Link from "next/link";
+=======
+import MapComponent from "@/screens/global/PickUpDropOffLoc";
+import Link from "next/link";
+import DriverLocation from "./DriverLocation";
+>>>>>>> c840ede48c8a94758dbbe46ce612e77623524acc
 
 interface SideCardProps {
   job: {
@@ -53,6 +60,12 @@ interface SideCardProps {
     DropOff: string;
     Title: string;
     Description: string;
+    dimensions?: string;
+    weight?: string;
+    suitableVehicles?: string;
+    parcelSize?: string;
+    Budget?: string;
+    collectionDate: string;
   };
   requests?: Array<any>;
   driver?: any;
@@ -65,6 +78,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
   const [isJobCompleted, setIsJobCompleted] = useState(false);
   const [isGettingContact, setIsGettingContact] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
+  const [packageSize, setPackageSize] = useState<string | null>(null);
 
   // Move the status check to useEffect to avoid infinite re-renders
   useEffect(() => {
@@ -73,6 +87,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
       job.packageStatus === "collected" ||
       job.packageStatus === "delivered"
     );
+    
     setIsJobCompleted(job.packageStatus === "delivered");
   }, [job.packageStatus]);
 
@@ -82,6 +97,8 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
       description: `Copied: ${job.Id}`,
     });
   };
+
+  
 
   const getContact = async () => {
     setIsGettingContact(true);
@@ -107,27 +124,71 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
     }
   };
 
-  const OrderDetails = () => (
+  const OrderDetails = () => {
+    if (job.parcelSize === "smallpackages") {
+      setPackageSize("Small Package");
+    }
+     if (job.parcelSize === "mediumpackages") {
+      setPackageSize("Medium Package");
+    }  
+    if (job.parcelSize === "largepackages") {
+      setPackageSize("Large Package");
+    } 
+    if (job.parcelSize === "extralargepackages") {
+      setPackageSize("Extra-Large Package");
+    } 
+    return(
     <>
       <div className="grid gap-3">
         <div className="font-semibold">Order Details</div>
         <ul className="grid gap-3">
+        <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Price</span>
+            <span className="flex-wrap">M{job.Budget}.00</span>
+          </li>
           <li className="flex items-center justify-between">
             <span className="text-muted-foreground">Item(s)</span>
             <span className="flex-wrap">{job.Description}</span>
           </li>
           <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Weight</span>
+            <span className="flex-wrap">{job.weight}</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Dimensions</span>
+            <span className="flex-wrap">{job.dimensions}</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Suitable Vehicles</span>
+            <span className="flex-wrap">{job.suitableVehicles}</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Parcel Size</span>
+            <span className="flex-wrap">{packageSize}</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">End Date</span>
+            <span className="flex-wrap">{new Date(job.collectionDate).toLocaleString()}</span>
+          </li>
+          <li className="flex items-center justify-between">
             <span className="text-muted-foreground">Pick Up</span>
-            <span className="flex flex-wrap">{job.PickUp}</span>
+            <span className="flex flex-wrap">
+              {job.PickUp}
+              <MapPin size={16} color="#3500f5" />
+            </span>
           </li>
           <li className="flex items-center justify-between">
             <span className="text-muted-foreground">Drop Off</span>
-            <span className="flex flex-wrap">{job.DropOff}</span>
+            <span className="flex flex-wrap">
+              {job.DropOff}
+              <MapPin size={16} color="#bd0a0a" />
+            </span>
           </li>
         </ul>
+        <MapComponent pickup={job.PickUp} dropoff={job.DropOff} />
       </div>
     </>
-  );
+  );}
 
   const PriceBreakdown = () => (
     <ul className="grid gap-3">
@@ -314,7 +375,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
               <CardTitle className="group flex flex-col gap-2 text-lg">
                 <div className="text-2xl flex flex-wrap">{job.Title}</div>
                 <div>
-                  Order: {job.Id}
+                  Order Id: {job.Id}
                   {!isClaimed && (
                     <Button
                       size="icon"
@@ -331,6 +392,14 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
               <CardDescription>
                 Date: {new Date(job.dateCreated).toLocaleString()}
               </CardDescription>
+              {!isJobCompleted && isClaimed && (
+                    <>
+                    <p className="text-sm text-muted-foreground">Driver's location:</p>
+                    <Link prefetch={true} href={`/track-delivery/${job.approvedRequestId}`} target="_blank">
+                    <DriverLocation params={{deliveryId: job.Id}} job={job} />
+                    </Link>
+                    </>
+                  )}
             </div>
             <div className="ml-auto flex flex-wrap md:flex-nowrap items-center gap-1">
               {isClaimed && (
@@ -344,41 +413,6 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
                     <Copy className="h-3 w-3" />
                     <span className="sr-only">Copy Order ID</span>
                   </Button>
-                  {!isJobCompleted && isClaimed && (
-                    <>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className=" h-8 hidden gap-1 md:flex flex-wrap md:flex-nowrap"
-                        onClick={() => {
-                          window.open(
-                            `/track-delivery/${job.approvedRequestId}`,
-                            "_blank"
-                          );
-                        }}
-                      >
-                        <Truck className=" h-3.5 w-3.5" />
-                        <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                          View Map
-                        </span>
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        className=" h-8 flex gap-1 md:hidden flex-wrap"
-                        onClick={() => {
-                          window.open(
-                            `/track-delivery/${job.approvedRequestId}`,
-                            "_blank"
-                          );
-                        }}
-                      >
-                        <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                          Map
-                        </span>
-                      </Button>
-                    </>
-                  )}
                 </>
               )}
               {job.packageStatus === "collected" && (

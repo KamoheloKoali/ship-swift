@@ -33,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "app/firebase-messaging-sw.js"  ],
   "exclude": [
     "node_modules"
   ]

@@ -4,6 +4,7 @@ import { checkDriverRole } from "@/actions/protectActions";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import Header from "@/screens/courier/dashboard/components/Header";
+import NotificationButton from "@/screens/notifications/PushNotifications/NotificationButton";
 
 export default async function UserLayout({
   children,
@@ -26,6 +27,9 @@ export default async function UserLayout({
     <div>
       <Header />
       {children}
+      <div className="fixed bottom-4 right-4">
+        <NotificationButton />
+      </div>
     </div>
   );
 }

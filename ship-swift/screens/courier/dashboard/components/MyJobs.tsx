@@ -55,12 +55,14 @@ export default function MyJobs() {
       if (userId) {
         const requests = await getUnapprovedJobRequests(userId);
         setJobRequests(requests);
+        if (requests && requests.length > 0) {
         console.log(requests[0].CourierJob.collectionDate);
+        }
       }
     };
 
     fetchJobRequests();
-  }, [userId]);
+  },[userId]);
 
   const handleRowClick = (job: any | undefined) => {
     setSelectedJob(job);
@@ -110,7 +112,7 @@ export default function MyJobs() {
               </CardFooter>
             </Card>
 
-            <Card>
+            <Card className="hidden sm:block">
               <CardHeader className="pb-2">
                 <CardDescription>This Week</CardDescription>
                 <CardTitle className="text-4xl">M 0.00</CardTitle>
@@ -125,7 +127,7 @@ export default function MyJobs() {
               </CardFooter>
             </Card>
 
-            <Card>
+            <Card className="hidden sm:block">
               <CardHeader className="pb-2">
                 <CardDescription>This Month</CardDescription>
                 <CardTitle className="text-4xl">M 0.00</CardTitle>
