@@ -12,12 +12,23 @@ import {
 import { StatusBadge } from "./JobsTable";
 import { JobRequest } from "./MyRequests";
 import MapComponent from "@/screens/global/PickUpDropOffLoc"; // Map component
+import { approveDirectRequest } from "@/actions/directRequestActions";
 
 interface RequestDetailsProps {
   request: JobRequest;
 }
 
 export default function RequestDetails({ request }: RequestDetailsProps) {
+  const approveRequest = async () => {
+    try {
+      await approveDirectRequest(request.Id);
+      // Optional: Add success feedback for the user, e.g., refresh the list or show a confirmation message
+      console.log("Request approved successfully.");
+    } catch (error) {
+      console.error("Error approving request:", error);
+      // Optional: Display an error message to the user
+    }
+  };
   return (
     <div>
       <Card className="overflow-hidden">
@@ -148,7 +159,7 @@ export default function RequestDetails({ request }: RequestDetailsProps) {
             </div>
             {request.CourierJob.isDirect ? (
               <div>
-                <button>Approve</button>
+                <Button onClick={approveRequest}>Accept</Button>
               </div>
             ) : null}
           </div>

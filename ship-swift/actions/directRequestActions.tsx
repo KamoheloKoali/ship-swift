@@ -69,7 +69,8 @@ export const getDirectRequestsByDriverId = async (
 ): Promise<DirectRequest[]> => {
   try {
     const directRequests = await prisma.directRequest.findMany({
-      where: { driverId },
+      where: { driverId, isApproved: false },
+      
       include: {
         CourierJob: {
           include: {
@@ -125,6 +126,53 @@ export const updateDirectRequest = async (
     return updatedRequest;
   } catch (error) {
     console.error("Error updating direct request:", error);
+    throw error;
+  }
+};
+
+export const approveDirectRequest = async (
+  id: string
+): Promise<DirectRequest> => {
+  try {
+    const result = await prisma.$transaction(async (prisma) => {
+      // Step 1: Update the DirectRequest to set isApproved to true
+      const updatedRequest = await prisma.directRequest.update({
+        where: { Id: id },
+        data: { isApproved: true },
+      });
+
+      // Step 2: Create a JobRequest entry without clientId if not defined in the schema
+      const jobRequest = await prisma.jobRequest.create({
+        data: {
+          courierJobId: updatedRequest.courierJobId,
+          driverId: updatedRequest.driverId,
+          isApproved: true,
+        },
+      });
+
+      // Step 3: Update the corresponding CourierJob to set approvedRequestId
+      await prisma.courierJobs.update({
+        where: { Id: updatedRequest.courierJobId },
+        data: { approvedRequestId: jobRequest.Id },
+      });
+
+      // Step 4: Create an entry in ActiveJobs with required fields
+      const activeJob = await prisma.activeJobs.create({
+        data: {
+          courierJobId: updatedRequest.courierJobId,
+          driverId: updatedRequest.driverId,
+          clientId: updatedRequest.clientId,
+          startDate: new Date().toISOString(),
+        },
+      });
+
+      // Return the updatedRequest after all steps are complete
+      return updatedRequest;
+    });
+
+    return result;
+  } catch (error) {
+    console.error("Error approving direct request:", error);
     throw error;
   }
 };
