@@ -2,6 +2,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 export default function CardJobsLoad() {
+  
   return (
     <div className="p-4 flex items-center justify-center w-full h-full z-50">
       <Card className="w-full max-w-lg bg-white shadow-xl rounded-xl overflow-hidden">

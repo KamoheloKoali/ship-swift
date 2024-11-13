@@ -4,6 +4,7 @@ import {
   ChevronRight,
   Copy,
   CreditCard,
+  MapPin,
 } from "lucide-react";
 import {
   Pagination,
@@ -21,6 +22,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { StatusBadge } from "./JobsTable";
+import MapComponent from "@/screens/global/PickUpDropOffLoc";
 
 interface JobDetailsProps {
   job: {
@@ -41,6 +43,9 @@ interface JobDetailsProps {
       dropOffEmail: string;
       parcelSize: string;
       collectionDate: string;
+      dimensions?: string;
+    weight?: string;
+    suitableVehicles?: string;
     };
     Client: {
       firstName: string;
@@ -105,6 +110,18 @@ export default function Details({ job }: JobDetailsProps) {
                 <span>{job.CourierJob.Description}</span>
               </li>
               <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Weight</span>
+            <span className="flex-wrap">{job.CourierJob.weight}</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Dimensions</span>
+            <span className="flex-wrap">{job.CourierJob.dimensions}</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Suitable Vehicles</span>
+            <span className="flex-wrap">{job.CourierJob.suitableVehicles}</span>
+          </li>
+              <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Parcel Size</span>
                 <span>{job.CourierJob.parcelSize}</span>
               </li>
@@ -114,23 +131,24 @@ export default function Details({ job }: JobDetailsProps) {
               <div className="grid gap-3">
                 <div className="font-semibold">Pickup Information</div>
                 <address className="grid gap-0.5 not-italic text-muted-foreground">
-                  <span>{job.CourierJob.PickUp}</span>
+                  <span>{job.CourierJob.PickUp}<MapPin size={16} color="#3500f5" /></span>
                   <span>{job.CourierJob.districtPickUp}</span>
                   <span>Phone: {job.CourierJob.pickupPhoneNumber}</span>
                   <span>
-                    Collection Date: {new Date(job.CourierJob.collectionDate).toLocaleString()}
+                    Collection Date: {new Date(job.CourierJob.collectionDate).toString()}
                   </span>
                 </address>
               </div>
               <div className="grid gap-3">
                 <div className="font-semibold">Dropoff Information</div>
                 <address className="grid gap-0.5 not-italic text-muted-foreground">
-                  <span>{job.CourierJob.DropOff}</span>
+                  <span>{job.CourierJob.DropOff}<MapPin size={16} color="#bd0a0a" /></span>
                   <span>{job.CourierJob.districtDropOff}</span>
                   <span>Phone: {job.CourierJob.dropoffPhoneNumber}</span>
                   <span>Email: {job.CourierJob.dropOffEmail}</span>
                 </address>
               </div>
+              <MapComponent pickup={job.CourierJob.PickUp} dropoff={job.CourierJob.DropOff} />
             </div>
             <Separator className="my-4" />
             <div className="grid gap-3">

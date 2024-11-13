@@ -84,11 +84,10 @@ model CourierJobs {
   collectionDate     DateTime        @default(now())
   dateCreated        DateTime        @default(now())
   packageStatus      String?         @default("")
-  approvedRequestId  String?         @unique
   dimensions         String?         @default("")
-  suitableVehicles   String?         @default("")
   weight             String?         @default("")
-  isDirect           Boolean         @default(false) // New column
+  suitableVehicles   String?         @default("")
+  approvedRequestId  String?         @unique
   activeJobs         ActiveJobs[]
   approvedRequest    JobRequest?     @relation("ApprovedRequest", fields: [approvedRequestId], references: [Id])
   client             clients         @relation(fields: [clientId], references: [Id])
@@ -228,6 +227,18 @@ model DriverReview {
   Drivers   Drivers  @relation(fields: [driverId], references: [Id])
 
   @@index([driverId])
+}
+
+model DirectRequest {
+  Id           String      @id
+  courierJobId String
+  clientId     String
+  driverId     String
+  isApproved   Boolean     @default(false)
+  dateCreated  DateTime    @default(now())
+  clients      clients     @relation(fields: [clientId], references: [Id])
+  CourierJobs  CourierJobs @relation(fields: [courierJobId], references: [Id])
+  Drivers      Drivers     @relation(fields: [driverId], references: [Id])
 }
 
 enum TripStatus {
