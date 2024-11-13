@@ -51,7 +51,7 @@ export const useScheduledTrips = () => {
         {
           event: "INSERT",
           schema: "public",
-          table: "scheduledTrips",
+          table: "ScheduledTrips",
         },
         (payload) => {
           // Handle INSERT event (New trip added)
@@ -62,7 +62,7 @@ export const useScheduledTrips = () => {
 
     // Cleanup subscription on unmount
     return () => {
-      subscription.unsubscribe();
+      supabase.removeChannel(subscription);
     };
   }, []);
 
