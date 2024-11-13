@@ -36,13 +36,9 @@ import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { updateJobStatus } from "@/actions/courierJobsActions";
 import { getContactByDriverAndClientId } from "@/actions/contactsActions";
-<<<<<<< HEAD
-import Link from "next/link";
-=======
 import MapComponent from "@/screens/global/PickUpDropOffLoc";
 import Link from "next/link";
 import DriverLocation from "./DriverLocation";
->>>>>>> c840ede48c8a94758dbbe46ce612e77623524acc
 
 interface SideCardProps {
   job: {
@@ -92,8 +88,8 @@ export default function Details({
   useEffect(() => {
     setIsClaimed(
       job.packageStatus === "claimed" ||
-      job.packageStatus === "collected" ||
-      job.packageStatus === "delivered"
+        job.packageStatus === "collected" ||
+        job.packageStatus === "delivered"
     );
 
     setIsJobCompleted(job.packageStatus === "delivered");
@@ -271,14 +267,10 @@ export default function Details({
           </div>
           <div>
             <Link href={`/driver-profile/${driver.Id}`}>
-              <Button
-              className="w-full"
-                variant="outline"
-                size="sm">
+              <Button className="w-full" variant="outline" size="sm">
                 Courier Profile
               </Button>
             </Link>
-
           </div>
         </dl>
       </div>
@@ -328,8 +320,8 @@ export default function Details({
             {job.packageStatus === "collected"
               ? "Collected"
               : isJobCompleted
-                ? "Delivered"
-                : "Not yet collected"}
+              ? "Delivered"
+              : "Not yet collected"}
           </dd>
         </div>
       </dl>
