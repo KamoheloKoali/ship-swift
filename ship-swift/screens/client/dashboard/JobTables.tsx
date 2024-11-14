@@ -50,7 +50,7 @@ const JobsTable: FC<TableProps> = ({
   };
 
   return (
-    <Tabs defaultValue="ongoing">
+    <Tabs defaultValue="unclaimed">
       <div className="flex flex-wrap items-center">
         <TabsList>
           <TabsTrigger className="flex gap-1 md:block " value="unclaimed">
@@ -89,7 +89,7 @@ const JobsTable: FC<TableProps> = ({
                     DropOff
                   </TableHead>
                   <TableHead className="hidden md:table-cell">
-                    Date Created
+                    End Date
                   </TableHead>
                   <TableHead className="text-right">Amount</TableHead>
                 </TableRow>
@@ -116,9 +116,9 @@ const JobsTable: FC<TableProps> = ({
                       {job.DropOff}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {new Date(job.dateCreated).toLocaleString()}
+                      {new Date(job.collectionDate).toString()}
                     </TableCell>
-                    <TableCell className="text-right">M {job.Budget}</TableCell>
+                    <TableCell className="text-right">M{job.Budget}.00</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -142,7 +142,7 @@ const JobsTable: FC<TableProps> = ({
                     DropOff
                   </TableHead>
                   <TableHead className="hidden md:table-cell">
-                    Date Created
+                    End Date
                   </TableHead>
                   <TableHead className="text-right">Amount</TableHead>
                 </TableRow>
@@ -169,9 +169,9 @@ const JobsTable: FC<TableProps> = ({
                       {job.DropOff}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {new Date(job.dateCreated).toLocaleString()}
+                      {new Date(job.collectionDate).toString()}
                     </TableCell>
-                    <TableCell className="text-right">M {job.Budget}</TableCell>
+                    <TableCell className="text-right">M{job.Budget}.00</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -195,7 +195,7 @@ const JobsTable: FC<TableProps> = ({
                     DropOff
                   </TableHead>
                   <TableHead className="hidden md:table-cell">
-                    Date Created
+                    End Date
                   </TableHead>
                   <TableHead className="text-right">Amount</TableHead>
                 </TableRow>
@@ -222,9 +222,9 @@ const JobsTable: FC<TableProps> = ({
                       {job.DropOff}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {new Date(job.dateCreated).toLocaleString()}
+                      {new Date(job.collectionDate).toString()}
                     </TableCell>
-                    <TableCell className="text-right">M {job.Budget}</TableCell>
+                    <TableCell className="text-right">M{job.Budget}.00</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

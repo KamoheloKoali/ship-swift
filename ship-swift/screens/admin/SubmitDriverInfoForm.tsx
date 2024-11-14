@@ -31,10 +31,10 @@ type Props = {
 };
 
 const formSchema = z.object({
-  VIN: z
+  vehicleRegistrationNo: z
     .string()
     .min(17)
-    .max(17, { message: "VIN must be exactly 17 characters" }),
+    .max(17, { message: "Vehicle Registration Number must be exactly 17 characters" }),
   IdNumber: z.string().min(1, { message: "ID Number is required" }),
   LicenseNumber: z.string().min(1, { message: "License Number is required" }),
   LicenseExpirationDate: z.date({
@@ -54,7 +54,7 @@ export default function GetDriverInfoForm({ user, Submit, driverId }: Props) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      VIN: "",
+      vehicleRegistrationNo: "",
       IdNumber: "",
       LicenseNumber: "",
       PlateNumber: "",
@@ -67,7 +67,7 @@ export default function GetDriverInfoForm({ user, Submit, driverId }: Props) {
     setFormSubmitting(true);
     // Simulate API call
     const formData = {
-      VIN: values.VIN,
+      vehicleRegistrationNo: values.vehicleRegistrationNo,
       idNumber: values.IdNumber,
       licenseNumber: values.LicenseNumber,
       plateNumber: values.PlateNumber,
@@ -83,15 +83,15 @@ export default function GetDriverInfoForm({ user, Submit, driverId }: Props) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="VIN"
+          name="vehicleRegistrationNo"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>VIN</FormLabel>
+              <FormLabel>Vehicle Registration Number</FormLabel>
               <FormControl>
-                <Input placeholder="Enter 17-character VIN" {...field} />
+                <Input placeholder="Enter 17-character Vehicle Registration Number" {...field} />
               </FormControl>
               <FormDescription>
-                Vehicle Identification Number (17 characters)
+                Vehicle Registration Number (17 characters)
               </FormDescription>
               <FormMessage />
             </FormItem>

@@ -55,7 +55,9 @@ export default function MyJobs() {
       if (userId) {
         const requests = await getUnapprovedJobRequests(userId);
         setJobRequests(requests);
-        console.log(requests[0].CourierJob.collectionDate);
+        if (requests && requests.length > 0) {
+          console.log(requests[0].CourierJob.collectionDate);
+        }
       }
     };
 
@@ -90,7 +92,7 @@ export default function MyJobs() {
       {loading && (
         <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-30 backdrop-blur-md">
           <Truck className="animate-truck" width="100" height="100" />
-          <p className="text-lg text-gray-700">Loading...</p>
+          <p className="text-lg text-gray-700">____________________</p>
         </div>
       )}
 
@@ -110,7 +112,7 @@ export default function MyJobs() {
               </CardFooter>
             </Card>
 
-            <Card>
+            <Card className="hidden sm:block">
               <CardHeader className="pb-2">
                 <CardDescription>This Week</CardDescription>
                 <CardTitle className="text-4xl">M 0.00</CardTitle>
@@ -125,7 +127,7 @@ export default function MyJobs() {
               </CardFooter>
             </Card>
 
-            <Card>
+            <Card className="hidden sm:block">
               <CardHeader className="pb-2">
                 <CardDescription>This Month</CardDescription>
                 <CardTitle className="text-4xl">M 0.00</CardTitle>

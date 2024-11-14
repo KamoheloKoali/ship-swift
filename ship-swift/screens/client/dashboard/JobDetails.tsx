@@ -7,9 +7,11 @@ import {
   CreditCard,
   HandCoins,
   Loader2,
+  MapPin,
   MessageSquareDot,
   MoreVertical,
   Truck,
+  X,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -34,7 +36,9 @@ import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { updateJobStatus } from "@/actions/courierJobsActions";
 import { getContactByDriverAndClientId } from "@/actions/contactsActions";
+import MapComponent from "@/screens/global/PickUpDropOffLoc";
 import Link from "next/link";
+import DriverLocation from "./DriverLocation";
 
 interface SideCardProps {
   job: {
@@ -53,26 +57,41 @@ interface SideCardProps {
     DropOff: string;
     Title: string;
     Description: string;
+    dimensions?: string;
+    weight?: string;
+    suitableVehicles?: string;
+    parcelSize?: string;
+    Budget?: string;
+    collectionDate: string;
   };
   requests?: Array<any>;
   driver?: any;
+  Open: boolean;
 }
 
-export default function Details({ job, requests = [], driver }: SideCardProps) {
+export default function Details({
+  job,
+  requests = [],
+  driver,
+  Open,
+}: SideCardProps) {
   const [isClaimed, setIsClaimed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [isJobCompleted, setIsJobCompleted] = useState(false);
   const [isGettingContact, setIsGettingContact] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
+  const [packageSize, setPackageSize] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(Open);
 
   // Move the status check to useEffect to avoid infinite re-renders
   useEffect(() => {
     setIsClaimed(
       job.packageStatus === "claimed" ||
-      job.packageStatus === "collected" ||
-      job.packageStatus === "delivered"
+        job.packageStatus === "collected" ||
+        job.packageStatus === "delivered"
     );
+
     setIsJobCompleted(job.packageStatus === "delivered");
   }, [job.packageStatus]);
 
@@ -107,27 +126,73 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
     }
   };
 
-  const OrderDetails = () => (
-    <>
-      <div className="grid gap-3">
-        <div className="font-semibold">Order Details</div>
-        <ul className="grid gap-3">
-          <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">Item(s)</span>
-            <span className="flex-wrap">{job.Description}</span>
-          </li>
-          <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">Pick Up</span>
-            <span className="flex flex-wrap">{job.PickUp}</span>
-          </li>
-          <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">Drop Off</span>
-            <span className="flex flex-wrap">{job.DropOff}</span>
-          </li>
-        </ul>
-      </div>
-    </>
-  );
+  const OrderDetails = () => {
+    useEffect(() => {
+      if (job.parcelSize === "smallpackages") {
+        setPackageSize("Small Package");
+      } else if (job.parcelSize === "mediumpackages") {
+        setPackageSize("Medium Package");
+      } else if (job.parcelSize === "largepackages") {
+        setPackageSize("Large Package");
+      } else if (job.parcelSize === "extralargepackages") {
+        setPackageSize("Extra-Large Package");
+      }
+    }, [job.parcelSize]);
+    return (
+      <>
+        <div className="grid gap-3">
+          <div className="font-semibold">Order Details</div>
+          <ul className="grid gap-3">
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">Price</span>
+              <span className="flex-wrap">M{job.Budget}.00</span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">Item(s)</span>
+              <span className="flex-wrap">{job.Description}</span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">Weight</span>
+              <span className="flex-wrap">{job.weight}</span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">Dimensions</span>
+              <span className="flex-wrap">{job.dimensions}</span>
+            </li>
+            {/* <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">Suitable Vehicles</span>
+              <span className="flex-wrap">{job.suitableVehicles}</span>
+            </li> */}
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">Parcel Size</span>
+              <span className="flex-wrap">{packageSize}</span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">End Date</span>
+              <span className="flex-wrap">
+                {new Date(job.collectionDate).toLocaleString()}
+              </span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">Pick Up</span>
+              <span className="flex flex-wrap">
+                {job.PickUp}
+                <MapPin size={16} color="#3500f5" />
+              </span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span className="text-muted-foreground">Drop Off</span>
+              <span className="flex flex-wrap">
+                {job.DropOff}
+                <MapPin size={16} color="#bd0a0a" />
+              </span>
+            </li>
+          </ul>
+          <MapComponent pickup={job.PickUp} dropoff={job.DropOff} />
+        </div>
+      </>
+    );
+  };
 
   const PriceBreakdown = () => (
     <ul className="grid gap-3">
@@ -154,7 +219,7 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
     <>
       <div className="grid gap-3">
         <div className="font-semibold flex justify-between">
-          <p>Courier Information</p>
+          <p>Driver Information</p>
           <Button
             className=""
             variant="outline"
@@ -202,20 +267,16 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
           </div>
           <div>
             <Link href={`/driver-profile/${driver.Id}`}>
-              <Button
-              className="w-full"
-                variant="outline"
-                size="sm">
+              <Button className="w-full" variant="outline" size="sm">
                 Courier Profile
               </Button>
             </Link>
-
           </div>
         </dl>
       </div>
       <Separator className="my-2" />
       <div className="grid gap-3">
-        <div className="font-semibold">Customer Information</div>
+        <div className="font-semibold">Client Information</div>
         <dl className="grid gap-3">
           <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">Customer</dt>
@@ -270,8 +331,8 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
             {job.packageStatus === "collected"
               ? "Collected"
               : isJobCompleted
-                ? "Delivered"
-                : "Not yet collected"}
+              ? "Delivered"
+              : "Not yet collected"}
           </dd>
         </div>
       </dl>
@@ -319,153 +380,159 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
           <p className="text-lg text-gray-700">____________________</p>
         </div>
       ) : (
-        <Card className="overflow-hidden flex flex-col">
-          <CardHeader className="flex flex-row items-start bg-muted/50">
-            <div className="grid gap-0.5">
-              <CardTitle className="group flex flex-col gap-2 text-lg">
-                <div className="text-2xl flex flex-wrap">{job.Title}</div>
-                <div>
-                  Order: {job.Id}
-                  {!isClaimed && (
-                    <Button
-                      size="icon"
-                      variant="outline"
-                      className="h-6 w-6 transition-opacity group-hover:opacity-100"
-                      onClick={handleCopyId}
-                    >
-                      <Copy className="h-3 w-3" />
-                      <span className="sr-only">Copy Order ID</span>
-                    </Button>
-                  )}
-                </div>
-              </CardTitle>
-              <CardDescription>
-                Date: {new Date(job.dateCreated).toLocaleString()}
-              </CardDescription>
-            </div>
-            <div className="ml-auto flex flex-wrap md:flex-nowrap items-center gap-1">
-              {isClaimed && (
-                <>
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="h-6 w-6 transition-opacity group-hover:opacity-100"
-                    onClick={handleCopyId}
-                  >
-                    <Copy className="h-3 w-3" />
-                    <span className="sr-only">Copy Order ID</span>
-                  </Button>
+        <div
+          className={`fixed inset-0 z-50 md:relative md:inset-auto ${
+            isOpen ? "block" : "hidden"
+          }`}
+        >
+          <div
+            className="absolute inset-0 bg-black/50 md:hidden"
+            onClick={() => setIsOpen(false)}
+          />
+          <div className="relative h-full w-full md:h-auto md:w-auto">
+            <Card className="h-full overflow-auto md:h-auto md:overflow-hidden flex flex-col">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-2 top-2 md:hidden z-50"
+                onClick={() => setIsOpen(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+              <CardHeader className="flex flex-row items-start bg-muted/50">
+                <div className="grid gap-0.5">
+                  <CardTitle className="group flex flex-col gap-2 text-lg">
+                    <div className="text-2xl flex flex-wrap">{job.Title}</div>
+                    <div>
+                      Order Id: {job.Id}
+                      {!isClaimed && (
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="h-6 w-6 transition-opacity group-hover:opacity-100"
+                          onClick={handleCopyId}
+                        >
+                          <Copy className="h-3 w-3" />
+                          <span className="sr-only">Copy Order ID</span>
+                        </Button>
+                      )}
+                    </div>
+                  </CardTitle>
+                  <CardDescription>
+                    Date: {new Date(job.dateCreated).toLocaleString()}
+                  </CardDescription>
                   {!isJobCompleted && isClaimed && (
                     <>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className=" h-8 hidden gap-1 md:flex flex-wrap md:flex-nowrap"
-                        onClick={() => {
-                          window.open(
-                            `/track-delivery/${job.approvedRequestId}`,
-                            "_blank"
-                          );
-                        }}
+                      <p className="text-sm text-muted-foreground">
+                        Driver's location:
+                      </p>
+                      <Link
+                        prefetch={true}
+                        href={`/track-delivery/${job.approvedRequestId}`}
+                        target="_blank"
                       >
-                        <Truck className=" h-3.5 w-3.5" />
-                        <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                          View Map
-                        </span>
-                      </Button>
+                        <DriverLocation
+                          params={{ deliveryId: job.Id }}
+                          job={job}
+                        />
+                      </Link>
+                    </>
+                  )}
+                </div>
+                <div className="ml-auto flex flex-wrap md:flex-nowrap items-center gap-1">
+                  {isClaimed && (
+                    <>
                       <Button
                         size="icon"
                         variant="outline"
-                        className=" h-8 flex gap-1 md:hidden flex-wrap"
-                        onClick={() => {
-                          window.open(
-                            `/track-delivery/${job.approvedRequestId}`,
-                            "_blank"
-                          );
-                        }}
+                        className="h-6 w-6 transition-opacity group-hover:opacity-100"
+                        onClick={handleCopyId}
                       >
-                        <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                          Map
-                        </span>
+                        <Copy className="h-3 w-3" />
+                        <span className="sr-only">Copy Order ID</span>
                       </Button>
                     </>
                   )}
-                </>
-              )}
-              {job.packageStatus === "collected" && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button size="icon" variant="outline" className="h-8 w-8">
-                      {isCompleting ? (
-                        <Loader2 className="animate-spin h-4 w-4" />
-                      ) : (
-                        <>
-                          <MoreVertical className="h-3.5 w-3.5" />
-                          <span className="sr-only">More</span>
-                        </>
-                      )}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      onClick={() => {
-                        handleJobComplete(job.Id);
-                      }}
-                    >
-                      <Check className="h-4 w-4 mr-2" />
-                      Mark as completed
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-            </div>
-          </CardHeader>
-
-          <CardContent className="p-6 text-sm">
-            <div className="grid gap-3">
-              <OrderDetails />
-              <Separator className="my-2" />
-              {isClaimed && (
-                <>
-                  {/* <PriceBreakdown /> */}
-                  {/* <Separator className="my-4" /> */}
-                  <CustomerCourierInformation />
-                  <Separator className="my-4" />
-                  <PackageStatus />
-                  <Separator className="my-4" />
-                  <PaymentMethod />
-                </>
-              )}
-              {!isClaimed && (
-                <div className="">
-                  {requests.length > 0 ? (
-                    requests.map((driver: any) => (
-                      <>
-                        <DriverProfile
-                          key={driver.Id}
-                          driver={driver}
-                          job={job}
-                        />
-                        <Separator className="my-2" />
-                      </>
-                    ))
-                  ) : (
-                    <div className="w-full text-center">No Applicants</div>
+                  {job.packageStatus === "collected" && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="h-8 w-8"
+                        >
+                          {isCompleting ? (
+                            <Loader2 className="animate-spin h-4 w-4" />
+                          ) : (
+                            <>
+                              <MoreVertical className="h-3.5 w-3.5" />
+                              <span className="sr-only">More</span>
+                            </>
+                          )}
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => {
+                            handleJobComplete(job.Id);
+                          }}
+                        >
+                          <Check className="h-4 w-4 mr-2" />
+                          Mark as completed
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   )}
                 </div>
-              )}
-            </div>
-          </CardContent>
+              </CardHeader>
 
-          <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
-            <div className="text-xs text-muted-foreground">
-              Created{" "}
-              <time dateTime={job.dateCreated}>
-                {new Date(job.dateCreated).toLocaleString()}
-              </time>
-            </div>
-          </CardFooter>
-        </Card>
+              <CardContent className="p-6 text-sm">
+                <div className="grid gap-3">
+                  <OrderDetails />
+                  <Separator className="my-2" />
+                  {isClaimed && (
+                    <>
+                      {/* <PriceBreakdown /> */}
+                      {/* <Separator className="my-4" /> */}
+                      <CustomerCourierInformation />
+                      <Separator className="my-4" />
+                      <PackageStatus />
+                      <Separator className="my-4" />
+                      <PaymentMethod />
+                    </>
+                  )}
+                  {!isClaimed && (
+                    <div className="">
+                      {requests.length > 0 ? (
+                        requests.map((driver: any) => (
+                          <>
+                            <DriverProfile
+                              key={driver.Id}
+                              driver={driver}
+                              job={job}
+                            />
+                            <Separator className="my-2" />
+                          </>
+                        ))
+                      ) : (
+                        <div className="w-full text-center">No Applicants</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+
+              <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
+                <div className="text-xs text-muted-foreground">
+                  Created{" "}
+                  <time dateTime={job.dateCreated}>
+                    {new Date(job.dateCreated).toLocaleString()}
+                  </time>
+                </div>
+              </CardFooter>
+            </Card>
+          </div>
+        </div>
       )}
     </>
   );

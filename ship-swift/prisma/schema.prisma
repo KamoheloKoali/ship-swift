@@ -110,10 +110,10 @@ model CourierJobs {
   collectionDate     DateTime        @default(now())
   dateCreated        DateTime        @default(now())
   packageStatus      String?         @default("")
-  approvedRequestId  String?         @unique
   dimensions         String?         @default("")
-  suitableVehicles   String?         @default("")
   weight             String?         @default("")
+  suitableVehicles   String?         @default("")
+  approvedRequestId  String?         @unique
   activeJobs         ActiveJobs[]
   approvedRequest    JobRequest?     @relation("ApprovedRequest", fields: [approvedRequestId], references: [Id])
   client             clients         @relation(fields: [clientId], references: [Id])

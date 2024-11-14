@@ -1,5 +1,6 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
+import notifyAboutJob from "./knock";
 
 const prisma = new PrismaClient();
 
@@ -9,6 +10,7 @@ export async function createActiveJob(data: {
   clientId: string;
   startDate: string;
 }) {
+  // remember to send notification to driver that they have been hired for a new job here
   try {
     const newJob = await prisma.activeJobs.create({
       data: {
@@ -17,7 +19,21 @@ export async function createActiveJob(data: {
         clientId: data.clientId,
         startDate: data.startDate,
       },
+      include: {
+        Client: true,
+        Driver: true,
+        CourierJob: true,
+      }
     });
+
+    if (newJob.Id) {
+      await notifyAboutJob(
+        newJob.Driver,
+        newJob.CourierJob,
+        "",
+        newJob.Client.firstName || "" + newJob.Client.lastName || "",
+      );
+    }
     return newJob;
   } catch (error) {
     console.error("Error creating ActiveJob:", error);

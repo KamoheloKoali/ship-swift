@@ -92,6 +92,17 @@ export const formatDate = (dateString: string) => {
   return `${formattedDay} ${formattedMonth} ${formattedYear} ${hours}:${minutes}`;
 };
 
+export const formatDateNoHrs = (dateString: string) => {
+  const [day, month, year] = dateString.split("/").map(Number); // Split and convert to numbers
+  const date = new Date(year, month - 1, day); // Create date object (month is zero-indexed)
+
+  const formattedDay = date.getDate().toString().padStart(2, "0");
+  const formattedMonth = date.toLocaleString(undefined, { month: "short" });
+  const formattedYear = date.getFullYear();
+
+  return `${formattedDay} ${formattedMonth} ${formattedYear}`;
+};
+
 export const filterJobsByStatus = (
   jobs: ActiveJob[] | undefined,
   status: string

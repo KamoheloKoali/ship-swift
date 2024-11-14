@@ -23,7 +23,9 @@ export default function RequestDetails({ request }: RequestDetailsProps) {
           <div className="grid gap-0.5">
             <CardTitle className="group flex items-center gap-2 text-lg">
               {request.CourierJob.Title}
-              <StatusBadge status={request.isApproved ? "Approved" : "Pending"} />
+              <StatusBadge
+                status={request.isApproved ? "Approved" : "Pending"}
+              />
               <Button
                 size="icon"
                 variant="outline"
@@ -36,7 +38,8 @@ export default function RequestDetails({ request }: RequestDetailsProps) {
             <CardDescription>
               Request ID: {request.Id}
               <br />
-              Date Created: {new Date(request.CourierJob.dateCreated).toLocaleString()}
+              Date Created:{" "}
+              {new Date(request.CourierJob.dateCreated).toLocaleString()}
             </CardDescription>
           </div>
         </CardHeader>
@@ -62,7 +65,9 @@ export default function RequestDetails({ request }: RequestDetailsProps) {
               </li>
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Collection Date</span>
-                <span>{new Date(request.CourierJob.collectionDate).toLocaleString()}</span>
+                <span>
+                  {new Date(request.CourierJob.collectionDate).toLocaleString()}
+                </span>
               </li>
             </ul>
             <div className="grid gap-3">
@@ -71,7 +76,8 @@ export default function RequestDetails({ request }: RequestDetailsProps) {
                 <div className="flex items-center justify-between">
                   <dt className="text-muted-foreground">Name</dt>
                   <dd>
-                    {request.CourierJob.client.firstName} {request.CourierJob.client.lastName}
+                    {request.CourierJob.client.firstName}{" "}
+                    {request.CourierJob.client.lastName}
                   </dd>
                 </div>
               </dl>
@@ -80,7 +86,8 @@ export default function RequestDetails({ request }: RequestDetailsProps) {
         </CardContent>
         <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
           <div className="flex-grow text-muted-foreground">
-            Payment Status: <span>Pending</span> {/* Adjust based on your logic */}
+            Payment Status: <span>Pending</span>{" "}
+            {/* Adjust based on your logic */}
           </div>
           <Button size="icon" variant="outline">
             <MoreVertical className="h-4 w-4" />

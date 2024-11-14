@@ -68,7 +68,7 @@ const JobsRequestsTable: React.FC<JobsRequestsTableProps> = ({
           );
 
           // If you want to select the first job as the default, you can do it here
-          if (sortedJobs.length > 0) {
+          if (sortedJobs.length > 0 && window.innerWidth >= 768) {
             setSelectedJob(sortedJobs[0]);
             onJobSelect(sortedJobs[0]);
           }

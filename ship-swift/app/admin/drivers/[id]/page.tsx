@@ -31,7 +31,7 @@ type Driver = {
   vehicleType: string | null;
   dateCreated: string;
   dateUpdated: string;
-  VIN: string | null;
+  vehicleRegistrationNo: string | null;
   idNumber: string | null;
   licenseExpiry: string | null;
   licenseNumber: string | null;
@@ -57,7 +57,7 @@ export default function DriverPage() {
     vehicleType: null,
     dateCreated: "",
     dateUpdated: "",
-    VIN: null,
+    vehicleRegistrationNo: null,
     idNumber: null,
     licenseExpiry: null,
     licenseNumber: null,
@@ -154,8 +154,8 @@ export default function DriverPage() {
                 <p>{driver.vehicleType || "N/A"}</p>
               </div>
               <div>
-                <p className="font-semibold">VIN:</p>
-                <p>{driver.VIN || "N/A"}</p>
+                <p className="font-semibold">Vehicle Registration Number:</p>
+                <p>{driver.vehicleRegistrationNo || "N/A"}</p>
               </div>
               <div>
                 <p className="font-semibold">ID Number:</p>
