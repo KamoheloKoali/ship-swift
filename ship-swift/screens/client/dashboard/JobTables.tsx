@@ -17,6 +17,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { formatDateNoHrs } from "@/screens/courier/dashboard/components/utils/jobTable";
+import { StatusBadge } from "@/screens/courier/dashboard/components/JobsTable";
 
 interface TableProps {
   jobs: any[] | undefined;
@@ -92,9 +94,22 @@ const JobsTable: FC<TableProps> = ({
                   {job.DropOff}
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  {new Date(job.collectionDate).toString()}
+                  {formatDateNoHrs(job.collectionDate)}
                 </TableCell>
-                <TableCell className="text-right">M{job.Budget}.00</TableCell>
+                <TableCell className="text-right">
+                  <div className="flex flex-col items-end gap-1">
+                    M{job.Budget}.00
+                    <StatusBadge
+                      status={
+                        job.packageStatus === "claimed"
+                          ? "ongoing"
+                          : job.packageStatus === "unclaimed"
+                          ? "unclaimed"
+                          : "collected"
+                      }
+                    />
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
