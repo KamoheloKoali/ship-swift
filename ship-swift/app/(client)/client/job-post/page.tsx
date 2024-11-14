@@ -121,10 +121,18 @@ export default function PostJobWizard() {
       .min(5, "Description must be at least 5 characters long")
       .max(1000, "Description must not exceed 1000 characters"),
     budget: z.string(),
-    pickUp: z.string().min(5, "Pickup address must be at least 5 characters long"),
-    dropOff: z.string().min(5, "Dropoff address must be at least 5 characters long"),
-    districtPickup: z.string().min(2, "District pickup must be at least 2 characters long"),
-    districtDropoff: z.string().min(2, "District dropoff must be at least 2 characters long"),
+    pickUp: z
+      .string()
+      .min(5, "Pickup address must be at least 5 characters long"),
+    dropOff: z
+      .string()
+      .min(5, "Dropoff address must be at least 5 characters long"),
+    districtPickup: z
+      .string()
+      .min(2, "District pickup must be at least 2 characters long"),
+    districtDropoff: z
+      .string()
+      .min(2, "District dropoff must be at least 2 characters long"),
     weight: z.string(),
     dimensions: z.string(),
     suitableVehicles: z.string(),
@@ -132,30 +140,34 @@ export default function PostJobWizard() {
     pickupPhoneNumber: phoneNumberSchema,
     dropoffPhoneNumber: phoneNumberSchema,
     dropoffEmail: z.string().email("Invalid email address"),
-    collectionDate: z.date().min(new Date(), "Collection date must be in the future"),
-  })
-  
-  type FormData = z.infer<typeof formSchema>
-    const [formData, setFormData] = useState<FormData>({
-      packageSize: 1,
-      title: '',
-      description: '',
-      budget: '80',
-      pickUp: '',
-      dropOff: '',
-      districtPickup: '',
-      districtDropoff: '',
-      parcelSize: '',
-      pickupPhoneNumber: '' as E164Number,
-      dropoffPhoneNumber: '' as E164Number,
-      dropoffEmail: '',
-      collectionDate: null as unknown as Date,
-      weight: '',
-      dimensions: '',
-      suitableVehicles: '',
-    })
-  
-    const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({})
+    collectionDate: z
+      .date()
+      .min(new Date(), "Collection date must be in the future"),
+  });
+
+  type FormData = z.infer<typeof formSchema>;
+  const [formData, setFormData] = useState<FormData>({
+    packageSize: 1,
+    title: "",
+    description: "",
+    budget: "80",
+    pickUp: "",
+    dropOff: "",
+    districtPickup: "",
+    districtDropoff: "",
+    parcelSize: "",
+    pickupPhoneNumber: "" as E164Number,
+    dropoffPhoneNumber: "" as E164Number,
+    dropoffEmail: "",
+    collectionDate: null as unknown as Date,
+    weight: "",
+    dimensions: "",
+    suitableVehicles: "",
+  });
+
+  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>(
+    {}
+  );
 
   const totalSteps = 6;
   const exampleTitles = [
@@ -299,6 +311,7 @@ export default function PostJobWizard() {
 
   const handleDirectRequest = async () => {
     if (driverId) {
+      setIsSubmitting(true);
       const formDataToSubmit = new FormData();
 
       // Log formData and userId for debugging purposes
@@ -325,6 +338,7 @@ export default function PostJobWizard() {
       );
 
       if (response.success) {
+        setIsSubmitting(false);
         toast({
           description: "Job created successfully!",
         });
@@ -363,7 +377,10 @@ export default function PostJobWizard() {
                       ...formData,
                       packageSize: size.id,
                       budget: size.price.toString(),
-                      parcelSize: size.name.toLowerCase().replace(/\s/g, "").replace("-", ""),
+                      parcelSize: size.name
+                        .toLowerCase()
+                        .replace(/\s/g, "")
+                        .replace("-", ""),
                       weight: size.weight,
                       dimensions: size.dimensions,
                       suitableVehicles: size.vehicles,
@@ -373,7 +390,9 @@ export default function PostJobWizard() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <size.icon className="w-8 h-8" />
-                      <span className="text-2xl font-bold">M{size.price}.00</span>
+                      <span className="text-2xl font-bold">
+                        M{size.price}.00
+                      </span>
                     </div>
                     <h3 className="text-lg font-semibold mb-2">{size.name}</h3>
                     <p className="text-sm text-muted-foreground mb-2">
@@ -611,7 +630,12 @@ export default function PostJobWizard() {
                   mode="single"
                   selected={formData.collectionDate || undefined}
                   onSelect={(date) =>
-                    setFormData({ ...formData, collectionDate: date ? new Date(date.setHours(0, 0, 0, 0)) : new Date(new Date().setHours(0, 0, 0, 0)) })
+                    setFormData({
+                      ...formData,
+                      collectionDate: date
+                        ? new Date(date.setHours(0, 0, 0, 0))
+                        : new Date(new Date().setHours(0, 0, 0, 0)),
+                    })
                   }
                   initialFocus
                 />
@@ -661,16 +685,10 @@ export default function PostJobWizard() {
             }
           >
             {step === totalSteps ? (
-              driverId ? (
-                isSubmitting ? (
-                  <Loader2 className="animate-spin h-4 w-4" />
-                ) : (
-                  <Send className="w-8 h-8" />
-                )
-              ) : isSubmitting ? (
+              isSubmitting ? (
                 <Loader2 className="animate-spin h-4 w-4" />
               ) : (
-                <Send className="w-12 h-12" />
+                <Send className={driverId ? "w-8 h-8" : "w-12 h-12"} />
               )
             ) : (
               "Next"

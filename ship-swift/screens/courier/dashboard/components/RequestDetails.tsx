@@ -1,6 +1,7 @@
 import React from "react";
 import { Copy, CreditCard, MoreVertical, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 import {
   Card,
   CardContent,
@@ -21,9 +22,13 @@ interface RequestDetailsProps {
 export default function RequestDetails({ request }: RequestDetailsProps) {
   const approveRequest = async () => {
     try {
-      await approveDirectRequest(request.Id);
-      // Optional: Add success feedback for the user, e.g., refresh the list or show a confirmation message
-      console.log("Request approved successfully.");
+      const requestObj = await approveDirectRequest(request.Id);
+      if (requestObj) {
+        toast({
+          title: "Request approved",
+          description: "Your request has been approved.",
+        });
+      }
     } catch (error) {
       console.error("Error approving request:", error);
       // Optional: Display an error message to the user
