@@ -140,9 +140,6 @@ export default function Header() {
                 onClose={handleCloseSheet}
               />
 
-              {/* Switch User Button */}
-              <SwitchUser />
-
               {/* User Button (Clerk) - Only visible on small screens in Sheet */}
               <div className="lg:hidden flex justify-between p-3 rounded-sm bg-slate-200">
                 <p>Account</p>
