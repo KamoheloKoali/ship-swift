@@ -60,7 +60,7 @@ type JobStatusType = (typeof JOB_STATUS)[keyof typeof JOB_STATUS];
 
 export const StatusBadge: FC<{ status: string }> = ({ status }) => (
   <span
-    className={`px-2 py-1 rounded-full text-xs font-medium ${
+    className={`px-2 py-1 rounded-full text-xs font-medium flex items-center ${
       STATUS_STYLES[status as keyof typeof STATUS_STYLES]
     }`}
   >

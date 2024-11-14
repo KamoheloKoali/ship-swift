@@ -118,12 +118,6 @@ export default function Details({ job }: JobDetailsProps) {
                 <span className="flex-wrap">{job.CourierJob.dimensions}</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Suitable Vehicles</span>
-                <span className="flex-wrap">
-                  {job.CourierJob.suitableVehicles}
-                </span>
-              </li>
-              <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Parcel Size</span>
                 <span>{job.CourierJob.parcelSize}</span>
               </li>

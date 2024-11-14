@@ -66,9 +66,9 @@ export default function MyJobs() {
 
   useEffect(() => {
     const handleNewJob = (payload: any) => {
-      console.log("Subscription payload received:", payload);
-      console.log("Current userId:", userId);
-      console.log("New job clientId:", payload.new.clientId);
+      // console.log("Subscription payload received:", payload);
+      // console.log("Current userId:", userId);
+      // console.log("New job clientId:", payload.new.clientId);
       try {
         const newJob = payload.new;
         console.log(payload.new);
@@ -114,9 +114,12 @@ export default function MyJobs() {
       if (job.isDirect) {
         // Get driver from DirectRequest
         const directRequest = await getDirectRequestsByCourierJobId(job.id);
-        if (directRequest && directRequest.length > 0 && directRequest[0].driverId) {
+        if (
+          directRequest &&
+          directRequest.length > 0 &&
+          directRequest[0].driverId
+        ) {
           const driver = await getDriverByID(directRequest[0].driverId);
-          console.log(driver);
           setRequests([driver]); // Assuming you want to set the direct driver only
         }
       } else {
@@ -137,7 +140,7 @@ export default function MyJobs() {
       job.packageStatus === "delivered"
     ) {
       // If the package is claimed, collected, or delivered, fetch the driver based on the job's driverId
-      if (job.driverId) {
+      if (job.Id) {
         const driver = await getDriverDetails(job);
         setDriver(driver);
       }
@@ -196,7 +199,7 @@ export default function MyJobs() {
                 requests={requests}
                 driver={driver}
                 Open={open}
-             />
+              />
             )
           )}
         </main>
