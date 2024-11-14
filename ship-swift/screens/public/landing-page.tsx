@@ -66,19 +66,21 @@ export default function ShipSwiftLanding() {
                   Connect with local drivers for fast, reliable parcel
                   deliveries. Ship Swift - Your Community Delivery Network.
                 </p>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                <div className="flex gap-2 min-[400px]:flex-row flex-row">
                   <Link href="/sign-up">
                     <Button className="inline-flex items-center justify-center text-base font-bold bg-white text-black hover:bg-gray-200">
                       Get Started
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
+                  <Link href="">
                   <Button
                     variant="outline"
-                    className="text-base font-bold text-black border-white hover:bg-white hover:text-black"
+                    className="text-base font-bold bg-black text-white border-white hover:bg-white hover:text-black"
                   >
                     Learn More
                   </Button>
+                  </Link>
                 </div>
               </div>
               <div
@@ -248,7 +250,7 @@ export default function ShipSwiftLanding() {
             <video
               key={activeTab}
               src={tabVideos[activeTab]}
-              className="w-96 h-96 shadow-2xl rounded-xl lg:relative absolute mt-4 "
+              className="w-96 h-96 shadow-2xl rounded-xl lg:relative absolute mt-4 hidden lg:block"
               autoPlay
               loop
               muted
