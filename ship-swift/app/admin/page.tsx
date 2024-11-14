@@ -18,6 +18,7 @@ import { getUnverifiedClients, verifyClient } from "@/actions/clientActions";
 import { getUnverifiedDrivers, VerifyDriver } from "@/actions/driverActions";
 import { toast } from "@/hooks/use-toast";
 import GetDriverInfoForm from "@/screens/admin/SubmitDriverInfoForm";
+import Image from "next/image";
 
 type User = {
   id: string;
@@ -28,7 +29,7 @@ type User = {
   idImage: string;
   idPhotoUrl?: string;
   selfieImage: string;
-  licensePhotoUrl?: string;
+  driverLicenseImage?: string;
 };
 
 export default function AdminDashboard() {
@@ -147,30 +148,36 @@ export default function AdminDashboard() {
         <CardDescription>{user.email}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
+        <div className="grid grid-cols-2 gap-4 ">
+          <div className="flex flex-col items-center justify-center">
             <p className="text-sm font-medium mb-2">ID Document</p>
-            <img
-              src={user.idPhotoUrl}
+            <Image
+              src={user.idImage || ""}
               alt="ID Document"
-              className="w-full h-40 object-cover rounded-md"
+              className="w-full md:w-[50%] h-[250px] object-cover rounded-md"
+              width={300}
+              height={300}
             />
           </div>
-          <div>
+          <div className="flex flex-col items-center justify-center">
             <p className="text-sm font-medium mb-2">Selfie</p>
-            <img
-              src={user.selfieImage}
+            <Image
+              src={user.selfieImage || ""}
               alt="Selfie"
-              className="w-full h-40 object-cover rounded-md"
+              className="w-full md:w-[50%] h-[300px] object-cover rounded-md"
+              width={300}
+              height={300}
             />
           </div>
           {user.type === "courier" && (
-            <div className="col-span-2">
+            <div className="col-span-2 flex flex-col items-center justify-center">
               <p className="text-sm font-medium mb-2">Driver's License</p>
-              <img
-                src={user.licensePhotoUrl}
+              <Image
+                src={user.driverLicenseImage || ""}
                 alt="Driver's License"
-                className="w-full h-40 object-cover rounded-md"
+                className="w-full md:w-[50%] h-[300px] object-cover rounded-md"
+                width={300}
+                height={300}
               />
             </div>
           )}
