@@ -31,19 +31,35 @@ export async function createJobRequest(data: {
     await notifyAboutJob(
       Client,
       jobRequest.CourierJob,
-      jobRequest.Driver.firstName || "" + jobRequest.Driver.lastName || "",
+      jobRequest.Driver.firstName || "" + jobRequest.Driver.lastName || ""
     );
   }
   return jobRequest;
 }
 
 export async function getAllJobRequests() {
-  const jobRequests = await prisma.jobRequest.findMany({
-    include: {
-      CourierJob: true, // Include related CourierJob details
-      Driver: true, // Include related Driver details
+  const directRequests = await prisma.directRequest.findMany({
+    select: {
+      courierJobId: true,
     },
   });
+
+  const excludedJobIds = directRequests.map((request) => request.courierJobId);
+
+  const jobRequests = await prisma.jobRequest.findMany({
+    where: {
+      NOT: {
+        courierJobId: {
+          in: excludedJobIds,
+        },
+      },
+    },
+    include: {
+      CourierJob: true,
+      Driver: true,
+    },
+  });
+
   return jobRequests;
 }
 

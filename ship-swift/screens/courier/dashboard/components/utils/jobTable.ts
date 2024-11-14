@@ -47,6 +47,7 @@ export interface JobRequest {
 
 // constants.ts
 export const JOB_STATUS = {
+  UNCLAIMED: "unclaimed",
   Ongoing: "ongoing",
   COLLECTED: "collected",
   DELIVERED: "delivered",
@@ -73,6 +74,7 @@ export const STATUS_ACTIONS = {
 } as const;
 
 export const STATUS_STYLES = {
+  [JOB_STATUS.UNCLAIMED]: "bg-red-100 text-red-800",
   [JOB_STATUS.Ongoing]: "bg-yellow-100 text-yellow-800",
   [JOB_STATUS.COLLECTED]: "bg-blue-100 text-blue-800",
   [JOB_STATUS.DELIVERED]: "bg-green-100 text-green-800",
@@ -93,14 +95,14 @@ export const formatDate = (dateString: string) => {
 };
 
 export const formatDateNoHrs = (dateString: string) => {
-  const [day, month, year] = dateString.split("/").map(Number); // Split and convert to numbers
-  const date = new Date(year, month - 1, day); // Create date object (month is zero-indexed)
-
-  const formattedDay = date.getDate().toString().padStart(2, "0");
-  const formattedMonth = date.toLocaleString(undefined, { month: "short" });
-  const formattedYear = date.getFullYear();
-
-  return `${formattedDay} ${formattedMonth} ${formattedYear}`;
+  const date = new Date(dateString);
+  return date
+    .toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    })
+    .replace(",", "");
 };
 
 export const filterJobsByStatus = (

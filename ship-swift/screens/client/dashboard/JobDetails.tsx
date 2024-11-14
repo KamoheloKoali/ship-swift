@@ -39,6 +39,8 @@ import { getContactByDriverAndClientId } from "@/actions/contactsActions";
 import MapComponent from "@/screens/global/PickUpDropOffLoc";
 import Link from "next/link";
 import DriverLocation from "./DriverLocation";
+import { formatDateNoHrs } from "@/screens/courier/dashboard/components/utils/jobTable";
+import { StatusBadge } from "@/screens/courier/dashboard/components/JobsTable";
 
 interface SideCardProps {
   job: {
@@ -63,6 +65,7 @@ interface SideCardProps {
     parcelSize?: string;
     Budget?: string;
     collectionDate: string;
+    isDirect?: boolean;
   };
   requests?: Array<any>;
   driver?: any;
@@ -77,14 +80,15 @@ export default function Details({
 }: SideCardProps) {
   const [isClaimed, setIsClaimed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [jobIsDirect, setJobIsDirect] = useState(false);
   const router = useRouter();
   const [isJobCompleted, setIsJobCompleted] = useState(false);
   const [isGettingContact, setIsGettingContact] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
   const [packageSize, setPackageSize] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(Open);
-
   // Move the status check to useEffect to avoid infinite re-renders
+
   useEffect(() => {
     setIsClaimed(
       job.packageStatus === "claimed" ||
@@ -170,7 +174,7 @@ export default function Details({
             <li className="flex items-center justify-between">
               <span className="text-muted-foreground">End Date</span>
               <span className="flex-wrap">
-                {new Date(job.collectionDate).toLocaleString()}
+                {formatDateNoHrs(job.collectionDate)}
               </span>
             </li>
             <li className="flex items-center justify-between">
@@ -266,7 +270,7 @@ export default function Details({
             </dd>
           </div>
           <div>
-            <Link href={`/driver-profile/${driver.Id}`}>
+            <Link href={`/driver-profile/${driver.Id}`} prefetch={true}>
               <Button className="w-full" variant="outline" size="sm">
                 Courier Profile
               </Button>
@@ -302,6 +306,13 @@ export default function Details({
                 {job.client?.phoneNumber}
               </a>
             </dd>
+          </div>
+          <div>
+            <Link href={`/client-profile/${job.client?.Id}`} prefetch={true}>
+              <Button className="w-full" variant="outline" size="sm">
+                Client Profile
+              </Button>
+            </Link>
           </div>
         </dl>
       </div>
@@ -391,7 +402,19 @@ export default function Details({
               <CardHeader className="flex flex-row items-start bg-muted/50">
                 <div className="grid gap-0.5">
                   <CardTitle className="group flex flex-col gap-2 text-lg">
-                    <div className="text-2xl flex flex-wrap">{job.Title}</div>
+                    <div className="text-xl flex flex-wrap gap-1">
+                      {job.Title}{" "}
+                      <StatusBadge
+                        status={
+                          job.packageStatus === "claimed"
+                            ? "ongoing"
+                            : job.packageStatus === "unclaimed"
+                            ? "unclaimed"
+                            : "collected"
+                        }
+                      />
+                    </div>
+
                     <div>
                       Order Id: {job.Id}
                       {!isClaimed && (

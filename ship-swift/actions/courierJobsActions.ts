@@ -22,6 +22,7 @@ export const createJob = async (jobData: FormData) => {
       | null;
     const dropOffEmail = jobData.get("dropoffEmail") as string | null;
     const collectionDate = jobData.get("collectionDate") as string | null;
+    const isDirect = jobData.get("isDirect") === "true" ? true : false; // Default to false if not provided
     const weight = jobData.get("weight") as string | null;
     const dimensions = jobData.get("dimensions") as string | null;
     const suitableVehicles = jobData.get("suitableVehicles") as string | null;
@@ -51,6 +52,7 @@ export const createJob = async (jobData: FormData) => {
         weight: weight,
         dimensions: dimensions,
         suitableVehicles: suitableVehicles,
+        isDirect: isDirect, // Add the isDirect flag to the job data
       },
     });
 
@@ -70,7 +72,8 @@ export const getAllJobs = async () => {
       include: { client: true }, // Include client data if needed
       where: {
         packageStatus: "unclaimed",
-      },
+        isDirect: false,
+      }
     });
     return { success: true, data: jobs };
   } catch (error) {
@@ -83,7 +86,10 @@ export const getAllJobsFiltered = async (clientId: string) => {
   try {
     const jobs = await prisma.courierJobs.findMany({
       where: { clientId: clientId },
-      include: { client: true }, // Include client data if needed
+      include: {
+        client: true, // Always include DirectRequest
+        DirectRequest: true,
+      },
     });
     return { success: true, data: jobs };
   } catch (error) {

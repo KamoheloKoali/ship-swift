@@ -23,7 +23,7 @@ export async function createActiveJob(data: {
         Client: true,
         Driver: true,
         CourierJob: true,
-      }
+      },
     });
 
     if (newJob.Id) {
@@ -31,7 +31,7 @@ export async function createActiveJob(data: {
         newJob.Driver,
         newJob.CourierJob,
         "",
-        newJob.Client.firstName || "" + newJob.Client.lastName || "",
+        newJob.Client.firstName || "" + newJob.Client.lastName || ""
       );
     }
     return newJob;

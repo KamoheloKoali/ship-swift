@@ -14,6 +14,9 @@ import { useAuth } from "@clerk/nextjs";
 import { approveJobRequest } from "@/actions/jobRequestActions";
 import { useRouter } from "next/navigation";
 import MapComponent from "@/screens/track-delivery/ReverseGeocoding";
+import { StarRating } from "@/app/(client)/driver-profile/components/ReviewSection/components/StarRating";
+import { useDriverReviews } from "@/app/(client)/driver-profile/components/ReviewSection/hooks/useDriverReviews";
+import Link from "next/link";
 
 type Props = {
   driver: any;
@@ -27,10 +30,26 @@ const DriverProfile = ({ driver, job }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [isWindow, setIsWindow] = useState(false);
-  
-    useEffect(() => {
-      setIsWindow(typeof window !== "undefined");
-    }, []);
+  const [isJobDirect, setIsJobDirect] = useState(false);
+  const [overallReview, setOverAllReview] = useState(0);
+  const { reviews } = useDriverReviews(driver.Id);
+
+  useEffect(() => {
+    setIsWindow(typeof window !== "undefined");
+  }, []);
+
+  useEffect(() => {
+    if (job.isDirect) {
+      setIsJobDirect(true);
+    }
+    if (reviews) {
+      const overallRating = reviews.reduce((acc, review) => {
+        return acc + review.rating;
+      }, 0);
+      setOverAllReview(overallRating / reviews.length);
+    }
+  }, [job.isDirect]);
+
   const hire = async () => {
     setIsLoading(true);
     const response = await approveJobRequest({
@@ -58,17 +77,21 @@ const DriverProfile = ({ driver, job }: Props) => {
         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
           <h3 className="text-lg font-semibold">{`${driver.firstName} ${driver.lastName}`}</h3>
           <Badge variant="secondary" className="w-fit">
-            Top Rated Plus
+            <StarRating rating={overallReview} />
           </Badge>
         </div>
 
         <div className="space-y-1">
           <p className="text-sm text-gray-500">
-            Professional Driver | 5+ Years Experience
-          </p>
-          <p className="text-sm text-gray-500">
-            {driver.location ? driver.location : "Location Not Available"}
-            {isWindow ? <MapComponent initialPosition={{ lat: 51.505, lng: -0.09 }} zoomLevel={13} driverId={driver.Id} /> : null}
+            {/* {driver.location ? driver.location : "Address Not Available"} */}
+            current location:
+            {isWindow ? (
+              <MapComponent
+                initialPosition={{ lat: 51.505, lng: -0.09 }}
+                zoomLevel={13}
+                driverId={driver.Id}
+              />
+            ) : null}
           </p>
         </div>
 
@@ -89,7 +112,7 @@ const DriverProfile = ({ driver, job }: Props) => {
                 variant="outline"
                 className="w-full sm:w-auto flex items-center gap-2"
                 onClick={hire}
-                disabled={isHired || isError}
+                disabled={isHired || isError || isJobDirect}
               >
                 {isHired ? (
                   <>
@@ -103,8 +126,14 @@ const DriverProfile = ({ driver, job }: Props) => {
                   </>
                 ) : (
                   <>
-                    <Truck className="h-4 w-4" />
-                    <span>Hire</span>
+                    {isJobDirect ? (
+                      <div>Not Approved</div>
+                    ) : (
+                      <>
+                        <Truck className="h-4 w-4" />
+                        <span>Hire</span>
+                      </>
+                    )}
                   </>
                 )}
               </Button>
@@ -125,7 +154,7 @@ const DriverProfile = ({ driver, job }: Props) => {
         <div className="flex flex-wrap">
           <dl className="grid gap-3  w-full">
             <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground">Courier</dt>
+              <dt className="text-muted-foreground">Driver</dt>
               <dd className="flex flex-wrap">
                 {driver?.firstName} {driver?.lastName}
               </dd>
@@ -151,11 +180,11 @@ const DriverProfile = ({ driver, job }: Props) => {
           </dl>
         </div>
 
-        {/* <p className="text-sm">
-          Experienced driver with a perfect safety record. Specializing in
-          efficient city and highway deliveries. Known for punctuality and
-          excellent customer service.
-        </p> */}
+        <Link href={`/driver-profile/${driver.Id}`} prefetch={true}>
+          <Button className="w-full" variant="outline" size="sm">
+            Courier Profile
+          </Button>
+        </Link>
       </div>
     </div>
   );

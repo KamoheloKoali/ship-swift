@@ -1,10 +1,11 @@
 "use client";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
+import { useSearchParams } from "next/navigation";
+import { Send } from "lucide-react";
 import type { E164Number } from "libphonenumber-js/core";
 import {
   Popover,
@@ -34,6 +35,7 @@ import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { getClientById } from "@/actions/clientActions";
+import { createJobAndDirectRequest } from "@/screens/client/utils/directRequests";
 
 const packageSizes = [
   {
@@ -106,6 +108,8 @@ export default function PostJobWizard() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const { userId } = useAuth();
+  const searchParams = useSearchParams();
+  const driverId = searchParams.get("driverId");
   const formSchema = z.object({
     packageSize: z.number().min(1).max(5),
     title: z
@@ -305,6 +309,65 @@ export default function PostJobWizard() {
     }
   };
 
+  const handleDirectRequest = async () => {
+    if (!driverId) return;
+
+    // Check if user is verified (similar to handleNext)
+    setIsSubmitting(true);
+    try {
+      const client = await getClientById(userId || "");
+      if (!client.data?.isVerified) {
+        setIsSubmitting(false);
+        toast({
+          title: "You must be verified to post a job",
+          description:
+            "Please wait until your account is verified to post a job",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const formDataToSubmit = new FormData();
+
+      // Add form data entries to FormData
+      Object.entries(formData).forEach(([key, value]) => {
+        if (typeof value === "string" || value instanceof Blob) {
+          formDataToSubmit.append(key, value);
+        } else if (typeof value === "number" || value instanceof Date) {
+          formDataToSubmit.append(key, value.toString());
+        }
+      });
+
+      formDataToSubmit.append("clientId", userId || "");
+
+      const response = await createJobAndDirectRequest(
+        formDataToSubmit,
+        userId || "",
+        driverId
+      );
+
+      if (response.success) {
+        toast({
+          description: "Job created successfully!",
+        });
+        router.push("/client");
+      } else {
+        toast({
+          description: response.error,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An error occurred while creating the job",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
   const renderStep = () => {
     switch (step) {
       case 1:
@@ -629,7 +692,9 @@ export default function PostJobWizard() {
             Back
           </Button>
           <Button
-            onClick={handleNext}
+            onClick={
+              step === totalSteps && driverId ? handleDirectRequest : handleNext
+            }
             disabled={
               (step === 1 && !formData.packageSize) ||
               (step === 2 && !formData.title) ||
@@ -640,7 +705,7 @@ export default function PostJobWizard() {
               isSubmitting ? (
                 <Loader2 className="animate-spin h-4 w-4" />
               ) : (
-                "Post Job"
+                <Send className={driverId ? "w-8 h-8" : "w-12 h-12"} />
               )
             ) : (
               "Next"

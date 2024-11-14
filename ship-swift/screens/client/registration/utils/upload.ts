@@ -2,6 +2,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth } from "@clerk/nextjs";
+import { updateClient } from "@/actions/clientActions";
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -36,6 +37,11 @@ export async function uploadImage(
       .getPublicUrl(`${folder}/${fileName}`);
 
     if (publicData) {
+      if (folder === "client-photo-rt") {
+        await updateClient(clerkId, {
+          selfieImage: publicData.publicUrl,
+        });
+      }
       return { url: publicData.publicUrl, error: null };
     }
 

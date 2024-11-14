@@ -110,10 +110,11 @@ model CourierJobs {
   collectionDate     DateTime        @default(now())
   dateCreated        DateTime        @default(now())
   packageStatus      String?         @default("")
-  dimensions         String?         @default("")
-  weight             String?         @default("")
-  suitableVehicles   String?         @default("")
   approvedRequestId  String?         @unique
+  dimensions         String?         @default("")
+  suitableVehicles   String?         @default("")
+  weight             String?         @default("")
+  isDirect           Boolean         @default(false)
   activeJobs         ActiveJobs[]
   approvedRequest    JobRequest?     @relation("ApprovedRequest", fields: [approvedRequestId], references: [Id])
   client             clients         @relation(fields: [clientId], references: [Id])
@@ -176,6 +177,18 @@ model JobRequest {
   Driver       Drivers      @relation(fields: [driverId], references: [Id])
 }
 
+model DirectRequest {
+  Id           String      @id @default(uuid())
+  courierJobId String
+  clientId     String
+  driverId     String
+  isApproved   Boolean     @default(false)
+  dateCreated  DateTime    @default(now())
+  Client       clients     @relation(fields: [clientId], references: [Id])
+  CourierJob   CourierJobs @relation(fields: [courierJobId], references: [Id])
+  Driver       Drivers     @relation(fields: [driverId], references: [Id])
+}
+
 model ActiveJobs {
   Id           String      @id @default(uuid())
   courierJobId String
@@ -215,18 +228,6 @@ model ScheduledTrips {
 model FCMTokens {
   userId String @id
   token  String
-}
-
-model DirectRequest {
-  Id           String      @id
-  courierJobId String
-  clientId     String
-  driverId     String
-  isApproved   Boolean     @default(false)
-  dateCreated  DateTime    @default(now())
-  clients      clients     @relation(fields: [clientId], references: [Id])
-  CourierJobs  CourierJobs @relation(fields: [courierJobId], references: [Id])
-  Drivers      Drivers     @relation(fields: [driverId], references: [Id])
 }
 
 enum TripStatus {

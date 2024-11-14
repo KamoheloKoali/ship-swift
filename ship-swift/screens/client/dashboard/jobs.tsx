@@ -25,6 +25,7 @@ import {
 import { getDriverByID } from "@/actions/driverActions";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { getDirectRequestsByCourierJobId } from "@/actions/directRequestActions";
 import { toast } from "@/hooks/use-toast";
 
 export default function MyJobs() {
@@ -65,9 +66,9 @@ export default function MyJobs() {
 
   useEffect(() => {
     const handleNewJob = (payload: any) => {
-      console.log("Subscription payload received:", payload);
-      console.log("Current userId:", userId);
-      console.log("New job clientId:", payload.new.clientId);
+      // console.log("Subscription payload received:", payload);
+      // console.log("Current userId:", userId);
+      // console.log("New job clientId:", payload.new.clientId);
       try {
         const newJob = payload.new;
         console.log(payload.new);
@@ -107,15 +108,30 @@ export default function MyJobs() {
   const handleRowClick = async (job: any | undefined) => {
     setRequests([]);
     setIsGettingDrivers(true);
+
     if (job.packageStatus === "unclaimed") {
       const requests = await getJobRequestsByCourierJobId(job.Id);
-      if (requests.length > 0) {
-        let drivers = [];
-        for (let request of requests) {
-          drivers.push(request.Driver);
+      if (job.isDirect) {
+        // Get driver from DirectRequest
+        const directRequest = await getDirectRequestsByCourierJobId(job.id);
+        if (
+          directRequest &&
+          directRequest.length > 0 &&
+          directRequest[0].driverId
+        ) {
+          const driver = await getDriverByID(directRequest[0].driverId);
+          setRequests([driver]); // Assuming you want to set the direct driver only
         }
-        if (drivers.length > 0) {
-          setRequests(drivers);
+      } else {
+        // Handle non-direct requests
+        if (requests.length > 0) {
+          let drivers = [];
+          for (let request of requests) {
+            drivers.push(request.Driver);
+          }
+          if (drivers.length > 0) {
+            setRequests(drivers);
+          }
         }
       }
     } else if (
@@ -123,9 +139,13 @@ export default function MyJobs() {
       job.packageStatus === "collected" ||
       job.packageStatus === "delivered"
     ) {
-      const driver = await getDriverDetails(job);
-      setDriver(driver);
+      // If the package is claimed, collected, or delivered, fetch the driver based on the job's driverId
+      if (job.Id) {
+        const driver = await getDriverDetails(job);
+        setDriver(driver);
+      }
     }
+
     setIsGettingDrivers(false);
     setSelectedJob(job);
     setOpen(true);

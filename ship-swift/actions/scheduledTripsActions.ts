@@ -94,3 +94,49 @@ export async function deleteScheduledTrip(id: string) {
     throw err;
   }
 }
+
+export const getScheduledTripsWithDriver = async () => {
+  try {
+    const trips = await prisma.scheduledTrips.findMany({
+      where: {
+        status: "SCHEDULED",
+      },
+      include: {
+        driver: {
+          select: {
+            Id: true,
+            firstName: true,
+            lastName: true,
+            photoUrl: true,
+            vehicleType: true,
+            isVerified: true,
+          },
+        },
+      },
+      orderBy: {
+        tripDate: "asc",
+      },
+    });
+
+    return trips.map((trip) => ({
+      id: trip.id,
+      driverId: trip.driverId,
+      fromLocation: trip.fromLocation,
+      toLocation: trip.toLocation,
+      routeDetails: trip.routeDetails,
+      tripDate: trip.tripDate,
+      status: trip.status,
+      driver: {
+        Id: trip.driver.Id,
+        firstName: trip.driver.firstName,
+        lastName: trip.driver.lastName,
+        photoUrl: trip.driver.photoUrl,
+        vehicleType: trip.driver.vehicleType,
+        isVerified: trip.driver.isVerified,
+      },
+    }));
+  } catch (error) {
+    console.error("Error fetching scheduled trips with driver:", error);
+    throw error;
+  }
+};

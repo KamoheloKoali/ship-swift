@@ -49,6 +49,7 @@ import MyRequests from "@/screens/courier/dashboard/components/MyRequests";
 interface TableProps {
   jobs: ActiveJob[] | undefined;
   jobRequests: any[] | undefined;
+  directRequests: any[] | undefined;
   onRowClick: (job: ActiveJob) => void;
   onRequestClick: (job: any) => void;
   onStatusChange: (jobId: string, newStatus: string) => Promise<void>;
@@ -59,7 +60,7 @@ type JobStatusType = (typeof JOB_STATUS)[keyof typeof JOB_STATUS];
 
 export const StatusBadge: FC<{ status: string }> = ({ status }) => (
   <span
-    className={`px-2 py-1 rounded-full text-xs font-medium ${
+    className={`px-2 py-1 rounded-full text-xs font-medium flex items-center ${
       STATUS_STYLES[status as keyof typeof STATUS_STYLES]
     }`}
   >
@@ -118,6 +119,7 @@ const LoadingState: FC = () => (
 const JobsTable: FC<TableProps> = ({
   jobs,
   jobRequests,
+  directRequests,
   onRowClick,
   onRequestClick,
   onStatusChange,
@@ -284,6 +286,7 @@ const JobsTable: FC<TableProps> = ({
       {activeTab === "my-requests" && (
         <MyRequests
           jobRequests={jobRequests || []}
+          directRequests={directRequests || []}
           onRequestClick={onRequestClick}
         />
       )}
