@@ -86,6 +86,7 @@ export default function Details({
   const [packageSize, setPackageSize] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(Open);
   // Move the status check to useEffect to avoid infinite re-renders
+
   useEffect(() => {
     setIsClaimed(
       job.packageStatus === "claimed" ||
@@ -267,7 +268,7 @@ export default function Details({
             </dd>
           </div>
           <div>
-            <Link href={`/driver-profile/${driver.Id}`}>
+            <Link href={`/driver-profile/${driver.Id}`} prefetch={true}>
               <Button className="w-full" variant="outline" size="sm">
                 Courier Profile
               </Button>
@@ -305,15 +306,11 @@ export default function Details({
             </dd>
           </div>
           <div>
-            <Link href={`/client-profile/${job.client?.Id}`}>
-              <Button
-              className="w-full"
-                variant="outline"
-                size="sm">
+            <Link href={`/client-profile/${job.client?.Id}`} prefetch={true}>
+              <Button className="w-full" variant="outline" size="sm">
                 Client Profile
               </Button>
             </Link>
-
           </div>
         </dl>
       </div>

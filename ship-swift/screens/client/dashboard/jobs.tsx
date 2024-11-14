@@ -114,7 +114,11 @@ export default function MyJobs() {
       if (job.isDirect) {
         // Get driver from DirectRequest
         const directRequest = await getDirectRequestsByCourierJobId(job.id);
-        if (directRequest && directRequest.length > 0 && directRequest[0].driverId) {
+        if (
+          directRequest &&
+          directRequest.length > 0 &&
+          directRequest[0].driverId
+        ) {
           const driver = await getDriverByID(directRequest[0].driverId);
           console.log(driver);
           setRequests([driver]); // Assuming you want to set the direct driver only
@@ -196,7 +200,7 @@ export default function MyJobs() {
                 requests={requests}
                 driver={driver}
                 Open={open}
-             />
+              />
             )
           )}
         </main>
