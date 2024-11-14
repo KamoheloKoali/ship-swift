@@ -20,7 +20,7 @@ type Trip = {
   id: string;
   fromLocation: string;
   toLocation: string;
-  tripDate: Date; // Changed from string to Date
+  tripDate: Date;
   driver: Driver;
   routeDetails: string;
 };
@@ -43,20 +43,46 @@ const removeCommas = (text: string | null) => {
 const TripCard = () => {
   const { userId } = useAuth();
   const trips = useScheduledTrips();
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Filter trips based on search term
+  const filteredTrips = trips.filter((trip) => {
+    const tripDate = formatDate(trip.tripDate).toLowerCase();
+    const fromLocation = trip.fromLocation.toLowerCase();
+    const toLocation = trip.toLocation.toLowerCase();
+    const driverName =
+      `${trip.driver.firstName} ${trip.driver.lastName}`.toLowerCase();
+
+    return (
+      fromLocation.includes(searchTerm.toLowerCase()) ||
+      toLocation.includes(searchTerm.toLowerCase()) ||
+      driverName.includes(searchTerm.toLowerCase()) ||
+      tripDate.includes(searchTerm.toLowerCase())
+    );
+  });
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6">
       <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
         Scheduled Trips
       </h2>
 
-      {trips.length === 0 ? (
+      {/* Search Bar */}
+      <input
+        type="text"
+        placeholder="Search by location, driver name, or date"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full p-3 mb-6 border rounded-lg shadow-sm focus:outline-none focus:border-blue-500"
+      />
+
+      {filteredTrips.length === 0 ? (
         <div className="text-center p-8 bg-white rounded-lg shadow">
           <p className="text-lg text-gray-500">No scheduled trips available</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {trips.map((trip) => (
+          {filteredTrips.map((trip) => (
             <Card
               key={trip.id}
               className="transition-all duration-300 transform hover:scale-105 hover:shadow-2xl rounded-xl border border-gray-200 overflow-hidden"
@@ -80,9 +106,7 @@ const TripCard = () => {
                     </div>
                   </div>
                   <div className="flex justify-end">
-                    <DropdownMenuComponent
-                      driverId={trip.driver.Id}
-                    />
+                    <DropdownMenuComponent driverId={trip.driver.Id} />
                   </div>
                 </div>
               </CardHeader>
@@ -123,8 +147,7 @@ const TripCard = () => {
                 </div>
               </div>
             </Card>
-          ))}{" "}
-        </div>
+          ))}        </div>
       )}
     </div>
   );

@@ -34,23 +34,30 @@ export default function MyJobs() {
   const [loading, setLoading] = useState<boolean>(true);
   const { userId } = useAuth();
 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      setLoading(true);
-      const response = await getAllActiveJobsByDriverId(userId || "");
-      if (response && response.length > 0) {
-        setJobs(response);
-        setSelectedJob(response[0]);
-      } else if (response) {
-        setError("An unexpected error occurred");
-      } else {
-        setError("No response received");
-      }
-      setLoading(false);
-    };
+  const fetchJobs = async () => {
+    setLoading(true);
+    const response = await getAllActiveJobsByDriverId(userId || "");
+    if (response && response.length > 0) {
+      setJobs(response);
+      setSelectedJob(response[0]);
+    } else if (response) {
+      setError("An unexpected error occurred");
+    } else {
+      setError("No response received");
+    }
+    setLoading(false);
+  };
 
+  useEffect(() => {
     fetchJobs();
   }, [userId]);
+
+  const handleRequestApproved = async (requestId: string) => {
+    setDirectRequests((prevRequests) =>
+      prevRequests?.filter((request) => request.Id !== requestId)
+    );
+    await fetchJobs();
+  };
 
   useEffect(() => {
     const fetchJobRequests = async () => {
@@ -76,7 +83,7 @@ export default function MyJobs() {
 
   const handleRowClick = (job: any | undefined) => {
     setSelectedJob(job);
-    setSelectedRequest(null); // Clear selected request when a job is clicked
+    setSelectedRequest(null);
   };
 
   const handleRequestClick = (request: any | undefined) => {
@@ -125,7 +132,10 @@ export default function MyJobs() {
               {selectedJob ? (
                 <Details job={selectedJob} />
               ) : selectedRequest ? (
-                <RequestDetails request={selectedRequest} />
+                <RequestDetails
+                  request={selectedRequest}
+                  onRequestApproved={handleRequestApproved}
+                />
               ) : null}
             </div>
           </div>

@@ -1,5 +1,5 @@
-import React from "react";
-import { Copy, CreditCard, MoreVertical, MapPin } from "lucide-react";
+import React, { useState } from "react";
+import { Copy, CreditCard, MoreVertical, MapPin, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import {
@@ -17,21 +17,43 @@ import { approveDirectRequest } from "@/actions/directRequestActions";
 
 interface RequestDetailsProps {
   request: JobRequest;
+  onRequestApproved?: (requestId: string) => void;
 }
 
-export default function RequestDetails({ request }: RequestDetailsProps) {
+export default function RequestDetails({
+  request,
+  onRequestApproved,
+}: RequestDetailsProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const approveRequest = async () => {
+    setIsSubmitting(true);
     try {
       const requestObj = await approveDirectRequest(request.Id);
       if (requestObj) {
         toast({
           title: "Request approved",
-          description: "Your request has been approved.",
+          description: "Your job approval was successful.",
+        });
+        if (onRequestApproved) {
+          onRequestApproved(request.Id);
+        }
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to approve request.",
+          variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Error approving request:", error);
-      // Optional: Display an error message to the user
+      toast({
+        title: "Error",
+        description: "An error occurred while approving the request.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
   return (
@@ -167,11 +189,22 @@ export default function RequestDetails({ request }: RequestDetailsProps) {
                 </div>
               </dl>
             </div>
-            {request.CourierJob.isDirect ? (
-              <div>
-                <Button onClick={approveRequest}>Accept</Button>
-              </div>
-            ) : null}
+            {request.CourierJob.isDirect && (
+              <Button
+                onClick={approveRequest}
+                disabled={isSubmitting}
+                className="w-full"
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center">
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Approving...
+                  </div>
+                ) : (
+                  "Accept"
+                )}
+              </Button>
+            )}
           </div>
         </CardContent>
         <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">

@@ -153,7 +153,7 @@ export const approveDirectRequest = async (
       // Step 3: Update the corresponding CourierJob to set approvedRequestId
       await prisma.courierJobs.update({
         where: { Id: updatedRequest.courierJobId },
-        data: { approvedRequestId: jobRequest.Id },
+        data: { approvedRequestId: jobRequest.Id, packageStatus: "claimed" },
       });
 
       // Step 4: Create an entry in ActiveJobs with required fields

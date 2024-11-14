@@ -104,12 +104,12 @@ const packageSizes = [
 ];
 
 export default function PostJobWizard() {
-  const [step, setStep] = useState(1);;
-  const [isSubmitting, setIsSubmitting] = useState(false);;
-  const router = useRouter();;
-  const {  userId  } = useAuth();
+  const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+  const { userId } = useAuth();
   const searchParams = useSearchParams();
-  const driverId = searchParams.get("driverId");;
+  const driverId = searchParams.get("driverId");
   const formSchema = z.object({
     packageSize: z.number().min(1).max(5),
     title: z
@@ -310,13 +310,24 @@ export default function PostJobWizard() {
   };
 
   const handleDirectRequest = async () => {
-    if (driverId) {
-      setIsSubmitting(true);
-      const formDataToSubmit = new FormData();
+    if (!driverId) return;
 
-      // Log formData and userId for debugging purposes
-      console.log(formData);
-      console.log(userId);
+    // Check if user is verified (similar to handleNext)
+    setIsSubmitting(true);
+    try {
+      const client = await getClientById(userId || "");
+      if (!client.data?.isVerified) {
+        setIsSubmitting(false);
+        toast({
+          title: "You must be verified to post a job",
+          description:
+            "Please wait until your account is verified to post a job",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const formDataToSubmit = new FormData();
 
       // Add form data entries to FormData
       Object.entries(formData).forEach(([key, value]) => {
@@ -327,10 +338,8 @@ export default function PostJobWizard() {
         }
       });
 
-      // Append userId (clientId) to the form data
       formDataToSubmit.append("clientId", userId || "");
 
-      // Call createJobAndDirectRequest with the updated formDataToSubmit
       const response = await createJobAndDirectRequest(
         formDataToSubmit,
         userId || "",
@@ -338,7 +347,6 @@ export default function PostJobWizard() {
       );
 
       if (response.success) {
-        setIsSubmitting(false);
         toast({
           description: "Job created successfully!",
         });
@@ -349,8 +357,17 @@ export default function PostJobWizard() {
           variant: "destructive",
         });
       }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An error occurred while creating the job",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
+  
   const renderStep = () => {
     switch (step) {
       case 1:

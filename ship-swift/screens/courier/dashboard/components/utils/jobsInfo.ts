@@ -168,12 +168,9 @@ export async function messageContact(
   clientId: string,
   driverId: string
 ): Promise<string | undefined> {
-  console.log("messageContact called with:", { clientId, driverId });
 
   try {
-    console.log("messageContact called with:", { clientId, driverId });
     const contactResponse = await getcontact(clientId, driverId);
-    console.log("getcontact response:", contactResponse);
 
     // Check if a contact exists and extract its ID if available
     if (contactResponse.success && contactResponse.data?.[0]?.Id) {

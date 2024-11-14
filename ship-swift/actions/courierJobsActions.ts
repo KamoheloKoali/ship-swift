@@ -88,6 +88,7 @@ export const getAllJobsFiltered = async (clientId: string) => {
       where: { clientId: clientId },
       include: {
         client: true, // Always include DirectRequest
+        DirectRequest: true,
       },
     });
     return { success: true, data: jobs };
