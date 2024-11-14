@@ -165,6 +165,17 @@ export const getAllDrivers = async () => {
   }
 };
 
+export const getAllVerifiedDrivers = async () => {
+  const drivers = await prisma.drivers.findMany({
+    where: { isVerified: true }
+  });
+  if (drivers.length > 0) {
+    return { success: true, data: drivers };
+  } else {
+    return { success: false, error: "No verified drivers found" };
+  }
+};
+
 export const updateDriver = async (
   driverId: string,
   driverData: Partial<any>
