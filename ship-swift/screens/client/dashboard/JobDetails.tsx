@@ -242,6 +242,17 @@ export default function Details({ job, requests = [], driver }: SideCardProps) {
               </a>
             </dd>
           </div>
+          <div>
+            <Link href={`/client-profile/${job.client?.Id}`}>
+              <Button
+              className="w-full"
+                variant="outline"
+                size="sm">
+                Client Profile
+              </Button>
+            </Link>
+
+          </div>
         </dl>
       </div>
     </>
