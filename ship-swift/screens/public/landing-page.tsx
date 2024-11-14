@@ -67,20 +67,23 @@ export default function ShipSwiftLanding() {
                   deliveries. Ship Swift - Your Community Delivery Network.
                 </p>
                 <div className="flex gap-2 min-[400px]:flex-row flex-row">
-                  <Link href="/sign-up">
-                    <Button className="inline-flex items-center justify-center text-base font-bold bg-white text-black hover:bg-gray-200">
-                      Get Started
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                  <Link href="">
+                <Link href="">
                   <Button
                     variant="outline"
-                    className="text-base font-bold bg-black text-white border-white hover:bg-white hover:text-black"
+                    className="text-base font-bold bg-white text-black "
                   >
                     Learn More
                   </Button>
                   </Link>
+
+                  <Link href="/sign-up">
+                    <Button className="inline-flex items-center justify-center text-base font-bold border border-white bg-black text-white hover:text-black hover:bg-gray-200">
+                      Get Started
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+
+                  
                 </div>
               </div>
               <div
