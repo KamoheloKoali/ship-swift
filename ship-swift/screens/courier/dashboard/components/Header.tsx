@@ -54,6 +54,8 @@ export default function Header() {
     }
   };
 
+  const handleCloseSheet = () => setIsSheetOpen(false);
+
   const menuItems = [
     {
       label: "Find Jobs",
@@ -134,6 +136,7 @@ export default function Header() {
                 items={menuItems}
                 isDriver={isDriver}
                 hasActiveJobs={hasActiveJobs}
+                onClose={handleCloseSheet}
               />
               {/* User Button (Clerk) - Only visible on small screens in Sheet */}
               {/* <div className="lg:hidden flex justify-end w-[20%]">

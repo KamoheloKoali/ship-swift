@@ -24,12 +24,14 @@ interface NavMenuProps {
   items: NavItem[]; // Array of navigation items
   isDriver?: Boolean;
   hasActiveJobs?: Boolean;
+  onClose?: () => void; // Callback to close the sheet
 }
 
 const NavMenu: React.FC<NavMenuProps> = ({
   items,
   isDriver,
   hasActiveJobs,
+  onClose
 }) => {
   const updateLocation = async (lat: number, lng: number) => {
     // just here, doing nothing
@@ -49,6 +51,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
                     <NavigationMenuLink
                       key={idx}
                       href={dropdownItem.href}
+                      onClick={onClose}
                       className="block px-4 py-2 hover:bg-gray-100 rounded"
                     >
                       {dropdownItem.label}
@@ -60,6 +63,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
               <Link
                 href={item.href || "#"}
                 prefetch={true}
+                onClick={onClose}
                 className="text-gray-800 hover:bg-gray-100 p-2 rounded transition-colors duration-200"
               >
                 {item.label}
