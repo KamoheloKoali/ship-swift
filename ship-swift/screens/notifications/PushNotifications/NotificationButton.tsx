@@ -27,6 +27,7 @@ export default function NotificationButton() {
         const currentToken = await getToken(messaging, {
           vapidKey: String(process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY),
         });
+        await getRegistrationToken();
         // Show button if:
         // 1. Permission not granted OR
         // 2. No current token exists
@@ -63,48 +64,47 @@ export default function NotificationButton() {
 
   async function getRegistrationToken() {
     const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
-    
+
     if (!vapidKey) {
-        console.error('VAPID key is missing');
-        return;
+      console.error("VAPID key is missing");
+      return;
     }
 
     if (!user) return;
 
     try {
-        const currentToken = await getToken(messaging, {
-            vapidKey: vapidKey
+      const currentToken = await getToken(messaging, {
+        vapidKey: vapidKey,
+      });
+
+      if (currentToken) {
+        const response = await createFCMToken({
+          userId: user.id,
+          token: currentToken,
         });
-        
-        if (currentToken) {
-            const response = await createFCMToken({
-                userId: user.id,
-                token: currentToken,
-            });
 
-            await saveDeviceToken(user.id, currentToken);
+        await saveDeviceToken(user.id, currentToken);
 
-            if (!response.success) {
-                toast({
-                    title: "Error",
-                    description: "Error creating FCMToken",
-                    variant: "destructive",
-                });
-            }
+        if (!response.success) {
+          toast({
+            title: "Error",
+            description: "Error creating FCMToken",
+            variant: "destructive",
+          });
         }
+      }
     } catch (error) {
-        console.error("Error retrieving token:", error);
+      console.error("Error retrieving token:", error);
     }
-}
+  }
 
   return showNotificationButton ? (
     <>
-    {isRequestingPermission ? <Button onClick={requestPermission}>
-       
-        <>Enable Notifications</>
-    </Button> :null
-      }
+      {isRequestingPermission ? (
+        <Button onClick={requestPermission}>
+          <>Enable Notifications</>
+        </Button>
+      ) : null}
     </>
   ) : null;
-  
 }

@@ -104,12 +104,12 @@ const packageSizes = [
 ];
 
 export default function PostJobWizard() {
-  const [step, setStep] = useState(1);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const router = useRouter();
-  const { userId } = useAuth();
+  const [step, setStep] = useState(1);;
+  const [isSubmitting, setIsSubmitting] = useState(false);;
+  const router = useRouter();;
+  const {  userId  } = useAuth();
   const searchParams = useSearchParams();
-  const driverId = searchParams.get("driverId");
+  const driverId = searchParams.get("driverId");;
   const formSchema = z.object({
     packageSize: z.number().min(1).max(5),
     title: z

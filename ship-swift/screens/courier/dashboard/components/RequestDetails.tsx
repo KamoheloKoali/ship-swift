@@ -44,6 +44,9 @@ export default function RequestDetails({ request }: RequestDetailsProps) {
               <StatusBadge
                 status={request.isApproved ? "Approved" : "Pending"}
               />
+              <StatusBadge
+                status={request.isApproved ? "Approved" : "Pending"}
+              />
               <Button
                 size="icon"
                 variant="outline"
@@ -82,8 +85,10 @@ export default function RequestDetails({ request }: RequestDetailsProps) {
                 <span>{request.CourierJob.dimensions}</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Suitable Vehicles</span>
-                <span>{request.CourierJob.suitableVehicles}</span>
+                <span className="text-muted-foreground">Collection Date</span>
+                <span>
+                  {new Date(request.CourierJob.collectionDate).toLocaleString()}
+                </span>
               </li>
             </ul>
             <div className="grid grid-cols-2 gap-4 mt-4">

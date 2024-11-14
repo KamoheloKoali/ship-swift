@@ -26,7 +26,7 @@ model clients {
   courierJobs    CourierJobs[]
   DirectRequest  DirectRequest[]
   driverRequests DriverRequests[]
-  DriverReview   DriverReview[]
+  Review         DriverReview[]
   Messages       Messages[]
   clientRequests clientRequests[]
 }
@@ -59,12 +59,38 @@ model Drivers {
   Contacts              Contacts[]
   DirectRequest         DirectRequest[]
   driveRequests         DriverRequests[]
-  DriverReview          DriverReview[]
+  Review                DriverReview[]
   JobRequests           JobRequest[]
   Location              Location[]
   Messages              Messages[]
   scheduledTrips        ScheduledTrips[]
   clientRequests        clientRequests[]
+}
+
+model DriverReview {
+  id        String   @id
+  content   String?
+  rating    Int
+  createdAt DateTime @default(now())
+  driverId  String
+  clientId  String
+  client    clients  @relation(fields: [clientId], references: [Id])
+  driver    Drivers  @relation(fields: [driverId], references: [Id])
+
+  @@index([driverId])
+}
+
+model ClientReview {
+  id        String   @id
+  content   String?
+  rating    Int
+  createdAt DateTime @default(now())
+  clientId  String
+  driverId  String
+  client    clients  @relation(fields: [clientId], references: [Id])
+  driver    Drivers  @relation(fields: [driverId], references: [Id])
+
+  @@index([driverId])
 }
 
 model CourierJobs {
@@ -201,32 +227,6 @@ model ScheduledTrips {
 model FCMTokens {
   userId String @id
   token  String
-}
-
-model ClientReview {
-  id        String   @id
-  content   String?
-  rating    Int
-  createdAt DateTime @default(now())
-  clientId  String
-  driverId  String
-  clients   clients  @relation(fields: [clientId], references: [Id])
-  Drivers   Drivers  @relation(fields: [driverId], references: [Id])
-
-  @@index([driverId])
-}
-
-model DriverReview {
-  id        String   @id
-  content   String?
-  rating    Int
-  createdAt DateTime @default(now())
-  driverId  String
-  clientId  String
-  clients   clients  @relation(fields: [clientId], references: [Id])
-  Drivers   Drivers  @relation(fields: [driverId], references: [Id])
-
-  @@index([driverId])
 }
 
 enum TripStatus {

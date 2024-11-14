@@ -1,4 +1,3 @@
-"use server";
 import "@/app/globals.css";
 import ClientNavBar from "./client/components/ClientNavBar";
 // import { useEffect, useState } from "react";
