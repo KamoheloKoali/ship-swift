@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -77,7 +77,8 @@ function MapComponent({ pickup, dropoff }: Props) {
   });
 
   const dropoffIcon = new L.Icon({
-    iconUrl: "https://img.icons8.com/?size=100&id=13800&format=png&color=000000", // Red marker icon
+    iconUrl:
+      "https://img.icons8.com/?size=100&id=13800&format=png&color=000000", // Red marker icon
     iconSize: [30, 30],
     iconAnchor: [15, 30],
     popupAnchor: [0, -30],
@@ -86,17 +87,15 @@ function MapComponent({ pickup, dropoff }: Props) {
   return (
     <div>
       <MapContainer
-        center={[51.505, -0.09]} // Default center
+        center={[-29.62319, 28.2334698]} // Default center
         zoom={13}
         className="w-full h-[200px]"
       >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
         {/* Pickup Marker */}
         {coords.pickup && (
-          <Marker position={coords.pickup} interactive={true} >
+          <Marker position={coords.pickup} interactive={true}>
             <Popup keepInView={true}>Pickup Location</Popup>
           </Marker>
         )}

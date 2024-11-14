@@ -22,6 +22,9 @@ export const createJob = async (jobData: FormData) => {
       | null;
     const dropOffEmail = jobData.get("dropoffEmail") as string | null;
     const collectionDate = jobData.get("collectionDate") as string | null;
+    const weight = jobData.get("weight") as string | null;
+    const dimensions = jobData.get("dimensions") as string | null;
+    const suitableVehicles = jobData.get("suitableVehicles") as string | null;
 
     // Ensure none of the required fields are null or undefined
     if (!clientId) {
@@ -45,6 +48,9 @@ export const createJob = async (jobData: FormData) => {
         dropOffEmail: dropOffEmail,
         collectionDate: collectionDate ? new Date(collectionDate) : undefined, // Convert to Date
         packageStatus: "unclaimed",
+        weight: weight,
+        dimensions: dimensions,
+        suitableVehicles: suitableVehicles,
       },
     });
 
@@ -64,7 +70,7 @@ export const getAllJobs = async () => {
       include: { client: true }, // Include client data if needed
       where: {
         packageStatus: "unclaimed",
-      }
+      },
     });
     return { success: true, data: jobs };
   } catch (error) {

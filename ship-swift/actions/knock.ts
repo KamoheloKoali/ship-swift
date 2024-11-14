@@ -8,7 +8,7 @@ export default async function notifyAboutJob(
   driverName: string = "",
   clientName: string = ""
 ) {
-  const approved = job.approvedRequestId?.length > 0 ? "approved" : "pending";
+  const approved = job.packageStatus === "claimed" ? "approved" : "pending";
   await knock.workflows.trigger("job-notifications", {
     data: {
       driverName,
@@ -25,4 +25,3 @@ export default async function notifyAboutJob(
     ],
   });
 }
-
