@@ -6,7 +6,6 @@ import { Card, CardHeader, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Calendar } from "lucide-react";
 import DropdownMenuComponent from "./DropDownMenu";
-import { useAuth } from "@clerk/nextjs";
 
 type Driver = {
   firstName: string;
@@ -41,7 +40,6 @@ const removeCommas = (text: string | null) => {
 };
 
 const TripCard = () => {
-  const { userId } = useAuth();
   const trips = useScheduledTrips();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -147,7 +145,8 @@ const TripCard = () => {
                 </div>
               </div>
             </Card>
-          ))}        </div>
+          ))}{" "}
+        </div>
       )}
     </div>
   );
