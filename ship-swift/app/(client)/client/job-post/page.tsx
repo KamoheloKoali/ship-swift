@@ -107,6 +107,7 @@ const packageSizes = [
 export default function PostJobWizard() {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmittingDriver, setIsSubmittingDriver] = useState(false);
   const router = useRouter();
   const [selectedDriverId, setSelectedDriverId] = useState<string>("");
   const { userId } = useAuth();
@@ -371,11 +372,11 @@ export default function PostJobWizard() {
   };
 
   const handleSelectedDriver = async (driverId: string) => {
-    setIsSubmitting(true);
+    setIsSubmittingDriver(true);
     try {
       const client = await getClientById(userId || "");
       if (!client.data?.isVerified) {
-        setIsSubmitting(false);
+        setIsSubmittingDriver(false);
         toast({
           title: "You must be verified to post a job",
           description:
@@ -422,7 +423,7 @@ export default function PostJobWizard() {
         variant: "destructive",
       });
     } finally {
-      setIsSubmitting(false);
+      setIsSubmittingDriver(false);
     }
   };
 
@@ -750,7 +751,13 @@ export default function PostJobWizard() {
             Back
           </Button>
           <div className="flex flex-row space-x-2">
-            {!driverId && step === totalSteps ? <DirectRequestButton  onDriverSelected={handleSelectedDriver} /> : null}
+            {!driverId && step === totalSteps ? (
+              isSubmittingDriver ? (
+                <Loader2 className="animate-spin h-4 w-4" />
+              ) : (
+                <DirectRequestButton onDriverSelected={handleSelectedDriver} />
+              )
+            ) : null}
 
             <Button
               onClick={

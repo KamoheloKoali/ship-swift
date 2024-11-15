@@ -147,25 +147,27 @@ const JobsTable: FC<TableProps> = ({
       onValueChange={(value: string) => setActiveTab(value)}
     >
       <TabsList className="flex w-full items-center gap-1 p-1">
-        {Object.values(JOB_STATUS).map((status) => (
-          <TabsTrigger
-            key={status}
-            value={status}
-            className="flex items-center gap-1 flex-1 min-w-0"
-            data-state={activeTab === status ? "active" : "inactive"}
-          >
-            <span className="md:hidden">{getStatusIcon(status)}</span>
-            <span className="hidden md:inline">
-              {capitalizeFirstLetter(status)}
-            </span>
-            <span className="truncate md:hidden">{status.slice(0, 3)}</span>
-            {filterJobsByStatus(jobs, status).length > 0 && (
-              <span className="ml-1 rounded-full bg-primary/20 px-1.5 py-0.5 text-xs">
-                {filterJobsByStatus(jobs, status).length}
+        {Object.values(JOB_STATUS)
+          .filter((status) => status !== "unclaimed") // Exclude "unclaimed"
+          .map((status) => (
+            <TabsTrigger
+              key={status}
+              value={status}
+              className="flex items-center gap-1 flex-1 min-w-0"
+              data-state={activeTab === status ? "active" : "inactive"}
+            >
+              <span className="md:hidden">{getStatusIcon(status)}</span>
+              <span className="hidden md:inline">
+                {capitalizeFirstLetter(status)}
               </span>
-            )}
-          </TabsTrigger>
-        ))}
+              <span className="truncate md:hidden">{status.slice(0, 3)}</span>
+              {filterJobsByStatus(jobs, status).length > 0 && (
+                <span className="ml-1 rounded-full bg-primary/20 px-1.5 py-0.5 text-xs">
+                  {filterJobsByStatus(jobs, status).length}
+                </span>
+              )}
+            </TabsTrigger>
+          ))}
 
         <TabsTrigger
           value="my-requests"
@@ -179,109 +181,111 @@ const JobsTable: FC<TableProps> = ({
         </TabsTrigger>
       </TabsList>
 
-      {Object.values(JOB_STATUS).map((status) => (
-        <TabsContent key={status} value={status}>
-          {activeTab === status && (
-            <Card>
-              <CardHeader className="px-4 md:px-7">
-                <CardTitle>Deliveries</CardTitle>
-                <CardDescription className="text-sm">
-                  {
-                    STATUS_DESCRIPTIONS[
-                      status as keyof typeof STATUS_DESCRIPTIONS
-                    ]
-                  }
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="px-2 md:px-6">
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="min-w-[200px]">Title</TableHead>
-                        <TableHead className="hidden min-w-[120px] sm:table-cell">
-                          Pickup
-                        </TableHead>
-                        <TableHead className="hidden min-w-[120px] sm:table-cell">
-                          Dropoff
-                        </TableHead>
-                        <TableHead className="hidden min-w-[150px] md:table-cell">
-                          Client
-                        </TableHead>
-                        <TableHead className="hidden min-w-[130px] lg:table-cell">
-                          Date
-                        </TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
-                        <TableHead className="w-[50px]"></TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filterJobsByStatus(jobs, status).map((job) => (
-                        <TableRow
-                          key={job.Id}
-                          className="cursor-pointer hover:bg-accent"
-                          onClick={() => onRowClick(job)}
-                        >
-                          <TableCell>
-                            <div className="font-medium line-clamp-1">
-                              {job.CourierJob.Title}
-                            </div>
-                            <div className="hidden text-sm text-muted-foreground md:block line-clamp-2">
-                              {job.CourierJob.Description}
-                            </div>
-                          </TableCell>
-                          <TableCell className="hidden sm:table-cell">
-                            <div className="line-clamp-1">
-                              {job.CourierJob.PickUp}
-                            </div>
-                          </TableCell>
-                          <TableCell className="hidden sm:table-cell">
-                            <div className="line-clamp-1">
-                              {job.CourierJob.DropOff}
-                            </div>
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            <div className="line-clamp-1">
-                              {job.Client.firstName} {job.Client.lastName}
-                            </div>
-                          </TableCell>
-                          <TableCell className="hidden lg:table-cell whitespace-nowrap">
-                            {formatDate(job.startDate)}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex flex-col items-end gap-1">
-                              <div className="whitespace-nowrap">
-                                M {job.CourierJob.Budget}
-                              </div>
-                              <StatusBadge status={job.jobStatus} />
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <StatusActions
-                              job={job}
-                              onStatusChange={onStatusChange}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                      {filterJobsByStatus(jobs, status).length === 0 && (
+      {Object.values(JOB_STATUS)
+        .filter((status) => status !== "unclaimed")
+        .map((status) => (
+          <TabsContent key={status} value={status}>
+            {activeTab === status && (
+              <Card>
+                <CardHeader className="px-4 md:px-7">
+                  <CardTitle>Deliveries</CardTitle>
+                  <CardDescription className="text-sm">
+                    {
+                      STATUS_DESCRIPTIONS[
+                        status as keyof typeof STATUS_DESCRIPTIONS
+                      ]
+                    }
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="px-2 md:px-6">
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
                         <TableRow>
-                          <TableCell
-                            colSpan={7}
-                            className="h-24 text-center text-muted-foreground"
-                          >
-                            No {status.toLowerCase()} deliveries found.
-                          </TableCell>
+                          <TableHead className="min-w-[200px]">Title</TableHead>
+                          <TableHead className="hidden min-w-[120px] sm:table-cell">
+                            Pickup
+                          </TableHead>
+                          <TableHead className="hidden min-w-[120px] sm:table-cell">
+                            Dropoff
+                          </TableHead>
+                          <TableHead className="hidden min-w-[150px] md:table-cell">
+                            Client
+                          </TableHead>
+                          <TableHead className="hidden min-w-[130px] lg:table-cell">
+                            Date
+                          </TableHead>
+                          <TableHead className="text-right">Amount</TableHead>
+                          <TableHead className="w-[50px]"></TableHead>
                         </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-      ))}
+                      </TableHeader>
+                      <TableBody>
+                        {filterJobsByStatus(jobs, status).map((job) => (
+                          <TableRow
+                            key={job.Id}
+                            className="cursor-pointer hover:bg-accent"
+                            onClick={() => onRowClick(job)}
+                          >
+                            <TableCell>
+                              <div className="font-medium line-clamp-1">
+                                {job.CourierJob.Title}
+                              </div>
+                              <div className="hidden text-sm text-muted-foreground md:block line-clamp-2">
+                                {job.CourierJob.Description}
+                              </div>
+                            </TableCell>
+                            <TableCell className="hidden sm:table-cell">
+                              <div className="line-clamp-1">
+                                {job.CourierJob.PickUp}
+                              </div>
+                            </TableCell>
+                            <TableCell className="hidden sm:table-cell">
+                              <div className="line-clamp-1">
+                                {job.CourierJob.DropOff}
+                              </div>
+                            </TableCell>
+                            <TableCell className="hidden md:table-cell">
+                              <div className="line-clamp-1">
+                                {job.Client.firstName} {job.Client.lastName}
+                              </div>
+                            </TableCell>
+                            <TableCell className="hidden lg:table-cell whitespace-nowrap">
+                              {formatDate(job.startDate)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex flex-col items-end gap-1">
+                                <div className="whitespace-nowrap">
+                                  M {job.CourierJob.Budget}
+                                </div>
+                                <StatusBadge status={job.jobStatus} />
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <StatusActions
+                                job={job}
+                                onStatusChange={onStatusChange}
+                              />
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {filterJobsByStatus(jobs, status).length === 0 && (
+                          <TableRow>
+                            <TableCell
+                              colSpan={7}
+                              className="h-24 text-center text-muted-foreground"
+                            >
+                              No {status.toLowerCase()} deliveries found.
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+        ))}
 
       {activeTab === "my-requests" && (
         <MyRequests
