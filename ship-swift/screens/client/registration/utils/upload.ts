@@ -36,6 +36,7 @@ export async function uploadImage(
       .from("client-documents")
       .getPublicUrl(`${folder}/${fileName}`);
 
+    // Update the client's photoUrl in the database
     if (publicData) {
       if (folder === "client-photo-rt") {
         await updateClient(clerkId, {
