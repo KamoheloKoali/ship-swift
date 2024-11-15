@@ -182,10 +182,10 @@ const Profile: React.FC<ProfileProps> = ({ driverData }) => {
 
         {/* Mobile view with accordion */}
         <div className="sm:hidden">
-          <Accordion type="single" collapsible className="w-full">
+          <Accordion type="single" collapsible className="w-full bg-white">
             <AccordionItem value="driver-info" className="border-none">
               <AccordionTrigger className="text-lg font-semibold no-underline">
-                <img src="/assets/public/id-card.png" alt="card-info" width="50" height="50" />
+                <img src="/assets/public/id-card.png" alt="card-info" width="35" height="35" />
                 Driver Information
               </AccordionTrigger>
               <AccordionContent className="space-y-2">
@@ -194,7 +194,7 @@ const Profile: React.FC<ProfileProps> = ({ driverData }) => {
             </AccordionItem>
             <AccordionItem value="vehicle-info" className="border-none">
               <AccordionTrigger className="text-lg font-semibold">
-                <img src="/assets/public/car-info.png" alt="car-info" width="50" height="50" />
+                <img src="/assets/public/car-info.png" alt="car-info" width="35" height="35" />
                 Vehicle Information
               </AccordionTrigger>
               <AccordionContent className="space-y-2">

@@ -54,6 +54,8 @@ export default function Header() {
     }
   };
 
+  const handleCloseSheet = () => setIsSheetOpen(false);
+
   const menuItems = [
     {
       label: "Find Jobs",
@@ -78,7 +80,7 @@ export default function Header() {
     <header className="w-full bg-white mb-16">
       <nav className="container mx-auto p-4 border-b-2 border-slate-200">
         <div className="hidden lg:flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 ">
             {/* Logo */}
             <div className="font-bold text-lg text-gray-800">Ship Swift</div>
 
@@ -88,14 +90,13 @@ export default function Header() {
               isDriver={isDriver}
               hasActiveJobs={hasActiveJobs}
             />
-            
           </div>
           <SwitchUser />
           {/* User Button (Clerk) - Only visible on large screens */}
           <div className="flex gap-2">
-              <NotificationFeed />
-              <UserButton />
-            </div>
+            <NotificationFeed />
+            <UserButton />
+          </div>
         </div>
 
         {/* For Small Screens: Logo and Hamburger Menu */}
@@ -103,9 +104,8 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             {/* Logo */}
             <div className="font-bold text-lg text-gray-800 flex gap-2">
-            <UserButton />
               Ship Swift
-              </div>
+            </div>
             {isDriver && (
               <div className="">
                 <LocationTracker updateLocation={updateLocation} />
@@ -115,12 +115,15 @@ export default function Header() {
           {/* Menu Button for small screens */}
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <div className="flex gap-2">
-            <NotificationFeed />
-            <SheetTrigger asChild>
-              <button className="bg-white" onClick={() => setIsSheetOpen(true)}>
-                <Bars3Icon className="h-6 w-6 text-gray-800" />
-              </button>
-            </SheetTrigger>
+              <NotificationFeed />
+              <SheetTrigger asChild>
+                <button
+                  className="bg-white"
+                  onClick={() => setIsSheetOpen(true)}
+                >
+                  <Bars3Icon className="h-6 w-6 text-gray-800" />
+                </button>
+              </SheetTrigger>
             </div>
 
             {/* Sheet Content */}
@@ -134,10 +137,14 @@ export default function Header() {
                 items={menuItems}
                 isDriver={isDriver}
                 hasActiveJobs={hasActiveJobs}
+                onClose={handleCloseSheet}
               />
+
               {/* User Button (Clerk) - Only visible on small screens in Sheet */}
-              {/* <div className="lg:hidden flex justify-end w-[20%]">
-              </div> */}
+              <div className="lg:hidden flex justify-between p-3 rounded-sm bg-slate-200">
+                <p>Account</p>
+                <UserButton />
+              </div>
             </SheetContent>
           </Sheet>
         </div>
