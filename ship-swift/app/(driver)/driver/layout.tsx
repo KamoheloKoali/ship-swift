@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import "@/app/globals.css";
 import { checkDriverRole } from "@/actions/protectActions";
 import { redirect } from "next/navigation";

@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import ScheduledTripsPage from "@/screens/client/scheduled-trips/TripCard";
 const Page = () => {
   return (
