@@ -109,46 +109,37 @@ export default function MyJobs() {
     setRequests([]);
     setIsGettingDrivers(true);
 
-    if (job.packageStatus === "unclaimed") {
-      const requests = await getJobRequestsByCourierJobId(job.Id);
-      if (job.isDirect) {
-        // Get driver from DirectRequest
-        const directRequest = await getDirectRequestsByCourierJobId(job.id);
-        if (
-          directRequest &&
-          directRequest.length > 0 &&
-          directRequest[0].driverId
-        ) {
-          const driver = await getDriverByID(directRequest[0].driverId);
-          setRequests([driver]); // Assuming you want to set the direct driver only
-        }
-      } else {
-        // Handle non-direct requests
-        if (requests.length > 0) {
-          let drivers = [];
-          for (let request of requests) {
-            drivers.push(request.Driver);
+    try {
+      if (job.packageStatus === "unclaimed") {
+        const requests = await getJobRequestsByCourierJobId(job.Id);
+        if (job.isDirect) {
+          const directRequest = await getDirectRequestsByCourierJobId(job.Id);
+          if (directRequest && directRequest[0].driverId) {
+            const driver = await getDriverByID(directRequest[0].driverId);
+            setRequests([driver]);
           }
-          if (drivers.length > 0) {
-            setRequests(drivers);
+        } else {
+          if (requests.length > 0) {
+            setRequests(requests.map((request) => request.Driver));
           }
         }
+      } else if (
+        job.packageStatus === "claimed" ||
+        job.packageStatus === "collected" ||
+        job.packageStatus === "delivered"
+      ) {
+        if (job.id) {
+          const driver = await getDriverByID(job.id);
+          setDriver(driver);
+        }
       }
-    } else if (
-      job.packageStatus === "claimed" ||
-      job.packageStatus === "collected" ||
-      job.packageStatus === "delivered"
-    ) {
-      // If the package is claimed, collected, or delivered, fetch the driver based on the job's driverId
-      if (job.Id) {
-        const driver = await getDriverDetails(job);
-        setDriver(driver);
-      }
+    } catch (error) {
+      console.error("Error fetching driver data:", error);
+    } finally {
+      setIsGettingDrivers(false);
+      setSelectedJob(job);
+      setOpen(true);
     }
-
-    setIsGettingDrivers(false);
-    setSelectedJob(job);
-    setOpen(true);
   };
 
   return (

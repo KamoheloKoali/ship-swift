@@ -1,6 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { getDriverByID } from "@/actions/driverActions";
 import {
   Card,
   CardContent,
@@ -14,7 +15,7 @@ import { CheckCircle, Loader2 } from "lucide-react";
 import { z } from "zod";
 import useclientRegistration from "@/screens/client/registration/utils/clientRegistration";
 import { PhoneInput, ValidationResult } from "@/screens/global/phone-input";
-
+import { useAuth } from "@clerk/nextjs";
 // Zod schema for validation
 const clientRegistrationSchema = z.object({
   idDocuments: z.instanceof(File, { message: "Identity document is required" }),
@@ -33,7 +34,7 @@ export default function ClientRegistrationForm() {
   } = useclientRegistration();
   const [phoneValidation, setPhoneValidation] =
     useState<ValidationResult | null>(null);
-
+  const { userId } = useAuth();
   // State to manage validation errors
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
