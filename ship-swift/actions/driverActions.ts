@@ -146,10 +146,10 @@ export const getDriverByID = async (driverId: string) => {
     });
 
     if (!driver) {
-      return driver;
+      return { success: false, error: "Driver not found" };
     }
 
-    return driver;
+    return { success: true, data: driver };
   } catch (error) {
     console.error("Error fetching driver by ID:", error);
     throw error;

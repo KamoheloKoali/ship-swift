@@ -91,9 +91,9 @@ export default function Header() {
               hasActiveJobs={hasActiveJobs}
             />
           </div>
-          <SwitchUser />
           {/* User Button (Clerk) - Only visible on large screens */}
           <div className="flex gap-2">
+            <SwitchUser />
             <NotificationFeed />
             <UserButton />
           </div>
@@ -144,6 +144,9 @@ export default function Header() {
               <div className="lg:hidden flex justify-between p-3 rounded-sm bg-slate-200">
                 <p>Account</p>
                 <UserButton />
+              </div>
+              <div className="mt-4">
+                <SwitchUser />
               </div>
             </SheetContent>
           </Sheet>

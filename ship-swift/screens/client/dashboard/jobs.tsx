@@ -116,7 +116,7 @@ export default function MyJobs() {
           const directRequest = await getDirectRequestsByCourierJobId(job.Id);
           if (directRequest && directRequest[0].driverId) {
             const driver = await getDriverByID(directRequest[0].driverId);
-            setRequests([driver]);
+            setRequests([driver.data]);
           }
         } else {
           if (requests.length > 0) {
@@ -127,9 +127,10 @@ export default function MyJobs() {
         job.packageStatus === "claimed" ||
         job.packageStatus === "collected" ||
         job.packageStatus === "delivered"
-      ) {
-        if (job.id) {
-          const driver = await getDriverByID(job.id);
+      ) {;
+        if (job.Id) {
+          const driver = await getDriverDetails(job);
+          console.log("driver", driver);
           setDriver(driver);
         }
       }

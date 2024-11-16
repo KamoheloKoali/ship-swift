@@ -30,7 +30,8 @@ const Jobs = () => {
 
       try {
         const data = await getDriverByID(user.id);
-        setDriverData(data);
+
+        setDriverData(data.data);
       } catch (err) {
         setError("Failed to fetch driver data");
         console.error(err);
