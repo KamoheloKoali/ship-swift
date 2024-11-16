@@ -19,7 +19,10 @@ import SwitchUser from "@/screens/global/switch-user";
 export default function ClientNavBar() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
-  const menuItems = [{ label: "Messages", href: "/conversations" }, { label: "Scheduled Trips", href: "/client/trips" }];
+  const menuItems = [
+    { label: "Messages", href: "/conversations" },
+    { label: "Scheduled Trips", href: "/client/trips" },
+  ];
 
   return (
     <header className="w-full bg-white mb-16">
@@ -56,26 +59,26 @@ export default function ClientNavBar() {
         <div className="flex items-center justify-between lg:hidden">
           <div className="flex items-center space-x-4">
             {/* Logo */}
-            <UserButton
+            {/* <UserButton
               userProfileMode="navigation"
               userProfileUrl="/profile"
-            />
+            /> */}
             <div className="font-bold text-lg text-gray-800">Ship Swift</div>
           </div>
 
           {/* Menu Button for small screens */}
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-              <div className="flex gap-2">
-                <NotificationFeed />
-            <SheetTrigger asChild>
+            <div className="flex gap-2">
+              <NotificationFeed />
+              <SheetTrigger asChild>
                 <button
-                className="bg-white"
+                  className="bg-white"
                   onClick={() => setIsSheetOpen(true)}
                 >
                   <Bars3Icon className="h-6 w-6 text-gray-800" />
                 </button>
-            </SheetTrigger>
-              </div>
+              </SheetTrigger>
+            </div>
 
             {/* Sheet Content */}
             <SheetContent side="left" className="bg-white p-4">
@@ -85,6 +88,15 @@ export default function ClientNavBar() {
 
               {/* Navigation Menu in Sheet */}
               <NavMenu items={menuItems} />
+
+              {/* User Button (Clerk) - Only visible on small screens in Sheet */}
+              <div className="lg:hidden flex justify-between p-3 rounded-sm bg-slate-200" >
+                <p>Account</p>
+                <UserButton
+                  userProfileMode="navigation"
+                  userProfileUrl="/profile"
+                />
+              </div>
             </SheetContent>
           </Sheet>
         </div>
