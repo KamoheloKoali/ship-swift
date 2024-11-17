@@ -10,6 +10,7 @@ import {
   UserCircle,
   PackageCheck,
   Truck,
+  DollarSign,
 } from "lucide-react";
 import {
   Card,
@@ -215,8 +216,8 @@ const JobsTable: FC<TableProps> = ({
                           <TableHead className="hidden min-w-[130px] lg:table-cell">
                             Date
                           </TableHead>
-                          <TableHead className="text-right">Amount</TableHead>
-                          <TableHead className="w-[50px]"></TableHead>
+                          <TableHead className="flex items-center justify-center"><DollarSign size={18} color="green" strokeWidth={2} /></TableHead>
+                          <TableHead className="w-[50px"></TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -250,7 +251,7 @@ const JobsTable: FC<TableProps> = ({
                               </div>
                             </TableCell>
                             <TableCell className="hidden lg:table-cell whitespace-nowrap">
-                              {formatDate(job.startDate)}
+                              {formatDate(job.CourierJob.collectionDate)}
                             </TableCell>
                             <TableCell className="text-right">
                               <div className="flex flex-col items-end gap-1">
