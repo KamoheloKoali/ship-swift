@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { uploadImage } from "../../registration/utils/Upload";
+import { getLocation } from "@/actions/locationAction";
+import { createDeliveredJob } from "@/actions/deliveredJobsActions";
 
 const PhotoCapture: React.FC = () => {
   const router = useRouter();
@@ -14,9 +16,15 @@ const PhotoCapture: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isCameraReady, setIsCameraReady] = useState(false);
+  const [jobId, setJobId] = useState<string | null>(null);
 
   useEffect(() => {
     setIsClient(true);
+    const params = new URLSearchParams(window.location.search);
+    const jobIdParam = params.get("jobId");
+    if (jobIdParam) {
+      setJobId(jobIdParam);
+    }
   }, []);
 
   // Start camera stream with rear camera
@@ -75,7 +83,9 @@ const PhotoCapture: React.FC = () => {
         const dataUrl = canvas.toDataURL("image/png");
         setPhoto(dataUrl);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to capture photo");
+        setError(
+          err instanceof Error ? err.message : "Failed to capture photo"
+        );
         console.error("Photo capture error:", err);
       }
     }
@@ -90,6 +100,10 @@ const PhotoCapture: React.FC = () => {
       setError("User ID not found");
       return;
     }
+    if (!jobId) {
+      setError("Job ID is missing");
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
@@ -100,7 +114,21 @@ const PhotoCapture: React.FC = () => {
       });
       await uploadImage(file, "proof-of-delivery", userId);
 
-      // Navigate to the My Jobs page
+      const locationResult = await getLocation(userId);
+      if (
+        !locationResult.success ||
+        !locationResult.data ||
+        !locationResult.data.latest
+      ) {
+        throw new Error(locationResult.error || "Failed to get location data");
+      }
+
+      await createDeliveredJob({
+        activeJobId: jobId,
+        locationId: locationResult.data.latest.Id,
+        proofOfDeliveryUrl: file.name,
+      });
+
       router.push("/driver/dashboard/my-jobs");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to upload photo");
@@ -109,7 +137,6 @@ const PhotoCapture: React.FC = () => {
       setIsLoading(false);
     }
   };
-
   const dataURItoBlob = (dataURI: string) => {
     try {
       const byteString = atob(dataURI.split(",")[1]);

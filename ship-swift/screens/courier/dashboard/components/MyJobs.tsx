@@ -117,7 +117,7 @@ export default function MyJobs() {
         )
       );
       if (jobToUpdate.newStatus === "delivered") {
-        router.push("/driver/dashboard/my-jobs/capture-proof");
+        router.push(`/capture-proof?jobId=${jobToUpdate.jobId}`); // Pass the jobId as a query parameter
       }
       setIsDialogOpen(false);
       setJobToUpdate(null);
