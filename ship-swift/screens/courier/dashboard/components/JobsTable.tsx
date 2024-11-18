@@ -119,7 +119,7 @@ const LoadingState: FC = () => (
   <Card>
     <CardContent className="p-6">
       <div className="h-[400px] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+        <div className="animate-spin  rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
       </div>
     </CardContent>
   </Card>
