@@ -31,7 +31,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
   items,
   isDriver,
   hasActiveJobs,
-  onClose
+  onClose,
 }) => {
   const updateLocation = async (lat: number, lng: number) => {
     // just here, doing nothing
@@ -71,7 +71,7 @@ const NavMenu: React.FC<NavMenuProps> = ({
             )}
           </NavigationMenuItem>
         ))}
-        {isDriver && hasActiveJobs && (
+        {isDriver && (
           <div className="hidden lg:flex">
             <LocationTracker updateLocation={updateLocation} />
           </div>
