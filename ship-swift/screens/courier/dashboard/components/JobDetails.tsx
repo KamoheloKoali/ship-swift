@@ -123,7 +123,7 @@ export default function Details({ job }: JobDetailsProps) {
               </li>
             </ul>
             <Separator className="my-2" />
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4">
               <div className="grid gap-3">
                 <div className="font-semibold">Pickup Information</div>
                 <address className="grid gap-0.5 not-italic text-muted-foreground">

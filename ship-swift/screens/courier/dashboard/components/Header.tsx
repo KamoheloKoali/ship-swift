@@ -33,9 +33,10 @@ export default function Header() {
         getUserRoleById(),
         getAllActiveJobsByDriverId(userId || ""),
       ]);
-      if (response.data?.driver && activeJobs && activeJobs?.length > 0) {
+      // console.log("response.data?.driver:", response.data?.driver);
+      if (response.data?.driver) {
         setIsDriver(true);
-        setHasActiveJobs(true);
+        // setHasActiveJobs(true);
       }
     };
     isDriver();
@@ -76,6 +77,8 @@ export default function Header() {
     { label: "Chats", href: "/conversations" },
   ];
 
+  // console.log("Is Driver:", isDriver);
+
   return (
     <header className="w-full bg-white mb-16">
       <nav className="container mx-auto p-4 border-b-2 border-slate-200">
@@ -91,9 +94,9 @@ export default function Header() {
               hasActiveJobs={hasActiveJobs}
             />
           </div>
-          <SwitchUser />
           {/* User Button (Clerk) - Only visible on large screens */}
           <div className="flex gap-2">
+            <SwitchUser />
             <NotificationFeed />
             <UserButton />
           </div>
@@ -144,6 +147,9 @@ export default function Header() {
               <div className="lg:hidden flex justify-between p-3 rounded-sm bg-slate-200">
                 <p>Account</p>
                 <UserButton />
+              </div>
+              <div className="mt-4">
+                <SwitchUser />
               </div>
             </SheetContent>
           </Sheet>

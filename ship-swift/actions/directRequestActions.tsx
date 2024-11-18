@@ -70,7 +70,7 @@ export const getDirectRequestsByDriverId = async (
   try {
     const directRequests = await prisma.directRequest.findMany({
       where: { driverId, isApproved: false },
-      
+
       include: {
         CourierJob: {
           include: {
@@ -113,6 +113,8 @@ export const getDirectRequestsByCourierJobId = async (
     throw error;
   }
 };
+
+
 // Update a DirectRequest by ID
 export const updateDirectRequest = async (
   id: string,

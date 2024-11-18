@@ -38,32 +38,43 @@ const SwitchUser = () => {
 
   const checkDriver = async () => {
     if (userId) {
-      const driver = await getDriverByID(userId);
-      if (driver) {
-        updateUserRole({
-          userId,
-          driver: true,
-          client: false,
-        });
-        router.push("/driver/dashboard/find-jobs");
-      } else {
-        router.push("/onboarding/driver/registration");
+      try {
+        const driverResponse = await getDriverByID(userId);
+
+        if (driverResponse.success) {
+          await updateUserRole({
+            userId,
+            driver: true,
+            client: false,
+          });
+          router.push("/driver/dashboard/find-jobs");
+        } else {
+          router.push("/onboarding/driver/registration");
+        }
+      } catch (error) {
+        console.error("Error during driver check/update:", error);
       }
     }
   };
 
   const checkClient = async () => {
     if (userId) {
-      const client = await getClientById(userId);
-      if (client.success) {
-        updateUserRole({
-          userId,
-          driver: false,
-          client: true,
-        });
-        router.push("/client");
-      } else {
-        router.push("/onboarding/client");
+      try {
+        const clientResponse = await getClientById(userId);
+
+        if (clientResponse.success) {
+          await updateUserRole({
+            userId,
+            driver: false,
+            client: true,
+          });
+
+          router.push("/client");
+        } else {
+          router.push(`/onboarding/client`);
+        }
+      } catch (error) {
+        console.error("Error during client check/update:", error);
       }
     }
   };

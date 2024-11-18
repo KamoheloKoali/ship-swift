@@ -24,9 +24,16 @@ export const createClient = async (clientData: {
         idPhotoUrl: clientData.idPhotoUrl,
       },
     });
-    await prisma.userRole.create({
-      data: {
+    await prisma.userRole.upsert({
+      where: {
+        userId: clientData.clerkId, // Assuming userId is a unique field
+      },
+      create: {
         userId: clientData.clerkId,
+        driver: false,
+        client: true,
+      },
+      update: {
         driver: false,
         client: true,
       },
@@ -51,7 +58,10 @@ export const getUnverifiedClients = async () => {
       return { success: false, error: "No unverified clients found" };
     }
   } catch (error) {
-    return { success: false, error: "Error retrieving unverified clients" + error };
+    return {
+      success: false,
+      error: "Error retrieving unverified clients" + error,
+    };
   }
 };
 

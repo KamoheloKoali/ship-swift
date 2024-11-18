@@ -40,23 +40,23 @@ export default function useDriverRegistration() {
           const driver = await getDriverByID(userId);
           if (driver) {
             console.log("Fetched Driver Data:", driver); // Debugging line
-            const vehicleTypeParts = driver.vehicleType
-              ? driver.vehicleType.split(",")
+            const vehicleTypeParts = driver.data?.vehicleType
+              ? driver.data?.vehicleType.split(",")
               : [];
 
             setFormData({
-              phoneNumber: driver.phoneNumber || "",
-              location: driver.location || "",
+              phoneNumber: driver.data?.phoneNumber || "",
+              location: driver.data?.location || "",
               vehicleMake: vehicleTypeParts[1] || "",
               vehicleModel: vehicleTypeParts[2] || "",
               typeOfVehicle: vehicleTypeParts[3] || "",
               vehicleColor: vehicleTypeParts[0] || "",
             });
             setExistingImages({
-              "profile-photo": driver.photoUrl || null,
-              "id-document": driver.idPhotoUrl || null,
-              "drivers-license": driver.licensePhotoUrl || null,
-              "license-disc": driver.discPhotoUrl || null,
+              "profile-photo": driver.data?.photoUrl || null,
+              "id-document": driver.data?.idPhotoUrl || null,
+              "drivers-license": driver.data?.licensePhotoUrl || null,
+              "license-disc": driver.data?.discPhotoUrl || null,
             });
           }
         } catch (error) {

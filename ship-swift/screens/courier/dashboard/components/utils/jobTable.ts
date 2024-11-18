@@ -8,6 +8,7 @@ export interface CourierJob {
   PickUp: string;
   DropOff: string;
   Budget: number;
+  collectionDate: string;
   dateCreated: string;
 }
 
@@ -81,9 +82,23 @@ export const STATUS_STYLES = {
 } as const;
 
 // utils.ts
-export const formatDate = (dateString: string) => {
-  const [day, month, year] = dateString.split("/").map(Number); // Split and convert to numbers
-  const date = new Date(year, month - 1, day); // Create date object (month is zero-indexed)
+export const formatDate = (dateString: string | Date | null | undefined) => {
+  if (
+    !dateString ||
+    (typeof dateString !== "string" && !(dateString instanceof Date))
+  ) {
+    console.error("Invalid date input:", dateString);
+    return "Invalid date";
+  }
+
+  let date: Date;
+
+  if (typeof dateString === "string") {
+    const [day, month, year] = dateString.split("/").map(Number);
+    date = new Date(year, month - 1, day); // Create date object (month is zero-indexed)
+  } else {
+    date = dateString; // Assume it's a Date object
+  }
 
   const formattedDay = date.getDate().toString().padStart(2, "0");
   const formattedMonth = date.toLocaleString(undefined, { month: "short" });

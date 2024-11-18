@@ -1,28 +1,27 @@
 "use client";
 
 import Details from "./JobDetails";
-import RequestDetails from "./RequestDetails"; // New RequestDetails component
+import RequestDetails from "./RequestDetails";
 import { Suspense, useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { Button } from "@/components/ui/button";
-import Loading from "@/app/loading";
-import { Truck } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Truck, Loader2 } from "lucide-react";
 import JobsTable from "./JobsTable";
-import { Progress } from "@/components/ui/progress";
 import {
   getAllActiveJobsByDriverId,
   updateActiveJobStatus,
 } from "@/actions/activeJobsActions";
 import { getUnapprovedJobRequests } from "@/actions/jobRequestActions";
 import { getDirectRequestsByDriverId } from "@/actions/directRequestActions";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function MyJobs() {
   const [jobs, setJobs] = useState<any[] | undefined>([]);
@@ -32,7 +31,15 @@ export default function MyJobs() {
   const [directRequests, setDirectRequests] = useState<any[] | undefined>([]);
   const [error, setError] = useState<string | null | undefined>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [statusLoading, setIsStatusLoading] = useState<boolean>(false); // Moved here
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [jobToUpdate, setJobToUpdate] = useState<{
+    jobId: string;
+    newStatus: string;
+  } | null>(null);
+
   const { userId } = useAuth();
+  const router = useRouter();
 
   const fetchJobs = async () => {
     setLoading(true);
@@ -92,15 +99,32 @@ export default function MyJobs() {
   };
 
   const handleStatusChange = async (jobId: string, newStatus: string) => {
+    setJobToUpdate({ jobId, newStatus });
+    setIsDialogOpen(true);
+  };
+
+  const confirmStatusChange = async () => {
+    if (!jobToUpdate) return;
+    setIsStatusLoading(true); // Start loading indicator
     try {
-      await updateActiveJobStatus(jobId, newStatus);
+      await updateActiveJobStatus(jobToUpdate.jobId, jobToUpdate.newStatus);
+      console.log("New status:", jobToUpdate.newStatus);
       setJobs((prevJobs) =>
         prevJobs?.map((job) =>
-          job.Id === jobId ? { ...job, jobStatus: newStatus } : job
+          job.Id === jobToUpdate.jobId
+            ? { ...job, jobStatus: jobToUpdate.newStatus }
+            : job
         )
       );
+      if (jobToUpdate.newStatus === "delivered") {
+        router.push(`/capture-proof?jobId=${jobToUpdate.jobId}`); // Pass the jobId as a query parameter
+      }
+      setIsDialogOpen(false);
+      setJobToUpdate(null);
     } catch (error) {
       console.error("Error updating job status:", error);
+    } finally {
+      setIsStatusLoading(false); // Stop loading indicator
     }
   };
 
@@ -112,6 +136,28 @@ export default function MyJobs() {
           <p className="text-lg text-gray-700">____________________</p>
         </div>
       )}
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-auto p-6">
+          <DialogHeader>
+            <DialogTitle>Confirm Job Status</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to mark this job as{" "}
+              <strong>{jobToUpdate?.newStatus}</strong>?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex justify-between items-center gap-4">
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            {statusLoading ? (
+              <Loader2 className="animate-spin text-gray-500" size={24} />
+            ) : (
+              <Button onClick={confirmStatusChange}>Confirm</Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <div className="flex flex-col gap-4 p-4 md:py-4 md:px-6 lg:px-8">
         <main className="grid gap-4 md:gap-6 lg:gap-8">

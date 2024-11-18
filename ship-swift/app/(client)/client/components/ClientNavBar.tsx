@@ -41,14 +41,13 @@ export default function ClientNavBar() {
             <NavMenu items={menuItems} />
           </div>
 
-          <div>
-            <SwitchUser />
-          </div>
-
           {/* Right side: Search Bar and User Button */}
           <div className="flex justify-end space-x-4 w-[20%]">
             {/* User Button (Clerk) */}
             <div className="flex gap-2">
+              <div>
+                <SwitchUser />
+              </div>
               <NotificationFeed />
               <UserButton />
             </div>
@@ -90,7 +89,7 @@ export default function ClientNavBar() {
               <NavMenu items={menuItems} />
 
               {/* User Button (Clerk) - Only visible on small screens in Sheet */}
-              <div className="lg:hidden flex justify-between p-3 my-4 rounded-sm bg-slate-200" >
+              <div className="lg:hidden flex justify-between p-3 my-4 rounded-sm bg-slate-200">
                 <p>Account</p>
                 <UserButton
                   userProfileMode="navigation"

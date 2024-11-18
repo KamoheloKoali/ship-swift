@@ -1,13 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  PhoneInput,
-  phoneNumberSchema,
-  ValidationResult,
-} from "@/screens/global/phone-input";
-
-import type { E164Number } from "libphonenumber-js";
+import { PhoneInput, ValidationResult } from "@/screens/global/phone-input";
 import {
   Card,
   CardContent,
@@ -21,8 +15,20 @@ import ImageUploadCard from "./ImageUploadCard";
 import { CheckCircle } from "lucide-react";
 import useDriverRegistration from "@/screens/courier/registration/utils/DriverRegistration";
 import { z } from "zod";
+import { getClientById } from "@/actions/clientActions";
+import { useAuth } from "@clerk/nextjs";
 
-// Zod schema for validation
+// Define the form data interface
+interface FormData {
+  phoneNumber: string;
+  location: string;
+  vehicleMake: string;
+  vehicleModel: string;
+  typeOfVehicle: string;
+  vehicleColor: string;
+  idPhotoUrl?: string; // Added idPhotoUrl as optional
+}
+
 const driverRegistrationSchema = z.object({
   phoneNumber: z
     .string()
@@ -46,24 +52,31 @@ export default function DriverRegistrationForm() {
     handleInputChange,
     handleUpload,
   } = useDriverRegistration();
-  const [phoneValidation, setPhoneValidation] = useState<ValidationResult | null>(null);
 
-  // State to manage validation errors
+  // Add local state to manage form data
+  const [localFormData, setLocalFormData] = useState<FormData>({
+    phoneNumber: formData.phoneNumber || "",
+    location: formData.location || "",
+    vehicleMake: formData.vehicleMake || "",
+    vehicleModel: formData.vehicleModel || "",
+    typeOfVehicle: formData.typeOfVehicle || "",
+    vehicleColor: formData.vehicleColor || "",
+    idPhotoUrl: "",
+  });
+
+  const [phoneValidation, setPhoneValidation] =
+    useState<ValidationResult | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const { userId } = useAuth();
 
   const handleSubmit = async () => {
     try {
-      // Clear previous errors
       setErrors({});
-
-      // Validate form data using Zod schema
-      driverRegistrationSchema.parse(formData);
-
-      await handleUpload(); // Proceed with upload if validation passes
+      driverRegistrationSchema.parse(localFormData);
+      await handleUpload();
     } catch (error) {
       if (error instanceof z.ZodError) {
         const formattedErrors: { [key: string]: string } = {};
-        // Map Zod errors to the corresponding input field
         error.errors.forEach((err) => {
           if (err.path[0]) {
             formattedErrors[err.path[0].toString()] = err.message;
@@ -73,6 +86,37 @@ export default function DriverRegistrationForm() {
       }
     }
   };
+
+  // Handle local form data changes
+  const handleLocalInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setLocalFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    handleInputChange(e); // Also update the original form data
+  };
+
+  useEffect(() => {
+    const fetchClient = async () => {
+      if (userId) {
+        try {
+          const client = await getClientById(userId);
+          if (client?.data) {
+            setLocalFormData((prev) => ({
+              ...prev,
+              phoneNumber: client.data.phoneNumber || "",
+              idPhotoUrl: client.data.idPhotoUrl || "",
+            }));
+          }
+        } catch (error) {
+          console.error("Error fetching client data:", error);
+        }
+      }
+    };
+
+    fetchClient();
+  }, [userId]);
 
   if (isLoading) {
     return (
@@ -121,7 +165,9 @@ export default function DriverRegistrationForm() {
             folder="id-document"
             cardTitle="Identity Document"
             onFileChange={handleFileChange("id-document")}
-            existingImageUrl={existingImages["id-document"]}
+            existingImageUrl={
+              existingImages["id-document"] || localFormData.idPhotoUrl
+            }
           />
           <ImageUploadCard
             folder="drivers-license"
@@ -138,26 +184,18 @@ export default function DriverRegistrationForm() {
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <div>
-            {/* <Input
-              name="phoneNumber"
-              placeholder="Phone Number"
-              value={formData.phoneNumber}
-              onChange={handleInputChange}
-              required
-            /> */}
             <PhoneInput
-              value={formData.phoneNumber}
+              value={localFormData.phoneNumber}
               placeholder="Phone Number"
               onValueChange={({ phoneNumber, validation }) => {
-                setPhoneValidation(validation)
-                handleInputChange({
+                setPhoneValidation(validation);
+                handleLocalInputChange({
                   target: {
                     name: "phoneNumber",
-                    value: phoneNumber as string
-                  } 
-                } as React.ChangeEvent<HTMLInputElement>) 
-              }
-            }
+                    value: phoneNumber as string,
+                  },
+                } as React.ChangeEvent<HTMLInputElement>);
+              }}
             />
             {errors.phoneNumber && (
               <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>
@@ -167,8 +205,8 @@ export default function DriverRegistrationForm() {
             <Input
               name="location"
               placeholder="Residential Address"
-              value={formData.location}
-              onChange={handleInputChange}
+              value={localFormData.location}
+              onChange={handleLocalInputChange}
               required
             />
             {errors.location && (
@@ -178,9 +216,9 @@ export default function DriverRegistrationForm() {
           <div>
             <Input
               name="vehicleMake"
-              placeholder="Vehicle Make"
-              value={formData.vehicleMake}
-              onChange={handleInputChange}
+              placeholder="Vehicle Make (e.g., Toyota, Honda, Hyundai, etc.)"
+              value={localFormData.vehicleMake}
+              onChange={handleLocalInputChange}
               required
             />
             {errors.vehicleMake && (
@@ -190,9 +228,9 @@ export default function DriverRegistrationForm() {
           <div>
             <Input
               name="vehicleModel"
-              placeholder="Vehicle Model"
-              value={formData.vehicleModel}
-              onChange={handleInputChange}
+              placeholder="Vehicle Model (e.g., Hilux, Fit, H100 etc.)"
+              value={localFormData.vehicleModel}
+              onChange={handleLocalInputChange}
               required
             />
             {errors.vehicleModel && (
@@ -202,9 +240,9 @@ export default function DriverRegistrationForm() {
           <div>
             <Input
               name="typeOfVehicle"
-              placeholder="Vehicle Type"
-              value={formData.typeOfVehicle}
-              onChange={handleInputChange}
+              placeholder="Vehicle Type (e.g., Van, Hatchback, Mini-Truck etc.)"
+              value={localFormData.typeOfVehicle}
+              onChange={handleLocalInputChange}
               required
             />
             {errors.typeOfVehicle && (
@@ -217,8 +255,8 @@ export default function DriverRegistrationForm() {
             <Input
               name="vehicleColor"
               placeholder="Vehicle Color"
-              value={formData.vehicleColor}
-              onChange={handleInputChange}
+              value={localFormData.vehicleColor}
+              onChange={handleLocalInputChange}
               required
             />
             {errors.vehicleColor && (

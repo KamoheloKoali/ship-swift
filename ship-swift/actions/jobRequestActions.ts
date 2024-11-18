@@ -166,7 +166,7 @@ export async function approveJobRequest(data: {
   }/${date.getFullYear()}`;
 
   // Group operations that can be executed concurrently
-  const [jobRequest, courierJob, contact, setActiveJob] = await Promise.all([
+  const [jobRequest, courierJob, contact] = await Promise.all([
     // Update job request
     prisma.jobRequest.update({
       where: { Id: jobRequestId },
@@ -191,15 +191,14 @@ export async function approveJobRequest(data: {
       clientId: data.clientId,
       driverId: data.driverId,
     }),
-
-    // Create active job
-    createActiveJob({
-      courierJobId: data.courierJobId,
-      driverId: data.driverId,
-      clientId: data.clientId,
-      startDate: currentDate,
-    }),
   ]);
+
+  const setActiveJob = await createActiveJob({
+    courierJobId: data.courierJobId,
+    driverId: data.driverId,
+    clientId: data.clientId,
+    startDate: currentDate,
+  });
 
   // Check if all operations were successful
   if (jobRequest.Id && courierJob.Id && contact.success && setActiveJob?.Id) {

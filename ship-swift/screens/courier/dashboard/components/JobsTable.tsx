@@ -10,6 +10,7 @@ import {
   UserCircle,
   PackageCheck,
   Truck,
+  DollarSign,
 } from "lucide-react";
 import {
   Card,
@@ -45,6 +46,12 @@ import {
   capitalizeFirstLetter,
 } from "@/screens/courier/dashboard/components/utils/jobTable";
 import MyRequests from "@/screens/courier/dashboard/components/MyRequests";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface TableProps {
   jobs: ActiveJob[] | undefined;
@@ -78,6 +85,8 @@ const StatusActions: FC<{
   if (!currentActions.length) {
     return null;
   }
+  // Function to check if a date is within 2 days from now
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="h-8 w-8 p-0">
@@ -110,7 +119,7 @@ const LoadingState: FC = () => (
   <Card>
     <CardContent className="p-6">
       <div className="h-[400px] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+        <div className="animate-spin  rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
       </div>
     </CardContent>
   </Card>
@@ -127,6 +136,12 @@ const JobsTable: FC<TableProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<string>(JOB_STATUS.Ongoing);
   if (isLoading) return <LoadingState />;
+  const isWithinTwoDays = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const twoDaysFromNow = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
+    return date <= twoDaysFromNow && date >= now;
+  };
 
   const getStatusIcon = (status: JobStatusType) => {
     switch (status) {
@@ -215,8 +230,10 @@ const JobsTable: FC<TableProps> = ({
                           <TableHead className="hidden min-w-[130px] lg:table-cell">
                             Date
                           </TableHead>
-                          <TableHead className="text-right">Amount</TableHead>
-                          <TableHead className="w-[50px]"></TableHead>
+                          <TableHead className="flex items-center justify-center">
+                            M
+                          </TableHead>
+                          <TableHead className="w-[50px"></TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -227,7 +244,21 @@ const JobsTable: FC<TableProps> = ({
                             onClick={() => onRowClick(job)}
                           >
                             <TableCell>
-                              <div className="font-medium line-clamp-1">
+                              <div className="font-medium line-clamp-1 flex gap-2">
+                                {isWithinTwoDays(
+                                  job.CourierJob.collectionDate
+                                ) && (
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger>
+                                        <Truck className="h-4 w-4 text-blue-500" />
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p>Delivery due within 2 days</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                )}
                                 {job.CourierJob.Title}
                               </div>
                               <div className="hidden text-sm text-muted-foreground md:block line-clamp-2">
@@ -250,7 +281,21 @@ const JobsTable: FC<TableProps> = ({
                               </div>
                             </TableCell>
                             <TableCell className="hidden lg:table-cell whitespace-nowrap">
-                              {formatDate(job.startDate)}
+                              {isWithinTwoDays(
+                                job.CourierJob.collectionDate
+                              ) && (
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <Clock className="h-4 w-4 text-red-600" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Collection due in less than 2 days</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              )}{" "}
+                              {formatDate(job.CourierJob.collectionDate)}
                             </TableCell>
                             <TableCell className="text-right">
                               <div className="flex flex-col items-end gap-1">

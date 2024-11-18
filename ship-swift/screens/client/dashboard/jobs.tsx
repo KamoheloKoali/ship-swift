@@ -1,3 +1,12 @@
+/**
+ * The `MyJobs` component is the main dashboard view for a client, displaying a list of their courier jobs and detailed information about a selected job.
+ *
+ * The component fetches the client's jobs from the server and displays them in a table. When a job is selected, the component fetches additional details about the job, such as the job requests and the driver assigned to the job, and displays them in a details panel.
+ *
+ * The component also includes functionality to handle new jobs received through a Supabase channel subscription, automatically adding them to the list of jobs and updating the details panel if the new job matches the currently selected job.
+ *
+ * @returns The `MyJobs` component, which renders the client's dashboard view.
+ */
 "use client";
 
 import Details from "./JobDetails";
@@ -39,6 +48,8 @@ export default function MyJobs() {
   const { userId } = useAuth();
   const [driver, setDriver] = useState<any | null>({});
   const [open, setOpen] = useState(true);
+  let jobsVar: any[] = [];
+  let selectedJobVar: any = null;
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -47,9 +58,11 @@ export default function MyJobs() {
       if (response.success && response.data) {
         const data = response.data;
         if (data.length > 0 && window.innerWidth >= 1024) {
+          selectedJobVar = data[0];
           handleRowClick(data[0]);
         }
         setJobs(data);
+        jobsVar = data;
       } else {
         setError(response.error);
       }
@@ -65,20 +78,44 @@ export default function MyJobs() {
   };
 
   useEffect(() => {
+    /**
+     * Handles the processing of a new job received from a Supabase channel subscription.
+     *
+     * This function is called whenever a new job is inserted into the `CourierJobs` table in the
+     * Supabase database. It checks if the new job's `clientId` matches the current user's `userId`,
+     * and if so, adds the new job to the `jobs` state. If the new job matches the currently selected
+     * job, it also calls the `handleRowClick` function to update the UI.
+     *
+     * @param payload - The payload object received from the Supabase channel subscription, containing the new job data.
+     */
     const handleNewJob = (payload: any) => {
-      // console.log("Subscription payload received:", payload);
-      // console.log("Current userId:", userId);
-      // console.log("New job clientId:", payload.new.clientId);
       try {
         const newJob = payload.new;
-        console.log(payload.new);
-        if (newJob.clientId === userId) {
+        if (newJob.courierJobId) {
           setJobs((prevJobs) =>
             prevJobs ? [...prevJobs, { ...newJob }] : [{ ...newJob }]
           );
-          if (selectedJob && selectedJob.Id === newJob.Id) {
-            handleRowClick(newJob);
-          }
+          jobsVar?.forEach((job: any) => {
+            if (job.Id === newJob.courierJobId) {
+              toast({
+                title: `New Job Application for ${job.Title}`,
+                description: `A driver just applied for ${job.Title}. You have to refresh the page to see the new job application.`,
+                action: (
+                  // TODO: button to refresh the page
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      router.refresh();
+                    }}
+                  >
+                    Refresh
+                  </Button>
+                ),
+                variant: "default",
+              });
+            }
+          });
         }
       } catch (error) {
         console.log(payload.errors);
@@ -92,7 +129,7 @@ export default function MyJobs() {
         {
           event: "INSERT",
           schema: "public",
-          table: "CourierJobs",
+          table: "JobRequest",
         },
         (payload) => {
           handleNewJob(payload);
@@ -109,46 +146,38 @@ export default function MyJobs() {
     setRequests([]);
     setIsGettingDrivers(true);
 
-    if (job.packageStatus === "unclaimed") {
-      const requests = await getJobRequestsByCourierJobId(job.Id);
-      if (job.isDirect) {
-        // Get driver from DirectRequest
-        const directRequest = await getDirectRequestsByCourierJobId(job.id);
-        if (
-          directRequest &&
-          directRequest.length > 0 &&
-          directRequest[0].driverId
-        ) {
-          const driver = await getDriverByID(directRequest[0].driverId);
-          setRequests([driver]); // Assuming you want to set the direct driver only
-        }
-      } else {
-        // Handle non-direct requests
-        if (requests.length > 0) {
-          let drivers = [];
-          for (let request of requests) {
-            drivers.push(request.Driver);
+    try {
+      if (job.packageStatus === "unclaimed") {
+        const requests = await getJobRequestsByCourierJobId(job.Id);
+        if (job.isDirect) {
+          const directRequest = await getDirectRequestsByCourierJobId(job.Id);
+          if (directRequest && directRequest[0].driverId) {
+            const driver = await getDriverByID(directRequest[0].driverId);
+            setRequests([driver.data]);
           }
-          if (drivers.length > 0) {
-            setRequests(drivers);
+        } else {
+          if (requests.length > 0) {
+            setRequests(requests.map((request) => request.Driver));
           }
         }
+      } else if (
+        job.packageStatus === "claimed" ||
+        job.packageStatus === "collected" ||
+        job.packageStatus === "delivered"
+      ) {
+        if (job.Id) {
+          const driver = await getDriverDetails(job);
+          console.log("driver", driver);
+          setDriver(driver);
+        }
       }
-    } else if (
-      job.packageStatus === "claimed" ||
-      job.packageStatus === "collected" ||
-      job.packageStatus === "delivered"
-    ) {
-      // If the package is claimed, collected, or delivered, fetch the driver based on the job's driverId
-      if (job.Id) {
-        const driver = await getDriverDetails(job);
-        setDriver(driver);
-      }
+    } catch (error) {
+      console.error("Error fetching driver data:", error);
+    } finally {
+      setIsGettingDrivers(false);
+      setSelectedJob(job);
+      setOpen(true);
     }
-
-    setIsGettingDrivers(false);
-    setSelectedJob(job);
-    setOpen(true);
   };
 
   return (
