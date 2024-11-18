@@ -109,10 +109,19 @@ const PhotoCapture: React.FC = () => {
     setError(null);
     try {
       const blob = dataURItoBlob(photo);
-      const file = new File([blob], `proof_of_delivery_${Date.now()}.png`, {
+      const file = new File([blob], `${userId}-${Date.now()}.png`, {
         type: "image/png",
       });
-      await uploadImage(file, "proof-of-delivery", userId);
+
+      const { url, error } = await uploadImage(
+        file,
+        "proof-of-delivery",
+        userId
+      );
+
+      if (error || !url) {
+        throw new Error(error || "Failed to upload photo");
+      }
 
       const locationResult = await getLocation(userId);
       if (
@@ -126,7 +135,7 @@ const PhotoCapture: React.FC = () => {
       await createDeliveredJob({
         activeJobId: jobId,
         locationId: locationResult.data.latest.Id,
-        proofOfDeliveryUrl: file.name,
+        proofOfDeliveryUrl: url, // Use the full URL here
       });
 
       router.push("/driver/dashboard/my-jobs");
