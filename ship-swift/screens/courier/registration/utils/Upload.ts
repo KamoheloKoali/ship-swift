@@ -15,7 +15,14 @@ export async function uploadImage(
   clerkId: string
 ): Promise<{ url: string | null; error: string | null }> {
   const fileExtension = file.type === "image/png" ? "png" : "jpg";
-  const fileName = `${clerkId}.${fileExtension}`;
+  let fileName: string;
+
+  // Determine the fileName based on the folder
+  if (folder === "proof-of-delivery") {
+    fileName = `${file.name}`;
+  } else {
+    fileName = `${clerkId}.${fileExtension}`;
+  }
 
   try {
     // Upload the file to Supabase Storage
