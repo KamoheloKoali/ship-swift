@@ -164,31 +164,43 @@ const PhotoCapture: React.FC = () => {
   if (!isClient) return null;
 
   return (
-    <div className="photo-capture flex flex-col justify-center items-center sm:p-0 xl:p-4 bg-gray-50 rounded-lg shadow-lg relative sm:w-[90%] lg:w-[50%]">
+    <div className="photo-capture fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-95">
       {error && (
-        <div className="w-full p-3 mb-4 bg-red-100 text-red-700 rounded-lg">
+        <div className="absolute top-4 w-[90%] p-3 bg-red-100 text-red-700 rounded-lg">
           {error}
         </div>
       )}
-      <div className="relative w-full sm:h-full xl:h-[80%] bg-blue-100 rounded-lg overflow-hidden mb-4">
-        <video ref={videoRef} autoPlay className="w-full h-full object-cover" />
-        <button
-          onClick={startCamera}
-          className="absolute top-4 right-4 bg-black text-white px-4 py-2 rounded-lg hover:bg-slate-500 focus:ring focus:ring-white"
-          disabled={isLoading}
-        >
-          Start Camera
-        </button>
+
+      {/* Camera Display */}
+      <div className="relative w-full h-full">
+        <video
+          ref={videoRef}
+          autoPlay
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+
+        {/* Centered Start Camera Button */}
+        {!isCameraReady && (
+          <button
+            onClick={startCamera}
+            className="absolute inset-0 flex items-center justify-center bg-black text-white px-6 py-3 rounded-lg hover:bg-slate-500 focus:ring focus:ring-white z-10"
+            disabled={isLoading}
+          >
+            Start Camera
+          </button>
+        )}
       </div>
 
-      <button
-        onClick={capturePhoto}
-        className="bg-slate-500 text-white px-6 py-2 rounded-lg mb-4 w-full max-w-xs hover:bg-black transition duration-700 disabled:opacity-50"
-        disabled={isLoading || !isCameraReady}
-      >
-        Capture Photo
-      </button>
+      {/* Capture Button */}
+      {isCameraReady && (
+        <button
+          onClick={capturePhoto}
+          className="absolute bottom-8 w-16 h-16 bg-white rounded-full shadow-md border-4 border-gray-300 hover:scale-105 transition-transform disabled:opacity-50"
+          disabled={isLoading || !isCameraReady}
+        />
+      )}
 
+      {/* Photo Preview */}
       {photo && (
         <div className="photo-preview flex flex-col items-center gap-4 fixed inset-0 bg-gray-800 bg-opacity-70 backdrop-blur-lg justify-center z-50">
           <Image
@@ -196,7 +208,7 @@ const PhotoCapture: React.FC = () => {
             alt="Captured photo"
             width={580}
             height={580}
-            className="rounded-lg shadow-md m-2"
+            className="rounded-lg shadow-md"
           />
           <button
             onClick={() => {
