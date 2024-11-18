@@ -60,7 +60,7 @@ const TripCard = () => {
   });
 
   return (
-    <div className="p-6">
+    <div className="p-6 w-[100%]">
       <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
         Scheduled Trips
       </h2>
@@ -83,9 +83,13 @@ const TripCard = () => {
           {filteredTrips.map((trip) => (
             <Card
               key={trip.id}
-              className="transition-all duration-300 transform hover:scale-105 hover:shadow-2xl rounded-xl border border-gray-200 overflow-hidden"
+              className="
+              transition-all 
+              duration-300 
+              transform 
+              lg:hover:scale-105 hover:scale-100 hover:shadow-2xl rounded-xl border border-gray-200 overflow-hidden"
             >
-              <CardHeader className="p-4 bg-black text-white">
+              <CardHeader className="p-4 bg-slate-600 text-white">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <div className="flex items-center space-x-2 mb-2">
