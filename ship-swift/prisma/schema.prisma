@@ -190,26 +190,28 @@ model DirectRequest {
 }
 
 model ActiveJobs {
-  Id           String      @id @default(uuid())
-  courierJobId String
-  driverId     String
-  clientId     String
-  startDate    String
-  endDate      String?
-  jobStatus    String      @default("ongoing")
-  Client       clients     @relation(fields: [clientId], references: [Id])
-  CourierJob   CourierJobs @relation(fields: [courierJobId], references: [Id])
-  Driver       Drivers     @relation(fields: [driverId], references: [Id])
+  Id            String         @id @default(uuid())
+  courierJobId  String
+  driverId      String
+  clientId      String
+  startDate     String
+  endDate       String?
+  jobStatus     String         @default("ongoing")
+  Client        clients        @relation(fields: [clientId], references: [Id])
+  CourierJob    CourierJobs    @relation(fields: [courierJobId], references: [Id])
+  Driver        Drivers        @relation(fields: [driverId], references: [Id])
+  DeliveredJobs DeliveredJobs?
 }
 
 model Location {
-  Id        String   @id @default(uuid())
-  time      DateTime @default(now())
-  latitude  Float
-  longitude Float
-  accuracy  Float
-  driverId  String
-  driver    Drivers  @relation(fields: [driverId], references: [Id])
+  Id            String          @id @default(uuid())
+  time          DateTime        @default(now())
+  latitude      Float
+  longitude     Float
+  accuracy      Float
+  driverId      String
+  DeliveredJobs DeliveredJobs[]
+  driver        Drivers         @relation(fields: [driverId], references: [Id])
 }
 
 model ScheduledTrips {
@@ -228,6 +230,18 @@ model ScheduledTrips {
 model FCMTokens {
   userId String @id
   token  String
+}
+
+model DeliveredJobs {
+  Id                 String     @id
+  activeJobId        String     @unique
+  locationId         String
+  deliveryDate       DateTime   @default(now())
+  proofOfDeliveryUrl String
+  isDriverConfirmed  Boolean    @default(true)
+  isClientConfirmed  Boolean    @default(false)
+  ActiveJobs         ActiveJobs @relation(fields: [activeJobId], references: [Id])
+  Location           Location   @relation(fields: [locationId], references: [Id])
 }
 
 enum TripStatus {
