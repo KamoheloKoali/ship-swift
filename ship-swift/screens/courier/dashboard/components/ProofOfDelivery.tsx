@@ -109,7 +109,7 @@ const PhotoCapture: React.FC = () => {
     setError(null);
     try {
       const blob = dataURItoBlob(photo);
-      const file = new File([blob], `${userId}-${Date.now()}.png`, {
+      const file = new File([blob], `${jobId}-${Date.now()}.png`, {
         type: "image/png",
       });
 
