@@ -200,6 +200,20 @@ model ActiveJobs {
   Client       clients     @relation(fields: [clientId], references: [Id])
   CourierJob   CourierJobs @relation(fields: [courierJobId], references: [Id])
   Driver       Drivers     @relation(fields: [driverId], references: [Id])
+
+  DeliveredJobs DeliveredJobs[]
+}
+
+model DeliveredJobs {
+  Id                 String     @id @default(uuid())
+  activeJobId        String     @unique
+  ActiveJob          ActiveJobs @relation(fields: [activeJobId], references: [Id])
+  locationId         String
+  Location           Location   @relation(fields: [locationId], references: [Id])
+  deliveryDate       DateTime   @default(now())
+  proofOfDeliveryUrl String
+  isDriverConfirmed  Boolean    @default(true)
+  isClientConfirmed  Boolean    @default(false)
 }
 
 model Location {
@@ -210,6 +224,8 @@ model Location {
   accuracy  Float
   driverId  String
   driver    Drivers  @relation(fields: [driverId], references: [Id])
+
+  DeliveredJobs DeliveredJobs[]
 }
 
 model ScheduledTrips {
