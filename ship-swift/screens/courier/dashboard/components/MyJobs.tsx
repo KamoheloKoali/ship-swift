@@ -138,7 +138,7 @@ export default function MyJobs() {
       )}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-sm sm:max-w-md md:max-w-lg mx-4 sm:mx-8 p-6">
+        <DialogContent className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-auto p-6">
           <DialogHeader>
             <DialogTitle>Confirm Job Status</DialogTitle>
             <DialogDescription>
