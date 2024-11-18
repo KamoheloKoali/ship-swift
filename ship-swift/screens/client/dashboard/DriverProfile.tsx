@@ -42,13 +42,16 @@ const DriverProfile = ({ driver, job }: Props) => {
     if (job.isDirect) {
       setIsJobDirect(true);
     }
+  }, [job.isDirect]);
+
+  useEffect(() => {
     if (reviews) {
       const overallRating = reviews.reduce((acc, review) => {
         return acc + review.rating;
       }, 0);
       setOverAllReview(overallRating / reviews.length);
     }
-  }, [job.isDirect]);
+  }, [reviews]);
 
   const hire = async () => {
     setIsLoading(true);
@@ -64,8 +67,8 @@ const DriverProfile = ({ driver, job }: Props) => {
     }
     setIsLoading(false);
   };
+
   return (
-    // use driver car details to fill in spaces here
     <div className="flex flex-col sm:flex-row sm:items-start sm:space-x-4">
       <div className="flex justify-start mb-4 sm:mb-0">
         <Avatar>
@@ -83,7 +86,6 @@ const DriverProfile = ({ driver, job }: Props) => {
 
         <div className="space-y-1">
           <p className="text-sm text-gray-500">
-            {/* {driver.location ? driver.location : "Address Not Available"} */}
             current location:
             {isWindow ? (
               <MapComponent

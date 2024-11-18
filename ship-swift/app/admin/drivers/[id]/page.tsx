@@ -72,13 +72,13 @@ export default function DriverPage() {
 
   useEffect(() => {
     const getDriver = async () => {
-      const driver = await getDriverByID(id as string);
+      const driverResponse = await getDriverByID(id as string);
       setIsLoading(false);
-      if (driver?.Id) {
+      if (driverResponse.data?.Id) {
         setDriver({
-          ...driver,
-          dateCreated: driver.dateCreated.toISOString(),
-          dateUpdated: driver.dateUpdated.toISOString(),
+          ...driverResponse.data,
+          dateCreated: driverResponse.data.dateCreated.toISOString(),
+          dateUpdated: driverResponse.data.dateUpdated.toISOString(),
         });
       } else {
         toast({

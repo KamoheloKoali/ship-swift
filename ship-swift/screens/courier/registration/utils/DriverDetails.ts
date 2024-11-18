@@ -6,7 +6,12 @@ import {
 } from "@/actions/driverActions";
 import { useRouter } from "next/navigation";
 
-import { createUserRole, updateUserRole, getUserRole, deleteUserRole } from '@/actions/roleAction';
+import {
+  createUserRole,
+  updateUserRole,
+  getUserRole,
+  deleteUserRole,
+} from "@/actions/roleAction";
 import { ArrowLeftToLine } from "lucide-react";
 
 interface DriverData {
@@ -52,13 +57,13 @@ export default function useDriverDetails() {
       if (userId) {
         try {
           const driver = await getDriverByID(userId);
-          if (driver) {
+          if (driver && driver.success && driver.data) {
             setDriverData({
-              ...driver,
-              vehicleRegistrationNo: (driver as any).vehicleRegistrationNo ?? null,
+              ...driver.data,
+              vehicleRegistrationNo: driver.data.vehicleRegistrationNo ?? null,
               Contacts: [],
               Messages: [],
-              clientRequests: []
+              clientRequests: [],
             } as DriverData);
           } else {
             setDriverData(null);
@@ -70,7 +75,8 @@ export default function useDriverDetails() {
           setLoading(false);
         }
       }
-    };    fetchDriverData();
+    };
+    fetchDriverData();
   }, [userId]);
 
   const handleConfirm = async () => {
@@ -79,24 +85,31 @@ export default function useDriverDetails() {
         setLoading(true);
         const updatedDriver = await updateDriverVerification(
           driverData.Id,
-          false,
+          false
         );
         setDriverData({
           ...updatedDriver,
-          vehicleRegistrationNo: (updatedDriver as any).vehicleRegistrationNo ?? null,
+          vehicleRegistrationNo:
+            (updatedDriver as any).vehicleRegistrationNo ?? null,
           Contacts: [],
           Messages: [],
-          clientRequests: []
+          clientRequests: [],
         } as DriverData);
-        
-        const createRole = await createUserRole({ userId, driver: true, client: false });
+
+        const createRole = await createUserRole({
+          userId,
+          driver: true,
+          client: false,
+        });
         if (createRole) {
           console.log("User role created successfully");
         } else {
           console.log("User role creation failed");
         }
 
-        alert("Thank you for the submission of your documents. They will be verified shortly.");
+        alert(
+          "Thank you for the submission of your documents. They will be verified shortly."
+        );
         router.push("/driver/dashboard/find-jobs");
       } catch (err) {
         setError("Failed to verify driver");

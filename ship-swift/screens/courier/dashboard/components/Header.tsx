@@ -33,9 +33,10 @@ export default function Header() {
         getUserRoleById(),
         getAllActiveJobsByDriverId(userId || ""),
       ]);
-      if (response.data?.driver && activeJobs && activeJobs?.length > 0) {
+      // console.log("response.data?.driver:", response.data?.driver);
+      if (response.data?.driver) {
         setIsDriver(true);
-        setHasActiveJobs(true);
+        // setHasActiveJobs(true);
       }
     };
     isDriver();
@@ -75,6 +76,8 @@ export default function Header() {
     },
     { label: "Chats", href: "/conversations" },
   ];
+
+  // console.log("Is Driver:", isDriver);
 
   return (
     <header className="w-full bg-white mb-16">

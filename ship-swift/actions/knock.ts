@@ -15,6 +15,9 @@ export default async function notifyAboutJob(
       clientName,
       job,
       approved,
+      url: `${String(
+        process.env.NEXT_PUBLIC_DEVELOPMENT_URL
+      )}/driver/dashboard/my-jobs`,
     },
     recipients: [
       {

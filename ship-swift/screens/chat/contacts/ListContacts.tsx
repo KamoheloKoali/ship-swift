@@ -179,8 +179,8 @@ const ListContacts = ({
         let fullName: string;
         if (role) {
           const driverData = await getDriverByID(newRequest.senderId); // Fetch driver by senderId
-          fullName = driverData?.Id
-            ? `${driverData.firstName} ${driverData.lastName}`
+          fullName = driverData.data?.Id
+            ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
             : "Unknown Driver";
         } else {
           const clientData = await getClientById(newRequest.senderId); // Fetch client by senderId
