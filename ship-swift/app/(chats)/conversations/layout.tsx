@@ -32,10 +32,10 @@ const ConversationsLayout = async ({ children }: Props) => {
         contactsWithNames = await Promise.all(
           contacts.map(async (request: any) => {
             const driverData = await getDriverByID(request.driverId); // Fetch driver by senderId
-            const fullName = driverData?.Id
-              ? `${driverData.firstName} ${driverData.lastName}`
+            const fullName = driverData.data?.Id
+              ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
               : "Unknown Driver";
-            const photoUrl = driverData?.photoUrl;
+            const photoUrl = driverData.data?.photoUrl;
             return {
               ...request,
               fullName, // Add fullName to the request

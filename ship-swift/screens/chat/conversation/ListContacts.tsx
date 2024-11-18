@@ -26,8 +26,8 @@ const ListContacts = ({ role, Contacts }: Props) => {
         let fullName: string;
         if (role) {
           const driverData = await getDriverByID(newContact.driverId); // Fetch driver by driverId
-          fullName = driverData?.Id
-            ? `${driverData.firstName} ${driverData.lastName}`
+          fullName = driverData.data?.Id
+            ? `${driverData.data?.firstName} ${driverData.data?.lastName}`
             : "Unknown Driver";
         } else {
           const clientData = await getClientById(newContact.clientId); // Fetch client by clientId
@@ -71,6 +71,7 @@ const ListContacts = ({ role, Contacts }: Props) => {
                 key={contact.Id}
                 className="w-full cursor-pointer"
                 href={`/conversations/${contact.Id}`}
+                prefetch={true}
               >
                 <div className="border-b  py-2 flex gap-2">
                   <div>
