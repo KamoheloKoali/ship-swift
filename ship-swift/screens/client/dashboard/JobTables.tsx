@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {MapPinnedIcon, MapPinHouse, CalendarClockIcon, DollarSign} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -70,10 +71,10 @@ const JobsTable: FC<TableProps> = ({
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
-              <TableHead className="hidden sm:table-cell">PickUp</TableHead>
-              <TableHead className="hidden sm:table-cell">DropOff</TableHead>
-              <TableHead className="hidden md:table-cell">End Date</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="hidden sm:table-cell text-red-600"><MapPinnedIcon/></TableHead>
+              <TableHead className="hidden sm:table-cell text-blue-600"><MapPinHouse/></TableHead>
+              <TableHead className="hidden md:table-cell"><CalendarClockIcon/></TableHead>
+              <TableHead className="text-center flex justify-end items-center text-green-600"><DollarSign/></TableHead>
             </TableRow>
           </TableHeader>
           
