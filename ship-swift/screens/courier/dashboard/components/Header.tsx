@@ -76,7 +76,7 @@ export default function Header() {
             {/* Logo */}
             <div className="font-bold text-lg text-gray-800">Ship Swift</div>
 
-            {/* Navigation Menu for larger screens */}
+            {/* Navigation Menu for larger  screens*/}
             <NavMenu
               items={menuItems}
               isDriver={isDriver}
