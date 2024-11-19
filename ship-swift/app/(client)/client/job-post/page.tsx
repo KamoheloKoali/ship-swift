@@ -977,8 +977,8 @@ export default function PostJobWizard() {
           <div className="flex flex-row space-x-2">
             {!driverId && step === totalSteps ? (
               isSubmittingDriver ? (
-                <div className="ml-2 border-black bg-white text-black hover:bg-gray-100">
-                  <Loader2 className="animate-spin h-4 w-4" />
+                <div className="ml-2 flex items-center justify-center h-12 w-12 border border-black bg-white text-black rounded-md hover:bg-gray-100">
+                  <Loader2 className="animate-spin h-5 w-5" />
                 </div>
               ) : (
                 <DirectRequestButton onDriverSelected={handleSelectedDriver} />

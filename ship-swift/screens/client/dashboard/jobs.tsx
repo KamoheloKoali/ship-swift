@@ -181,7 +181,7 @@ export default function MyJobs() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-muted/40">
+    <div className="relative flex min-h-screen w-full flex-col bg-slate-200/30 rounded-xl">
       {/* Full-screen loading overlay */}
       {loading && (
         <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-30 backdrop-blur-md">
@@ -195,7 +195,7 @@ export default function MyJobs() {
         <div className="flex p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
           <Link href={"/client/job-post"} prefetch={true}>
             <Button
-              className="mb-4 flex items-center"
+              className="mb-4 flex items-center bg-slate-600"
               // onClick={() => {
               //   router.push("/client/job-post");
               // }}

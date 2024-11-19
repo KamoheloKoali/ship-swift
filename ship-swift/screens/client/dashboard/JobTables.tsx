@@ -56,12 +56,16 @@ const JobsTable: FC<TableProps> = ({
 
   // Table rendering logic
   const renderTable = (jobsList: any[], title: string, description: string) => (
-    <Card x-chunk="dashboard-05-chunk-3">
+    <Card
+      x-chunk="dashboard-05-chunk-3"
+      className="shadow-lg bg-white/50 border border-black/5"
+    >
       <CardHeader className="px-7">
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
+      {jobsList && jobsList.length > 0 ? (
         <Table>
           <TableHeader>
             <TableRow>
@@ -72,71 +76,88 @@ const JobsTable: FC<TableProps> = ({
               <TableHead className="text-right">Amount</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
-            {jobsList?.map((job) => (
-              <TableRow
-                key={job.Id}
-                className={`cursor-pointer ${
-                  Clicked?.Id === job.Id ? "bg-accent" : ""
-                }`}
-                onClick={() => onRowClick(job)}
-              >
-                <TableCell>
-                  <div className="font-medium">{job.Title}</div>
-                  <div className="hidden text-sm text-muted-foreground md:inline">
-                    {job.Description}
-                  </div>
-                </TableCell>
-                <TableCell className="hidden sm:table-cell">
-                  {job.PickUp}
-                </TableCell>
-                <TableCell className="hidden sm:table-cell">
-                  {job.DropOff}
-                </TableCell>
-                <TableCell className="hidden md:table-cell">
-                  {formatDateNoHrs(job.collectionDate)}
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex flex-col items-end gap-1">
-                    M{job.Budget}.00
-                    <StatusBadge
-                      status={
-                        job.packageStatus === "claimed"
-                          ? "ongoing"
-                          : job.packageStatus === "unclaimed"
-                          ? "unclaimed"
-                          : "collected"
-                      }
-                    />
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+          
+            
+              <TableBody>
+              {jobsList?.map((job) => (
+                <TableRow
+                  key={job.Id}
+                  className={`cursor-pointer ${
+                    Clicked?.Id === job.Id ? "bg-accent" : ""
+                  }`}
+                  onClick={() => onRowClick(job)}
+                >
+                  <TableCell>
+                    <div className="font-medium">{job.Title}</div>
+                    <div className="hidden text-sm text-muted-foreground md:inline">
+                      {job.Description}
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    {job.PickUp}
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    {job.DropOff}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {formatDateNoHrs(job.collectionDate)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex flex-col items-end gap-1">
+                      M{job.Budget}.00
+                      <StatusBadge
+                        status={
+                          job.packageStatus === "claimed"
+                            ? "ongoing"
+                            : job.packageStatus === "unclaimed"
+                            ? "unclaimed"
+                            : "collected"
+                        }
+                      />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+              </TableBody>
         </Table>
+        ) : (
+          <div className="text-center text-xl p-10 font-extrabold text-primary/40 bg-slate-100 flex items-center justify-center flex-col">
+            <p>Nothing to see Here</p>
+            <img src="/assets/public/nothing.png" alt="Nothing" />
+          </div>
+        )}
       </CardContent>
     </Card>
   );
 
   return (
     <Tabs defaultValue="unclaimed">
-      <div className="flex flex-wrap items-center">
-        <TabsList>
-          <TabsTrigger className="flex gap-1 md:block " value="unclaimed">
+      <div className="flex flex-wrap justify-center lg:justify-start items-center border-b border-black/20 p-2">
+        <TabsList className="flex flex-row gap-2 md:gap-4">
+          <TabsTrigger
+            className="flex gap-1 md:block bg-orange-400"
+            value="unclaimed"
+          >
             Unclaimed
-            <span className="md:ml-2 md:bg-primary/20 md:px-2 md:py-0.5 rounded-full text-xs">
+            <span className="m-1 md:bg-white/60 md:p-2 px-2 rounded-full text-xs bg-white">
               {unclaimedJobs?.length}
             </span>
           </TabsTrigger>
-          <TabsTrigger value="ongoing" className="flex gap-1 md:block ">
+          <TabsTrigger
+            value="ongoing"
+            className="flex gap-1 md:block bg-blue-400"
+          >
             Ongoing
-            <span className="md:ml-2 md:bg-primary/20 md:px-2 md:py-0.5 rounded-full text-xs">
+            <span className="m-1 md:bg-white/60 md:p-2 px-2 rounded-full text-xs bg-white">
               {filterJobs("ongoing")?.length}
             </span>
           </TabsTrigger>
-          <TabsTrigger value="delivered" className="flex gap-1 md:block ">
+          <TabsTrigger
+            value="delivered"
+            className="flex gap-1 md:block bg-green-400"
+          >
             Delivered
-            <span className="md:ml-2 md:bg-primary/20 md:px-2 md:py-0.5 rounded-full text-xs">
+            <span className="m-1 md:bg-white/60 md:p-2 px-2 my-1 rounded-full text-xs bg-white">
               {filterJobs("delivered")?.length}
             </span>
           </TabsTrigger>
