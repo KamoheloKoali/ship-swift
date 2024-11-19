@@ -26,11 +26,8 @@ export default function ClientNavBar() {
 
   return (
     <header className="w-full bg-white mb-16">
-      {/* Main Navigation */}
       <nav className="container mx-auto p-4">
-        {/* Row 1: Logo and Navigation Menu for large screens */}
         <div className="hidden lg:flex items-center justify-between">
-          {/* Left side: Logo and Navigation Menu */}
           <div className="flex items-center space-x-8">
             {/* Logo */}
             <Link href={"/client"}>

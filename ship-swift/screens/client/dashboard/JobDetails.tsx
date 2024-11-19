@@ -30,6 +30,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogClose,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
 import DriverProfile from "./DriverProfile";
 import { toast } from "@/hooks/use-toast";
@@ -145,54 +154,71 @@ export default function Details({
     return (
       <>
         <div className="grid gap-3">
-          <div className="font-semibold">Order Details</div>
-          <ul className="grid gap-3">
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Price</span>
-              <span className="flex-wrap">M{job.Budget}.00</span>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Item(s)</span>
-              <span className="flex-wrap">{job.Description}</span>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Weight</span>
-              <span className="flex-wrap">{job.weight}</span>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Dimensions</span>
-              <span className="flex-wrap">{job.dimensions}</span>
-            </li>
-            {/* <li className="flex items-center justify-between">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="text-lg font-bold bg-slate-800">
+                Order Details
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="w-[80%] rounded-md">
+              <DialogHeader>
+                <DialogTitle>Order Details</DialogTitle>
+              </DialogHeader>
+              <ul className="grid gap-3">
+                <li className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Price</span>
+                  <span className="flex-wrap">M{job.Budget}.00</span>
+                </li>
+                <li className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Item(s)</span>
+                  <span className="flex-wrap">{job.Description}</span>
+                </li>
+                <li className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Weight</span>
+                  <span className="flex-wrap">{job.weight}</span>
+                </li>
+                <li className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Dimensions</span>
+                  <span className="flex-wrap">{job.dimensions}</span>
+                </li>
+                {/* <li className="flex items-center justify-between">
               <span className="text-muted-foreground">Suitable Vehicles</span>
               <span className="flex-wrap">{job.suitableVehicles}</span>
             </li> */}
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Parcel Size</span>
-              <span className="flex-wrap">{packageSize}</span>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">End Date</span>
-              <span className="flex-wrap">
-                {formatDateNoHrs(job.collectionDate)}
-              </span>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Pick Up</span>
-              <span className="flex flex-wrap">
-                {job.PickUp}
-                <MapPin size={16} color="#3500f5" />
-              </span>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Drop Off</span>
-              <span className="flex flex-wrap">
-                {job.DropOff}
-                <MapPin size={16} color="#bd0a0a" />
-              </span>
-            </li>
-          </ul>
-          <MapComponent pickup={job.PickUp} dropoff={job.DropOff} />
+                <li className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Parcel Size</span>
+                  <span className="flex-wrap">{packageSize}</span>
+                </li>
+                <li className="flex items-center justify-between">
+                  <span className="text-muted-foreground">End Date</span>
+                  <span className="flex-wrap">
+                    {formatDateNoHrs(job.collectionDate)}
+                  </span>
+                </li>
+                <li className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Pick Up</span>
+                  <span className="flex flex-wrap">
+                    {job.PickUp}
+                    <MapPin size={16} color="#3500f5" />
+                  </span>
+                </li>
+                <li className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Drop Off</span>
+                  <span className="flex flex-wrap">
+                    {job.DropOff}
+                    <MapPin size={16} color="#bd0a0a" />
+                  </span>
+                </li>
+              </ul>
+              <MapComponent pickup={job.PickUp} dropoff={job.DropOff} />
+              <DialogFooter></DialogFooter>
+              <DialogClose>
+                <Button className="font-bold text-lg">Close</Button>
+              </DialogClose>
+            </DialogContent>
+          </Dialog>
+
+
         </div>
       </>
     );
@@ -222,8 +248,17 @@ export default function Details({
   const CustomerCourierInformation = () => (
     <>
       <div className="grid gap-3">
+      <Dialog>
+            <DialogTrigger asChild>
+              <Button className="text-lg font-bold bg-slate-800">
+              <p>Driver Information</p>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="w-[80%] rounded-md">
+              <DialogHeader>
+                <DialogTitle>Driver Information</DialogTitle>
+              </DialogHeader>
         <div className="font-semibold flex justify-between">
-          <p>Driver Information</p>
           <Button
             className=""
             variant="outline"
@@ -277,10 +312,27 @@ export default function Details({
             </Link>
           </div>
         </dl>
+        <DialogFooter></DialogFooter>
+              <DialogClose>
+                <Button className="font-bold text-lg">Close</Button>
+              </DialogClose>
+            </DialogContent>
+          </Dialog>
       </div>
+
+      
       <Separator className="my-2" />
       <div className="grid gap-3">
-        <div className="font-semibold">Client Information</div>
+      <Dialog>
+            <DialogTrigger asChild>
+              <Button className="text-lg font-bold bg-slate-800">
+              <p>Client Information</p>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="w-[80%] rounded-md">
+              <DialogHeader>
+                <DialogTitle>Client Informationn</DialogTitle>
+              </DialogHeader>
         <dl className="grid gap-3">
           <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">Customer</dt>
@@ -315,6 +367,12 @@ export default function Details({
             </Link>
           </div>
         </dl>
+        <DialogFooter></DialogFooter>
+              <DialogClose>
+                <Button className="font-bold text-lg">Close</Button>
+              </DialogClose>
+            </DialogContent>
+          </Dialog>
       </div>
     </>
   );
