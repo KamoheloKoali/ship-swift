@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
+// Create a new job
 export const createJob = async (jobData: FormData) => {
   try {
     // Extract values from FormData
