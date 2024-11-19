@@ -157,7 +157,7 @@ export default function Details({
         <div className="grid gap-3">
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="text-lg font-bold bg-slate-800">
+              <Button className="text-lg font-bold">
                 Order Details
               </Button>
             </DialogTrigger>
@@ -249,7 +249,7 @@ export default function Details({
       <div className="grid gap-3">
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="text-lg font-bold bg-slate-800">
+            <Button className="text-lg font-bold">
               <p>Driver Information</p>
             </Button>
           </DialogTrigger>
@@ -326,7 +326,7 @@ export default function Details({
       <div className="grid gap-3">
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="text-lg font-bold bg-slate-800">
+            <Button className="text-lg font-bold">
               <p>Client Information</p>
             </Button>
           </DialogTrigger>
