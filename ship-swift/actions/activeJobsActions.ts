@@ -95,9 +95,15 @@ export async function getActiveJobByCourierJobId(courierJobId: string) {
 
 export async function updateActiveJobStatus(id: string, status: string) {
   try {
+    const updatedData: { jobStatus: string; endDate?: string } = { jobStatus: status };
+
+    if (status === "delivered") {
+      updatedData.endDate = new Date().toISOString();
+    }
+
     const updatedJob = await prisma.activeJobs.update({
       where: { Id: id },
-      data: { jobStatus: status },
+      data: updatedData,
     });
 
     if (status !== "delivered") {
@@ -106,9 +112,11 @@ export async function updateActiveJobStatus(id: string, status: string) {
         data: { packageStatus: status },
       });
     }
+
     return updatedJob;
   } catch (error) {
     console.error("Error updating Job status:", error);
+    throw error;
   }
 }
 

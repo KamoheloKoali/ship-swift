@@ -105,7 +105,7 @@ export default function MyJobs() {
 
   const confirmStatusChange = async () => {
     if (!jobToUpdate) return;
-    setIsStatusLoading(true); // Start loading indicator
+    setIsStatusLoading(true);
     try {
       await updateActiveJobStatus(jobToUpdate.jobId, jobToUpdate.newStatus);
       console.log("New status:", jobToUpdate.newStatus);
@@ -117,14 +117,15 @@ export default function MyJobs() {
         )
       );
       if (jobToUpdate.newStatus === "delivered") {
-        router.push(`/capture-proof?jobId=${jobToUpdate.jobId}`); // Pass the jobId as a query parameter
+        await router.prefetch(`/capture-proof?jobId=${jobToUpdate.jobId}`);
+        router.push(`/capture-proof?jobId=${jobToUpdate.jobId}`);
       }
       setIsDialogOpen(false);
       setJobToUpdate(null);
     } catch (error) {
       console.error("Error updating job status:", error);
     } finally {
-      setIsStatusLoading(false); // Stop loading indicator
+      setIsStatusLoading(false);
     }
   };
 
