@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {MapPinnedIcon, MapPinHouse, CalendarClockIcon, DollarSign} from "lucide-react";
+import {MapPinnedIcon, MapPinHouse, CalendarClockIcon, DollarSign, TruckIcon, PackageOpen, House} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -136,28 +136,28 @@ const JobsTable: FC<TableProps> = ({
       <div className="flex flex-wrap justify-center lg:justify-start items-center p-2">
         <TabsList className="flex flex-row gap-2 md:gap-4 w-full">
           <TabsTrigger
-            className="flex gap-1 md:block w-full"
+            className="flex items-center justify-center text-center gap-1 w-full max-h-10"
             value="unclaimed"
           >
-            Unclaimed
+            <PackageOpen className="text-red-700"/><p className="hidden lg:flex">Unclaimed</p>
             <span className="m-1 md:bg-white/60 md:p-2 px-2 rounded-full text-xs bg-white">
               {unclaimedJobs?.length}
             </span>
           </TabsTrigger>
           <TabsTrigger
             value="ongoing"
-            className="flex gap-1 md:block w-full"
+            className="flex items-center justify-center text-center gap-1 w-full max-h-10"
           >
-            Ongoing
+            <TruckIcon className="text-blue-700"/><p className="hidden lg:flex">Ongoing</p>
             <span className="m-1 md:bg-white/60 md:p-2 px-2 rounded-full text-xs bg-white">
               {filterJobs("ongoing")?.length}
             </span>
           </TabsTrigger>
           <TabsTrigger
             value="delivered"
-            className="flex gap-1 md:block w-full"
+            className="flex items-center justify-center text-center gap-1 w-full max-h-10"
           >
-            Delivered
+            <House className="text-green-700"/><p className="hidden lg:flex">Delivered</p>
             <span className="m-1 md:bg-white/60 md:p-2 px-2 my-1 rounded-full text-xs bg-white">
               {filterJobs("delivered")?.length}
             </span>
@@ -193,7 +193,7 @@ const JobsTable: FC<TableProps> = ({
         {renderTable(
           filterJobs("delivered") || [],
           "Deliveries",
-          "All delivered deliveries."
+          "All delivered packages."
         )}
       </TabsContent>
     </Tabs>
