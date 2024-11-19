@@ -188,7 +188,7 @@ export default function MyJobs() {
 
       {/* Proof Capture Modal */}
       <Dialog open={isProofModalOpen} onOpenChange={closeProofModal}>
-        <DialogContent className="w-full max-w-md mx-auto p-6">
+        <DialogContent className="w-full h-full max-w-none mx-0 my-0 p-6">
           <DialogHeader>
             <DialogTitle>Capture Proof</DialogTitle>
             <DialogDescription>
