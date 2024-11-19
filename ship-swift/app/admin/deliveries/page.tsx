@@ -50,11 +50,21 @@ export default function DeliveriesPage() {
   }, []);
 
   const filteredJobs = deliveredJobs.filter((job) => {
-    const clientName = job?.ActiveJob?.Client?.name?.toLowerCase() || "";
-    const driverName = job?.ActiveJob?.Driver?.name?.toLowerCase() || "";
+    const clientFirstName =
+      job?.ActiveJob?.Client?.firstName?.toLowerCase() || "";
+    const clientLastName =
+      job?.ActiveJob?.Client?.lastName?.toLowerCase() || "";
+    const driverFirstName =
+      job?.ActiveJob?.Driver?.firstName?.toLowerCase() || "";
+    const driverLastName =
+      job?.ActiveJob?.Driver?.lastName?.toLowerCase() || "";
+
+    const clientFullName = `${clientFirstName} ${clientLastName}`.trim();
+    const driverFullName = `${driverFirstName} ${driverLastName}`.trim();
+
     return (
-      clientName.includes(searchTerm.toLowerCase()) ||
-      driverName.includes(searchTerm.toLowerCase())
+      clientFullName.includes(searchTerm.toLowerCase()) ||
+      driverFullName.includes(searchTerm.toLowerCase())
     );
   });
 
