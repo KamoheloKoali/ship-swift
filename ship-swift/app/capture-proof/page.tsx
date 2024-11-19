@@ -4,7 +4,7 @@ import PhotoCapture from "@/screens/courier/dashboard/components/ProofOfDelivery
 const page = () => {
   return (
     <div>
-      <PhotoCapture />
+      {/* <PhotoCapture /> */}
     </div>
   );
 };

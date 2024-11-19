@@ -27,33 +27,28 @@ export default function Header() {
   const [hasActiveJobs, setHasActiveJobs] = useState(false);
 
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  useEffect(() => {
-    const isDriver = async () => {
-      const [response, activeJobs] = await Promise.all([
-        getUserRoleById(),
-        getAllActiveJobsByDriverId(userId || ""),
-      ]);
-      // console.log("response.data?.driver:", response.data?.driver);
-      if (response.data?.driver) {
-        setIsDriver(true);
-        // setHasActiveJobs(true);
-      }
-    };
-    isDriver();
-  }, []);
-  const updateLocation = async (lat: number, lng: number, accuracy: number) => {
-    const response = await createLocation({
-      driverId: userId || "",
-      latitude: lat,
-      longitude: lng,
-      accuracy: accuracy,
-    });
-    if (response.success) {
-      console.log("Location created successfully");
-    } else {
-      console.log("Error creating location: " + response.error);
-    }
-  };
+  // useEffect(() => {
+  //   const isDriver = async () => {
+  //     const response = await getUserRoleById();
+  //     if (response.data?.driver) {
+  //       setIsDriver(true);
+  //     }
+  //   };
+  //   isDriver();
+  // }, []);
+  // const updateLocation = async (lat: number, lng: number, accuracy: number) => {
+  //   const response = await createLocation({
+  //     driverId: userId || "",
+  //     latitude: lat,
+  //     longitude: lng,
+  //     accuracy: accuracy,
+  //   });
+  //   if (response.success) {
+  //     console.log("Location created successfully");
+  //   } else {
+  //     console.log("Error creating location: " + response.error);
+  //   }
+  // };
 
   const handleCloseSheet = () => setIsSheetOpen(false);
 
@@ -68,16 +63,10 @@ export default function Header() {
     },
     {
       label: "Manage Finances",
-      dropdownItems: [
-        { label: "Income", href: "/finances/income" },
-        { label: "Expenses", href: "/finances/expenses" },
-        { label: "Reports", href: "/finances/reports" },
-      ],
+      href: "/finances",
     },
     { label: "Chats", href: "/conversations" },
   ];
-
-  // console.log("Is Driver:", isDriver);
 
   return (
     <header className="w-full bg-white mb-16">
@@ -109,11 +98,11 @@ export default function Header() {
             <div className="font-bold text-lg text-gray-800 flex gap-2">
               Ship Swift
             </div>
-            {isDriver && (
+            {/* {isDriver && (
               <div className="">
                 <LocationTracker updateLocation={updateLocation} />
               </div>
-            )}
+            )} */}
           </div>
           {/* Menu Button for small screens */}
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
