@@ -2,6 +2,7 @@
 
 import Details from "./JobDetails";
 import RequestDetails from "./RequestDetails";
+import PhotoCapture from "./ProofOfDelivery";
 import { Suspense, useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { Truck, Loader2 } from "lucide-react";
@@ -21,7 +22,6 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 
 export default function MyJobs() {
   const [jobs, setJobs] = useState<any[] | undefined>([]);
@@ -31,15 +31,16 @@ export default function MyJobs() {
   const [directRequests, setDirectRequests] = useState<any[] | undefined>([]);
   const [error, setError] = useState<string | null | undefined>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [statusLoading, setIsStatusLoading] = useState<boolean>(false); // Moved here
+  const [statusLoading, setIsStatusLoading] = useState<boolean>(false);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [jobToUpdate, setJobToUpdate] = useState<{
     jobId: string;
     newStatus: string;
   } | null>(null);
+  const [isProofModalOpen, setIsProofModalOpen] = useState<boolean>(false);
+  const [currentJobId, setCurrentJobId] = useState<string | null>(null);
 
   const { userId } = useAuth();
-  const router = useRouter();
 
   const fetchJobs = async () => {
     setLoading(true);
@@ -95,12 +96,17 @@ export default function MyJobs() {
 
   const handleRequestClick = (request: any | undefined) => {
     setSelectedRequest(request);
-    setSelectedJob(null); // Clear selected job when a request is clicked
+    setSelectedJob(null);
   };
 
   const handleStatusChange = async (jobId: string, newStatus: string) => {
-    setJobToUpdate({ jobId, newStatus });
-    setIsDialogOpen(true);
+    if (newStatus === "delivered") {
+      setCurrentJobId(jobId);
+      setIsProofModalOpen(true);
+    } else {
+      setJobToUpdate({ jobId, newStatus });
+      setIsDialogOpen(true);
+    }
   };
 
   const confirmStatusChange = async () => {
@@ -108,7 +114,6 @@ export default function MyJobs() {
     setIsStatusLoading(true);
     try {
       await updateActiveJobStatus(jobToUpdate.jobId, jobToUpdate.newStatus);
-      console.log("New status:", jobToUpdate.newStatus);
       setJobs((prevJobs) =>
         prevJobs?.map((job) =>
           job.Id === jobToUpdate.jobId
@@ -116,10 +121,6 @@ export default function MyJobs() {
             : job
         )
       );
-      if (jobToUpdate.newStatus === "delivered") {
-        await router.prefetch(`/capture-proof?jobId=${jobToUpdate.jobId}`);
-        router.push(`/capture-proof?jobId=${jobToUpdate.jobId}`);
-      }
       setIsDialogOpen(false);
       setJobToUpdate(null);
     } catch (error) {
@@ -129,17 +130,23 @@ export default function MyJobs() {
     }
   };
 
+  const closeProofModal = () => {
+    setIsProofModalOpen(false);
+    setCurrentJobId(null);
+  };
+
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-muted/40">
       {loading && (
         <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-30 backdrop-blur-md">
           <Truck className="animate-truck" width="100" height="100" />
-          <p className="text-lg text-gray-700">____________________</p>
+          <p className="text-lg text-gray-700">Loading jobs...</p>
         </div>
       )}
 
+      {/* Confirmation Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg mx-auto p-6">
+        <DialogContent className="w-full max-w-md mx-auto p-6">
           <DialogHeader>
             <DialogTitle>Confirm Job Status</DialogTitle>
             <DialogDescription>
@@ -160,9 +167,28 @@ export default function MyJobs() {
         </DialogContent>
       </Dialog>
 
+      {/* Proof Capture Modal */}
+      <Dialog open={isProofModalOpen} onOpenChange={closeProofModal}>
+        <DialogContent className="w-full max-w-md mx-auto p-6">
+          <DialogHeader>
+            <DialogTitle>Capture Proof of Delivery</DialogTitle>
+            <DialogDescription>
+              Upload proof for job ID: <strong>{currentJobId}</strong>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="w-full aspect-square">
+            <PhotoCapture jobId={currentJobId} />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={closeProofModal}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <div className="flex flex-col gap-4 p-4 md:py-4 md:px-6 lg:px-8">
         <main className="grid gap-4 md:gap-6 lg:gap-8">
-          {/* Main Content Area */}
           <div className="grid gap-4 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <JobsTable
