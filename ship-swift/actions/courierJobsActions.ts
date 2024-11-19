@@ -26,6 +26,15 @@ export const createJob = async (jobData: FormData) => {
     const weight = jobData.get("weight") as string | null;
     const dimensions = jobData.get("dimensions") as string | null;
     const suitableVehicles = jobData.get("suitableVehicles") as string | null;
+    const packageType = jobData.get("packageType") as string | null;
+    const isPackaged = jobData.get("isPackaged") ? true : false; // Convert to boolean
+    const recipientName = jobData.get("recipientName") as string | null;
+    const recipientGender = jobData.get("recipientGender") as string | null;
+    const paymentMode = jobData.get("paymentMode") as string | null;
+    const handlingRequirements = jobData.get("handlingRequirements") as
+      | string
+      | null;
+    const deliveryDate = jobData.get("deliveryDate") as string | null;
 
     // Ensure none of the required fields are null or undefined
     if (!clientId) {
@@ -53,6 +62,13 @@ export const createJob = async (jobData: FormData) => {
         dimensions: dimensions,
         suitableVehicles: suitableVehicles,
         isDirect: isDirect, // Add the isDirect flag to the job data
+        packageType: packageType,
+        isPackaged: isPackaged,
+        recipientName: recipientName,
+        recipientGender: recipientGender,
+        paymentMethod: paymentMode,
+        parcelHandling: handlingRequirements,
+        deliveryDate: deliveryDate ? new Date(deliveryDate) : undefined, // Convert to Date
       },
     });
 
@@ -64,7 +80,6 @@ export const createJob = async (jobData: FormData) => {
     return { success: false, error: `Error creating job: ${error.message}` }; // Return detailed error
   }
 };
-
 // Function to get all jobs
 export const getAllJobs = async () => {
   try {
@@ -73,7 +88,7 @@ export const getAllJobs = async () => {
       where: {
         packageStatus: "unclaimed",
         isDirect: false,
-      }
+      },
     });
     return { success: true, data: jobs };
   } catch (error) {
