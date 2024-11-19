@@ -74,9 +74,10 @@ export default function ReleasePayment({ job }: { job: { Id: string } }) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Confirm Payment</DialogTitle>
+          <DialogTitle>Release Payment</DialogTitle>
           <DialogDescription>
-            Are you sure you want to make payment? This action cannot be undone.
+            Are you sure you want to release payment? This action cannot be
+            undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
