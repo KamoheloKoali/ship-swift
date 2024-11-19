@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {MapPinnedIcon, MapPinHouse, CalendarClockIcon, DollarSign} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -70,10 +71,10 @@ const JobsTable: FC<TableProps> = ({
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
-              <TableHead className="hidden sm:table-cell">PickUp</TableHead>
-              <TableHead className="hidden sm:table-cell">DropOff</TableHead>
-              <TableHead className="hidden md:table-cell">End Date</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="hidden sm:table-cell text-red-600"><MapPinnedIcon/></TableHead>
+              <TableHead className="hidden sm:table-cell text-blue-600"><MapPinHouse/></TableHead>
+              <TableHead className="hidden md:table-cell"><CalendarClockIcon/></TableHead>
+              <TableHead className="text-center flex justify-end items-center text-green-600"><DollarSign/></TableHead>
             </TableRow>
           </TableHeader>
           
@@ -132,10 +133,10 @@ const JobsTable: FC<TableProps> = ({
 
   return (
     <Tabs defaultValue="unclaimed">
-      <div className="flex flex-wrap justify-center lg:justify-start items-center border-b border-black/20 p-2">
-        <TabsList className="flex flex-row gap-2 md:gap-4">
+      <div className="flex flex-wrap justify-center lg:justify-start items-center p-2">
+        <TabsList className="flex flex-row gap-2 md:gap-4 w-full">
           <TabsTrigger
-            className="flex gap-1 md:block bg-orange-400"
+            className="flex gap-1 md:block w-full"
             value="unclaimed"
           >
             Unclaimed
@@ -145,7 +146,7 @@ const JobsTable: FC<TableProps> = ({
           </TabsTrigger>
           <TabsTrigger
             value="ongoing"
-            className="flex gap-1 md:block bg-blue-400"
+            className="flex gap-1 md:block w-full"
           >
             Ongoing
             <span className="m-1 md:bg-white/60 md:p-2 px-2 rounded-full text-xs bg-white">
@@ -154,7 +155,7 @@ const JobsTable: FC<TableProps> = ({
           </TabsTrigger>
           <TabsTrigger
             value="delivered"
-            className="flex gap-1 md:block bg-green-400"
+            className="flex gap-1 md:block w-full"
           >
             Delivered
             <span className="m-1 md:bg-white/60 md:p-2 px-2 my-1 rounded-full text-xs bg-white">
