@@ -124,6 +124,7 @@ model CourierJobs {
   recipientGender    String?         @default("")
   recipientName      String?         @default("")
   urgency            String?         @default("")
+  paymentMethod      String?         @default("")
   activeJobs         ActiveJobs[]
   approvedRequest    JobRequest?     @relation("ApprovedRequest", fields: [approvedRequestId], references: [Id])
   client             clients         @relation(fields: [clientId], references: [Id])
