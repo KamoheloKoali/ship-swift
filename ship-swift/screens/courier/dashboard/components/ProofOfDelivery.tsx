@@ -7,27 +7,20 @@ import { uploadImage } from "../../registration/utils/Upload";
 import { getLocation } from "@/actions/locationAction";
 import { createDeliveredJob } from "@/actions/deliveredJobsActions";
 
-const PhotoCapture: React.FC = () => {
+interface PhotoCaptureProps {
+  jobId: string | null;
+  onClose?: () => void;
+}
+
+const PhotoCapture: React.FC<PhotoCaptureProps> = ({ jobId, onClose }) => {
   const router = useRouter();
   const [photo, setPhoto] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const { userId } = useAuth();
-  const [isClient, setIsClient] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isCameraReady, setIsCameraReady] = useState(false);
-  const [jobId, setJobId] = useState<string | null>(null);
 
-  useEffect(() => {
-    setIsClient(true);
-    const params = new URLSearchParams(window.location.search);
-    const jobIdParam = params.get("jobId");
-    if (jobIdParam) {
-      setJobId(jobIdParam);
-    }
-  }, []);
-
-  // Start camera stream with rear camera
   const startCamera = async () => {
     try {
       setError(null);
@@ -35,10 +28,9 @@ const PhotoCapture: React.FC = () => {
         throw new Error("Camera access is not supported in your browser");
       }
 
-      // Set constraints to use the rear camera (back camera)
       const constraints = {
         video: {
-          facingMode: { exact: "environment" }, // targeting rear camera
+          facingMode: { exact: "environment" },
         },
       };
 
@@ -53,7 +45,6 @@ const PhotoCapture: React.FC = () => {
     }
   };
 
-  // Stop camera stream
   const stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
@@ -135,10 +126,14 @@ const PhotoCapture: React.FC = () => {
       await createDeliveredJob({
         activeJobId: jobId,
         locationId: locationResult.data.latest.Id,
-        proofOfDeliveryUrl: url, // Use the full URL here
+        proofOfDeliveryUrl: url,
       });
 
-      router.push("/driver/dashboard/my-jobs");
+      if (onClose) {
+        onClose();
+      } else {
+        router.push("/driver/dashboard/my-jobs");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to upload photo");
       console.error("Photo upload error:", err);
@@ -146,6 +141,7 @@ const PhotoCapture: React.FC = () => {
       setIsLoading(false);
     }
   };
+
   const dataURItoBlob = (dataURI: string) => {
     try {
       const byteString = atob(dataURI.split(",")[1]);
@@ -160,8 +156,6 @@ const PhotoCapture: React.FC = () => {
       throw new Error("Failed to convert photo data");
     }
   };
-
-  if (!isClient) return null;
 
   return (
     <div className="photo-capture fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-95">

@@ -48,6 +48,21 @@ export async function confirmClientDelivery(deliveredJobId: string) {
   }
 }
 
+export async function getDeliveryByActiveJobId(activeJobId: string) {
+  try {
+    const deliveredJob = await prisma.deliveredJobs.findFirst({
+      where: {
+        activeJobId: activeJobId,
+      },
+    });
+    return deliveredJob;
+  }
+  catch (error) {
+    console.error("Error fetching delivered job by activeJobId:", error);
+    throw error;
+  }
+}
+
 export async function getDeliveredJobDetails(deliveredJobId: string) {
   try {
     const deliveredJobs = await prisma.deliveredJobs.findMany({
