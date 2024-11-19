@@ -1,8 +1,6 @@
 "use client";
 import {
   Check,
-  ChevronLeft,
-  ChevronRight,
   Copy,
   CreditCard,
   HandCoins,
@@ -17,7 +15,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
@@ -50,6 +47,8 @@ import Link from "next/link";
 import DriverLocation from "./DriverLocation";
 import { formatDateNoHrs } from "@/screens/courier/dashboard/components/utils/jobTable";
 import { StatusBadge } from "@/screens/courier/dashboard/components/JobsTable";
+import ReleasePayment from "@/screens/client/payments/ReleasePayment";
+import { useAuth } from "@clerk/nextjs";
 
 interface SideCardProps {
   job: {
@@ -91,6 +90,7 @@ export default function Details({
   const [isLoading, setIsLoading] = useState(false);
   const [jobIsDirect, setJobIsDirect] = useState(false);
   const router = useRouter();
+  const { userId } = useAuth();
   const [isJobCompleted, setIsJobCompleted] = useState(false);
   const [isGettingContact, setIsGettingContact] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
@@ -151,6 +151,7 @@ export default function Details({
         setPackageSize("Extra-Large Package");
       }
     }, [job.parcelSize]);
+
     return (
       <>
         <div className="grid gap-3">
@@ -217,8 +218,6 @@ export default function Details({
               </DialogClose>
             </DialogContent>
           </Dialog>
-
-
         </div>
       </>
     );
@@ -248,131 +247,136 @@ export default function Details({
   const CustomerCourierInformation = () => (
     <>
       <div className="grid gap-3">
-      <Dialog>
-            <DialogTrigger asChild>
-              <Button className="text-lg font-bold bg-slate-800">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="text-lg font-bold bg-slate-800">
               <p>Driver Information</p>
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="w-[80%] rounded-md">
+            <DialogHeader>
+              <DialogTitle>Driver Information</DialogTitle>
+            </DialogHeader>
+            <div className="font-semibold flex justify-between">
+              <Button
+                className=""
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  const contact = await getContact();
+                  router.push(`/conversations/${contact?.Id}`);
+                  setIsGettingContact(false);
+                }}
+              >
+                {isGettingContact ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <MessageSquareDot size={8} />
+                    Message
+                  </>
+                )}
               </Button>
-            </DialogTrigger>
-            <DialogContent className="w-[80%] rounded-md">
-              <DialogHeader>
-                <DialogTitle>Driver Information</DialogTitle>
-              </DialogHeader>
-        <div className="font-semibold flex justify-between">
-          <Button
-            className=""
-            variant="outline"
-            size="sm"
-            onClick={async () => {
-              const contact = await getContact();
-              router.push(`/conversations/${contact?.Id}`);
-              setIsGettingContact(false);
-            }}
-          >
-            {isGettingContact ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <>
-                <MessageSquareDot size={8} />
-                Message
-              </>
-            )}
-          </Button>
-        </div>
-        <dl className="grid gap-3">
-          <div className="flex items-center justify-between">
-            <dt className="text-muted-foreground">Courier</dt>
-            <dd className="flex flex-wrap">
-              {driver?.firstName} {driver?.lastName}
-            </dd>
-          </div>
-          <div className="flex flex-wrap items-center justify-between">
-            <dt className="text-muted-foreground">Email</dt>
-            <dd>
-              <a href={`mailto:${driver?.email}`} className="flex flex-wrap">
-                {driver?.email}
-              </a>
-            </dd>
-          </div>
-          <div className="flex items-center justify-between">
-            <dt className="text-muted-foreground">Vehicle</dt>
-            <dd className="flex flex-wrap">{driver.vehicleType}</dd>
-          </div>
-          <div className="flex items-center justify-between">
-            <dt className="text-muted-foreground">Phone</dt>
-            <dd>
-              <a href={`tel:${driver.phoneNumber}`}>{driver.phoneNumber}</a>
-            </dd>
-          </div>
-          <div>
-            <Link href={`/driver-profile/${driver.Id}`} prefetch={true}>
-              <Button className="w-full" variant="outline" size="sm">
-                Courier Profile
-              </Button>
-            </Link>
-          </div>
-        </dl>
-        <DialogFooter></DialogFooter>
-              <DialogClose>
-                <Button className="font-bold text-lg">Close</Button>
-              </DialogClose>
-            </DialogContent>
-          </Dialog>
+            </div>
+            <dl className="grid gap-3">
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Courier</dt>
+                <dd className="flex flex-wrap">
+                  {driver?.firstName} {driver?.lastName}
+                </dd>
+              </div>
+              <div className="flex flex-wrap items-center justify-between">
+                <dt className="text-muted-foreground">Email</dt>
+                <dd>
+                  <a
+                    href={`mailto:${driver?.email}`}
+                    className="flex flex-wrap"
+                  >
+                    {driver?.email}
+                  </a>
+                </dd>
+              </div>
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Vehicle</dt>
+                <dd className="flex flex-wrap">{driver.vehicleType}</dd>
+              </div>
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Phone</dt>
+                <dd>
+                  <a href={`tel:${driver.phoneNumber}`}>{driver.phoneNumber}</a>
+                </dd>
+              </div>
+              <div>
+                <Link href={`/driver-profile/${driver.Id}`} prefetch={true}>
+                  <Button className="w-full" variant="outline" size="sm">
+                    Courier Profile
+                  </Button>
+                </Link>
+              </div>
+            </dl>
+            <DialogFooter></DialogFooter>
+            <DialogClose>
+              <Button className="font-bold text-lg">Close</Button>
+            </DialogClose>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      
       <Separator className="my-2" />
       <div className="grid gap-3">
-      <Dialog>
-            <DialogTrigger asChild>
-              <Button className="text-lg font-bold bg-slate-800">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="text-lg font-bold bg-slate-800">
               <p>Client Information</p>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="w-[80%] rounded-md">
-              <DialogHeader>
-                <DialogTitle>Client Informationn</DialogTitle>
-              </DialogHeader>
-        <dl className="grid gap-3">
-          <div className="flex items-center justify-between">
-            <dt className="text-muted-foreground">Customer</dt>
-            <dd className="flex flex-wrap">
-              {job.client?.firstName} {job.client?.lastName}
-            </dd>
-          </div>
-          <div className="flex items-center justify-between">
-            <dt className="text-muted-foreground">Email</dt>
-            <dd>
-              <a
-                href={`mailto:${job.client?.email}`}
-                className="flex flex-wrap"
-              >
-                {job.client?.email}
-              </a>
-            </dd>
-          </div>
-          <div className="flex items-center justify-between">
-            <dt className="text-muted-foreground">Phone</dt>
-            <dd>
-              <a href={`tel:${job.client?.phoneNumber}`}>
-                {job.client?.phoneNumber}
-              </a>
-            </dd>
-          </div>
-          <div>
-            <Link href={`/client-profile/${job.client?.Id}`} prefetch={true}>
-              <Button className="w-full" variant="outline" size="sm">
-                Client Profile
-              </Button>
-            </Link>
-          </div>
-        </dl>
-        <DialogFooter></DialogFooter>
-              <DialogClose>
-                <Button className="font-bold text-lg">Close</Button>
-              </DialogClose>
-            </DialogContent>
-          </Dialog>
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="w-[80%] rounded-md">
+            <DialogHeader>
+              <DialogTitle>Client Informationn</DialogTitle>
+            </DialogHeader>
+            <dl className="grid gap-3">
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Customer</dt>
+                <dd className="flex flex-wrap">
+                  {job.client?.firstName} {job.client?.lastName}
+                </dd>
+              </div>
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Email</dt>
+                <dd>
+                  <a
+                    href={`mailto:${job.client?.email}`}
+                    className="flex flex-wrap"
+                  >
+                    {job.client?.email}
+                  </a>
+                </dd>
+              </div>
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Phone</dt>
+                <dd>
+                  <a href={`tel:${job.client?.phoneNumber}`}>
+                    {job.client?.phoneNumber}
+                  </a>
+                </dd>
+              </div>
+              <div>
+                <Link
+                  href={`/client-profile/${job.client?.Id}`}
+                  prefetch={true}
+                >
+                  <Button className="w-full" variant="outline" size="sm">
+                    Client Profile
+                  </Button>
+                </Link>
+              </div>
+            </dl>
+            <DialogFooter></DialogFooter>
+            <DialogClose>
+              <Button className="font-bold text-lg">Close</Button>
+            </DialogClose>
+          </DialogContent>
+        </Dialog>
       </div>
     </>
   );
@@ -403,20 +407,7 @@ export default function Details({
         className={`font-semibold ${isJobCompleted && "flex justify-between"}`}
       >
         <p>Payment Method</p>
-        {isJobCompleted && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              toast({
-                title: "Feature not yet implemented",
-                description: "This feature is not yet implemented",
-              });
-            }}
-          >
-            <HandCoins className="h-4 w-4" /> Release payment
-          </Button>
-        )}
+        {isJobCompleted && <ReleasePayment job={{ Id: job.Id }} />}
       </div>
       <dl className="grid gap-3">
         <div className="flex items-center justify-between">
