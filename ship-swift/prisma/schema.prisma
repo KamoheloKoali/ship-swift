@@ -115,6 +115,15 @@ model CourierJobs {
   suitableVehicles   String?         @default("")
   weight             String?         @default("")
   isDirect           Boolean         @default(false)
+  clientGender       String?         @default("")
+  clientIdName       String?         @default("")
+  deliveryDate       DateTime        @default(now())
+  isPackaged         Boolean         @default(false)
+  packageType        String?         @default("")
+  parcelHandling     String?         @default("")
+  recipientGender    String?         @default("")
+  recipientName      String?         @default("")
+  urgency            String?         @default("")
   activeJobs         ActiveJobs[]
   approvedRequest    JobRequest?     @relation("ApprovedRequest", fields: [approvedRequestId], references: [Id])
   client             clients         @relation(fields: [clientId], references: [Id])
@@ -190,42 +199,40 @@ model DirectRequest {
 }
 
 model ActiveJobs {
-  Id           String      @id @default(uuid())
-  courierJobId String
-  driverId     String
-  clientId     String
-  startDate    String
-  endDate      String?
-  jobStatus    String      @default("ongoing")
-  Client       clients     @relation(fields: [clientId], references: [Id])
-  CourierJob   CourierJobs @relation(fields: [courierJobId], references: [Id])
-  Driver       Drivers     @relation(fields: [driverId], references: [Id])
-
-  DeliveredJobs DeliveredJobs[]
+  Id            String         @id @default(uuid())
+  courierJobId  String
+  driverId      String
+  clientId      String
+  startDate     String
+  endDate       String?
+  jobStatus     String         @default("ongoing")
+  Client        clients        @relation(fields: [clientId], references: [Id])
+  CourierJob    CourierJobs    @relation(fields: [courierJobId], references: [Id])
+  Driver        Drivers        @relation(fields: [driverId], references: [Id])
+  DeliveredJobs DeliveredJobs?
 }
 
 model DeliveredJobs {
   Id                 String     @id @default(uuid())
   activeJobId        String     @unique
-  ActiveJob          ActiveJobs @relation(fields: [activeJobId], references: [Id])
   locationId         String
-  Location           Location   @relation(fields: [locationId], references: [Id])
   deliveryDate       DateTime   @default(now())
   proofOfDeliveryUrl String
   isDriverConfirmed  Boolean    @default(true)
   isClientConfirmed  Boolean    @default(false)
+  ActiveJob          ActiveJobs @relation(fields: [activeJobId], references: [Id])
+  Location           Location   @relation(fields: [locationId], references: [Id])
 }
 
 model Location {
-  Id        String   @id @default(uuid())
-  time      DateTime @default(now())
-  latitude  Float
-  longitude Float
-  accuracy  Float
-  driverId  String
-  driver    Drivers  @relation(fields: [driverId], references: [Id])
-
+  Id            String          @id @default(uuid())
+  time          DateTime        @default(now())
+  latitude      Float
+  longitude     Float
+  accuracy      Float
+  driverId      String
   DeliveredJobs DeliveredJobs[]
+  driver        Drivers         @relation(fields: [driverId], references: [Id])
 }
 
 model ScheduledTrips {
