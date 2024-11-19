@@ -37,34 +37,53 @@ export default function MyJobs() {
     jobId: string;
     newStatus: string;
   } | null>(null);
-  const [isProofModalOpen, setIsProofModalOpen] = useState<boolean>(false);
+  const [isProofModalOpen, setIsProofModalOpen] = useState<boolean>(false); // For proof modal
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
 
   const { userId } = useAuth();
 
-  const fetchJobs = async () => {
+  // Refactored to use concurrent data fetching
+  const fetchInitialData = async () => {
+    if (!userId) return;
+
     setLoading(true);
-    const response = await getAllActiveJobsByDriverId(userId || "");
-    if (response && response.length > 0) {
-      setJobs(response);
-      setSelectedJob(response[0]);
-    } else if (response) {
-      setError("An unexpected error occurred");
-    } else {
-      setError("No response received");
+    try {
+      // Concurrent data fetching using Promise.all
+      const [jobsResponse, unapprovedRequests, directRequest] =
+        await Promise.all([
+          getAllActiveJobsByDriverId(userId),
+          getUnapprovedJobRequests(userId),
+          getDirectRequestsByDriverId(userId),
+        ]);
+
+      // Process jobs
+      if (jobsResponse && jobsResponse.length > 0) {
+        setJobs(jobsResponse);
+        setSelectedJob(jobsResponse[0]);
+      } else {
+        setError("No active jobs found");
+      }
+
+      // Set other data
+      setJobRequests(unapprovedRequests || []);
+      setDirectRequests(directRequest || []);
+    } catch (fetchError) {
+      console.error("Error fetching initial data:", fetchError);
+      setError("Failed to fetch job data");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
+  // Initial data fetch
   useEffect(() => {
-    fetchJobs();
+    fetchInitialData();
   }, [userId]);
-
   const handleRequestApproved = async (requestId: string) => {
     setDirectRequests((prevRequests) =>
       prevRequests?.filter((request) => request.Id !== requestId)
     );
-    await fetchJobs();
+    await fetchInitialData(); // Reuse the concurrent data fetch
   };
 
   useEffect(() => {
@@ -96,12 +115,12 @@ export default function MyJobs() {
 
   const handleRequestClick = (request: any | undefined) => {
     setSelectedRequest(request);
-    setSelectedJob(null);
+    setSelectedJob(null); // Clear selected job when a request is clicked
   };
 
   const handleStatusChange = async (jobId: string, newStatus: string) => {
     if (newStatus === "delivered") {
-      setCurrentJobId(jobId);
+      setCurrentJobId(jobId); // Open proof modal for "delivered" status
       setIsProofModalOpen(true);
     } else {
       setJobToUpdate({ jobId, newStatus });
@@ -171,14 +190,12 @@ export default function MyJobs() {
       <Dialog open={isProofModalOpen} onOpenChange={closeProofModal}>
         <DialogContent className="w-full max-w-md mx-auto p-6">
           <DialogHeader>
-            <DialogTitle>Capture Proof of Delivery</DialogTitle>
+            <DialogTitle>Capture Proof</DialogTitle>
             <DialogDescription>
               Upload proof for job ID: <strong>{currentJobId}</strong>
             </DialogDescription>
           </DialogHeader>
-          <div className="w-full aspect-square">
-            <PhotoCapture jobId={currentJobId} />
-          </div>
+          <PhotoCapture jobId={currentJobId} onClose={closeProofModal} />
           <DialogFooter>
             <Button variant="outline" onClick={closeProofModal}>
               Close
@@ -189,6 +206,7 @@ export default function MyJobs() {
 
       <div className="flex flex-col gap-4 p-4 md:py-4 md:px-6 lg:px-8">
         <main className="grid gap-4 md:gap-6 lg:gap-8">
+          {/* Main Content Area */}
           <div className="grid gap-4 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <JobsTable

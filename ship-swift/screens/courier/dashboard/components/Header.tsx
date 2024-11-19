@@ -29,14 +29,9 @@ export default function Header() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   useEffect(() => {
     const isDriver = async () => {
-      const [response, activeJobs] = await Promise.all([
-        getUserRoleById(),
-        getAllActiveJobsByDriverId(userId || ""),
-      ]);
-      // console.log("response.data?.driver:", response.data?.driver);
+      const response = await getUserRoleById();
       if (response.data?.driver) {
         setIsDriver(true);
-        // setHasActiveJobs(true);
       }
     };
     isDriver();
@@ -68,16 +63,11 @@ export default function Header() {
     },
     {
       label: "Manage Finances",
-      dropdownItems: [
-        { label: "Income", href: "/finances/income" },
-        { label: "Expenses", href: "/finances/expenses" },
-        { label: "Reports", href: "/finances/reports" },
-      ],
+      href: "/finances",
     },
     { label: "Chats", href: "/conversations" },
   ];
 
-  // console.log("Is Driver:", isDriver);
 
   return (
     <header className="w-full bg-white mb-16">
