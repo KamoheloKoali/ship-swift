@@ -181,7 +181,7 @@ export default function MyJobs() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-slate-200/30 rounded-xl">
+    <div className="relative flex min-h-screen w-full flex-col bg-gray-50 ">
       {/* Full-screen loading overlay */}
       {loading && (
         <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-30 backdrop-blur-md">
