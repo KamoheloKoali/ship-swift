@@ -109,7 +109,7 @@ const PhotoCapture: React.FC = () => {
     setError(null);
     try {
       const blob = dataURItoBlob(photo);
-      const file = new File([blob], `${userId}-${Date.now()}.png`, {
+      const file = new File([blob], `${jobId}-${Date.now()}.png`, {
         type: "image/png",
       });
 
@@ -186,7 +186,7 @@ const PhotoCapture: React.FC = () => {
             className="absolute inset-0 flex items-center justify-center bg-black text-white px-6 py-3 rounded-lg hover:bg-slate-500 focus:ring focus:ring-white z-10"
             disabled={isLoading}
           >
-            Start Camera
+            Start Camera...
           </button>
         )}
       </div>

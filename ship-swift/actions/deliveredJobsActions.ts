@@ -50,7 +50,7 @@ export async function confirmClientDelivery(deliveredJobId: string) {
 
 export async function getDeliveredJobDetails(deliveredJobId: string) {
   try {
-    const deliveredJob = await prisma.deliveredJobs.findUnique({
+    const deliveredJobs = await prisma.deliveredJobs.findMany({
       where: {
         Id: deliveredJobId,
       },
@@ -66,7 +66,7 @@ export async function getDeliveredJobDetails(deliveredJobId: string) {
       },
     });
 
-    return deliveredJob;
+    return deliveredJobs;
   } catch (error) {
     console.error("Error fetching delivered job details:", error);
     throw error;
@@ -93,3 +93,27 @@ export async function getDeliveredJobsByDriver(driverId: string) {
     throw error;
   }
 }
+
+export const getAllDeliveries = async () => {
+  try {
+    const deliveredJobs = await prisma.deliveredJobs.findMany({
+      include: {
+        ActiveJob: {
+          include: {
+            Client: true,
+            Driver: true,
+            CourierJob: true,
+          },
+        },
+        Location: true,
+      },
+      orderBy: {
+        deliveryDate: "desc", // Sorting by deliveryDate (latest to oldest)
+      },
+    });
+    return deliveredJobs;
+  } catch (error) {
+    console.error("Error fetching all deliveries:", error);
+    throw new Error("Failed to fetch all deliveries");
+  }
+};
