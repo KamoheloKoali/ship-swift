@@ -21,6 +21,17 @@ import { getAllActiveJobsByDriverId } from "@/actions/activeJobsActions";
 import NotificationFeed from "@/screens/notifications/InApp/NotificationFeed";
 import SwitchUser from "@/screens/global/switch-user";
 
+const locationBuffer: {
+  driverId: string;
+  latitude: number;
+  longitude: number;
+  accuracy: number;
+  timestamp: Date;
+}[] = [];
+
+const BATCH_SIZE = 100; // Number of locations to collect before sending
+const FLUSH_INTERVAL = 1200000; // Flush every 2 minutes
+
 export default function Header() {
   const { userId } = useAuth();
   const [isDriver, setIsDriver] = useState(false);
@@ -36,18 +47,54 @@ export default function Header() {
     };
     isDriver();
   }, []);
+  const createLocationInMemory = async (locationData: {
+    driverId: string;
+    latitude: number;
+    longitude: number;
+    accuracy: number;
+  }) => {
+    // Add timestamp and store in buffer
+    locationBuffer.push({
+      ...locationData,
+      timestamp: new Date(),
+    });
+
+    // If buffer reaches threshold, flush to database
+    if (locationBuffer.length >= BATCH_SIZE) {
+      return flushLocations();
+    }
+
+    return { success: true };
+  };
+
+  const flushLocations = async () => {
+    if (locationBuffer.length === 0) return { success: true };
+
+    try {
+      // Create many locations in a single transaction
+      const result = await createLocation(locationBuffer);
+      // Clear buffer after successful write
+      locationBuffer.length = 0;
+      return { success: true, data: result };
+    } catch (error) {
+      return { success: false, error: "Error creating locations: " + error };
+    }
+  };
+
+  // Set up periodic flush
+  if (typeof setInterval !== "undefined") {
+    setInterval(flushLocations, FLUSH_INTERVAL);
+  }
+
   const updateLocation = async (lat: number, lng: number, accuracy: number) => {
-    const response = await createLocation({
+    const locationData = {
       driverId: userId || "",
       latitude: lat,
       longitude: lng,
       accuracy: accuracy,
-    });
-    if (response.success) {
-      console.log("Location created successfully");
-    } else {
-      console.log("Error creating location: " + response.error);
-    }
+    };
+    const response = await createLocationInMemory(locationData);
+    return response;
   };
 
   const handleCloseSheet = () => setIsSheetOpen(false);

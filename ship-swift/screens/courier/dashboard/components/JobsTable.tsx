@@ -228,9 +228,9 @@ const JobsTable: FC<TableProps> = ({
                             Client
                           </TableHead>
                           <TableHead className="hidden min-w-[130px] lg:table-cell">
-                            Date
+                            Collection Date
                           </TableHead>
-                          <TableHead className="flex items-center justify-center">
+                          <TableHead className="flex items-center justify-center text-green-500">
                             M
                           </TableHead>
                           <TableHead className="w-[50px"></TableHead>
