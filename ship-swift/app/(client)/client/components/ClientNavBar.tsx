@@ -85,7 +85,7 @@ export default function ClientNavBar() {
               {/* Navigation Menu in Sheet */}
               <NavMenu items={menuItems} />
 
-              {/* User Button (Clerk) - Only visible on small screens in Sheet */}
+              {/* User Button (Clerk)  Only visible on small screens in Sheet */}
               <div className="lg:hidden flex justify-between p-3 my-4 rounded-sm bg-slate-200">
                 <p>Account</p>
                 <UserButton
