@@ -125,6 +125,8 @@ model CourierJobs {
   recipientName      String?         @default("")
   urgency            String?         @default("")
   paymentMethod      String?         @default("")
+  isPaid             Boolean         @default(false)
+  releasePayment     Boolean         @default(false)
   activeJobs         ActiveJobs[]
   approvedRequest    JobRequest?     @relation("ApprovedRequest", fields: [approvedRequestId], references: [Id])
   client             clients         @relation(fields: [clientId], references: [Id])
