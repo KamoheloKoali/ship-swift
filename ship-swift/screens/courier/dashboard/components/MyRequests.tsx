@@ -44,6 +44,11 @@ export interface JobRequest {
       phoneNumber: string;
       email: string;
     };
+    deliveryDate: string;
+    recipientName: string;
+    recipientGender: string;
+    packageType: string;
+    parcelHandling: string;
     dateCreated: string;
     collectionDate: string;
   };

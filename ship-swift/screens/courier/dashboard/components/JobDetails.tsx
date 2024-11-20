@@ -32,14 +32,15 @@ import {
 } from "@/components/ui/card";
 import { StatusBadge } from "./JobsTable";
 import MapComponent from "@/screens/global/PickUpDropOffLoc";
+import { formatDate, formatDateNoHrs } from "./utils/jobTable";
 
 interface JobDetailsProps {
   job: {
     Id: string;
     jobStatus: string;
     startDate: string;
-    endDate?: string;
     CourierJob: {
+      deliveryDate?: string;
       Title: string;
       Description: string;
       Budget: string;
@@ -55,6 +56,10 @@ interface JobDetailsProps {
       dimensions?: string;
       weight?: string;
       suitableVehicles?: string;
+      recipientName: string;
+      recipientGender: string;
+      packageType: string;
+      parcelHandling: string;
     };
     Client: {
       firstName: string;
@@ -96,11 +101,11 @@ export default function Details({ job }: JobDetailsProps) {
             <CardDescription>
               Order ID: {job.Id}
               <br />
-              Start Date: {new Date(job.startDate).toLocaleString()}
-              {job.endDate && (
+              Collection Date: {formatDate(job.CourierJob.collectionDate)}
+              {job.CourierJob.deliveryDate && (
                 <>
                   <br />
-                  End Date: {new Date(job.endDate).toLocaleString()}
+                  Delivery Date: {formatDateNoHrs(job.CourierJob.deliveryDate)}
                 </>
               )}
             </CardDescription>
@@ -112,7 +117,7 @@ export default function Details({ job }: JobDetailsProps) {
               <DialogTrigger asChild>
                 <Button className="font-semibold">Delivery Details</Button>
               </DialogTrigger>
-              <DialogContent className="w-[80%] rounded-md">
+              <DialogContent className="md:w-[80%] w-full rounded-md">
                 <DialogHeader>
                   <DialogTitle>Order Details</DialogTitle>
                 </DialogHeader>
@@ -139,6 +144,29 @@ export default function Details({ job }: JobDetailsProps) {
                     <span className="text-muted-foreground">Parcel Size</span>
                     <span>{job.CourierJob.parcelSize}</span>
                   </li>
+                  {job.CourierJob.parcelHandling && (
+                    <li className="flex items-center justify-between">
+                      <span className="text-muted-foreground">
+                        Handling requirements
+                      </span>
+                      <span>{job.CourierJob.parcelHandling}</span>
+                    </li>
+                  )}
+                  {job.CourierJob.packageType && (
+                    <li className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Packaging</span>
+                      <span>{job.CourierJob.packageType}</span>
+                    </li>
+                  )}
+                  {job.CourierJob.recipientName && (
+                    <li className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Recipient</span>
+                      <span>
+                        {job.CourierJob.recipientName} -{" "}
+                        {job.CourierJob.recipientGender}{" "}
+                      </span>
+                    </li>
+                  )}
                 </ul>
                 <DialogFooter></DialogFooter>
                 <DialogClose>

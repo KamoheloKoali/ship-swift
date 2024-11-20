@@ -209,7 +209,7 @@ const JobsTable: FC<TableProps> = ({
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead >Title</TableHead>
+                          <TableHead>Title</TableHead>
                           <TableHead className="hidden lg:flex items-center justify-center">
                             <p>
                               <User className="h-4 w-4" />
@@ -220,12 +220,14 @@ const JobsTable: FC<TableProps> = ({
                           ) : (
                             <TableHead>Dropoff</TableHead>
                           )}
-                          <TableHead className="hidden lg:table-cell">
-                            Date
+
+                          <TableHead className="hidden min-w-[130px] lg:table-cell">
+                            Collection Date
                           </TableHead>
                           <TableHead className="hidden lg:flex items-center justify-center">
                             <p className="text-green-500">M</p>
                           </TableHead>
+
                           <TableHead className="hidden lg:table-cell">
                             Status
                           </TableHead>

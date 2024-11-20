@@ -22,6 +22,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import Loading from "@/app/loading";
 
 export default function MyJobs() {
   const [jobs, setJobs] = useState<any[] | undefined>([]);
@@ -156,12 +157,7 @@ export default function MyJobs() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-muted/40">
-      {loading && (
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-30 backdrop-blur-md">
-          <Truck className="animate-truck" width="100" height="100" />
-          <p className="text-lg text-gray-700">------------------</p>
-        </div>
-      )}
+      {loading && <Loading />}
 
       {/* Confirmation Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

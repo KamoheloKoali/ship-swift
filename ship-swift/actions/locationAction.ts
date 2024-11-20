@@ -3,28 +3,31 @@ import { Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const createLocation = async (locationData: {
-  driverId: string;
-  latitude: number; // Float
-  longitude: number; // Float
-  accuracy: number;
-}) => {
+export const createLocation = async (
+  locationBuffer: {
+    driverId: string;
+    latitude: number; // Float
+    longitude: number; // Float
+    accuracy: number;
+    timestamp: Date;
+  }[]
+) => {
   try {
-    const newlocation = await prisma.location.create({
-      data: {
-        driverId: locationData.driverId,
-        latitude: locationData.latitude,
-        longitude: locationData.longitude,
-        accuracy: locationData.accuracy,
-      },
+    const result = await prisma.location.createMany({
+      data: locationBuffer.map((loc) => ({
+        driverId: loc.driverId,
+        latitude: loc.latitude,
+        longitude: loc.longitude,
+        accuracy: loc.accuracy,
+        time: loc.timestamp,
+      })),
     });
-    if (newlocation.Id) return { success: true, data: newlocation };
+    if (result.count > 0) return { success: true, data: result };
     else return { success: false };
   } catch (error) {
     return { success: false, error: "Error creating location" + error };
   }
 };
-
 export const getLocation = async (driverId: string) => {
   try {
     // Get all locations
