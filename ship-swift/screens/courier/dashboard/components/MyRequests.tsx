@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { getJobById } from "@/actions/courierJobsActions";
+import { User } from "lucide-react";
 
 export interface JobRequest {
   Id: string;
@@ -81,8 +82,10 @@ const MyRequests: FC<MyRequestsProps> = ({
                     <TableHead className="hidden min-w-[140px] sm:table-cell">
                       Dropoff Location
                     </TableHead>
-                    <TableHead className="hidden min-w-[150px] md:table-cell">
-                      Client
+                    <TableHead className="hidden lg:flex items-center justify-center">
+                      <p>
+                        <User className="h-4 w-4" />
+                      </p>
                     </TableHead>
                     <TableHead className="text-right min-w-[100px]">
                       Amount
@@ -161,8 +164,10 @@ const MyRequests: FC<MyRequestsProps> = ({
                     <TableHead className="hidden min-w-[140px] sm:table-cell">
                       Dropoff Location
                     </TableHead>
-                    <TableHead className="hidden min-w-[150px] md:table-cell">
-                      Client
+                    <TableHead className="hidden lg:flex items-center justify-center">
+                      <p>
+                        <User className="h-4 w-4" />
+                      </p>
                     </TableHead>
                     <TableHead className="text-right min-w-[100px]">
                       Amount
