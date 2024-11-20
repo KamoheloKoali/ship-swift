@@ -5,7 +5,7 @@ import RequestDetails from "./RequestDetails";
 import PhotoCapture from "./ProofOfDelivery";
 import { Suspense, useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { Truck, Loader2 } from "lucide-react";
+import { Truck, Loader2, X } from "lucide-react";
 import JobsTable from "./JobsTable";
 import {
   getAllActiveJobsByDriverId,
@@ -23,6 +23,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import Loading from "@/app/loading";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function MyJobs() {
   const [jobs, setJobs] = useState<any[] | undefined>([]);
@@ -34,11 +41,12 @@ export default function MyJobs() {
   const [loading, setLoading] = useState<boolean>(true);
   const [statusLoading, setIsStatusLoading] = useState<boolean>(false);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false);
   const [jobToUpdate, setJobToUpdate] = useState<{
     jobId: string;
     newStatus: string;
   } | null>(null);
-  const [isProofModalOpen, setIsProofModalOpen] = useState<boolean>(false); // For proof modal
+  const [isProofModalOpen, setIsProofModalOpen] = useState<boolean>(false);
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
 
   const { userId } = useAuth();
@@ -112,13 +120,21 @@ export default function MyJobs() {
   const handleRowClick = (job: any | undefined) => {
     setSelectedJob(job);
     setSelectedRequest(null);
+
+    if (window.innerWidth < 1024) {
+      setIsSheetOpen(true);
+    }
   };
 
   const handleRequestClick = (request: any | undefined) => {
     setSelectedRequest(request);
-    setSelectedJob(null); // Clear selected job when a request is clicked
+    setSelectedJob(null);
+    setIsSheetOpen(true);
   };
 
+  const handleCloseSheet = () => {
+    setIsSheetOpen(false);
+  };
   const handleStatusChange = async (jobId: string, newStatus: string) => {
     if (newStatus === "delivered") {
       setCurrentJobId(jobId); // Open proof modal for "delivered" status
@@ -202,7 +218,6 @@ export default function MyJobs() {
 
       <div className="flex flex-col gap-4 p-4 md:py-4 md:px-6 lg:px-8">
         <main className="grid gap-4 md:gap-6 lg:gap-8">
-          {/* Main Content Area */}
           <div className="grid gap-4 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <JobsTable
@@ -215,7 +230,8 @@ export default function MyJobs() {
               />
             </div>
 
-            <div className="lg:col-span-1">
+            {/* Desktop view for details */}
+            <div className="hidden lg:block lg:col-span-1">
               {selectedJob ? (
                 <Details job={selectedJob} />
               ) : selectedRequest ? (
@@ -225,6 +241,28 @@ export default function MyJobs() {
                 />
               ) : null}
             </div>
+
+            {/* Mobile/Tablet view with Sheet */}
+
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+              <SheetContent side="left" className="w-full sm:max-w-lg">
+                <SheetHeader className="flex flex-row justify-between items-center">
+                  <SheetTitle>
+                    {selectedJob ? "Job Details" : "Request Details"}
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="mt-6">
+                  {selectedJob ? (
+                    <Details job={selectedJob} />
+                  ) : selectedRequest ? (
+                    <RequestDetails
+                      request={selectedRequest}
+                      onRequestApproved={handleRequestApproved}
+                    />
+                  ) : null}
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </main>
       </div>
