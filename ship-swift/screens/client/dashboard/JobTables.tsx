@@ -8,7 +8,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {MapPinnedIcon, MapPinHouse, CalendarClockIcon, DollarSign, TruckIcon, PackageOpen, House} from "lucide-react";
+import {
+  MapPinnedIcon,
+  MapPinHouse,
+  CalendarClockIcon,
+  DollarSign,
+  TruckIcon,
+  PackageOpen,
+  House,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -66,20 +74,27 @@ const JobsTable: FC<TableProps> = ({
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
-      {jobsList && jobsList.length > 0 ? (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead className="hidden sm:table-cell text-red-600"><MapPinnedIcon/></TableHead>
-              <TableHead className="hidden sm:table-cell text-blue-600"><MapPinHouse/></TableHead>
-              <TableHead className="hidden md:table-cell"><CalendarClockIcon/></TableHead>
-              <TableHead className="text-center flex justify-end items-center text-green-600"><DollarSign/></TableHead>
-            </TableRow>
-          </TableHeader>
-          
-            
-              <TableBody>
+        {jobsList && jobsList.length > 0 ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Title</TableHead>
+                <TableHead className="hidden sm:table-cell text-red-600">
+                  <MapPinnedIcon />
+                </TableHead>
+                <TableHead className="hidden sm:table-cell text-blue-600">
+                  <MapPinHouse />
+                </TableHead>
+                <TableHead className="hidden md:table-cell">
+                  <CalendarClockIcon />
+                </TableHead>
+                <TableHead className="text-center flex justify-end items-center text-green-600">
+                  M
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
               {jobsList?.map((job) => (
                 <TableRow
                   key={job.Id}
@@ -119,8 +134,8 @@ const JobsTable: FC<TableProps> = ({
                   </TableCell>
                 </TableRow>
               ))}
-              </TableBody>
-        </Table>
+            </TableBody>
+          </Table>
         ) : (
           <div className="text-center text-xl p-10 font-extrabold text-primary/40 bg-slate-100 flex items-center justify-center flex-col">
             <p>Nothing to see Here</p>
@@ -139,7 +154,8 @@ const JobsTable: FC<TableProps> = ({
             className="flex items-center justify-center text-center gap-1 w-full max-h-10"
             value="unclaimed"
           >
-            <PackageOpen className="text-red-700"/><p className="hidden lg:flex">Unclaimed</p>
+            <PackageOpen className="text-red-700" />
+            <p className="hidden lg:flex">Unclaimed</p>
             <span className="m-1 md:bg-white/60 md:p-2 px-2 rounded-full text-xs bg-white">
               {unclaimedJobs?.length}
             </span>
@@ -148,7 +164,8 @@ const JobsTable: FC<TableProps> = ({
             value="ongoing"
             className="flex items-center justify-center text-center gap-1 w-full max-h-10"
           >
-            <TruckIcon className="text-blue-700"/><p className="hidden lg:flex">Ongoing</p>
+            <TruckIcon className="text-blue-700" />
+            <p className="hidden lg:flex">Ongoing</p>
             <span className="m-1 md:bg-white/60 md:p-2 px-2 rounded-full text-xs bg-white">
               {filterJobs("ongoing")?.length}
             </span>
@@ -157,7 +174,8 @@ const JobsTable: FC<TableProps> = ({
             value="delivered"
             className="flex items-center justify-center text-center gap-1 w-full max-h-10"
           >
-            <House className="text-green-700"/><p className="hidden lg:flex">Delivered</p>
+            <House className="text-green-700" />
+            <p className="hidden lg:flex">Delivered</p>
             <span className="m-1 md:bg-white/60 md:p-2 px-2 my-1 rounded-full text-xs bg-white">
               {filterJobs("delivered")?.length}
             </span>
