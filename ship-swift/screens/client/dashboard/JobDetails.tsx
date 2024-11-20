@@ -246,7 +246,13 @@ export default function Details({
                 )}
               </ul>
               <MapComponent pickup={job.PickUp} dropoff={job.DropOff} />
-              <DialogFooter></DialogFooter>
+              <DialogFooter>
+            {/* <Link href={`/client/payment/${job.Id}`}>
+              <Button className="font-bold text-lg">
+                Pay Now
+              </Button>
+            </Link> */}
+          </DialogFooter>
               <DialogClose>
                 <Button className="font-bold text-lg">Close</Button>
               </DialogClose>

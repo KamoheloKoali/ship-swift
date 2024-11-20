@@ -130,6 +130,19 @@ export const getJobById = async (jobId: string) => {
   }
 };
 
+export async function updateJobPaymentStatus(jobId: string, isPaid: boolean) {
+  try {
+    const updatedJob = await prisma.courierJobs.update({
+      where: { Id: jobId },
+      data: { isPaid: isPaid },
+    });
+    return { success: true, data: updatedJob };
+  } catch (error) {
+    console.error('Failed to update job payment status:', error);
+    return { success: false, error: 'Failed to update job payment status' };
+  }
+}
+
 // Function to update a job
 export const updateJob = async (jobId: string, jobData: Partial<any>) => {
   try {
