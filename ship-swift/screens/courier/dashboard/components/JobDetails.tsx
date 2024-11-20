@@ -11,6 +11,15 @@ import {
   PaginationContent,
   PaginationItem,
 } from "@/components/ui/pagination";
+import {
+  Dialog,
+  DialogContent,
+  DialogClose,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import {
@@ -69,7 +78,7 @@ export default function Details({ job }: JobDetailsProps) {
 
   return (
     <div>
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden lg:flex flex-col hidden">
         <CardHeader className="flex flex-row items-start bg-muted/50">
           <div className="grid gap-0.5">
             <CardTitle className="group flex items-center gap-2 text-lg">
@@ -99,64 +108,119 @@ export default function Details({ job }: JobDetailsProps) {
         </CardHeader>
         <CardContent className="p-6 text-sm">
           <div className="grid gap-3">
-            <div className="font-semibold">Delivery Details</div>
-            <ul className="grid gap-3">
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Fee</span>
-                <span>M {job.CourierJob.Budget}</span>
-              </li>
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Items</span>
-                <span>{job.CourierJob.Description}</span>
-              </li>
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Weight</span>
-                <span className="flex-wrap">{job.CourierJob.weight}</span>
-              </li>
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Dimensions</span>
-                <span className="flex-wrap">{job.CourierJob.dimensions}</span>
-              </li>
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Parcel Size</span>
-                <span>{job.CourierJob.parcelSize}</span>
-              </li>
-            </ul>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="font-semibold">Delivery Details</Button>
+              </DialogTrigger>
+              <DialogContent className="w-[80%] rounded-md">
+                <DialogHeader>
+                  <DialogTitle>Order Details</DialogTitle>
+                </DialogHeader>
+                <ul className="grid gap-3">
+                  <li className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Fee</span>
+                    <span>M {job.CourierJob.Budget}</span>
+                  </li>
+                  <li className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Items</span>
+                    <span>{job.CourierJob.Description}</span>
+                  </li>
+                  <li className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Weight</span>
+                    <span className="flex-wrap">{job.CourierJob.weight}</span>
+                  </li>
+                  <li className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Dimensions</span>
+                    <span className="flex-wrap">
+                      {job.CourierJob.dimensions}
+                    </span>
+                  </li>
+                  <li className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Parcel Size</span>
+                    <span>{job.CourierJob.parcelSize}</span>
+                  </li>
+                </ul>
+                <DialogFooter></DialogFooter>
+                <DialogClose>
+                  <Button className="font-bold text-lg">Close</Button>
+                </DialogClose>
+              </DialogContent>
+            </Dialog>
             <Separator className="my-2" />
             <div className="grid gap-4">
-              <div className="grid gap-3">
-                <div className="font-semibold">Pickup Information</div>
-                <address className="grid gap-0.5 not-italic text-muted-foreground">
-                  <span>
-                    {job.CourierJob.PickUp}
-                    <MapPin size={16} color="#3500f5" />
-                  </span>
-                  <span>{job.CourierJob.districtPickUp}</span>
-                  <span>Phone: {job.CourierJob.pickupPhoneNumber}</span>
-                  <span>
-                    Collection Date:{" "}
-                    {new Date(job.CourierJob.collectionDate).toString()}
-                  </span>
-                </address>
-              </div>
-              <div className="grid gap-3">
-                <div className="font-semibold">Dropoff Information</div>
-                <address className="grid gap-0.5 not-italic text-muted-foreground">
-                  <span>
-                    {job.CourierJob.DropOff}
-                    <MapPin size={16} color="#bd0a0a" />
-                  </span>
-                  <span>{job.CourierJob.districtDropOff}</span>
-                  <span>Phone: {job.CourierJob.dropoffPhoneNumber}</span>
-                  <span>Email: {job.CourierJob.dropOffEmail}</span>
-                </address>
-              </div>
-              <div className="w-full">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="font-semibold">Pickup Information</Button>
+                </DialogTrigger>
+                <DialogContent className="w-[80%] rounded-md">
+                  <DialogHeader>
+                    <DialogTitle>Order Details</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid gap-3">
+                    <div className="font-semibold">Pickup Information</div>
+                    <address className="grid gap-0.5 not-italic text-muted-foreground">
+                      <span>
+                        {job.CourierJob.PickUp}
+                        <MapPin size={16} color="#3500f5" />
+                      </span>
+                      <span>{job.CourierJob.districtPickUp}</span>
+                      <span>Phone: {job.CourierJob.pickupPhoneNumber}</span>
+                      <span>
+                        Collection Date:{" "}
+                        {new Date(job.CourierJob.collectionDate).toString()}
+                      </span>
+                    </address>
+                    <div className="w-full">
+                      <MapComponent
+                        pickup={job.CourierJob.PickUp}
+                        dropoff={job.CourierJob.DropOff}
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter></DialogFooter>
+                  <DialogClose>
+                    <Button className="font-bold text-lg">Close</Button>
+                  </DialogClose>
+                </DialogContent>
+              </Dialog>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="font-semibold">Pickup Information</Button>
+                </DialogTrigger>
+                <DialogContent className="w-[80%] rounded-md">
+                  <DialogHeader>
+                    <DialogTitle>Order Details</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid gap-3">
+                    <div className="font-semibold">Dropoff Information</div>
+                    <address className="grid gap-0.5 not-italic text-muted-foreground">
+                      <span>
+                        {job.CourierJob.DropOff}
+                        <MapPin size={16} color="#bd0a0a" />
+                      </span>
+                      <span>{job.CourierJob.districtDropOff}</span>
+                      <span>Phone: {job.CourierJob.dropoffPhoneNumber}</span>
+                      <span>Email: {job.CourierJob.dropOffEmail}</span>
+                    </address>
+                    <div className="w-full">
+                      <MapComponent
+                        pickup={job.CourierJob.PickUp}
+                        dropoff={job.CourierJob.DropOff}
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter></DialogFooter>
+                  <DialogClose>
+                    <Button className="font-bold text-lg">Close</Button>
+                  </DialogClose>
+                </DialogContent>
+              </Dialog>
+              {/* <div className="w-full">
                 <MapComponent
                   pickup={job.CourierJob.PickUp}
                   dropoff={job.CourierJob.DropOff}
                 />
-              </div>
+              </div> */}
             </div>
             <Separator className="my-4" />
             <div className="grid gap-3">

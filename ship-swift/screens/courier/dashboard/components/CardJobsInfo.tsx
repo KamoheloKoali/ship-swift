@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ApplyButton from "./ApplyButton";
 import RequestButton from "./RequestButton";
 import { MapPin, Calendar, Package, DollarSign, Clock } from "lucide-react";
+import {MapPinnedIcon, MapPinHouse, CalendarClockIcon, TruckIcon, PackageOpen, House} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import {
