@@ -1,6 +1,5 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
-import { UserRoundPlus } from "lucide-react";
 
 const prisma = new PrismaClient();
 
@@ -49,7 +48,9 @@ export const upsertDriver = async (driverData: {
         ...(driverData.discPhotoUrl && {
           discPhotoUrl: driverData.discPhotoUrl,
         }),
-        ...(driverData.vehicleRegistrationNo && { vehicleRegistrationNo: driverData.vehicleRegistrationNo }),
+        ...(driverData.vehicleRegistrationNo && {
+          vehicleRegistrationNo: driverData.vehicleRegistrationNo,
+        }),
         ...(driverData.discExpiry && { discExpiry: driverData.discExpiry }),
       },
       create: {
@@ -167,7 +168,7 @@ export const getAllDrivers = async () => {
 
 export const getAllVerifiedDrivers = async () => {
   const drivers = await prisma.drivers.findMany({
-    where: { isVerified: true }
+    where: { isVerified: true },
   });
   if (drivers.length > 0) {
     return { success: true, data: drivers };
@@ -192,7 +193,10 @@ export const updateDriver = async (
   }
 };
 
-export const updateOnlineStatus = async (driverId: string, isOnline: boolean) => {
+export const updateOnlineStatus = async (
+  driverId: string,
+  isOnline: boolean
+) => {
   try {
     const updatedDriver = await prisma.drivers.update({
       where: { Id: driverId },
