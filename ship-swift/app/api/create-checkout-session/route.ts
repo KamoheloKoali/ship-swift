@@ -10,7 +10,7 @@ if (!stripeSecretKey) {
 
 // Initialize Stripe with proper typing
 const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: '2023-10-16', // Update to latest version
+  apiVersion: '2024-10-28.acacia', // Update to latest version
   typescript: true,
 });
 
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       line_items: [
         {
           price_data: {
-            currency: 'usd',
+            currency: 'zar',
             product_data: {
               name: `Payment for Job #${jobId}`,
             },
@@ -40,8 +40,8 @@ export async function POST(request: Request) {
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/cancel`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/client/payments/success/${jobId}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/client/payments/cancel/${jobId}`,
     });
 
     return NextResponse.json({ sessionId: session.id });

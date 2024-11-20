@@ -1,6 +1,7 @@
 "use client";
 
 import React, { FC } from "react";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -8,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {MapPinnedIcon, MapPinHouse, CalendarClockIcon, DollarSign} from "lucide-react";
+import { MapPinnedIcon, MapPinIcon as MapPinHouse, CalendarClockIcon, DollarSign, CheckCircle, XCircle } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -18,6 +19,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { formatDateNoHrs } from "@/screens/courier/dashboard/components/utils/jobTable";
 import { StatusBadge } from "@/screens/courier/dashboard/components/JobsTable";
 
@@ -75,56 +78,77 @@ const JobsTable: FC<TableProps> = ({
               <TableHead className="hidden sm:table-cell text-blue-600"><MapPinHouse/></TableHead>
               <TableHead className="hidden md:table-cell"><CalendarClockIcon/></TableHead>
               <TableHead className="text-center flex justify-end items-center text-green-600"><DollarSign/></TableHead>
+              <TableHead className="text-center">Payment Status</TableHead>
             </TableRow>
           </TableHeader>
-          
-            
-              <TableBody>
-              {jobsList?.map((job) => (
-                <TableRow
-                  key={job.Id}
-                  className={`cursor-pointer ${
-                    Clicked?.Id === job.Id ? "bg-accent" : ""
-                  }`}
-                  onClick={() => onRowClick(job)}
-                >
-                  <TableCell>
-                    <div className="font-medium">{job.Title}</div>
-                    <div className="hidden text-sm text-muted-foreground md:inline">
-                      {job.Description}
-                    </div>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    {job.PickUp}
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    {job.DropOff}
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {formatDateNoHrs(job.collectionDate)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex flex-col items-end gap-1">
-                      M{job.Budget}.00
-                      <StatusBadge
-                        status={
-                          job.packageStatus === "claimed"
-                            ? "ongoing"
-                            : job.packageStatus === "unclaimed"
-                            ? "unclaimed"
-                            : "collected"
-                        }
-                      />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              </TableBody>
+          <TableBody>
+          {jobsList?.map((job) => (
+            <TableRow
+              key={job.Id}
+              className={`cursor-pointer ${
+                Clicked?.Id === job.Id ? "bg-accent" : ""
+              }`}
+              onClick={() => onRowClick(job)}
+            >
+              <TableCell>
+                <div className="font-medium">{job.Title}</div>
+                <div className="hidden text-sm text-muted-foreground md:inline">
+                  {job.Description}
+                </div>
+              </TableCell>
+              <TableCell className="hidden sm:table-cell">
+                {job.PickUp}
+              </TableCell>
+              <TableCell className="hidden sm:table-cell">
+                {job.DropOff}
+              </TableCell>
+              <TableCell className="hidden md:table-cell">
+                {formatDateNoHrs(job.collectionDate)}
+              </TableCell>
+              <TableCell className="text-right">
+                <div className="flex flex-col items-end gap-1">
+                  M{job.Budget}.00
+                  <StatusBadge
+                    status={
+                      job.packageStatus === "claimed"
+                        ? "ongoing"
+                        : job.packageStatus === "unclaimed"
+                        ? "unclaimed"
+                        : "collected"
+                    }
+                  />
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex flex-col items-center gap-1">
+                  {job.isPaid ? (
+                    <Badge variant="outline" className="bg-green-100 text-green-800">
+                      <CheckCircle className="w-4 h-4 mr-1" />
+                      Paid
+                    </Badge>
+                  ) : (
+                    <>
+                      <Badge variant="outline" className="bg-red-100 text-red-800 mb-1">
+                        <XCircle className="w-4 h-4 mr-1" />
+                        Unpaid
+                      </Badge>
+                      <Button asChild size="sm">
+                        <Link href={`/client/payment/${job.Id}`}>
+                          Pay Now
+                        </Link>
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+          </TableBody>
         </Table>
         ) : (
           <div className="text-center text-xl p-10 font-extrabold text-primary/40 bg-slate-100 flex items-center justify-center flex-col">
             <p>Nothing to see Here</p>
-            <img src="/assets/public/nothing.png" alt="Nothing" />
+            <img src="/assets/public/nothing.png" alt="No jobs available" className="mt-4 max-w-xs" />
           </div>
         )}
       </CardContent>
