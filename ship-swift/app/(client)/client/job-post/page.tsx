@@ -45,6 +45,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Case1 from "@/screens/client/job-post/Case1";
+import Case2 from "@/screens/client/job-post/Case2";
+import Case3 from "@/screens/client/job-post/Case3";
+import Case4 from "@/screens/client/job-post/Case4";
+import Case5 from "@/screens/client/job-post/Case5";
+import Case6 from "@/screens/client/job-post/Case6";
 
 const packageSizes = [
   {
@@ -467,484 +473,55 @@ export default function PostJobWizard() {
     switch (step) {
       case 1:
         return (
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-semibold tracking-tight">
-                Select your package size
-              </h1>
-              <p className="text-lg text-muted-foreground">
-                Choose the size that best fits your delivery needs.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {packageSizes.map((size) => (
-                <Card
-                  key={size.id}
-                  className={cn(
-                    "cursor-pointer hover:border-primary transition-colors",
-                    formData.packageSize === size.id && "border-primary"
-                  )}
-                  onClick={() =>
-                    setFormData({
-                      ...formData,
-                      packageSize: size.id,
-                      budget: size.price.toString(),
-                      parcelSize: size.name
-                        .toLowerCase()
-                        .replace(/\s/g, "")
-                        .replace("-", ""),
-                      weight: size.weight,
-                      dimensions: size.dimensions,
-                      suitableVehicles: size.vehicles,
-                    })
-                  }
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <size.icon className="w-8 h-8" />
-                      <span className="text-2xl font-bold">
-                        M{size.price}.00
-                      </span>
-                    </div>
-                    <h3 className="text-lg font-semibold mb-2">{size.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      {size.description}
-                    </p>
-                    <p className="text-sm">
-                      <strong>Dimensions:</strong> {size.dimensions}
-                    </p>
-                    <p className="text-sm">
-                      <strong>Weight:</strong> {size.weight}
-                    </p>
-                    <p className="text-sm">
-                      <strong>Examples:</strong> {size.examples}
-                    </p>
-                    <p className="text-sm">
-                      <strong>Suitable Vehicles:</strong> {size.vehicles}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
+          <Case1
+            packageSizes={packageSizes}
+            setFormData={setFormData}
+            formData={formData}
+          />
         );
       case 2:
         return (
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-semibold tracking-tight">
-                Let's start with a strong title.
-              </h1>
-              <p className="text-lg text-muted-foreground">
-                This helps your job post stand out to the right couriers. It's
-                the first thing they'll see, so make it count!
-              </p>
-            </div>
-            <Input
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              className="text-lg py-6"
-              placeholder="Write a title for your job post"
-            />
-            {errors.title && (
-              <p className="text-sm text-red-500">{errors.title}</p>
-            )}
-            <div className="space-y-4">
-              <h2 className="text-sm font-medium">Example titles</h2>
-              <ul className="space-y-3">
-                {exampleTitles.map((title, index) => (
-                  <li
-                    key={index}
-                    className="text-primary cursor-pointer hover:underline"
-                    onClick={() => setFormData({ ...formData, title: title })}
-                  >
-                    {title}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          <Case2
+            setFormData={setFormData}
+            formData={formData}
+            handleInputChange={handleInputChange}
+            errors={errors}
+            exampleTitles={exampleTitles}
+          />
         );
       case 3:
         return (
-          <>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <h1 className="text-4xl font-semibold tracking-tight">
-                  List the items for delivery
-                </h1>
-                <p className="text-lg text-muted-foreground">
-                  Provide details of the items to be delivered.
-                </p>
-              </div>
-              <Textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                className="min-h-[200px]"
-                placeholder="List the items for delivery, e.g., 2 Hisense TVs, 1 laptop"
-              />
-              {errors.description && (
-                <p className="text-sm text-red-500">{errors.description}</p>
-              )}
-            </div>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <h1 className="text-4xl font-semibold tracking-tight">
-                  List any special handling requirements (optional)
-                </h1>
-                <p className="text-lg text-muted-foreground">
-                  Provide any special handling requirements for the items.
-                </p>
-              </div>
-              <Textarea
-                name="handlingRequirements"
-                value={formData.handlingRequirements}
-                onChange={handleInputChange}
-                className="min-h-[50px]"
-                placeholder="e.g., Fragile, Keep upright"
-              />
-              {errors.handlingRequirements && (
-                <p className="text-sm text-red-500">
-                  {errors.handlingRequirements}
-                </p>
-              )}
-            </div>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <h1 className="text-4xl font-semibold tracking-tight">
-                  Is it packaged?
-                </h1>
-              </div>
-              <Select
-                onValueChange={(value) =>
-                  setFormData({ ...formData, isPackaged: value === "Yes" })
-                }
-                defaultValue={formData.isPackaged ? "Yes" : "No"}
-              >
-                <SelectTrigger>
-                  <SelectValue defaultValue="Yes" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Yes">Yes</SelectItem>
-                  <SelectItem value="No">No</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            {formData.isPackaged && (
-              <div className="space-y-6 animate-in slide-in-from-bottom duration-300">
-                <div className="space-y-2">
-                  <h1 className="text-4xl font-semibold tracking-tight">
-                    Specify the type of packaging used
-                  </h1>
-                </div>
-                <Textarea
-                  name="packageType"
-                  value={formData.packageType}
-                  onChange={handleInputChange}
-                  className="min-h-[50px]"
-                  placeholder="e.g., Cardboard box, Bubble wrap, Plastic container, Wooden crate"
-                />
-                {errors.packageType && (
-                  <p className="text-sm text-red-500">{errors.packageType}</p>
-                )}
-              </div>
-            )}
-          </>
+          <Case3
+            setFormData={setFormData}
+            formData={formData}
+            handleInputChange={handleInputChange}
+            errors={errors}
+          />
         );
       case 4:
         return (
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-semibold tracking-tight">
-                Specify pickup and dropoff locations
-              </h1>
-              <p className="text-lg text-muted-foreground">
-                Provide accurate addresses for pickup and delivery.
-              </p>
-            </div>
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Pickup Location</h2>
-              <Input
-                name="pickUp"
-                value={formData.pickUp}
-                onChange={handleInputChange}
-                placeholder="Enter pickup address... e.g., letamong, Maqhaka, Berea, Lesotho"
-              />
-              {errors.pickUp && (
-                <p className="text-sm text-red-500">{errors.pickUp}</p>
-              )}
-              <Input
-                name="districtPickup"
-                value={formData.districtPickup}
-                onChange={handleInputChange}
-                placeholder="Enter pickup district/province... e.g., Berea"
-              />
-              {errors.districtPickup && (
-                <p className="text-sm text-red-500">{errors.districtPickup}</p>
-              )}
-            </div>
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Dropoff Location</h2>
-              <Input
-                name="dropOff"
-                value={formData.dropOff}
-                onChange={handleInputChange}
-                placeholder="Enter dropoff address... e.g., Moshoeshoe 2 masoleng, Maseru, Lesotho"
-              />
-              {errors.dropOff && (
-                <p className="text-sm text-red-500">{errors.dropOff}</p>
-              )}
-              <Input
-                name="districtDropoff"
-                value={formData.districtDropoff}
-                onChange={handleInputChange}
-                placeholder="Enter dropoff district/province... e.g., Maseru"
-              />
-              {errors.districtDropoff && (
-                <p className="text-sm text-red-500">{errors.districtDropoff}</p>
-              )}
-            </div>
-          </div>
+          <Case4
+            formData={formData}
+            handleInputChange={handleInputChange}
+            errors={errors}
+          />
         );
       case 5:
         return (
-          <>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <h1 className="text-4xl font-semibold tracking-tight">
-                  Contact information
-                </h1>
-                <p className="text-lg text-muted-foreground">
-                  Provide contact details for pickup and delivery.
-                </p>
-              </div>
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold">Pickup Contact</h2>
-                <PhoneInput
-                  value={formData.pickupPhoneNumber}
-                  onChange={(value) =>
-                    handlePhoneChange("pickup")(value as E164Number, {
-                      success: true,
-                    })
-                  }
-                  onValueChange={({ phoneNumber, validation }) =>
-                    handlePhoneChange("pickup")(
-                      phoneNumber as E164Number,
-                      validation
-                    )
-                  }
-                />
-                {errors.pickupPhoneNumber && (
-                  <p className="text-sm text-red-500">
-                    {errors.pickupPhoneNumber}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold">Dropoff Contact</h2>
-                <PhoneInput
-                  value={formData.dropoffPhoneNumber}
-                  onChange={(value) =>
-                    handlePhoneChange("dropoff")(value as E164Number, {
-                      success: true,
-                    })
-                  }
-                  onValueChange={({ phoneNumber, validation }) =>
-                    handlePhoneChange("dropoff")(
-                      phoneNumber as E164Number,
-                      validation
-                    )
-                  }
-                />
-                {errors.dropoffPhoneNumber && (
-                  <p className="text-sm text-red-500">
-                    {errors.dropoffPhoneNumber}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <h1 className="text-4xl font-semibold tracking-tight">
-                  Recipient information
-                </h1>
-                <p className="text-lg text-muted-foreground">
-                  Provide recipient details.
-                </p>
-                <p className="text-lg"> Name</p>
-                <Input
-                  placeholder="Jane Doe"
-                  value={formData.recipientName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, recipientName: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-lg"> Gender</p>
-                    <Select
-                      value={formData.recipientGender}
-                      onValueChange={(value: "male" | "female" | "other") =>
-                        setFormData({ ...formData, recipientGender: value })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select gender" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
+          <Case5
+            formData={formData}
+            handlePhoneChange={handlePhoneChange}
+            errors={errors}
+            setFormData={setFormData}
+          />
         );
       case 6:
         return (
-          <>
-            <div className="space-y-6">
-              <h1 className="text-4xl font-semibold tracking-tight">
-                Set collection date and time
-              </h1>
-              <p className="text-lg text-muted-foreground">
-                Choose the date and time of when the item should be collected.
-              </p>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !formData.collectionDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.collectionDate ? (
-                      format(formData.collectionDate, "PPP HH:mm")
-                    ) : (
-                      <span>Pick a date and time</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={formData.collectionDate || undefined}
-                    onSelect={(date) =>
-                      setFormData({
-                        ...formData,
-                        collectionDate: date
-                          ? new Date(date.setHours(0, 0, 0, 0))
-                          : new Date(new Date().setHours(0, 0, 0, 0)),
-                      })
-                    }
-                    initialFocus
-                  />
-                  <div className="p-3 border-t">
-                    <Input
-                      type="time"
-                      onChange={(e) => {
-                        const date = formData.collectionDate || new Date();
-                        const [hours, minutes] = e.target.value.split(":");
-                        date.setHours(parseInt(hours), parseInt(minutes));
-                        setFormData({
-                          ...formData,
-                          collectionDate: date,
-                        });
-                      }}
-                    />
-                  </div>
-                </PopoverContent>
-              </Popover>
-              {errors.collectionDate && (
-                <p className="text-sm text-red-500">{errors.collectionDate}</p>
-              )}
-            </div>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <h1 className="text-4xl font-semibold tracking-tight">
-                  Set the expected delivery date
-                </h1>
-                <p className="text-lg text-muted-foreground">
-                  Choose the date when the item should be delivered.
-                </p>
-              </div>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !formData.deliveryDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.deliveryDate ? (
-                      format(formData.deliveryDate, "PPP")
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={formData.deliveryDate || undefined}
-                    onSelect={(date) =>
-                      setFormData({
-                        ...formData,
-                        deliveryDate: date
-                          ? new Date(date.setHours(0, 0, 0, 0))
-                          : new Date(new Date().setHours(0, 0, 0, 0)),
-                      })
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              {errors.deliveryDate && (
-                <p className="text-sm text-red-500">{errors.deliveryDate}</p>
-              )}
-            </div>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <h1 className="text-4xl font-semibold tracking-tight">
-                  Payment Method
-                </h1>
-                <p className="text-lg text-muted-foreground">
-                  Choose the payment method.
-                </p>
-              </div>
-              <Select
-                value={formData.paymentMode}
-                onValueChange={(value: "Ecocash" | "M-Pesa" | "Bank") =>
-                  setFormData({ ...formData, paymentMode: value })
-                }
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select payment method" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Ecocash">Ecocash</SelectItem>
-                  <SelectItem value="M-Pesa">M-Pesa</SelectItem>
-                  <SelectItem value="Bank">Bank Transfer</SelectItem>
-                </SelectContent>
-              </Select>
-              {errors.paymentMode && (
-                <p className="text-sm text-red-500">{errors.paymentMode}</p>
-              )}
-            </div>
-          </>
+          <Case6
+            formData={formData}
+            setFormData={setFormData}
+            errors={errors}
+          />
         );
       default:
         return null;
@@ -1012,71 +589,4 @@ export default function PostJobWizard() {
       </div>
     </div>
   );
-}
-
-{
-  /*
-  {
-    "packageSize": 2,
-    "title": "Need courier for same-day delivery in Maseru",
-    "description": "2 Hisense TVs",
-    "budget": "20",
-    "pickUp": "Maqhaka, Berea, Lesotho",
-    "dropOff": "Moshoeshoe 2, Maseru, Lesotho",
-    "districtPickup": "Berea",
-    "districtDropoff": "Maseru",
-    "parcelSize": "mediumpackages",
-    "pickupPhoneNumber": "",
-    "dropoffPhoneNumber": "",
-    "dropoffEmail": "kamohelokoali201@gmail.com",
-    "collectionDate": "2024-11-20T10:00:00.000Z"
-}
-  */
-}
-
-// collection time and date field
-
-{
-  /* <FormField
-control={form.control}
-name="collectionDateTime"
-render={({ field }) => (
-  <FormItem className="flex flex-col">
-    <FormLabel>Collection Date and Time</FormLabel>
-    <Popover>
-      <PopoverTrigger asChild>
-        <FormControl>
-          <Button variant={"outline"}>
-            {field.value ? (
-              format(field.value, "PPP HH:mm")
-            ) : (
-              <span>Pick a date and time</span>
-            )}
-          </Button>
-        </FormControl>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          mode="single"
-          selected={field.value}
-          onSelect={field.onChange}
-          initialFocus
-        />
-        <div className="p-3 border-t">
-          <Input
-            type="time"
-            onChange={(e) => {
-              const date = field.value || new Date();
-              const [hours, minutes] = e.target.value.split(":");
-              date.setHours(parseInt(hours), parseInt(minutes));
-              field.onChange(date);
-            }}
-          />
-        </div>
-      </PopoverContent>
-    </Popover>
-    <FormMessage />
-  </FormItem>
-)}
-/> */
 }
