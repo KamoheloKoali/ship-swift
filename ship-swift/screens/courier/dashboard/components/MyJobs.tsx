@@ -137,8 +137,10 @@ export default function MyJobs() {
   };
   const handleStatusChange = async (jobId: string, newStatus: string) => {
     if (newStatus === "delivered") {
-      setCurrentJobId(jobId); // Open proof modal for "delivered" status
+      console.log("jobId:", jobId);
+      console.log("newStatus:", newStatus);
       setJobToUpdate({ jobId, newStatus });
+      setCurrentJobId(jobId); // Open proof modal for "delivered" status
       setIsProofModalOpen(true);
     } else {
       setJobToUpdate({ jobId, newStatus });
@@ -147,6 +149,7 @@ export default function MyJobs() {
   };
 
   const confirmStatusChange = async () => {
+    console.log("its in");
     if (!jobToUpdate) return;
     setIsStatusLoading(true);
     try {
@@ -208,7 +211,7 @@ export default function MyJobs() {
               Upload proof for job ID: <strong>{currentJobId}</strong>
             </DialogDescription>
           </DialogHeader>
-          <PhotoCapture jobId={currentJobId} onClose={closeProofModal} />
+          <PhotoCapture jobId={currentJobId} onClose={closeProofModal} confirm={confirmStatusChange}/>
           <DialogFooter>
             <Button variant="outline" onClick={closeProofModal}>
               Close

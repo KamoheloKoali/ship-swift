@@ -6,13 +6,19 @@ import { useAuth } from "@clerk/nextjs";
 import { uploadImage } from "../../registration/utils/Upload";
 import { getLocation } from "@/actions/locationAction";
 import { createDeliveredJob } from "@/actions/deliveredJobsActions";
+import { toast } from "@/hooks/use-toast";
 
 interface PhotoCaptureProps {
   jobId: string | null;
+  confirm: () => void;
   onClose?: () => void;
 }
 
-const PhotoCapture: React.FC<PhotoCaptureProps> = ({ jobId, onClose }) => {
+const PhotoCapture: React.FC<PhotoCaptureProps> = ({
+  jobId,
+  confirm,
+  onClose,
+}) => {
   const router = useRouter();
   const [photo, setPhoto] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -123,11 +129,21 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({ jobId, onClose }) => {
         throw new Error(locationResult.error || "Failed to get location data");
       }
 
-      await createDeliveredJob({
+      const deliveredJob = await createDeliveredJob({
         activeJobId: jobId,
         locationId: locationResult.data.latest.Id,
         proofOfDeliveryUrl: url,
       });
+
+      if (deliveredJob.Id) {
+        confirm();
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to create delivered job",
+          variant: "destructive",
+        });
+      }
 
       if (onClose) {
         onClose();

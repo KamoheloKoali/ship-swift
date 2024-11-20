@@ -97,6 +97,8 @@ export async function getActiveJobByCourierJobId(courierJobId: string) {
 export async function updateActiveJobStatus(id: string, status: string) {
   try {
     const updatedData: { jobStatus: string; endDate?: string } = { jobStatus: status };
+    console.log("Id", id);
+    console.log("Status", status);
 
     if (status === "delivered") {
       updatedData.endDate = new Date().toISOString();
@@ -106,6 +108,7 @@ export async function updateActiveJobStatus(id: string, status: string) {
       where: { Id: id },
       data: updatedData,
     });
+    console.log("Updated Job:", updatedJob);
 
     if (updatedJob.courierJobId) {
       await prisma.courierJobs.update({
