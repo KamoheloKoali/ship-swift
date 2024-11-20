@@ -182,26 +182,27 @@ export default function MyJobs() {
       {loading && <Loading />}
 
       {/* Confirmation Dialog */}
+
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="w-full max-w-md mx-auto p-6">
-          <DialogHeader>
-            <DialogTitle>Confirm Job Status</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to mark this job as{" "}
-              <strong>{jobToUpdate?.newStatus}</strong>?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex justify-between items-center gap-4">
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
-            </Button>
-            {statusLoading ? (
-              <Loader2 className="animate-spin text-gray-500" size={24} />
-            ) : (
-              <Button onClick={confirmStatusChange}>Confirm</Button>
-            )}
-          </DialogFooter>
-        </DialogContent>
+          <DialogContent className="w-full max-w-md mx-auto p-6">
+            <DialogHeader>
+              <DialogTitle>Confirm Job Status</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to mark this job as{" "}
+                <strong>{jobToUpdate?.newStatus}</strong>?
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="flex justify-between items-center gap-4">
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              {statusLoading ? (
+                <Loader2 className="animate-spin text-gray-500" size={24} />
+              ) : (
+                <Button onClick={confirmStatusChange}>Confirm</Button>
+              )}
+            </DialogFooter>
+          </DialogContent>
       </Dialog>
 
       {/* Proof Capture Modal */}
