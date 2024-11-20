@@ -93,6 +93,7 @@ export default function ClientNavBar() {
                   userProfileUrl="/profile"
                 />
               </div>
+              <SwitchUser />
             </SheetContent>
           </Sheet>
         </div>
