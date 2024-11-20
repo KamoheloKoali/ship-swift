@@ -11,6 +11,8 @@ import {
   PackageCheck,
   Truck,
   DollarSign,
+  Home,
+  User,
 } from "lucide-react";
 import {
   Card,
@@ -146,11 +148,11 @@ const JobsTable: FC<TableProps> = ({
   const getStatusIcon = (status: JobStatusType) => {
     switch (status) {
       case JOB_STATUS.Ongoing:
-        return <Clock className="h-4 w-4" />;
+        return <Clock className="h-4 w-4 text-red-600" />;
       case JOB_STATUS.COLLECTED:
-        return <PackageCheck className="h-4 w-4" />;
+        return <PackageCheck className="h-4 w-4 text-blue-500" />;
       case JOB_STATUS.DELIVERED:
-        return <Truck className="h-4 w-4" />;
+        return <Home className="h-4 w-4 text-green-500" />; // Replacing Truck with Home
       default:
         return <Package className="h-4 w-4" />;
     }
@@ -171,16 +173,7 @@ const JobsTable: FC<TableProps> = ({
               className="flex items-center gap-1 flex-1 min-w-0"
               data-state={activeTab === status ? "active" : "inactive"}
             >
-              <span className="md:hidden">{getStatusIcon(status)}</span>
-              <span className="hidden md:inline">
-                {capitalizeFirstLetter(status)}
-              </span>
-              <span className="truncate md:hidden">{status.slice(0, 3)}</span>
-              {filterJobsByStatus(jobs, status).length > 0 && (
-                <span className="ml-1 rounded-full bg-primary/20 px-1.5 py-0.5 text-xs">
-                  {filterJobsByStatus(jobs, status).length}
-                </span>
-              )}
+              <span>{getStatusIcon(status)}</span> {/* Only display icons */}
             </TabsTrigger>
           ))}
 
@@ -189,10 +182,9 @@ const JobsTable: FC<TableProps> = ({
           className="flex items-center gap-1"
           data-state={activeTab === "my-requests" ? "active" : "inactive"}
         >
-          <span className="md:hidden">
+          <span>
             <UserCircle className="h-4 w-4" />
           </span>
-          <span className="hidden md:inline">My Requests</span>
         </TabsTrigger>
       </TabsList>
 
@@ -217,23 +209,29 @@ const JobsTable: FC<TableProps> = ({
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead className="min-w-[200px]">Title</TableHead>
-                          <TableHead className="hidden min-w-[120px] sm:table-cell">
-                            Pickup
+                          <TableHead>Title</TableHead>
+                          <TableHead className="hidden lg:flex items-center justify-center">
+                            <p>
+                              <User className="h-4 w-4" />
+                            </p>
                           </TableHead>
-                          <TableHead className="hidden min-w-[120px] sm:table-cell">
-                            Dropoff
-                          </TableHead>
-                          <TableHead className="hidden min-w-[150px] md:table-cell">
-                            Client
-                          </TableHead>
+                          {status === JOB_STATUS.Ongoing ? (
+                            <TableHead>Pickup</TableHead>
+                          ) : (
+                            <TableHead>Dropoff</TableHead>
+                          )}
+
                           <TableHead className="hidden min-w-[130px] lg:table-cell">
-                            Date
+                            Collection Date
                           </TableHead>
-                          <TableHead className="flex items-center justify-center">
-                            M
+                          <TableHead className="hidden lg:flex items-center justify-center">
+                            <p className="text-green-500">M</p>
                           </TableHead>
-                          <TableHead className="w-[50px"></TableHead>
+
+                          <TableHead className="hidden lg:table-cell">
+                            Status
+                          </TableHead>
+                          <TableHead className="w-[50px]"></TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -261,49 +259,33 @@ const JobsTable: FC<TableProps> = ({
                                 )}
                                 {job.CourierJob.Title}
                               </div>
-                              <div className="hidden text-sm text-muted-foreground md:block line-clamp-2">
-                                {job.CourierJob.Description}
-                              </div>
-                            </TableCell>
-                            <TableCell className="hidden sm:table-cell">
-                              <div className="line-clamp-1">
-                                {job.CourierJob.PickUp}
-                              </div>
-                            </TableCell>
-                            <TableCell className="hidden sm:table-cell">
-                              <div className="line-clamp-1">
-                                {job.CourierJob.DropOff}
-                              </div>
                             </TableCell>
                             <TableCell className="hidden md:table-cell">
                               <div className="line-clamp-1">
                                 {job.Client.firstName} {job.Client.lastName}
                               </div>
                             </TableCell>
-                            <TableCell className="hidden lg:table-cell whitespace-nowrap">
-                              {isWithinTwoDays(
-                                job.CourierJob.collectionDate
-                              ) && (
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger>
-                                      <Clock className="h-4 w-4 text-red-600" />
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      <p>Collection due in less than 2 days</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-                              )}{" "}
+                            {status === JOB_STATUS.Ongoing ? (
+                              <TableCell>
+                                <div className="line-clamp-1">
+                                  {job.CourierJob.PickUp}
+                                </div>
+                              </TableCell>
+                            ) : (
+                              <TableCell>
+                                <div className="line-clamp-1">
+                                  {job.CourierJob.DropOff}
+                                </div>
+                              </TableCell>
+                            )}
+                            <TableCell className="hidden lg:table-cell">
                               {formatDate(job.CourierJob.collectionDate)}
                             </TableCell>
-                            <TableCell className="text-right">
-                              <div className="flex flex-col items-end gap-1">
-                                <div className="whitespace-nowrap">
-                                  M {job.CourierJob.Budget}
-                                </div>
-                                <StatusBadge status={job.jobStatus} />
-                              </div>
+                            <TableCell className="hidden lg:table-cell">
+                              M {job.CourierJob.Budget}
+                            </TableCell>
+                            <TableCell className="hidden lg:table-cell">
+                              <StatusBadge status={job.jobStatus} />
                             </TableCell>
                             <TableCell>
                               <StatusActions

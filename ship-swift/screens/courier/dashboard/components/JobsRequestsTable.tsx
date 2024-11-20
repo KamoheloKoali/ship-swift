@@ -15,6 +15,7 @@ interface Client {
   photoUrl: string;
   idPhotoUrl: string;
   dateUpdated: Date;
+  clientGender?: any;
 }
 
 // Update the interface to match your Prisma schema
@@ -29,6 +30,11 @@ export interface JobRequest {
   collectionDate: Date;
   dateCreated: Date;
   client: Client;
+  approvedRequestId: any;
+  deliveryDate: Date;
+  isPackaged: boolean;
+  parcelHandling: string | null;
+  packageType: string | null;
 }
 
 // Define the response type from your getAllJobs action
