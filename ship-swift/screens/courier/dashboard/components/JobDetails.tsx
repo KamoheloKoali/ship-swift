@@ -117,7 +117,7 @@ export default function Details({ job }: JobDetailsProps) {
               <DialogTrigger asChild>
                 <Button className="font-semibold">Delivery Details</Button>
               </DialogTrigger>
-              <DialogContent className="w-[80%] rounded-md">
+              <DialogContent className="md:w-[80%] w-full rounded-md">
                 <DialogHeader>
                   <DialogTitle>Order Details</DialogTitle>
                 </DialogHeader>

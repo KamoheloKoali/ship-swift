@@ -14,6 +14,7 @@ import { StatusBadge } from "./JobsTable";
 import { JobRequest } from "./MyRequests";
 import MapComponent from "@/screens/global/PickUpDropOffLoc"; // Map component
 import { approveDirectRequest } from "@/actions/directRequestActions";
+import { formatDate, formatDateNoHrs } from "./utils/jobTable";
 
 interface RequestDetailsProps {
   request: JobRequest;
@@ -106,11 +107,36 @@ export default function RequestDetails({
                 <span className="text-muted-foreground">Dimensions</span>
                 <span>{request.CourierJob.dimensions}</span>
               </li>
+              {request.CourierJob.parcelHandling && (
+                <li className="flex items-center justify-between">
+                  <span className="text-muted-foreground">
+                    Handling requirements
+                  </span>
+                  <span>{request.CourierJob.parcelHandling}</span>
+                </li>
+              )}
+              {request.CourierJob.packageType && (
+                <li className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Packaging</span>
+                  <span>{request.CourierJob.packageType}</span>
+                </li>
+              )}
+              {request.CourierJob.recipientName && (
+                <li className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Recipient</span>
+                  <span>
+                    {request.CourierJob.recipientName} -{" "}
+                    {request.CourierJob.recipientGender}{" "}
+                  </span>
+                </li>
+              )}
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Collection Date</span>
-                <span>
-                  {new Date(request.CourierJob.collectionDate).toLocaleString()}
-                </span>
+                <span>{formatDate(request.CourierJob.collectionDate)}</span>
+              </li>
+              <li className="flex items-center justify-between">
+                <span className="text-muted-foreground">Delivery Date</span>
+                <span>{formatDateNoHrs(request.CourierJob.deliveryDate)}</span>
               </li>
             </ul>
             <div className="grid gap-4 mt-4">

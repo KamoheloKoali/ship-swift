@@ -45,7 +45,10 @@ import { getContactByDriverAndClientId } from "@/actions/contactsActions";
 import MapComponent from "@/screens/global/PickUpDropOffLoc";
 import Link from "next/link";
 import DriverLocation from "./DriverLocation";
-import { formatDateNoHrs } from "@/screens/courier/dashboard/components/utils/jobTable";
+import {
+  formatDate,
+  formatDateNoHrs,
+} from "@/screens/courier/dashboard/components/utils/jobTable";
 import { StatusBadge } from "@/screens/courier/dashboard/components/JobsTable";
 import ReleasePayment from "@/screens/client/payments/ReleasePayment";
 import { useAuth } from "@clerk/nextjs";
@@ -62,6 +65,10 @@ interface SideCardProps {
       email?: string;
       phoneNumber?: string;
     };
+    packageType: string;
+    parcelHandling: string;
+    recipientName: string;
+    recipientGender: string;
     approvedRequestId: string;
     PickUp: string;
     DropOff: string;
@@ -74,6 +81,7 @@ interface SideCardProps {
     Budget?: string;
     collectionDate: string;
     isDirect?: boolean;
+    deliveryDate: string;
   };
   requests?: Array<any>;
   driver?: any;
@@ -157,11 +165,9 @@ export default function Details({
         <div className="grid gap-3">
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="text-lg font-bold">
-                Order Details
-              </Button>
+              <Button className="text-lg font-bold">Order Details</Button>
             </DialogTrigger>
-            <DialogContent className="w-[80%] rounded-md">
+            <DialogContent className="w-full md:w-[80%] rounded-md">
               <DialogHeader>
                 <DialogTitle>Order Details</DialogTitle>
               </DialogHeader>
@@ -191,9 +197,15 @@ export default function Details({
                   <span className="flex-wrap">{packageSize}</span>
                 </li>
                 <li className="flex items-center justify-between">
-                  <span className="text-muted-foreground">End Date</span>
+                  <span className="text-muted-foreground">Collection Date</span>
                   <span className="flex-wrap">
-                    {formatDateNoHrs(job.collectionDate)}
+                    {formatDate(job.collectionDate)}
+                  </span>
+                </li>
+                <li className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Delivery Date</span>
+                  <span className="flex-wrap">
+                    {formatDateNoHrs(job.deliveryDate)}
                   </span>
                 </li>
                 <li className="flex items-center justify-between">
@@ -210,6 +222,28 @@ export default function Details({
                     <MapPin size={16} color="#bd0a0a" />
                   </span>
                 </li>
+                {job.parcelHandling && (
+                  <li className="flex items-center justify-between">
+                    <span className="text-muted-foreground">
+                      Handling requirements
+                    </span>
+                    <span>{job.parcelHandling}</span>
+                  </li>
+                )}
+                {job.packageType && (
+                  <li className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Packaging</span>
+                    <span>{job.packageType}</span>
+                  </li>
+                )}
+                {job.recipientName && (
+                  <li className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Recipient</span>
+                    <span>
+                      {job.recipientName} - {job.recipientGender}{" "}
+                    </span>
+                  </li>
+                )}
               </ul>
               <MapComponent pickup={job.PickUp} dropoff={job.DropOff} />
               <DialogFooter></DialogFooter>
