@@ -29,7 +29,7 @@ const locationBuffer: {
   timestamp: Date;
 }[] = [];
 
-const BATCH_SIZE = 100; // Number of locations to collect before sending
+const BATCH_SIZE = 50; // Number of locations to collect before sending
 const FLUSH_INTERVAL = 1200000; // Flush every 2 minutes
 
 export default function Header() {
