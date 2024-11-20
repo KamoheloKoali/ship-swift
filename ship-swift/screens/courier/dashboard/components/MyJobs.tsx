@@ -129,7 +129,9 @@ export default function MyJobs() {
   const handleRequestClick = (request: any | undefined) => {
     setSelectedRequest(request);
     setSelectedJob(null);
-    setIsSheetOpen(true);
+    if (window.innerWidth < 1024) {
+      setIsSheetOpen(true);
+    }
   };
 
   const handleCloseSheet = () => {
@@ -211,7 +213,11 @@ export default function MyJobs() {
               Upload proof for job ID: <strong>{currentJobId}</strong>
             </DialogDescription>
           </DialogHeader>
-          <PhotoCapture jobId={currentJobId} onClose={closeProofModal} confirm={confirmStatusChange}/>
+          <PhotoCapture
+            jobId={currentJobId}
+            onClose={closeProofModal}
+            confirm={confirmStatusChange}
+          />
           <DialogFooter>
             <Button variant="outline" onClick={closeProofModal}>
               Close
@@ -255,7 +261,7 @@ export default function MyJobs() {
                     {selectedJob ? "Job Details" : "Request Details"}
                   </SheetTitle>
                 </SheetHeader>
-                <div className="mt-6">
+                <div className="flex mt-6 overflow-auto h-full">
                   {selectedJob ? (
                     <Details job={selectedJob} />
                   ) : selectedRequest ? (

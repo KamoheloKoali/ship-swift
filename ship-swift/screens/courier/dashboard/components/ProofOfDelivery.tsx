@@ -136,6 +136,7 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
       });
 
       if (deliveredJob.Id) {
+        console.log("Delivered job created successfully");
         confirm();
       } else {
         toast({

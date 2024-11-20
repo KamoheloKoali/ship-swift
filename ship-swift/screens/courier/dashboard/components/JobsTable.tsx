@@ -174,6 +174,11 @@ const JobsTable: FC<TableProps> = ({
               data-state={activeTab === status ? "active" : "inactive"}
             >
               <span>{getStatusIcon(status)}</span> {/* Only display icons */}
+              {filterJobsByStatus(jobs, status).length > 0 && (
+                <span className="ml-1 rounded-full bg-primary/10 px-1.5 py-0.5 text-xs">
+                  {filterJobsByStatus(jobs, status).length}
+                </span>
+              )}
             </TabsTrigger>
           ))}
 
