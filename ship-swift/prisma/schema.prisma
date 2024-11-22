@@ -127,6 +127,8 @@ model CourierJobs {
   paymentMethod      String?         @default("")
   isPaid             Boolean         @default(false)
   releasePayment     Boolean         @default(false)
+  DropOffLocation    String?         @default("")
+  PickUpLocation     String?         @default("")
   activeJobs         ActiveJobs[]
   approvedRequest    JobRequest?     @relation("ApprovedRequest", fields: [approvedRequestId], references: [Id])
   client             clients         @relation(fields: [clientId], references: [Id])
