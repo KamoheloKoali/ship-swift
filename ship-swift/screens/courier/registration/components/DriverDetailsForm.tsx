@@ -124,7 +124,7 @@ export default function DriverDetailsForm(): JSX.Element {
               className="bg-gray-50"
             />
           </div>
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label htmlFor="idNumber">ID Number</Label>
             <Input
               id="idNumber"
@@ -132,10 +132,10 @@ export default function DriverDetailsForm(): JSX.Element {
               readOnly
               className="bg-gray-50"
             />
-          </div>
+          </div> */}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="licenseNumber">License Number</Label>
             <Input
@@ -154,7 +154,7 @@ export default function DriverDetailsForm(): JSX.Element {
               className="bg-gray-50"
             />
           </div>
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -170,7 +170,7 @@ export default function DriverDetailsForm(): JSX.Element {
               className="bg-gray-50"
             />
           </div>
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label htmlFor="plateNumber">Plate Number</Label>
             <Input
               id="plateNumber"
@@ -178,10 +178,10 @@ export default function DriverDetailsForm(): JSX.Element {
               readOnly
               className="bg-gray-50"
             />
-          </div>
+          </div> */}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="Vehicle Registration Number">Vehicle Registration Number</Label>
             <Input
@@ -200,7 +200,7 @@ export default function DriverDetailsForm(): JSX.Element {
               className="bg-gray-50"
             />
           </div>
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">

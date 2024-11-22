@@ -66,6 +66,7 @@
     "next-themes": "^0.3.0",
     "npx": "^10.2.2",
     "react": "^18",
+    "react-cropper": "^2.3.3",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",

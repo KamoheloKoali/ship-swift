@@ -3,6 +3,13 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { PhoneInput, ValidationResult } from "@/screens/global/phone-input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -146,7 +153,7 @@ export default function DriverRegistrationForm() {
     <Card className="w-full max-w-4xl mx-auto bg-white rounded-none">
       <CardHeader className="bg-gray-50 border-b border-gray-200">
         <CardTitle className="text-3xl text-center font-bold text-gray-900">
-          Profile Registration Form
+          Registration
         </CardTitle>
         <CardDescription className="text-lg text-center text-gray-600">
           Upload the required documents and provide additional information to be
@@ -238,13 +245,27 @@ export default function DriverRegistrationForm() {
             )}
           </div>
           <div>
-            <Input
-              name="typeOfVehicle"
-              placeholder="Vehicle Type (e.g., Van, Hatchback, Mini-Truck etc.)"
+            <Select
               value={localFormData.typeOfVehicle}
-              onChange={handleLocalInputChange}
-              required
-            />
+              onValueChange={(value: string) =>
+                handleLocalInputChange({
+                  target: { name: "typeOfVehicle", value },
+                } as React.ChangeEvent<HTMLInputElement>)
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select Vehicle Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Sedan">Sedan</SelectItem>
+                <SelectItem value="Hatchback">Hatchback</SelectItem>
+                <SelectItem value="SUV">SUV</SelectItem>
+                <SelectItem value="Van">Van</SelectItem>
+                <SelectItem value="Mini-Bus Taxi">Mini-Bus Taxi</SelectItem>
+                <SelectItem value="Mini-Truck">Mini-Truck</SelectItem>
+                <SelectItem value="Truck">Truck</SelectItem>
+              </SelectContent>
+            </Select>
             {errors.typeOfVehicle && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.typeOfVehicle}
