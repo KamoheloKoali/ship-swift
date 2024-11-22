@@ -141,15 +141,20 @@ export default function MyJobs() {
     if (newStatus === "delivered") {
       setJobToUpdate({ jobId, newStatus });
       setCurrentJobId(jobId); // Open proof modal for "delivered" status
-      setIsProofModalOpen(true);
+      setIsDialogOpen(true);
+      // setIsProofModalOpen(true);
     } else {
       setJobToUpdate({ jobId, newStatus });
       setIsDialogOpen(true);
     }
   };
 
+  const handleProofModalOpen = () => {
+    setIsDialogOpen(false);
+    setIsProofModalOpen(true);
+  };
+
   const confirmStatusChange = async () => {
-    console.log("its in");
     if (!jobToUpdate) return;
     setIsStatusLoading(true);
     try {
@@ -182,25 +187,27 @@ export default function MyJobs() {
       {/* Confirmation Dialog */}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="w-full max-w-md mx-auto p-6">
-            <DialogHeader>
-              <DialogTitle>Confirm Job Status</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to mark this job as{" "}
-                <strong>{jobToUpdate?.newStatus}</strong>?
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter className="flex justify-between items-center gap-4">
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Cancel
-              </Button>
-              {statusLoading ? (
-                <Loader2 className="animate-spin text-gray-500" size={24} />
-              ) : (
-                <Button onClick={confirmStatusChange}>Confirm</Button>
-              )}
-            </DialogFooter>
-          </DialogContent>
+        <DialogContent className="w-full max-w-md mx-auto p-6">
+          <DialogHeader>
+            <DialogTitle>Confirm Job Status</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to mark this job as{" "}
+              <strong>{jobToUpdate?.newStatus}</strong>?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex justify-between items-center gap-4">
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            {statusLoading ? (
+              <Loader2 className="animate-spin text-gray-500" size={24} />
+            ) : jobToUpdate && jobToUpdate.newStatus === "delivered" ? (
+              <Button onClick={handleProofModalOpen}>Confirm</Button>
+            ) : (
+              <Button onClick={confirmStatusChange}>Confirm</Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
       </Dialog>
 
       {/* Proof Capture Modal */}
