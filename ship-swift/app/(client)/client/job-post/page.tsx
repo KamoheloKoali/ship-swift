@@ -30,7 +30,7 @@ import {
   ValidationResult,
 } from "@/screens/global/phone-input";
 import { z } from "zod";
-import { createJob } from "@/actions/courierJobsActions";
+import { createJob, updateJob } from "@/actions/courierJobsActions";
 import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
@@ -51,6 +51,7 @@ import Case3 from "@/screens/client/job-post/Case3";
 import Case4 from "@/screens/client/job-post/Case4";
 import Case5 from "@/screens/client/job-post/Case5";
 import Case6 from "@/screens/client/job-post/Case6";
+import { uploadPickUpAndDropOffImage } from "@/screens/client/registration/utils/upload";
 
 const packageSizes = [
   {
@@ -178,7 +179,64 @@ export default function PostJobWizard() {
     packageType: z.string().optional(),
     isPackaged: z.boolean(),
   });
+  const [files, setFiles] = useState<{ [key: string]: File | null }>({
+    PickUpLocation: null,
+    DropOffLocation: null,
+  });
 
+  const [existingImages, setExistingImages] = useState<{
+    [key: string]: string | null;
+  }>({
+    PickUp: null,
+    DropOff: null,
+  });
+
+  const handleFileChange = (folder: string) => (file: File | null) => {
+    // console.log("folder and file", folder, file);
+    setFiles((prev) => ({ ...prev, [folder]: file }));
+    if (file) {
+      setExistingImages((prev) => ({ ...prev, [folder]: null }));
+    }
+  };
+
+  const handleUpload = async (jobId: string) => {
+    const allFilesSelectedOrExisting = Object.entries(files).every(
+      ([key, file]) => file !== null || existingImages[key] !== null
+    );
+
+    for (const [folder, file] of Object.entries(files)) {
+      if (file) {
+        const { url, error } = await uploadPickUpAndDropOffImage(
+          file,
+          folder,
+          jobId
+        );
+
+        if (error) {
+          alert(`Error uploading ${folder}: ${error}`);
+          return 1;
+        }
+
+        if (url) {
+          const updatedCourierJob = await updateJob(jobId, {
+            [folder]: url,
+          });
+          if (
+            updatedCourierJob &&
+            updatedCourierJob.error &&
+            updatedCourierJob.error.length > 0
+          ) {
+            toast({
+              title: "Error updating job",
+              description: updatedCourierJob.error,
+            });
+            return 1;
+          }
+        }
+      }
+    }
+    return 0;
+  };
   type FormData = z.infer<typeof formSchema>;
   const [formData, setFormData] = useState<FormData>({
     packageSize: 1,
@@ -333,6 +391,7 @@ export default function PostJobWizard() {
         const response = await createJob(formDataToSubmit);
 
         if (response.success) {
+          const upload = await handleUpload(response.data?.Id || "");
           toast({
             description: "Job created successfully!",
           });
@@ -504,6 +563,7 @@ export default function PostJobWizard() {
             formData={formData}
             handleInputChange={handleInputChange}
             errors={errors}
+            handleFileChange={handleFileChange}
           />
         );
       case 5:

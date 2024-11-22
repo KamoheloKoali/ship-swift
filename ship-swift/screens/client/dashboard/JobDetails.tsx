@@ -35,6 +35,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
 import DriverProfile from "./DriverProfile";
@@ -82,6 +83,8 @@ interface SideCardProps {
     collectionDate: string;
     isDirect?: boolean;
     deliveryDate: string;
+    PickUpLocation: string;
+    DropOffLocation: string;
   };
   requests?: Array<any>;
   driver?: any;
@@ -245,14 +248,38 @@ export default function Details({
                   </li>
                 )}
               </ul>
+              <div className="space-y-4 flex gap-1 justify-center">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <p className="underline text-sm text-blue-400 cursor-pointer">
+                      View Images of the Pick Up and Drop Off Location
+                    </p>
+                  </DialogTrigger>
+                  <DialogContent className="w-full md:w-[80%]">
+                    <DialogHeader>
+                      <DialogTitle>
+                        Images of the Pick Up and Drop Off Location
+                      </DialogTitle>
+                      <DialogDescription>
+                        These are the images of the Pick Up and Drop Off
+                        Location
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogTitle>Image of the Pick Up Location</DialogTitle>
+                    <img src={job.PickUpLocation} alt="Pick Up" />
+                    <DialogTitle>Image of the Drop Off Location</DialogTitle>
+                    <img src={job.DropOffLocation} alt="Drop Off" />
+                  </DialogContent>
+                </Dialog>
+              </div>
               <MapComponent pickup={job.PickUp} dropoff={job.DropOff} />
               <DialogFooter>
-            {/* <Link href={`/client/payment/${job.Id}`}>
+                {/* <Link href={`/client/payment/${job.Id}`}>
               <Button className="font-bold text-lg">
                 Pay Now
               </Button>
             </Link> */}
-          </DialogFooter>
+              </DialogFooter>
               <DialogClose>
                 <Button className="font-bold text-lg">Close</Button>
               </DialogClose>

@@ -8,9 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import ImageUploadCard from "@/screens/courier/registration/components/ImageUploadCard";
-import React, { useState } from "react";
-import useclientRegistration from "../registration/utils/clientRegistration";
-import { uploadPickUpAndDropOffImage } from "../registration/utils/upload";
+import React from "react";
 
 type Props = {
   formData: any;
@@ -18,58 +16,15 @@ type Props = {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
   errors: any;
+  handleFileChange: any;
 };
 
-const Case4 = ({ formData, handleInputChange, errors }: Props) => {
-  const [files, setFiles] = useState<{ [key: string]: File | null }>({
-    PickUp: null,
-    DropOff: null,
-  });
-
-  const [existingImages, setExistingImages] = useState<{
-    [key: string]: string | null;
-  }>({
-    PickUp: null,
-    DropOff: null,
-  });
-
-  const handleFileChange = (folder: string) => (file: File | null) => {
-    setFiles((prev) => ({ ...prev, [folder]: file }));
-    if (file) {
-      setExistingImages((prev) => ({ ...prev, [folder]: null }));
-    }
-  };
-
-  // const handleUpload = async () => {
-  //   const allFilesSelectedOrExisting = Object.entries(files).every(
-  //     ([key, file]) => file !== null || existingImages[key] !== null
-  //   );
-  //   if (!allFilesSelectedOrExisting) {
-  //     return alert("Please select all required files or use existing images");
-  //   }
-
-  //   for (const [folder, file] of Object.entries(files)) {
-  //     if (file) {
-  //       const { url, error } = await uploadPickUpAndDropOffImage(file, folder, job. || "");
-
-  //       if (error) {
-  //         return alert(`Error uploading ${folder}: ${error}`);
-  //       }
-
-  //       const fieldName = folder === "id-documents" && "idPhotoUrl";
-
-  //       if (fieldName) {
-  //         updateData[fieldName] = url;
-  //       }
-  //     } else if (existingImages[folder]) {
-  //       const fieldName = folder === "id-documents" ? "idPhotoUrl" : null;
-
-  //       if (fieldName) {
-  //         updateData[fieldName] = existingImages[folder];
-  //       }
-  //     }
-  //   }
-  // };
+const Case4 = ({
+  formData,
+  handleInputChange,
+  errors,
+  handleFileChange,
+}: Props) => {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -142,13 +97,13 @@ const Case4 = ({ formData, handleInputChange, errors }: Props) => {
             <ImageUploadCard
               folder="Pick Up"
               cardTitle="Image of the Pick Up Location"
-              onFileChange={handleFileChange("PickUp")}
+              onFileChange={handleFileChange("PickUpLocation")}
               // existingImageUrl={existingImages["id-documents"]}
             />
             <ImageUploadCard
               folder="Drop Off"
               cardTitle="Image of the Drop Off Location"
-              onFileChange={handleFileChange("Dropoff")}
+              onFileChange={handleFileChange("DropOffLocation")}
               // existingImageUrl={existingImages["id-documents"]}
             />
           </DialogContent>

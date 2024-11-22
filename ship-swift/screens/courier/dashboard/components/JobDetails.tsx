@@ -19,6 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -60,6 +61,8 @@ interface JobDetailsProps {
       recipientGender: string;
       packageType: string;
       parcelHandling: string;
+      PickUpLocation: string;
+      DropOffLocation: string;
     };
     Client: {
       firstName: string;
@@ -230,6 +233,40 @@ export default function Details({ job }: JobDetailsProps) {
                       <span>Phone: {job.CourierJob.dropoffPhoneNumber}</span>
                       <span>Email: {job.CourierJob.dropOffEmail}</span>
                     </address>
+                    <div className="space-y-4 flex gap-1 justify-center">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <p className="underline text-sm text-blue-400 cursor-pointer">
+                            View Images of the Pick Up and Drop Off Location
+                          </p>
+                        </DialogTrigger>
+                        <DialogContent className="w-full md:w-[80%]">
+                          <DialogHeader>
+                            <DialogTitle>
+                              Images of the Pick Up and Drop Off Location
+                            </DialogTitle>
+                            <DialogDescription>
+                              These are the images of the Pick Up and Drop Off
+                              Location
+                            </DialogDescription>
+                          </DialogHeader>
+                          <DialogTitle>
+                            Image of the Pick Up Location
+                          </DialogTitle>
+                          <img
+                            src={job.CourierJob.PickUpLocation}
+                            alt="Pick Up"
+                          />
+                          <DialogTitle>
+                            Image of the Drop Off Location
+                          </DialogTitle>
+                          <img
+                            src={job.CourierJob.DropOffLocation}
+                            alt="Drop Off"
+                          />
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                     <div className="w-full">
                       <MapComponent
                         pickup={job.CourierJob.PickUp}

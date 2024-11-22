@@ -125,6 +125,8 @@ model CourierJobs {
   recipientName      String?         @default("")
   urgency            String?         @default("")
   paymentMethod      String?         @default("")
+  DropOffLocation    String?         @default("")
+  PickUpLocation     String?         @default("")
   isPaid             Boolean         @default(false)
   releasePayment     Boolean         @default(false)
   activeJobs         ActiveJobs[]
