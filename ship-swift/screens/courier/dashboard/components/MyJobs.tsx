@@ -139,8 +139,6 @@ export default function MyJobs() {
   };
   const handleStatusChange = async (jobId: string, newStatus: string) => {
     if (newStatus === "delivered") {
-      console.log("jobId:", jobId);
-      console.log("newStatus:", newStatus);
       setJobToUpdate({ jobId, newStatus });
       setCurrentJobId(jobId); // Open proof modal for "delivered" status
       setIsProofModalOpen(true);
