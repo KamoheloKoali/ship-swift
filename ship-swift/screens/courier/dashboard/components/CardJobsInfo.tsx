@@ -218,7 +218,7 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
               </span>
             </div>
             <div className="flex items-center space-x-1">
-              {/* <DollarSign className="w-4 h-4 text-green-600" /> */}
+              <DollarSign className="w-4 h-4 text-green-600" />
               <span className="font-bold text-gray-800">
                 {formatBudget(job.Budget)}
               </span>

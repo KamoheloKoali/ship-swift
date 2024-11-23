@@ -1,9 +1,15 @@
-// ApplyButton.tsx
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { CheckCheck, Loader2, AlertCircle } from "lucide-react";
 import { ApplicationStatus, applyForJob } from "./utils/jobsInfo";
 import useDriverDetails from "@/screens/courier/registration/utils/DriverDetails";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Tooltip,
   TooltipContent,
@@ -26,18 +32,29 @@ const ApplyButton: React.FC<ApplyButtonProps> = ({
   setApplicationStatus,
   setErrorMessage,
 }) => {
-  const jobApply = async () => {
-    if (userId && jobId) {
-      setApplicationStatus("applying");
-      const result = await applyForJob(jobId, userId);
-      setApplicationStatus(result.status);
-      setErrorMessage(result.errorMessage);
-    }
-  };
+  const [openDialog, setOpenDialog] = React.useState(false);
 
   const { driverData } = useDriverDetails();
 
-  if (driverData?.isVerified == false) {
+  const jobApply = async () => {
+    try {
+      setApplicationStatus("applying");
+      const result = await applyForJob(jobId, userId);
+      setApplicationStatus(result.status);
+      setErrorMessage(result.errorMessage || null);
+      setOpenDialog(false); // Close dialog after attempting to apply
+    } catch (error) {
+      console.error("Error applying for job:", error);
+      setApplicationStatus("error");
+      setErrorMessage("An unexpected error occurred. Please try again.");
+    }
+  };
+
+  const handleDialogCancel = () => {
+    setOpenDialog(false); // Close dialog on cancel
+  };
+
+  if (driverData?.isVerified === false) {
     return (
       <TooltipProvider>
         <Tooltip>
@@ -87,16 +104,33 @@ const ApplyButton: React.FC<ApplyButtonProps> = ({
       );
     case "not_applied":
       return (
-        <Button
-          className="flex items-center justify-center space-x-2 border border-black bg-white hover:bg-gray-100 transition-colors duration-200 my-2 w-full"
-          variant="outline"
-          onClick={jobApply}
-        >
-          <CheckCheck className="w-4 h-4 text-black" />
-          <span className="text-black">Apply</span>
-        </Button>
+        <>
+          <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+            <DialogTrigger asChild>
+              <Button
+                className="flex items-center justify-center space-x-2 border border-black bg-white hover:bg-gray-100 transition-colors duration-200 my-2 w-full"
+                variant="outline"
+              >
+                <CheckCheck className="w-4 h-4 text-black" />
+                <span className="text-black">Apply</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <p>Are you sure you want to apply for this job?</p>
+              </DialogHeader>
+              <DialogFooter className="flex justify-between items-center gap-4">
+                <Button variant="outline" onClick={handleDialogCancel}>
+                  Cancel
+                </Button>
+                <Button variant="default" onClick={jobApply}>
+                  Apply
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
       );
   }
 };
-
 export default ApplyButton;
