@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useAuth } from "@clerk/nextjs";
 import { uploadImage } from "../../registration/utils/Upload";
 import { updateVehicleImages } from "@/actions/driverActions";
-import { Button } from "@/components/ui/button"; // Adjust the path to your ShadCN button
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -21,14 +21,14 @@ const VehicleImages: React.FC = () => {
     side: string | null;
     rear: string | null;
   }>({ front: null, side: null, rear: null });
-  const [photo, setPhoto] = useState<string | null>(null); // Photo for current view
+  const [photo, setPhoto] = useState<string | null>(null);
   const [currentView, setCurrentView] = useState<
     "front" | "side" | "rear" | null
   >(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false); // For submit button loading state
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
   const startCamera = async (view: "front" | "side" | "rear") => {
@@ -40,15 +40,46 @@ const VehicleImages: React.FC = () => {
         throw new Error("Camera access is not supported in your browser");
       }
 
-      const constraints = { video: { facingMode: { exact: "environment" } } };
+      const constraints = {
+        video: {
+          facingMode: { exact: "environment" },
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+        },
+      };
+
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        setIsCameraReady(true);
+        videoRef.current.onloadedmetadata = () => {
+          setIsCameraReady(true);
+        };
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to access camera.");
+      // If environment camera fails, try without exact requirement
+      try {
+        const fallbackConstraints = {
+          video: {
+            facingMode: "environment",
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+          },
+        };
+        const stream = await navigator.mediaDevices.getUserMedia(
+          fallbackConstraints
+        );
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.onloadedmetadata = () => {
+            setIsCameraReady(true);
+          };
+        }
+      } catch (fallbackErr) {
+        setError(
+          "Failed to access camera. Please ensure camera permissions are granted."
+        );
+      }
     }
   };
 
@@ -70,7 +101,7 @@ const VehicleImages: React.FC = () => {
       const ctx = canvas.getContext("2d");
       if (ctx) {
         ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-        const dataUrl = canvas.toDataURL("image/png");
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.8); // Using JPEG with 0.8 quality for better compression
         setPhoto(dataUrl);
         stopCamera();
       }
@@ -92,8 +123,8 @@ const VehicleImages: React.FC = () => {
 
     try {
       const blob = dataURItoBlob(photo);
-      const file = new File([blob], `${userId}-${currentView}.png`, {
-        type: "image/png",
+      const file = new File([blob], `${userId}-${currentView}.jpg`, {
+        type: "image/jpeg",
       });
 
       const { url, error } = await uploadImage(file, "car-photos", userId);
@@ -162,85 +193,105 @@ const VehicleImages: React.FC = () => {
           Capture Vehicle Images
         </CardTitle>
         <CardDescription className="text-lg text-center text-gray-600">
-          Upload the required documents and provide additional information to be
-          verified and start working with us.
+          Please capture clear images of your vehicle from all required angles.
         </CardDescription>
       </CardHeader>
-      {error && <div className="text-red-500 text-sm">{error}</div>}
+
       <CardContent className="p-6 shadow-md">
-        {/* <div className="capture-buttons grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {["front", "side", "rear"].map((view) => (
-            <Button
-              key={view}
-              onClick={() => startCamera(view as "front" | "side" | "rear")}
-              disabled={isCameraReady}
-              className="bg-black text-white hover:bg-gray-800 px-4 py-2 rounded-md"
-            >
-              Capture {view.charAt(0).toUpperCase() + view.slice(1)} View
-            </Button>
-          ))}
-        </div> */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded">
+            {error}
+          </div>
+        )}
 
         {isCameraReady && (
-          <div className="camera flex flex-col items-center gap-4">
+          <div className="camera flex flex-col items-center gap-4 mb-6">
             <video
               ref={videoRef}
               autoPlay
+              playsInline
               className="w-full max-w-md border rounded-md shadow-sm"
             />
-            <Button
-              onClick={capturePhoto}
-              className="bg-black text-white hover:bg-gray-800 px-6 py-2 rounded-md"
-            >
-              Capture Photo
-            </Button>
+            <div className="flex gap-4">
+              <Button
+                onClick={capturePhoto}
+                className="bg-black text-white hover:bg-gray-800 px-6 py-2 rounded-md"
+              >
+                Capture Photo
+              </Button>
+              <Button
+                onClick={stopCamera}
+                variant="outline"
+                className="px-6 py-2 rounded-md"
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         )}
 
         {photo && (
-          <div className="photo-preview flex flex-col items-center gap-4">
+          <div className="photo-preview flex flex-col items-center gap-4 mb-6">
             <Image
               src={photo}
               alt="Captured photo"
-              width={200}
-              height={200}
+              width={400}
+              height={300}
               className="rounded-md border shadow-sm"
             />
-            <Button
-              onClick={uploadPhoto}
-              className="bg-black text-white hover:bg-gray-800 px-6 py-2 rounded-md"
-            >
-              Upload Photo
-            </Button>
+            <div className="flex gap-4">
+              <Button
+                onClick={uploadPhoto}
+                className="bg-black text-white hover:bg-gray-800 px-6 py-2 rounded-md"
+              >
+                Upload Photo
+              </Button>
+              <Button
+                onClick={() => setPhoto(null)}
+                variant="outline"
+                className="px-6 py-2 rounded-md"
+              >
+                Retake
+              </Button>
+            </div>
           </div>
         )}
 
-        <div className="preview grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+        <div className="preview grid grid-cols-1 sm:grid-cols-3 gap-6">
           {Object.entries(images).map(([view, url]) => (
-            <div className="flex flex-col items-center gap-4">
-              <Card className="w-full bg-white shadow-md overflow-hidden transition-all duration-200 ease-in-out transform hover:shadow-lg hover:scale-105 mt-6">
+            <div key={view} className="flex flex-col items-center gap-4">
+              <Card className="w-full bg-white shadow-md overflow-hidden">
                 <CardContent className="p-4">
-                  <div key={view} className="w-full">
-                    {url ? (
+                  {url ? (
+                    <div className="relative">
                       <Image
                         src={url}
                         alt={`${view} view`}
-                        width={100}
-                        height={100}
-                        className="rounded-md border shadow-sm"
+                        width={300}
+                        height={200}
+                        className="rounded-md"
                       />
-                    ) : (
-                      <div className="w-full h-48 border rounded-md flex items-center justify-center text-gray-500 bg-gray-50">
-                        No Image
-                      </div>
-                    )}
-                  </div>
+                      <Button
+                        onClick={() =>
+                          startCamera(view as "front" | "side" | "rear")
+                        }
+                        className="absolute bottom-2 right-2 bg-black/80 text-white hover:bg-black"
+                        size="sm"
+                      >
+                        Retake
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="w-full h-48 border rounded-md flex items-center justify-center text-gray-500 bg-gray-50">
+                      No Image
+                    </div>
+                  )}
                 </CardContent>
               </Card>
               <Button
                 onClick={() => startCamera(view as "front" | "side" | "rear")}
-                disabled={isCameraReady}
-                className="w-full bg-black text-white hover:bg-gray-800 px-4 py-2 rounded-md"
+                disabled={isCameraReady || photo !== null}
+                className="w-full bg-black text-white hover:bg-gray-800 disabled:bg-gray-300"
               >
                 Capture {view.charAt(0).toUpperCase() + view.slice(1)} View
               </Button>
@@ -253,11 +304,7 @@ const VehicleImages: React.FC = () => {
           disabled={
             !images.front || !images.side || !images.rear || isSubmitting
           }
-          className={`w-full mt-6 py-4 text-lg font-semibold rounded-md ${
-            !images.front || !images.side || !images.rear || isSubmitting
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-              : "bg-black text-white hover:bg-gray-800"
-          }`}
+          className="w-full mt-6 py-4 text-lg font-semibold rounded-md bg-black text-white hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-500"
         >
           {isSubmitting ? "Submitting..." : "Submit All Images"}
         </Button>
@@ -265,4 +312,5 @@ const VehicleImages: React.FC = () => {
     </Card>
   );
 };
+
 export default VehicleImages;
