@@ -53,7 +53,7 @@ model Drivers {
   isVerified            Boolean          @default(false)
   isOnline              Boolean          @default(false)
   rating                Float?
-  vehicleRegistrationNo String? 
+  vehicleRegistrationNo String?
   vehicleImagesUrls     String?
   activeJobs            ActiveJobs[]
   ClientReview          ClientReview[]
@@ -126,10 +126,10 @@ model CourierJobs {
   recipientName      String?         @default("")
   urgency            String?         @default("")
   paymentMethod      String?         @default("")
-  DropOffLocation    String?         @default("")
-  PickUpLocation     String?         @default("")
   isPaid             Boolean         @default(false)
   releasePayment     Boolean         @default(false)
+  DropOffLocation    String?         @default("")
+  PickUpLocation     String?         @default("")
   activeJobs         ActiveJobs[]
   approvedRequest    JobRequest?     @relation("ApprovedRequest", fields: [approvedRequestId], references: [Id])
   client             clients         @relation(fields: [clientId], references: [Id])
