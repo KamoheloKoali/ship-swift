@@ -143,7 +143,7 @@ const PhotoCapture: React.FC = () => {
             className="absolute inset-0 flex items-center justify-center bg-black text-white px-6 py-3 rounded-lg hover:bg-slate-500 focus:ring focus:ring-white z-10"
             disabled={isLoading}
           >
-            Tap to take proof of delivery
+            Tap to take an image of your face
           </button>
         )}
       </div>
