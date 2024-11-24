@@ -104,26 +104,26 @@ export default function DriverRegistrationForm() {
     handleInputChange(e); // Also update the original form data
   };
 
-  useEffect(() => {
-    const fetchClient = async () => {
-      if (userId) {
-        try {
-          const client = await getClientById(userId);
-          if (client?.data) {
-            setLocalFormData((prev) => ({
-              ...prev,
-              phoneNumber: client.data.phoneNumber || "",
-              idPhotoUrl: client.data.idPhotoUrl || "",
-            }));
-          }
-        } catch (error) {
-          console.error("Error fetching client data:", error);
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const fetchClient = async () => {
+  //     if (userId) {
+  //       try {
+  //         const client = await getClientById(userId);
+  //         if (client?.data) {
+  //           setLocalFormData((prev) => ({
+  //             ...prev,
+  //             phoneNumber: client.data.phoneNumber || "",
+  //             idPhotoUrl: client.data.idPhotoUrl || "",
+  //           }));
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching client data:", error);
+  //       }
+  //     }
+  //   };
 
-    fetchClient();
-  }, [userId]);
+  //   fetchClient();
+  // }, [userId]);
 
   if (isLoading) {
     return (

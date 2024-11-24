@@ -38,6 +38,40 @@ export default function ClientRegistrationForm() {
   // State to manage validation errors
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+  // useEffect(() => {
+  //   const fetchDriverData = async () => {
+  //     if (userId) {
+  //       const driver = await getDriverByID(userId);
+  //       if (driver.success && driver.data) {
+  //         // Convert idPhotoUrl to File
+  //         if (driver.data.idPhotoUrl) {
+  //           const file = await urlToFile(
+  //             driver.data.idPhotoUrl,
+  //             "id-document.jpg"
+  //           );
+  //           handleFileChange("id-documents")(file);
+  //           console.log(existingImages["id-documents"]);
+  //         }
+  //         // Set the existing phone number
+  //         handleInputChange({
+  //           target: {
+  //             name: "phoneNumber",
+  //             value: driver.data.phoneNumber || "",
+  //           },
+  //         } as React.ChangeEvent<HTMLInputElement>);
+  //       }
+  //     }
+  //   };
+
+  //   fetchDriverData();
+  // }, [userId, handleFileChange, handleInputChange]);
+
+  async function urlToFile(url: string, fileName: string): Promise<File> {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new File([blob], fileName, { type: blob.type });
+  }
+
   const handleSubmit = async () => {
     try {
       // Validate file upload

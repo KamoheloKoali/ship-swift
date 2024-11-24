@@ -218,3 +218,18 @@ export const deleteDriver = async (driverId: string) => {
     return { success: false, error: "Error deleting driver" };
   }
 };
+
+export const updateVehicleImages = async (
+  driverId: string,
+  vehicleImagesUrls: string
+) => {
+  try {
+    const updatedDriver = await prisma.drivers.update({
+      where: { Id: driverId },
+      data: { vehicleImagesUrls },
+    });
+    return { success: true, data: updatedDriver };
+  } catch (error) {
+    return { success: false, error: "Error updating vehicle images URLs" };
+  }
+};
