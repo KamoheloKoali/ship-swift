@@ -17,6 +17,10 @@ export async function uploadImage(
   const fileExtension = file.type === "image/png" ? "png" : "jpg";
   let fileName: string;
 
+  console.log("file", file);
+  console.log("folder", folder);
+  console.log("clerkId", clerkId);
+
   // Determine the fileName based on the folder
   if (folder === "proof-of-delivery") {
     fileName = `${file.name}`;

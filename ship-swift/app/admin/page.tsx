@@ -30,6 +30,8 @@ type User = {
   idPhotoUrl?: string;
   selfieImage: string;
   driverLicenseImage?: string;
+  discImage?: string;
+  vehicleImagesUrl?: string;
 };
 
 export default function AdminDashboard() {
@@ -63,6 +65,7 @@ export default function AdminDashboard() {
           idImage: driver.idPhotoUrl,
           selfieImage: driver.photoUrl,
           driverLicenseImage: driver.licensePhotoUrl || undefined,
+          discImage: driver.discPhotoUrl || undefined,
           role: "driver",
         })) || []),
       ];
@@ -72,6 +75,8 @@ export default function AdminDashboard() {
 
     fetchUsers();
   }, []);
+  
+
 
   const handleVerify = async (userId: string, user: any) => {
     if (user.type === "client") {
@@ -170,15 +175,27 @@ export default function AdminDashboard() {
             />
           </div>
           {user.type === "courier" && (
-            <div className="col-span-2 flex flex-col items-center justify-center">
-              <p className="text-sm font-medium mb-2">Driver's License</p>
-              <Image
-                src={user.driverLicenseImage || ""}
-                alt="Driver's License"
-                className="w-full md:w-[50%] h-[300px] object-cover rounded-md"
-                width={300}
-                height={300}
-              />
+            <div className="grid grid-cols-2 gap-4 ">
+              <div className="flex flex-col items-center justify-center">
+                <p className="text-sm font-medium mb-2">Driver's License</p>
+                <Image
+                  src={user.driverLicenseImage || ""}
+                  alt="Driver's License"
+                  className="w-full md:w-[50%] h-[300px] object-cover rounded-md"
+                  width={300}
+                  height={300}
+                />
+              </div>
+              <div className="flex flex-col items-center justify-center">
+                <p className="text-sm font-medium mb-2">Vehicle Disc</p>
+                <Image
+                  src={user.discImage || ""}
+                  alt="Vehicle Disc"
+                  className="w-full md:w-[50%] h-[300px] object-cover rounded-md"
+                  width={300}
+                  height={300}
+                />
+              </div>
             </div>
           )}
         </div>

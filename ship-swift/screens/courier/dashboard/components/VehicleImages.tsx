@@ -30,16 +30,32 @@ const VehicleImages = ({}) => {
         throw new Error("Camera access is not supported in your browser");
       }
 
-      const constraints = {
-        video: {
-          facingMode: { exact: "environment" },
-        },
-      };
+      // First try to get the rear camera
+      try {
+        const rearCameraStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { exact: "environment" },
+          },
+        });
 
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        setIsCameraReady(true);
+        if (videoRef.current) {
+          videoRef.current.srcObject = rearCameraStream;
+          setIsCameraReady(true);
+        }
+      } catch (rearCameraError) {
+        // If rear camera fails, fall back to any available camera
+        console.log(
+          "Rear camera not available, falling back to default camera"
+        );
+
+        const anyCameraStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
+
+        if (videoRef.current) {
+          videoRef.current.srcObject = anyCameraStream;
+          setIsCameraReady(true);
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to access camera");
@@ -139,9 +155,7 @@ const VehicleImages = ({}) => {
           });
         } catch (uploadError) {
           // If individual upload fails, throw error with context
-          throw new Error(
-            `Failed to upload ${views[+view - 1]}`
-          );
+          throw new Error(`Failed to upload ${views[+view - 1]}`);
         }
       }
 

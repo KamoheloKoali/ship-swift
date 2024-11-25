@@ -170,7 +170,7 @@ export default function DriverRegistrationForm() {
           />
           <ImageUploadCard
             folder="id-document"
-            cardTitle="Identity Document"
+            cardTitle="ID Photo"
             onFileChange={handleFileChange("id-document")}
             existingImageUrl={
               existingImages["id-document"] || localFormData.idPhotoUrl
@@ -184,9 +184,27 @@ export default function DriverRegistrationForm() {
           />
           <ImageUploadCard
             folder="license-disc"
-            cardTitle="License Disc"
+            cardTitle="Vehicle Disc"
             onFileChange={handleFileChange("license-disc")}
             existingImageUrl={existingImages["license-disc"]}
+          />
+          <ImageUploadCard
+            folder="car-photos-front"
+            cardTitle="Vehicle Front View"
+            onFileChange={handleFileChange("car-photos-front")}
+            existingImageUrl={existingImages["car-photos-front"]}
+          />
+          <ImageUploadCard
+            folder="car-photos-side"
+            cardTitle="Vehicle Side View"
+            onFileChange={handleFileChange("car-photos-side")}
+            existingImageUrl={existingImages["car-photos-side"]}
+          />
+          <ImageUploadCard
+            folder="car-photos-rear"
+            cardTitle="Vehicle Rear View"
+            onFileChange={handleFileChange("car-photos-rear")}
+            existingImageUrl={existingImages["car-photos-rear"]}
           />
         </div>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -295,7 +313,7 @@ export default function DriverRegistrationForm() {
           ) : (
             <>
               <CheckCircle className="mr-2 h-5 w-5" />
-              Upload All Documents and Submit
+              Upload
             </>
           )}
         </Button>
