@@ -26,6 +26,7 @@ export const upsertDriver = async (driverData: {
   discExpiry?: string;
   discPhotoUrl?: string;
   location: string; // Now required
+  vehicleImagesUrls?: string;
 }) => {
   try {
     const upsertedDriver = await prisma.drivers.upsert({
@@ -42,6 +43,9 @@ export const upsertDriver = async (driverData: {
         ...(driverData.idNumber && { idNumber: driverData.idNumber }),
         ...(driverData.licensePhotoUrl && {
           licensePhotoUrl: driverData.licensePhotoUrl,
+        }),
+        ...(driverData.vehicleImagesUrls && {
+          photoUrl: driverData.vehicleImagesUrls,
         }),
         ...(driverData.licenseNumber && {
           licenseNumber: driverData.licenseNumber,
@@ -76,6 +80,7 @@ export const upsertDriver = async (driverData: {
         discPhotoUrl: driverData.discPhotoUrl,
         vehicleRegistrationNo: driverData.vehicleRegistrationNo,
         discExpiry: driverData.discExpiry,
+        vehicleImagesUrls: driverData.vehicleImagesUrls || "",
       },
     });
     return { success: true, data: upsertedDriver };
