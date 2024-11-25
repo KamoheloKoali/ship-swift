@@ -31,10 +31,10 @@ Lebohang Moletsane (Full Stack Developer) [Linkedin](https://twitter.com/).
 
 ## Screenshots
 
-![App Screenshot](./Screenshot%20from%202024-11-25%2015-53-22.png)
-![App Screenshot](./Screenshot%20from%202024-11-25%2015-53-14.png)
-![App Screenshot](./Screenshot%20from%202024-11-25%2015-53-22.png)
-![App Screenshot](./Screenshot%20from%202024-11-25%2015-53-35.png)
+![App Screenshot](./assets/Screenshot%20from%202024-11-25%2015-53-22.png)
+![App Screenshot](./assets/Screenshot%20from%202024-11-25%2015-53-14.png)
+![App Screenshot](./assets/Screenshot%20from%202024-11-25%2015-53-22.png)
+![App Screenshot](./assets/Screenshot%20from%202024-11-25%2015-53-35.png)
 
 ## Installation
 
