@@ -4,23 +4,23 @@
 
 Ship Swift is a modern, user-friendly platform designed to connect clients needing delivery services with freelance drivers who can fulfill these requests. It offers flexibility, affordability, and ease of use for individuals and businesses alike. The platform focuses on local deliveries, providing an efficient solution tailored for the on-demand economy.
 
-Visit the deployed site [here](https://twitter.com/).
+Visit the deployed site [here](https://ship-swift-self.vercel.app/).
 
 Read our blog article detailing the journey of Ship Swift [here](https://twitter.com/).
 
 #### Team Members:
 
-Kamohelo Koali (Project Manager, Full Stack Developer) [Linkedin](https://twitter.com/).
+Kamohelo Koali (Project Manager, Full Stack Developer) - [Linkedin](https://www.linkedin.com/in/kamohelo-koali-9b90542b4/).
 
-Khiba Koenane (Full Stack Developer) [Linkedin](https://twitter.com/).
+Khiba Koenane (Full Stack Developer) - [Linkedin](https://www.linkedin.com/in/khiba-koenane/).
 
-Langa Hoohlo (Full Stack Developer) [Linkedin](https://twitter.com/).
+Langa Hoohlo (Full Stack Developer) - [Linkedin](https://www.linkedin.com/in/langa-hoohlo-404608229/).
 
-Mthawelanga Matross (Full Stack Developer) [Linkedin](https://twitter.com/).
+Mthawelanga Matross (Full Stack Developer) - [Linkedin](https://www.linkedin.com/in/mthawelanga-matross-a961412b4/).
 
-Pheello Ntlele (Full Stack Developer) [Linkedin](https://twitter.com/).
+Pheello Ntlele (Full Stack Developer) - [Linkedin](https://www.linkedin.com/in/david-ntlele-32a0372aa/).
 
-Lebohang Moletsane (Full Stack Developer) [Linkedin](https://twitter.com/).
+Lebohang Moletsane (Full Stack Developer) - [Linkedin](https://www.linkedin.com/in/lebohang-moletsane-445ab7328/).
 
 ## Features
 
