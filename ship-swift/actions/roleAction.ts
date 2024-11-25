@@ -9,6 +9,11 @@ interface UserRole {
   client?: boolean;
 }
 
+/**
+ * Creates or updates a user role for a given user ID
+ * @param {UserRole} params - Object containing userId and optional driver/client flags
+ * @returns {Promise} The created or updated user role
+ */
 export const createUserRole = async ({
   userId,
   driver = false,
@@ -34,6 +39,11 @@ export const createUserRole = async ({
   }
 };
 
+/**
+ * Updates an existing user role
+ * @param {UserRole} params - Object containing userId and driver/client flags to update
+ * @returns {Promise} The updated user role
+ */
 export const updateUserRole = async ({ userId, driver, client }: UserRole) => {
   try {
     const updatedUserRole = await prisma.userRole.update({
@@ -50,6 +60,11 @@ export const updateUserRole = async ({ userId, driver, client }: UserRole) => {
   }
 };
 
+/**
+ * Retrieves a user role by user ID
+ * @param {string} userId - The ID of the user to find the role for
+ * @returns {Promise} The user role if found, null otherwise
+ */
 export const getUserRole = async (userId: string) => {
   try {
     const userRole = await prisma.userRole.findUnique({
@@ -62,6 +77,11 @@ export const getUserRole = async (userId: string) => {
   }
 };
 
+/**
+ * Deletes a user role by user ID
+ * @param {string} userId - The ID of the user whose role should be deleted
+ * @returns {Promise} The deleted user role
+ */
 export const deleteUserRole = async (userId: string) => {
   try {
     const deletedUserRole = await prisma.userRole.delete({

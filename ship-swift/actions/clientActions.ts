@@ -3,6 +3,11 @@ import { Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+/**
+ * Creates a new client and assigns client role
+ * @param clientData Object containing client details (clerkId, email, phoneNumber, firstName, lastName, photoUrl, idPhotoUrl)
+ * @returns Object with success status and client data or error message
+ */
 export const createClient = async (clientData: {
   clerkId: string;
   email: string;
@@ -45,6 +50,10 @@ export const createClient = async (clientData: {
   }
 };
 
+/**
+ * Retrieves all unverified clients from the database
+ * @returns Object with success status and array of unverified clients or error message
+ */
 export const getUnverifiedClients = async () => {
   try {
     const unverifiedClients = await prisma.clients.findMany({
@@ -65,6 +74,11 @@ export const getUnverifiedClients = async () => {
   }
 };
 
+/**
+ * Verifies a client by updating their verification status
+ * @param clientId The ID of the client to verify
+ * @returns Object with success status and updated client data or error message
+ */
 export const verifyClient = async (clientId: string) => {
   try {
     const updatedClient = await prisma.clients.update({
@@ -81,6 +95,11 @@ export const verifyClient = async (clientId: string) => {
   }
 };
 
+/**
+ * Retrieves a client by their ID
+ * @param clientId The ID of the client to retrieve
+ * @returns Object with success status and client data or error message
+ */
 export const getClientById = async (clientId: string) => {
   try {
     const client = await prisma.clients.findUnique({
@@ -96,6 +115,10 @@ export const getClientById = async (clientId: string) => {
   }
 };
 
+/**
+ * Retrieves all clients from the database
+ * @returns Object with success status and array of all clients or error message
+ */
 export const getAllClients = async () => {
   const clients = await prisma.clients.findMany(); // Remove where clause to get all clients
   if (clients.length > 0) {
@@ -105,6 +128,12 @@ export const getAllClients = async () => {
   }
 };
 
+/**
+ * Updates a client's information
+ * @param clientId The ID of the client to update
+ * @param clientData The data to update the client with
+ * @returns Object with success status and updated client data or error message
+ */
 export const updateClient = async (
   clientId: string,
   clientData: Prisma.clientsUpdateInput
@@ -120,6 +149,11 @@ export const updateClient = async (
   }
 };
 
+/**
+ * Deletes a client from the database
+ * @param clientId The ID of the client to delete
+ * @returns Object with success status and deleted client data or error message
+ */
 export const deleteClient = async (clientId: string) => {
   try {
     const deletedClient = await prisma.clients.delete({
