@@ -1,41 +1,31 @@
 "use client";
-import { useState, useRef } from "react";
+
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useAuth } from "@clerk/nextjs";
 import { uploadImage } from "../../registration/utils/Upload";
-import { updateVehicleImages } from "@/actions/driverActions";
+import { useRouter } from "next/navigation"
+import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { updateVehicleImages } from "@/actions/driverActions";
 
-const VehicleImages: React.FC = () => {
-  const { userId } = useAuth();
-  const [images, setImages] = useState<{
-    front: string | null;
-    side: string | null;
-    rear: string | null;
-  }>({ front: null, side: null, rear: null });
-  const [photo, setPhoto] = useState<string | null>(null);
-  const [currentView, setCurrentView] = useState<
-    "front" | "side" | "rear" | null
-  >(null);
+const VehicleImages = ({}) => {
+  const [photos, setPhotos] = useState<Record<string, string>>({});
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [currentViewIndex, setCurrentViewIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { userId } = useAuth();
   const router = useRouter();
 
-  const startCamera = async (view: "front" | "side" | "rear") => {
+  const views = ["Front View", "Side View", "Rear View"];
+
+  const startCamera = async () => {
     try {
       setError(null);
-      setCurrentView(view);
-
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         throw new Error("Camera access is not supported in your browser");
       }
@@ -43,135 +33,112 @@ const VehicleImages: React.FC = () => {
       const constraints = {
         video: {
           facingMode: { exact: "environment" },
-          width: { ideal: 1920 },
-          height: { ideal: 1080 },
         },
       };
 
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
-
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.onloadedmetadata = () => {
-          setIsCameraReady(true);
-        };
+        setIsCameraReady(true);
       }
     } catch (err) {
-      // If environment camera fails, try without exact requirement
-      try {
-        const fallbackConstraints = {
-          video: {
-            facingMode: "environment",
-            width: { ideal: 1920 },
-            height: { ideal: 1080 },
-          },
-        };
-        const stream = await navigator.mediaDevices.getUserMedia(
-          fallbackConstraints
-        );
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          videoRef.current.onloadedmetadata = () => {
-            setIsCameraReady(true);
-          };
-        }
-      } catch (fallbackErr) {
-        setError(
-          "Failed to access camera. Please ensure camera permissions are granted."
-        );
-      }
+      setError(err instanceof Error ? err.message : "Failed to access camera");
+      console.error("Camera access error:", err);
     }
   };
 
   const stopCamera = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
+    if (videoRef.current?.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
       stream.getTracks().forEach((track) => track.stop());
       videoRef.current.srcObject = null;
       setIsCameraReady(false);
-      setCurrentView(null);
     }
   };
 
   const capturePhoto = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      const canvas = document.createElement("canvas");
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.8); // Using JPEG with 0.8 quality for better compression
-        setPhoto(dataUrl);
-        stopCamera();
+    if (videoRef.current?.srcObject) {
+      try {
+        const video = videoRef.current;
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d");
+
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const dataUrl = canvas.toDataURL("image/png");
+
+          setPhotos((prevPhotos) => ({
+            ...prevPhotos,
+            [`${currentViewIndex + 1}`]: dataUrl,
+          }));
+
+          if (currentViewIndex < views.length - 1) {
+            setCurrentViewIndex((prev) => prev + 1);
+          } else {
+            stopCamera();
+            setIsCameraOpen(false);
+          }
+        } else {
+          throw new Error("Failed to create canvas context");
+        }
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Failed to capture photo"
+        );
+        console.error("Photo capture error:", err);
       }
     }
   };
 
-  const uploadPhoto = async () => {
-    if (!photo || !currentView) {
-      setError("No photo captured or view not selected.");
-      return;
-    }
-
+  const uploadAllPhotos = async () => {
     if (!userId) {
-      setError("User not authenticated.");
+      setError("User ID is missing. Please log in again.");
       return;
     }
 
-    setError(null);
+    if (Object.keys(photos).length !== views.length) {
+      setError("Please capture all views before uploading");
+      return;
+    }
 
+    setIsLoading(true);
     try {
-      const blob = dataURItoBlob(photo);
-      const file = new File([blob], `${userId}-${currentView}.jpg`, {
-        type: "image/jpeg",
-      });
+      const uploadPromises = Object.entries(photos).map(
+        async ([view, photo]) => {
+          const blob = dataURItoBlob(photo);
+          const file = new File([blob], `${userId}-${view}.png`, {
+            type: "image/png",
+          });
+          const { url, error } = await uploadImage(file, "car-photos", userId);
 
-      const { url, error } = await uploadImage(file, "car-photos", userId);
+          if (error || !url) {
+            throw new Error(
+              error || `Failed to upload ${views[+view - 1]} photo`
+            );
+          }
 
-      if (error || !url) {
-        throw new Error(error || "Failed to upload photo.");
+          return url;
+        }
+      );
+
+      const urls = await Promise.all(uploadPromises);
+      const combinedUrls = urls.join(", ");
+      const result = await updateVehicleImages(userId, combinedUrls);
+
+      if (result.success) {
+        toast({ title: "Success", description: "Vehicle images updated" });
+        setPhotos({});
+        router.push("/onboarding/driver-onboarding/face-recog");
+      } else {
+        throw new Error(result.error || "Failed to update vehicle images");
       }
-
-      setImages((prev) => ({
-        ...prev,
-        [currentView]: url,
-      }));
-
-      setPhoto(null);
-      setCurrentView(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred.");
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!userId) {
-      setError("User not authenticated.");
-      return;
-    }
-
-    if (!images.front || !images.side || !images.rear) {
-      setError("Please capture all vehicle images before submitting.");
-      return;
-    }
-
-    setError(null);
-    setIsSubmitting(true);
-
-    try {
-      const vehicleImagesUrls = `${images.front},${images.side},${images.rear}`;
-      const result = await updateVehicleImages(userId, vehicleImagesUrls);
-
-      if (!result.success) {
-        throw new Error(result.error || "Failed to update database.");
-      }
-
-      router.push("/onboarding/driver-onboarding/face-recog");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred.");
+      setError(err instanceof Error ? err.message : "Failed to upload photos");
+      console.error("Photo upload error:", err);
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   };
 
@@ -186,130 +153,62 @@ const VehicleImages: React.FC = () => {
     return new Blob([ab], { type: mimeString });
   };
 
+  useEffect(() => {
+    if (isCameraOpen) {
+      startCamera();
+    }
+  }, [isCameraOpen]);
+
   return (
-    <Card className="w-full max-w-4xl mx-auto bg-white rounded-none">
-      <CardHeader className="bg-gray-50 border-b border-gray-200">
-        <CardTitle className="text-3xl text-center font-bold text-gray-900">
-          Capture Vehicle Images
-        </CardTitle>
-        <CardDescription className="text-lg text-center text-gray-600">
-          Please capture clear images of your vehicle from all required angles.
-        </CardDescription>
-      </CardHeader>
+    <div className="flex flex-col items-center justify-center p-4">
+      <Button
+        onClick={() => {
+          setPhotos({});
+          setCurrentViewIndex(0);
+          setIsCameraOpen(true);
+        }}
+        className="bg-black text-white px-6 py-3 rounded-lg hover:bg-slate-500 focus:ring focus:ring-white"
+        disabled={isLoading}
+      >
+        Capture Vehicle Images
+      </Button>
 
-      <CardContent className="p-6 shadow-md">
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded">
-            {error}
-          </div>
-        )}
+      <Button
+        onClick={uploadAllPhotos}
+        className="mt-4 bg-black text-white px-6 py-3 rounded-lg hover:bg-slate-500 focus:ring focus:ring-white"
+        disabled={isLoading || Object.keys(photos).length !== views.length}
+      >
+        {isLoading ? "Uploading..." : "Upload Images"}
+      </Button>
 
-        {isCameraReady && (
-          <div className="camera flex flex-col items-center gap-4 mb-6">
+      <Dialog
+        open={isCameraOpen}
+        onOpenChange={(open) => !open && stopCamera()}
+      >
+        <DialogContent className="max-w-full max-h-full w-screen h-screen p-0 bg-black">
+          {error && (
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-[90%] p-3 bg-red-100 text-red-700 rounded-lg z-50">
+              {error}
+            </div>
+          )}
+
+          <div className="relative w-full h-full">
             <video
               ref={videoRef}
               autoPlay
-              playsInline
-              className="w-full max-w-md border rounded-md shadow-sm"
+              className="absolute inset-0 w-full h-full object-cover"
             />
-            <div className="flex gap-4">
-              <Button
+
+            {isCameraReady && (
+              <button
                 onClick={capturePhoto}
-                className="bg-black text-white hover:bg-gray-800 px-6 py-2 rounded-md"
-              >
-                Capture Photo
-              </Button>
-              <Button
-                onClick={stopCamera}
-                variant="outline"
-                className="px-6 py-2 rounded-md"
-              >
-                Cancel
-              </Button>
-            </div>
+                className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-white rounded-full shadow-md border-4 border-gray-300 hover:scale-105 transition-transform disabled:opacity-50"
+              />
+            )}
           </div>
-        )}
-
-        {photo && (
-          <div className="photo-preview flex flex-col items-center gap-4 mb-6">
-            <Image
-              src={photo}
-              alt="Captured photo"
-              width={400}
-              height={300}
-              className="rounded-md border shadow-sm"
-            />
-            <div className="flex gap-4">
-              <Button
-                onClick={uploadPhoto}
-                className="bg-black text-white hover:bg-gray-800 px-6 py-2 rounded-md"
-              >
-                Upload Photo
-              </Button>
-              <Button
-                onClick={() => setPhoto(null)}
-                variant="outline"
-                className="px-6 py-2 rounded-md"
-              >
-                Retake
-              </Button>
-            </div>
-          </div>
-        )}
-
-        <div className="preview grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {Object.entries(images).map(([view, url]) => (
-            <div key={view} className="flex flex-col items-center gap-4">
-              <Card className="w-full bg-white shadow-md overflow-hidden">
-                <CardContent className="p-4">
-                  {url ? (
-                    <div className="relative">
-                      <Image
-                        src={url}
-                        alt={`${view} view`}
-                        width={300}
-                        height={200}
-                        className="rounded-md"
-                      />
-                      <Button
-                        onClick={() =>
-                          startCamera(view as "front" | "side" | "rear")
-                        }
-                        className="absolute bottom-2 right-2 bg-black/80 text-white hover:bg-black"
-                        size="sm"
-                      >
-                        Retake
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="w-full h-48 border rounded-md flex items-center justify-center text-gray-500 bg-gray-50">
-                      No Image
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-              <Button
-                onClick={() => startCamera(view as "front" | "side" | "rear")}
-                disabled={isCameraReady || photo !== null}
-                className="w-full bg-black text-white hover:bg-gray-800 disabled:bg-gray-300"
-              >
-                Capture {view.charAt(0).toUpperCase() + view.slice(1)} View
-              </Button>
-            </div>
-          ))}
-        </div>
-
-        <Button
-          onClick={handleSubmit}
-          disabled={
-            !images.front || !images.side || !images.rear || isSubmitting
-          }
-          className="w-full mt-6 py-4 text-lg font-semibold rounded-md bg-black text-white hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-500"
-        >
-          {isSubmitting ? "Submitting..." : "Submit All Images"}
-        </Button>
-      </CardContent>
-    </Card>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 
