@@ -4,6 +4,15 @@ import notifyAboutJob from "./knock";
 
 const prisma = new PrismaClient();
 
+/**
+ * Creates a new active job and notifies the assigned driver
+ * @param data Object containing job details
+ * @param data.courierJobId The ID of the courier job
+ * @param data.driverId The ID of the assigned driver
+ * @param data.clientId The ID of the client
+ * @param data.startDate The start date of the job
+ * @returns The newly created active job with included relations, or undefined if creation fails
+ */
 export async function createActiveJob(data: {
   courierJobId: string;
   driverId: string;
@@ -40,6 +49,10 @@ export async function createActiveJob(data: {
   }
 }
 
+/**
+ * Retrieves all active jobs with their related data
+ * @returns Array of active jobs including CourierJob, Driver, and Client relations, or undefined if fetch fails
+ */
 export async function getActiveJobs() {
   try {
     const jobs = await prisma.activeJobs.findMany({
@@ -55,6 +68,11 @@ export async function getActiveJobs() {
   }
 }
 
+/**
+ * Retrieves all active jobs for a specific driver
+ * @param driverId The unique identifier of the driver
+ * @returns Array of active jobs including CourierJob, Driver, and Client relations for the specified driver, or undefined if fetch fails
+ */
 export async function getAllActiveJobsByDriverId(driverId: string) {
   try {
     const jobs = await prisma.activeJobs.findMany({
@@ -71,6 +89,11 @@ export async function getAllActiveJobsByDriverId(driverId: string) {
   }
 }
 
+/**
+ * Retrieves all active jobs for a specific client
+ * @param clientId The unique identifier of the client
+ * @returns Array of active jobs for the specified client, or undefined if fetch fails
+ */
 export async function getAllActiveJobsByClientId(clientId: string) {
   try {
     const jobs = await prisma.activeJobs.findMany({
@@ -82,6 +105,11 @@ export async function getAllActiveJobsByClientId(clientId: string) {
   }
 }
 
+/**
+ * Retrieves an active job by its courier job ID
+ * @param courierJobId The unique identifier of the courier job
+ * @returns The active job matching the courier job ID, or null if not found or fetch fails
+ */
 export async function getActiveJobByCourierJobId(courierJobId: string) {
   try {
     const job = await prisma.activeJobs.findFirst({
@@ -94,9 +122,17 @@ export async function getActiveJobByCourierJobId(courierJobId: string) {
   }
 }
 
+/**
+ * Updates the status of an active job and related courier job
+ * @param id The unique identifier of the active job
+ * @param status The new status to set for the job
+ * @returns The updated active job, or throws an error if update fails
+ */
 export async function updateActiveJobStatus(id: string, status: string) {
   try {
-    const updatedData: { jobStatus: string; endDate?: string } = { jobStatus: status };
+    const updatedData: { jobStatus: string; endDate?: string } = {
+      jobStatus: status,
+    };
     console.log("Id", id);
     console.log("Status", status);
 
@@ -124,6 +160,11 @@ export async function updateActiveJobStatus(id: string, status: string) {
   }
 }
 
+/**
+ * Deletes an active job by its ID
+ * @param id The unique identifier of the active job to delete
+ * @returns The deleted active job, or undefined if deletion fails
+ */
 export async function deleteActiveJob(id: string) {
   try {
     const deletedJob = await prisma.activeJobs.delete({

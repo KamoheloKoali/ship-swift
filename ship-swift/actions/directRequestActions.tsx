@@ -10,7 +10,13 @@ type CreateDirectRequestResponse = {
   error?: string;
 };
 
-// Create a DirectRequest and establish contact if not already a contact
+/**
+ * Creates a DirectRequest and establishes contact between client and driver if not already existing
+ * @param courierJobId - The ID of the courier job
+ * @param clientId - The ID of the client
+ * @param driverId - The ID of the driver
+ * @returns Promise containing success status and created DirectRequest data
+ */
 export const createDirectRequest = async (
   courierJobId: string,
   clientId: string,
@@ -48,7 +54,13 @@ export const createDirectRequest = async (
     console.error("Error creating direct request:", error);
     throw error;
   }
-}; // Get a DirectRequest by ID
+};
+
+/**
+ * Retrieves a DirectRequest by its ID
+ * @param id - The ID of the DirectRequest to fetch
+ * @returns Promise containing the DirectRequest or null if not found
+ */
 export const getDirectRequestById = async (
   id: string
 ): Promise<DirectRequest | null> => {
@@ -63,7 +75,11 @@ export const getDirectRequestById = async (
   }
 };
 
-// Get DirectRequests by Driver ID
+/**
+ * Retrieves all DirectRequests associated with a specific driver
+ * @param driverId - The ID of the driver
+ * @returns Promise containing an array of DirectRequests
+ */
 export const getDirectRequestsByDriverId = async (
   driverId: string
 ): Promise<DirectRequest[]> => {
@@ -85,7 +101,12 @@ export const getDirectRequestsByDriverId = async (
     throw error;
   }
 };
-// Get DirectRequests by Client ID
+
+/**
+ * Retrieves all DirectRequests associated with a specific client
+ * @param clientId - The ID of the client
+ * @returns Promise containing an array of DirectRequests
+ */
 export const getDirectRequestsByClientId = async (
   clientId: string
 ): Promise<DirectRequest[]> => {
@@ -100,6 +121,11 @@ export const getDirectRequestsByClientId = async (
   }
 };
 
+/**
+ * Retrieves all DirectRequests associated with a specific courier job
+ * @param courierJobId - The ID of the courier job
+ * @returns Promise containing an array of DirectRequests
+ */
 export const getDirectRequestsByCourierJobId = async (
   courierJobId: string
 ): Promise<DirectRequest[]> => {
@@ -114,8 +140,12 @@ export const getDirectRequestsByCourierJobId = async (
   }
 };
 
-
-// Update a DirectRequest by ID
+/**
+ * Updates a DirectRequest by its ID with provided data
+ * @param id - The ID of the DirectRequest to update
+ * @param updateData - Partial DirectRequest data to update
+ * @returns Promise containing the updated DirectRequest
+ */
 export const updateDirectRequest = async (
   id: string,
   updateData: Partial<DirectRequest>
@@ -132,6 +162,12 @@ export const updateDirectRequest = async (
   }
 };
 
+/**
+ * Approves a DirectRequest and performs associated actions in a transaction
+ * Creates JobRequest, updates CourierJob, and creates ActiveJob
+ * @param id - The ID of the DirectRequest to approve
+ * @returns Promise containing the updated DirectRequest
+ */
 export const approveDirectRequest = async (
   id: string
 ): Promise<DirectRequest> => {
@@ -179,7 +215,11 @@ export const approveDirectRequest = async (
   }
 };
 
-// Delete a DirectRequest by ID
+/**
+ * Deletes a DirectRequest by its ID
+ * @param id - The ID of the DirectRequest to delete
+ * @returns Promise containing a success message
+ */
 export const deleteDirectRequest = async (
   id: string
 ): Promise<{ message: string }> => {

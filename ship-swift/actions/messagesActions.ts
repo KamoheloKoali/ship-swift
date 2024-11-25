@@ -2,7 +2,11 @@
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
-
+/**
+ * Creates a new message between a driver and client
+ * @param messageData Object containing driverId, clientId, message, and senderId
+ * @returns Object with success status and created message data
+ */
 export const createMessage = async (messageData: {
   driverId: string;
   clientId: string;
@@ -21,6 +25,12 @@ export const createMessage = async (messageData: {
   else return { success: false };
 };
 
+/**
+ * Retrieves all messages between a specific client and driver
+ * @param clientId The ID of the client
+ * @param driverId The ID of the driver
+ * @returns Object with success status and array of messages
+ */
 export const getMessages = async (clientId: string, driverId: string) => {
   try {
     const messages = await prisma.messages.findMany({
@@ -32,6 +42,11 @@ export const getMessages = async (clientId: string, driverId: string) => {
   }
 };
 
+/**
+ * Retrieves a specific message by its ID
+ * @param messageId The ID of the message to retrieve
+ * @returns Object with success status and message data
+ */
 export const getMessageById = async (messageId: string) => {
   try {
     if (messageId.length > 0) {
@@ -45,6 +60,12 @@ export const getMessageById = async (messageId: string) => {
   }
 };
 
+/**
+ * Updates an existing message
+ * @param messageId The ID of the message to update
+ * @param messageData Partial object containing fields to update
+ * @returns Object with success status and updated message data
+ */
 export const updateMessage = async (
   messageId: string,
   messageData: Partial<any>
@@ -60,6 +81,11 @@ export const updateMessage = async (
   }
 };
 
+/**
+ * Deletes a message by its ID
+ * @param messageId The ID of the message to delete
+ * @returns Object with success status and deleted message data
+ */
 export const deleteMessage = async (messageId: string) => {
   try {
     const deletedmessage = await prisma.messages.delete({

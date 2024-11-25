@@ -3,6 +3,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+/**
+ * Creates a new delivered job record
+ * @param data Object containing activeJobId, locationId, and proofOfDeliveryUrl
+ * @returns The created delivered job with ActiveJob and Location relations
+ */
 export async function createDeliveredJob(data: {
   activeJobId: string;
   locationId: string;
@@ -30,6 +35,11 @@ export async function createDeliveredJob(data: {
   }
 }
 
+/**
+ * Updates a delivered job to mark it as confirmed by the client
+ * @param deliveredJobId The ID of the delivered job to confirm
+ * @returns The updated delivered job
+ */
 export async function confirmClientDelivery(deliveredJobId: string) {
   try {
     const updatedJob = await prisma.deliveredJobs.update({
@@ -48,6 +58,11 @@ export async function confirmClientDelivery(deliveredJobId: string) {
   }
 }
 
+/**
+ * Retrieves a delivered job by its associated active job ID
+ * @param activeJobId The ID of the active job
+ * @returns The delivered job if found
+ */
 export async function getDeliveryByActiveJobId(activeJobId: string) {
   try {
     const deliveredJob = await prisma.deliveredJobs.findFirst({
@@ -56,13 +71,17 @@ export async function getDeliveryByActiveJobId(activeJobId: string) {
       },
     });
     return deliveredJob;
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Error fetching delivered job by activeJobId:", error);
     throw error;
   }
 }
 
+/**
+ * Retrieves detailed information about a delivered job
+ * @param deliveredJobId The ID of the delivered job
+ * @returns The delivered job with related ActiveJob (including Client, Driver, CourierJob) and Location
+ */
 export async function getDeliveredJobDetails(deliveredJobId: string) {
   try {
     const deliveredJobs = await prisma.deliveredJobs.findMany({
@@ -88,6 +107,11 @@ export async function getDeliveredJobDetails(deliveredJobId: string) {
   }
 }
 
+/**
+ * Retrieves all delivered jobs for a specific driver
+ * @param driverId The ID of the driver
+ * @returns Array of delivered jobs with ActiveJob and Location relations
+ */
 export async function getDeliveredJobsByDriver(driverId: string) {
   try {
     const deliveredJobs = await prisma.deliveredJobs.findMany({
@@ -109,6 +133,10 @@ export async function getDeliveredJobsByDriver(driverId: string) {
   }
 }
 
+/**
+ * Retrieves all delivered jobs with their related information
+ * @returns Array of delivered jobs with related ActiveJob (including Client, Driver, CourierJob) and Location, sorted by delivery date
+ */
 export const getAllDeliveries = async () => {
   try {
     const deliveredJobs = await prisma.deliveredJobs.findMany({

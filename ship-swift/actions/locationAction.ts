@@ -3,6 +3,11 @@ import { Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+/**
+ * Creates multiple location records for a driver
+ * @param locationBuffer Array of location data including driver ID, coordinates, accuracy and timestamp
+ * @returns Object with success status and created records data or error message
+ */
 export const createLocation = async (
   locationBuffer: {
     driverId: string;
@@ -28,6 +33,12 @@ export const createLocation = async (
     return { success: false, error: "Error creating location" + error };
   }
 };
+
+/**
+ * Retrieves all locations and latest location for a specific driver
+ * @param driverId The ID of the driver
+ * @returns Object containing all locations and latest location or error message
+ */
 export const getLocation = async (driverId: string) => {
   try {
     // Get all locations
@@ -62,7 +73,11 @@ export const getLocation = async (driverId: string) => {
   }
 };
 
-// Alternative: Separate functions for different use cases
+/**
+ * Retrieves all locations for a specific driver
+ * @param driverId The ID of the driver
+ * @returns Object containing all locations or error message
+ */
 export const getAllLocations = async (driverId: string) => {
   try {
     const locations = await prisma.location.findMany({
@@ -82,6 +97,11 @@ export const getAllLocations = async (driverId: string) => {
   }
 };
 
+/**
+ * Retrieves the most recent location for a specific driver
+ * @param driverId The ID of the driver
+ * @returns Object containing the latest location or error message
+ */
 export const getLatestLocation = async (driverId: string) => {
   try {
     const location = await prisma.location.findFirst({
@@ -101,6 +121,11 @@ export const getLatestLocation = async (driverId: string) => {
   }
 };
 
+/**
+ * Deletes a specific location record
+ * @param locationId The ID of the location to delete
+ * @returns Object with success status and deleted location data or error message
+ */
 export const deleteLocation = async (locationId: string) => {
   try {
     const deletedlocation = await prisma.location.delete({

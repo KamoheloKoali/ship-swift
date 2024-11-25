@@ -101,6 +101,7 @@ export default function Details({ job }: JobDetailsProps) {
                 <span className="sr-only">Copy Order ID</span>
               </Button>
             </CardTitle>
+            {/* Card Description */}
             <CardDescription>
               Order ID: {job.Id}
               <br />

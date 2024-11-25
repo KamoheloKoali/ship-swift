@@ -3,6 +3,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+/**
+ * Creates a new driver request
+ * @param requestData Object containing receiverId and senderId
+ * @returns Object with success status and created request data
+ */
 export const createDriverRequest = async (requestData: {
   receiverId: string;
   senderId: string;
@@ -18,6 +23,12 @@ export const createDriverRequest = async (requestData: {
   else return { success: false };
 };
 
+/**
+ * Retrieves a specific driver request based on sender and receiver IDs
+ * @param senderId ID of the request sender
+ * @param receiverId ID of the request receiver
+ * @returns Object with success status and request data
+ */
 export const getDriverRequest = async (
   senderId: string,
   receiverId: string
@@ -33,6 +44,12 @@ export const getDriverRequest = async (
   }
 };
 
+/**
+ * Retrieves all driver requests for either a sender or receiver
+ * @param senderId Optional ID of the sender (driver)
+ * @param receiverId Optional ID of the receiver (client)
+ * @returns Object with success status and array of requests
+ */
 export const getDriverRequests = async (
   senderId: string = "",
   receiverId: string = ""
@@ -58,6 +75,12 @@ export const getDriverRequests = async (
   }
 };
 
+/**
+ * Updates an existing driver request and creates a contact relationship
+ * @param requestId ID of the request to update
+ * @param requestData Partial data to update the request with
+ * @returns Object with success status and updated request data
+ */
 export const updateDriverRequest = async (
   requestId: string,
   requestData: Partial<any>
@@ -80,6 +103,11 @@ export const updateDriverRequest = async (
   }
 };
 
+/**
+ * Deletes a driver request
+ * @param requestId ID of the request to delete
+ * @returns Object with success status and deleted request data
+ */
 export const deleteDriverRequest = async (requestId: string) => {
   try {
     const deletedRequest = await prisma.driverRequests.delete({
@@ -91,6 +119,11 @@ export const deleteDriverRequest = async (requestId: string) => {
   }
 };
 
+/**
+ * Creates a new driver request with validation checks
+ * @param requestData Object containing receiverId and senderId
+ * @returns Object with success status and created request data or error message
+ */
 export const createDriverRequestV1 = async (requestData: {
   receiverId: string;
   senderId: string;

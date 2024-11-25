@@ -4,7 +4,11 @@ import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
-// Create a new job
+/**
+ * Creates a new courier job in the database
+ * @param jobData FormData containing all the job details
+ * @returns Object with success status and either job data or error message
+ */
 export const createJob = async (jobData: FormData) => {
   try {
     // Extract values from FormData
@@ -81,7 +85,11 @@ export const createJob = async (jobData: FormData) => {
     return { success: false, error: `Error creating job: ${error.message}` }; // Return detailed error
   }
 };
-// Function to get all jobs
+
+/**
+ * Retrieves all unclaimed and non-direct courier jobs
+ * @returns Object with success status and either jobs array or error message
+ */
 export const getAllJobs = async () => {
   try {
     const jobs = await prisma.courierJobs.findMany({
@@ -98,6 +106,11 @@ export const getAllJobs = async () => {
   }
 };
 
+/**
+ * Retrieves all jobs for a specific client
+ * @param clientId The ID of the client
+ * @returns Object with success status and either filtered jobs array or error message
+ */
 export const getAllJobsFiltered = async (clientId: string) => {
   try {
     const jobs = await prisma.courierJobs.findMany({
@@ -113,7 +126,12 @@ export const getAllJobsFiltered = async (clientId: string) => {
     return { success: false, error: "Error retrieving jobs." };
   }
 };
-// Function to get job by ID
+
+/**
+ * Retrieves a specific job by its ID
+ * @param jobId The ID of the job to retrieve
+ * @returns Object with success status and either job data or error message
+ */
 export const getJobById = async (jobId: string) => {
   try {
     const job = await prisma.courierJobs.findUnique({
@@ -130,6 +148,12 @@ export const getJobById = async (jobId: string) => {
   }
 };
 
+/**
+ * Updates the payment status of a job
+ * @param jobId The ID of the job to update
+ * @param isPaid Boolean indicating whether the job is paid
+ * @returns Object with success status and either updated job data or error message
+ */
 export async function updateJobPaymentStatus(jobId: string, isPaid: boolean) {
   try {
     const updatedJob = await prisma.courierJobs.update({
@@ -138,12 +162,17 @@ export async function updateJobPaymentStatus(jobId: string, isPaid: boolean) {
     });
     return { success: true, data: updatedJob };
   } catch (error) {
-    console.error('Failed to update job payment status:', error);
-    return { success: false, error: 'Failed to update job payment status' };
+    console.error("Failed to update job payment status:", error);
+    return { success: false, error: "Failed to update job payment status" };
   }
 }
 
-// Function to update a job
+/**
+ * Updates a job's details
+ * @param jobId The ID of the job to update
+ * @param jobData Partial object containing the fields to update
+ * @returns Object with success status and either updated job data or error message
+ */
 export const updateJob = async (jobId: string, jobData: Partial<any>) => {
   try {
     const updatedJob = await prisma.courierJobs.update({
@@ -157,7 +186,11 @@ export const updateJob = async (jobId: string, jobData: Partial<any>) => {
   }
 };
 
-// Function to delete a job
+/**
+ * Deletes a job from the database
+ * @param jobId The ID of the job to delete
+ * @returns Object with success status and either deleted job data or error message
+ */
 export const deleteJob = async (jobId: string) => {
   try {
     const deletedJob = await prisma.courierJobs.delete({
@@ -170,6 +203,12 @@ export const deleteJob = async (jobId: string) => {
   }
 };
 
+/**
+ * Updates the package status of a job
+ * @param id The ID of the job to update
+ * @param status The new status to set
+ * @returns Updated job data or undefined if error occurs
+ */
 export async function updateJobStatus(id: string, status: string) {
   try {
     const updatedJob = await prisma.courierJobs.update({
