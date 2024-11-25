@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useAuth } from "@clerk/nextjs";
 import { uploadImage } from "../../registration/utils/Upload";
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -104,39 +104,82 @@ const VehicleImages = ({}) => {
     }
 
     setIsLoading(true);
+    setError(null); // Clear any previous errors
+
     try {
-      const uploadPromises = Object.entries(photos).map(
-        async ([view, photo]) => {
+      // Create an array to store successful uploads
+      const uploadedUrls: string[] = [];
+
+      // Upload photos sequentially instead of parallel
+      for (const [view, photo] of Object.entries(photos)) {
+        try {
           const blob = dataURItoBlob(photo);
           const file = new File([blob], `${userId}-${view}.png`, {
             type: "image/png",
           });
-          const { url, error } = await uploadImage(file, "car-photos", userId);
 
-          if (error || !url) {
+          const { url, error: uploadError } = await uploadImage(
+            file,
+            "car-photos",
+            `${userId}-${view}`
+          );
+
+          if (uploadError || !url) {
             throw new Error(
-              error || `Failed to upload ${views[+view - 1]} photo`
+              uploadError || `Failed to upload ${views[+view - 1]} photo`
             );
           }
 
-          return url;
+          uploadedUrls.push(url);
+
+          // Update progress toast
+          toast({
+            title: "Upload Progress",
+            description: `Uploaded ${uploadedUrls.length} of ${views.length} images`,
+          });
+        } catch (uploadError) {
+          // If individual upload fails, throw error with context
+          throw new Error(
+            `Failed to upload ${views[+view - 1]}`
+          );
         }
-      );
+      }
 
-      const urls = await Promise.all(uploadPromises);
-      const combinedUrls = urls.join(", ");
-      const result = await updateVehicleImages(userId, combinedUrls);
+      // Only proceed with update if we have all URLs
+      if (uploadedUrls.length === views.length) {
+        const result = await updateVehicleImages(
+          userId,
+          uploadedUrls.join(", ")
+        );
 
-      if (result.success) {
-        toast({ title: "Success", description: "Vehicle images updated" });
-        setPhotos({});
-        router.push("/onboarding/driver-onboarding/face-recog");
+        if (result.success) {
+          toast({
+            title: "Success",
+            description: "All vehicle images uploaded and updated successfully",
+          });
+          setPhotos({});
+          router.push("/onboarding/driver-onboarding/face-recog");
+        } else {
+          throw new Error(
+            result.error || "Failed to update vehicle images in database"
+          );
+        }
       } else {
-        throw new Error(result.error || "Failed to update vehicle images");
+        throw new Error(
+          `Only ${uploadedUrls.length} of ${views.length} images uploaded successfully`
+        );
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to upload photos");
       console.error("Photo upload error:", err);
+
+      // Show error toast
+      toast({
+        variant: "destructive",
+        title: "Upload Failed",
+        description:
+          err instanceof Error ? err.message : "Failed to upload photos",
+      });
     } finally {
       setIsLoading(false);
     }
