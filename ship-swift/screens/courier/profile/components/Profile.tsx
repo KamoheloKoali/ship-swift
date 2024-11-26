@@ -24,6 +24,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import ScheduledTrips from "@/screens/courier/dashboard/components/TripCard";
+
 
 type InfoItemProps = {
   icon: React.ReactNode;
@@ -175,10 +177,14 @@ const Profile: React.FC<ProfileProps> = ({ driverData }) => {
 
       <CardContent className="pt-4 sm:pt-6 pb-2 sm:pb-4">
         {/* Desktop view */}
+
         <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <InfoSection title="Driver Information" items={driverInfoItems} />
           <InfoSection title="Vehicle Information" items={vehicleInfoItems} />
         </div>
+
+      <div className="hidden mylg:w-[2.5%] 2xl:w-[10%] lg:block"></div>
+
 
         {/* Mobile view with accordion */}
         <div className="sm:hidden">
@@ -203,6 +209,7 @@ const Profile: React.FC<ProfileProps> = ({ driverData }) => {
             </AccordionItem>
           </Accordion>
         </div>
+
       </CardContent>
 
       {/* <Separator className="my-4 sm:my-6" /> */}

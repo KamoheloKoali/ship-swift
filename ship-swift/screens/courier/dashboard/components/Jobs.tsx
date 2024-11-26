@@ -3,7 +3,8 @@ import { useUser } from "@clerk/nextjs";
 import JobsMenu from "./JobsMenu";
 import CardJobsInfo from "@/screens/courier/dashboard/components/CardJobsInfo";
 import CardStatus from "@/screens/courier/dashboard/components/CardStatus";
-
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import JobsRequestsTable, {
   JobRequest,
 } from "@/screens/courier/dashboard/components/JobsRequestsTable";
@@ -12,6 +13,13 @@ import Profile from "@/screens/courier/profile/components/Profile";
 import { getDriverByID } from "@/actions/driverActions";
 import { Skeleton } from "@/components/ui/skeleton";
 import ScheduledTrips from "./TripCard";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionTrigger,
+  AccordionItem,
+  AccordionHeader,
+} from "@radix-ui/react-accordion";
 
 const Jobs = () => {
   const { user } = useUser();
@@ -85,13 +93,26 @@ const Jobs = () => {
       <div>
         <Profile driverData={driverData} />
 
-        <div className="flex md:hidden justify-start w-full">
+        <div className="flex flex-col md:hidden justify-start w-full">
           <CardStatus />
+          <div className="border text-center p-5 bg-muted">
+            <Accordion type="single" collapsible>
+              <AccordionItem value="Schedualed-trips">
+                <AccordionTrigger>My schedual</AccordionTrigger>
+                <AccordionContent>
+                  <ScheduledTrips />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
         </div>
-        <div className="hidden md:block mylg:hidden">
+        <div className="hidden md:block mylg:block">
           <ScheduledTrips />
         </div>
-        <h1 className="font-semibold text-lg py-8">Job Requests</h1>
+
+        <h1 className="lg:text-left text-center font-semibold text-lg py-8">
+          Job Requests
+        </h1>
         <JobsMenu onSortChange={handleSortChange} onSearch={handleSearch} />
         <JobsRequestsTable
           sortType={sortType}
@@ -115,9 +136,6 @@ const Jobs = () => {
           </div>
         </div>
       </div>
-
-      <div className="hidden mylg:w-[2.5%] 2xl:w-[10%] lg:block"></div>
-
       <div className="hidden">
         {isSheetOpen && (
           <div className="shadcn-sheet">

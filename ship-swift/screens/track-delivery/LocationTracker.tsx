@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 const LocationTracker = ({
   updateLocation,
@@ -31,7 +32,22 @@ const LocationTracker = ({
   }, [updateLocation]);
 
   return error ? (
-    <div>Error: {error}</div>
+    error == "User denied Geolocation" ? (
+      <div
+        className="flex flex-row md:text-sm text-xs items-center"
+      >
+        <Image
+          src="/assets/public/allow-location.gif"
+          alt="Your GIF description"
+          width={30}
+          height={20}
+          layout="intrinsic"
+          className="mr-2 md:w-7 w-5 "
+        /> <p>Allow geolocation</p>
+      </div>
+    ) : (
+      <div>Error: {error}</div>
+    )
   ) : (
     <div className="relative flex justify-center items-center">
       {/* SVG Icon  */}
