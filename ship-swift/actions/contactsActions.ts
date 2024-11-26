@@ -3,6 +3,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+/**
+ * Creates a new contact between a client and driver
+ * @param contactData Object containing clientId and driverId
+ * @returns Object with success status and contact data or error message
+ */
 export const createcontact = async (contactData: {
   clientId: string;
   driverId: string;
@@ -28,6 +33,11 @@ export const createcontact = async (contactData: {
   // }
 };
 
+/**
+ * Retrieves a contact by its ID
+ * @param contactId The unique identifier of the contact
+ * @returns Object with success status and contact data or error message
+ */
 export const getcontactById = async (contactId: string) => {
   try {
     const contact = await prisma.contacts.findUnique({
@@ -43,6 +53,12 @@ export const getcontactById = async (contactId: string) => {
   }
 };
 
+/**
+ * Retrieves a contact by client and driver IDs
+ * @param clientId The ID of the client
+ * @param driverId The ID of the driver
+ * @returns Object with success status and contact data or error message
+ */
 export const getcontact = async (clientId: string, driverId: string) => {
   try {
     const contact = await prisma.contacts.findMany({
@@ -58,6 +74,10 @@ export const getcontact = async (clientId: string, driverId: string) => {
   }
 };
 
+/**
+ * Retrieves all contacts from the database
+ * @returns Object with success status and array of contacts or error message
+ */
 export const getAllcontacts = async () => {
   const contacts = await prisma.contacts.findMany(); // Remove where clause to get all contacts
   if (contacts.length > 0) {
@@ -67,6 +87,12 @@ export const getAllcontacts = async () => {
   }
 };
 
+/**
+ * Retrieves the first contact matching the driver and client IDs
+ * @param driverId The ID of the driver
+ * @param clientId The ID of the client
+ * @returns Object with success status and contact data or error message
+ */
 export const getContactByDriverAndClientId = async (
   driverId: string,
   clientId: string
@@ -81,6 +107,11 @@ export const getContactByDriverAndClientId = async (
   }
 };
 
+/**
+ * Deletes a contact by its ID
+ * @param contactId The unique identifier of the contact to delete
+ * @returns Object with success status and deleted contact data or error message
+ */
 export const deletecontact = async (contactId: string) => {
   try {
     const deletedcontact = await prisma.contacts.delete({

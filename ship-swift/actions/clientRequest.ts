@@ -3,6 +3,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+/**
+ * Creates a new client request between a sender and receiver
+ * @param requestData Object containing receiverId and senderId
+ * @returns Object with success status and created request data
+ */
 export const createClientRequest = async (requestData: {
   receiverId: string;
   senderId: string;
@@ -18,6 +23,12 @@ export const createClientRequest = async (requestData: {
   else return { success: false };
 };
 
+/**
+ * Retrieves a specific client request between a sender and receiver
+ * @param senderId ID of the request sender
+ * @param receiverId ID of the request receiver
+ * @returns Object with success status and request data if found
+ */
 export const getClientRequest = async (
   senderId: string,
   receiverId: string
@@ -32,6 +43,12 @@ export const getClientRequest = async (
   }
 };
 
+/**
+ * Retrieves all client requests for either a sender or receiver
+ * @param senderId Optional ID of the sender to filter requests
+ * @param receiverId Optional ID of the receiver to filter requests
+ * @returns Object with success status and array of requests if found
+ */
 export const getClientRequests = async (
   senderId: string = "",
   receiverId: string = ""
@@ -54,6 +71,12 @@ export const getClientRequests = async (
   }
 };
 
+/**
+ * Updates an existing client request and creates a contact relationship
+ * @param requestId ID of the request to update
+ * @param requestData Partial data to update the request with
+ * @returns Object with success status and updated request data
+ */
 export const updateClientRequest = async (
   requestId: string,
   requestData: Partial<any>
@@ -75,6 +98,11 @@ export const updateClientRequest = async (
   }
 };
 
+/**
+ * Deletes a client request
+ * @param requestId ID of the request to delete
+ * @returns Object with success status and deleted request data
+ */
 export const deleteClientRequest = async (requestId: string) => {
   try {
     const deletedRequest = await prisma.clientRequests.delete({

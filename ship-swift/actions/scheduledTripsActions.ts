@@ -2,8 +2,11 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
-
-// Create a new scheduled trip
+/**
+ * Creates a new scheduled trip in the database
+ * @param tripData The data for creating the scheduled trip
+ * @returns The newly created scheduled trip
+ */
 export async function createScheduledTrip(
   tripData: Prisma.ScheduledTripsCreateInput
 ) {
@@ -18,7 +21,10 @@ export async function createScheduledTrip(
   }
 }
 
-// Get all scheduled trips
+/**
+ * Retrieves all scheduled trips from the database
+ * @returns Array of all scheduled trips
+ */
 export async function getScheduledTrips() {
   try {
     const trips = await prisma.scheduledTrips.findMany();
@@ -29,7 +35,11 @@ export async function getScheduledTrips() {
   }
 }
 
-// Get a single scheduled trip by ID
+/**
+ * Retrieves a single scheduled trip by its ID
+ * @param id The ID of the scheduled trip to retrieve
+ * @returns The scheduled trip if found, null otherwise
+ */
 export async function getScheduledTripById(id: string) {
   try {
     const trip = await prisma.scheduledTrips.findUnique({
@@ -44,7 +54,12 @@ export async function getScheduledTripById(id: string) {
   }
 }
 
-// Update a scheduled trip
+/**
+ * Updates an existing scheduled trip
+ * @param id The ID of the scheduled trip to update
+ * @param updatedData The new data to update the trip with
+ * @returns The updated scheduled trip
+ */
 export async function updateScheduledTrip(
   id: string,
   updatedData: Prisma.ScheduledTripsUpdateInput
@@ -63,6 +78,11 @@ export async function updateScheduledTrip(
   }
 }
 
+/**
+ * Retrieves all scheduled trips for a specific driver
+ * @param driverId The ID of the driver
+ * @returns Array of scheduled trips for the specified driver
+ */
 export async function getScheduledTripsByDriverId(driverId: string) {
   try {
     const trips = await prisma.scheduledTrips.findMany({
@@ -80,7 +100,11 @@ export async function getScheduledTripsByDriverId(driverId: string) {
   }
 }
 
-// Delete a scheduled trip
+/**
+ * Deletes a scheduled trip from the database
+ * @param id The ID of the scheduled trip to delete
+ * @returns The deleted scheduled trip
+ */
 export async function deleteScheduledTrip(id: string) {
   try {
     const deletedTrip = await prisma.scheduledTrips.delete({
@@ -95,6 +119,10 @@ export async function deleteScheduledTrip(id: string) {
   }
 }
 
+/**
+ * Retrieves all scheduled trips with their associated driver information
+ * @returns Array of scheduled trips with driver details
+ */
 export const getScheduledTripsWithDriver = async () => {
   try {
     const trips = await prisma.scheduledTrips.findMany({

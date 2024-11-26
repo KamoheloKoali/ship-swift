@@ -33,8 +33,10 @@ const ImageUploadCard: React.FC<ImageUploadCardProps> = ({
     if (existingImageUrl) {
       setImageUrl(existingImageUrl);
       setOriginalImageUrl(existingImageUrl); // Save the original image
+      
     }
   }, [existingImageUrl]);
+  
 
   const validateFile = (file: File): string | null => {
     const validTypes = ["image/png", "image/jpeg"];

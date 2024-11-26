@@ -4,13 +4,9 @@ import {
   Check,
   Package,
   Clock,
-  CheckCircle,
-  XCircle,
-  Inbox,
   UserCircle,
   PackageCheck,
   Truck,
-  DollarSign,
   Home,
   User,
 } from "lucide-react";

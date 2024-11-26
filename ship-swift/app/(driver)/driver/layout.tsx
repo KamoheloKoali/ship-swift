@@ -24,6 +24,7 @@ export default async function UserLayout({
 
   return (
     <div>
+      {/* Header */}
       <Header />
       {children}
       <div className="fixed bottom-4 right-4">

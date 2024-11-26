@@ -6,6 +6,11 @@ import notifyAboutJob from "./knock";
 
 const prisma = new PrismaClient();
 
+/**
+ * Creates a new job request and notifies the client about the new applicant
+ * @param data Object containing courierJobId and driverId
+ * @returns The created job request with Driver and CourierJob details
+ */
 export async function createJobRequest(data: {
   courierJobId: string;
   driverId: string;
@@ -37,6 +42,10 @@ export async function createJobRequest(data: {
   return jobRequest;
 }
 
+/**
+ * Retrieves all job requests excluding those that have direct requests
+ * @returns Array of job requests with CourierJob and Driver details
+ */
 export async function getAllJobRequests() {
   const directRequests = await prisma.directRequest.findMany({
     select: {
@@ -63,6 +72,12 @@ export async function getAllJobRequests() {
   return jobRequests;
 }
 
+/**
+ * Retrieves job requests for a specific driver and courier job
+ * @param driverId The ID of the driver
+ * @param courierJobId The ID of the courier job
+ * @returns Array of matching job requests with CourierJob and Driver details
+ */
 export async function getJobRequestByDriverIdAndByCourierJobId(
   driverId: string,
   courierJobId: string
@@ -77,6 +92,11 @@ export async function getJobRequestByDriverIdAndByCourierJobId(
   return jobRequest;
 }
 
+/**
+ * Retrieves a specific job request by its ID
+ * @param id The ID of the job request
+ * @returns The job request with CourierJob and Driver details
+ */
 export async function getJobRequestById(id: string) {
   const jobRequest = await prisma.jobRequest.findUnique({
     where: { Id: id },
@@ -88,6 +108,12 @@ export async function getJobRequestById(id: string) {
   return jobRequest;
 }
 
+/**
+ * Updates a job request with new data
+ * @param id The ID of the job request to update
+ * @param data Object containing offerAmount and/or isApproved
+ * @returns The updated job request
+ */
 export async function updateJobRequest(
   id: string,
   data: Partial<{
@@ -102,6 +128,11 @@ export async function updateJobRequest(
   return updatedJobRequest;
 }
 
+/**
+ * Deletes a job request
+ * @param id The ID of the job request to delete
+ * @returns The deleted job request
+ */
 export async function deleteJobRequest(id: string) {
   const deletedJobRequest = await prisma.jobRequest.delete({
     where: { Id: id },
@@ -109,6 +140,11 @@ export async function deleteJobRequest(id: string) {
   return deletedJobRequest;
 }
 
+/**
+ * Retrieves all job requests for a specific courier job
+ * @param courierJobId The ID of the courier job
+ * @returns Array of job requests with CourierJob and Driver details
+ */
 export async function getJobRequestsByCourierJobId(courierJobId: string) {
   const jobRequests = await prisma.jobRequest.findMany({
     where: { courierJobId: courierJobId },
@@ -121,6 +157,11 @@ export async function getJobRequestsByCourierJobId(courierJobId: string) {
   return jobRequests;
 }
 
+/**
+ * Retrieves all job requests for a specific driver
+ * @param driverId The ID of the driver
+ * @returns Array of job requests with CourierJob and Driver details
+ */
 export async function getJobRequestsByDriverId(driverId: string) {
   const jobRequests = await prisma.jobRequest.findMany({
     where: { driverId: driverId },
@@ -132,6 +173,11 @@ export async function getJobRequestsByDriverId(driverId: string) {
   return jobRequests;
 }
 
+/**
+ * Retrieves all unapproved job requests for a specific driver
+ * @param driverId The ID of the driver
+ * @returns Array of unapproved job requests with CourierJob, client, and Driver details
+ */
 export async function getUnapprovedJobRequests(driverId: string) {
   const jobRequests = await prisma.jobRequest.findMany({
     where: { driverId: driverId, isApproved: false },
@@ -147,6 +193,11 @@ export async function getUnapprovedJobRequests(driverId: string) {
   return jobRequests;
 }
 
+/**
+ * Approves a job request and performs related operations
+ * @param data Object containing driverId, clientId, and courierJobId
+ * @returns 0 if successful, 1 if failed, 2 if contact already exists
+ */
 export async function approveJobRequest(data: {
   driverId: string;
   clientId: string;

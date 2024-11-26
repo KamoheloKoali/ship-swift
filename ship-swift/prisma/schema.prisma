@@ -54,6 +54,7 @@ model Drivers {
   isOnline              Boolean          @default(false)
   rating                Float?
   vehicleRegistrationNo String?
+  vehicleImagesUrls     String?
   activeJobs            ActiveJobs[]
   ClientReview          ClientReview[]
   Contacts              Contacts[]

@@ -3,6 +3,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+/**
+ * Upserts a driver in the database
+ * @param driverData Object containing driver information including required clerkId, email, phoneNumber, firstName, lastName, vehicleType, and location
+ * @returns Object with success status and either the upserted driver data or error message
+ */
 export const upsertDriver = async (driverData: {
   clerkId: string;
   email: string;
@@ -21,6 +26,7 @@ export const upsertDriver = async (driverData: {
   discExpiry?: string;
   discPhotoUrl?: string;
   location: string; // Now required
+  vehicleImagesUrls?: string;
 }) => {
   try {
     const upsertedDriver = await prisma.drivers.upsert({
@@ -37,6 +43,9 @@ export const upsertDriver = async (driverData: {
         ...(driverData.idNumber && { idNumber: driverData.idNumber }),
         ...(driverData.licensePhotoUrl && {
           licensePhotoUrl: driverData.licensePhotoUrl,
+        }),
+        ...(driverData.vehicleImagesUrls && {
+          photoUrl: driverData.vehicleImagesUrls,
         }),
         ...(driverData.licenseNumber && {
           licenseNumber: driverData.licenseNumber,
@@ -71,6 +80,7 @@ export const upsertDriver = async (driverData: {
         discPhotoUrl: driverData.discPhotoUrl,
         vehicleRegistrationNo: driverData.vehicleRegistrationNo,
         discExpiry: driverData.discExpiry,
+        vehicleImagesUrls: driverData.vehicleImagesUrls || "",
       },
     });
     return { success: true, data: upsertedDriver };
@@ -85,6 +95,10 @@ export const upsertDriver = async (driverData: {
   }
 };
 
+/**
+ * Retrieves all unverified drivers from the database
+ * @returns Array of unverified drivers
+ */
 export const getUnverifiedDrivers = async () => {
   try {
     const unverifiedDrivers = await prisma.drivers.findMany({
@@ -99,6 +113,12 @@ export const getUnverifiedDrivers = async () => {
   }
 };
 
+/**
+ * Updates the verification status of a driver
+ * @param driverId The ID of the driver to update
+ * @param isVerified Boolean indicating verification status (defaults to true)
+ * @returns Updated driver object
+ */
 export const updateDriverVerification = async (
   driverId: string,
   isVerified: boolean = true
@@ -115,6 +135,12 @@ export const updateDriverVerification = async (
   }
 };
 
+/**
+ * Verifies a driver and updates their documentation details
+ * @param driverId The ID of the driver to verify
+ * @param data Object containing vehicle and license documentation details
+ * @returns Updated driver object
+ */
 export const VerifyDriver = async (
   driverId: string,
   data: {
@@ -138,6 +164,11 @@ export const VerifyDriver = async (
   }
 };
 
+/**
+ * Retrieves a driver by their ID
+ * @param driverId The ID of the driver to fetch
+ * @returns Object with success status and either the driver data or error message
+ */
 export const getDriverByID = async (driverId: string) => {
   try {
     const driver = await prisma.drivers.findUnique({
@@ -157,8 +188,12 @@ export const getDriverByID = async (driverId: string) => {
   }
 };
 
+/**
+ * Retrieves all drivers from the database
+ * @returns Object with success status and either array of drivers or error message
+ */
 export const getAllDrivers = async () => {
-  const drivers = await prisma.drivers.findMany(); // Remove where clause to get all clients
+  const drivers = await prisma.drivers.findMany();
   if (drivers.length > 0) {
     return { success: true, data: drivers };
   } else {
@@ -166,6 +201,10 @@ export const getAllDrivers = async () => {
   }
 };
 
+/**
+ * Retrieves all verified drivers from the database
+ * @returns Object with success status and either array of verified drivers or error message
+ */
 export const getAllVerifiedDrivers = async () => {
   const drivers = await prisma.drivers.findMany({
     where: { isVerified: true },
@@ -177,6 +216,12 @@ export const getAllVerifiedDrivers = async () => {
   }
 };
 
+/**
+ * Updates driver information
+ * @param driverId The ID of the driver to update
+ * @param driverData Partial object containing fields to update
+ * @returns Object with success status and either updated driver data or error message
+ */
 export const updateDriver = async (
   driverId: string,
   driverData: Partial<any>
@@ -193,6 +238,12 @@ export const updateDriver = async (
   }
 };
 
+/**
+ * Updates a driver's online status
+ * @param driverId The ID of the driver to update
+ * @param isOnline Boolean indicating online status
+ * @returns Object with success status and either updated driver data or error message
+ */
 export const updateOnlineStatus = async (
   driverId: string,
   isOnline: boolean
@@ -208,6 +259,11 @@ export const updateOnlineStatus = async (
   }
 };
 
+/**
+ * Deletes a driver from the database
+ * @param driverId The ID of the driver to delete
+ * @returns Object with success status and either deleted driver data or error message
+ */
 export const deleteDriver = async (driverId: string) => {
   try {
     const deletedDriver = await prisma.drivers.delete({
@@ -216,5 +272,26 @@ export const deleteDriver = async (driverId: string) => {
     return { success: true, data: deletedDriver };
   } catch (error) {
     return { success: false, error: "Error deleting driver" };
+  }
+};
+
+/**
+ * Updates the vehicle images URLs for a driver
+ * @param driverId The ID of the driver to update
+ * @param vehicleImagesUrls String containing vehicle image URLs
+ * @returns Object with success status and either updated driver data or error message
+ */
+export const updateVehicleImages = async (
+  driverId: string,
+  vehicleImagesUrls: string
+) => {
+  try {
+    const updatedDriver = await prisma.drivers.update({
+      where: { Id: driverId },
+      data: { vehicleImagesUrls },
+    });
+    return { success: true, data: updatedDriver };
+  } catch (error) {
+    return { success: false, error: "Error updating vehicle images URLs" };
   }
 };

@@ -1,30 +1,49 @@
-"use server"
-import { PrismaClient } from '@prisma/client';
+"use server";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-interface UserRole{
+interface UserRole {
   userId: string;
   driver?: boolean;
   client?: boolean;
 }
 
-export const createUserRole = async ({ userId, driver = false, client = false }: UserRole) => {
+/**
+ * Creates or updates a user role for a given user ID
+ * @param {UserRole} params - Object containing userId and optional driver/client flags
+ * @returns {Promise} The created or updated user role
+ */
+export const createUserRole = async ({
+  userId,
+  driver = false,
+  client = false,
+}: UserRole) => {
   try {
-    const userRole = await prisma.userRole.create({
-      data: {
-        userId,
+    const userRole = await prisma.userRole.upsert({
+      where: { userId }, // Match the userRole by userId
+      update: {
+        driver, // Update fields if the role already exists
+        client,
+      },
+      create: {
+        userId, // Create a new userRole if it doesn't exist
         driver,
         client,
       },
     });
     return userRole;
   } catch (error) {
-    console.error('Error creating user role:', error);
+    console.error("Error upserting user role:", error);
     throw error;
   }
 };
 
+/**
+ * Updates an existing user role
+ * @param {UserRole} params - Object containing userId and driver/client flags to update
+ * @returns {Promise} The updated user role
+ */
 export const updateUserRole = async ({ userId, driver, client }: UserRole) => {
   try {
     const updatedUserRole = await prisma.userRole.update({
@@ -36,11 +55,16 @@ export const updateUserRole = async ({ userId, driver, client }: UserRole) => {
     });
     return updatedUserRole;
   } catch (error) {
-    console.error('Error updating user role:', error);
+    console.error("Error updating user role:", error);
     throw error;
   }
 };
 
+/**
+ * Retrieves a user role by user ID
+ * @param {string} userId - The ID of the user to find the role for
+ * @returns {Promise} The user role if found, null otherwise
+ */
 export const getUserRole = async (userId: string) => {
   try {
     const userRole = await prisma.userRole.findUnique({
@@ -48,11 +72,16 @@ export const getUserRole = async (userId: string) => {
     });
     return userRole;
   } catch (error) {
-    console.error('Error retrieving user role:', error);
+    console.error("Error retrieving user role:", error);
     throw error;
   }
 };
 
+/**
+ * Deletes a user role by user ID
+ * @param {string} userId - The ID of the user whose role should be deleted
+ * @returns {Promise} The deleted user role
+ */
 export const deleteUserRole = async (userId: string) => {
   try {
     const deletedUserRole = await prisma.userRole.delete({
@@ -60,7 +89,7 @@ export const deleteUserRole = async (userId: string) => {
     });
     return deletedUserRole;
   } catch (error) {
-    console.error('Error deleting user role:', error);
+    console.error("Error deleting user role:", error);
     throw error;
   }
 };

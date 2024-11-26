@@ -10,6 +10,9 @@ export default function useDriverRegistration() {
     "id-document": null,
     "drivers-license": null,
     "license-disc": null,
+    "car-photos-front": null,
+    "car-photos-side": null,
+    "car-photos-rear": null,
   });
   const [existingImages, setExistingImages] = useState<{
     [key: string]: string | null;
@@ -18,6 +21,9 @@ export default function useDriverRegistration() {
     "id-document": null,
     "drivers-license": null,
     "license-disc": null,
+    "car-photos-front": null,
+    "car-photos-side": null,
+    "car-photos-rear": null,
   });
   const [formData, setFormData] = useState({
     phoneNumber: "",
@@ -43,6 +49,9 @@ export default function useDriverRegistration() {
             const vehicleTypeParts = driver.data?.vehicleType
               ? driver.data?.vehicleType.split(",")
               : [];
+            const vehicleImageParts = driver.data?.vehicleImagesUrls
+              ? driver.data?.vehicleImagesUrls.split(",")
+              : [];
 
             setFormData({
               phoneNumber: driver.data?.phoneNumber || "",
@@ -57,6 +66,9 @@ export default function useDriverRegistration() {
               "id-document": driver.data?.idPhotoUrl || null,
               "drivers-license": driver.data?.licensePhotoUrl || null,
               "license-disc": driver.data?.discPhotoUrl || null,
+              "car-photos-front": vehicleImageParts[0] || null,
+              "car-photos-side": vehicleImageParts[1] || null,
+              "car-photos-rear": vehicleImageParts[2] || null,
             });
           }
         } catch (error) {
@@ -106,6 +118,7 @@ export default function useDriverRegistration() {
         `${formData.vehicleColor}, ${formData.vehicleMake}, ${formData.vehicleModel}, ${formData.typeOfVehicle}`.trim(),
     };
 
+    let vehicleImages = [];
     for (const [folder, file] of Object.entries(files)) {
       if (file) {
         const { url, error } = await uploadImage(file, folder, userId || "");
@@ -129,6 +142,14 @@ export default function useDriverRegistration() {
         if (fieldName) {
           updateData[fieldName] = url;
         }
+
+        if (
+          ["car-photos-front", "car-photos-side", "car-photos-rear"].includes(
+            folder
+          )
+        ) {
+          vehicleImages.push(url);
+        }
       } else if (existingImages[folder]) {
         const fieldName =
           folder === "profile-photo"
@@ -144,7 +165,21 @@ export default function useDriverRegistration() {
         if (fieldName) {
           updateData[fieldName] = existingImages[folder];
         }
+
+        // Collect car photo URLs from existing images
+        if (
+          ["car-photos-front", "car-photos-side", "car-photos-rear"].includes(
+            folder
+          )
+        ) {
+          vehicleImages.push(existingImages[folder]);
+        }
       }
+    }
+
+    // Assign collected URLs to vehicleImagesUrls, separated by commas
+    if (vehicleImages.length > 0) {
+      updateData.vehicleImagesUrls = vehicleImages.join(",");
     }
 
     const result = await upsertDriver(updateData);

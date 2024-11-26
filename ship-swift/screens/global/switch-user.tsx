@@ -12,9 +12,11 @@ import { getClientById } from "@/actions/clientActions";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { updateUserRole, getUserRole } from "@/actions/roleAction";
+import Loading from "@/app/loading";
 
 const SwitchUser = () => {
   const [role, setRole] = useState<"driver" | "client" | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { userId } = useAuth();
   const router = useRouter();
 
@@ -37,6 +39,7 @@ const SwitchUser = () => {
   }, [userId]);
 
   const checkDriver = async () => {
+    setIsLoading(true);
     if (userId) {
       try {
         const driverResponse = await getDriverByID(userId);
@@ -48,8 +51,10 @@ const SwitchUser = () => {
             client: false,
           });
           router.push("/driver/dashboard/find-jobs");
+          setIsLoading(false);
         } else {
           router.push("/onboarding/driver/registration");
+          setIsLoading(false);
         }
       } catch (error) {
         console.error("Error during driver check/update:", error);
@@ -58,6 +63,7 @@ const SwitchUser = () => {
   };
 
   const checkClient = async () => {
+    setIsLoading(true);
     if (userId) {
       try {
         const clientResponse = await getClientById(userId);
@@ -70,8 +76,10 @@ const SwitchUser = () => {
           });
 
           router.push("/client");
+          setIsLoading(false);
         } else {
           router.push(`/onboarding/client`);
+          setIsLoading(false);
         }
       } catch (error) {
         console.error("Error during client check/update:", error);
@@ -80,18 +88,24 @@ const SwitchUser = () => {
   };
 
   return (
-    <Menubar>
-      <MenubarMenu>
-        <MenubarTrigger>Switch User</MenubarTrigger>
-        <MenubarContent>
-          {role === "client" ? (
-            <MenubarItem onClick={checkDriver}>Driver</MenubarItem>
-          ) : (
-            <MenubarItem onClick={checkClient}>Client</MenubarItem>
-          )}
-        </MenubarContent>
-      </MenubarMenu>
-    </Menubar>
+    <>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <Menubar>
+          <MenubarMenu>
+            <MenubarTrigger>Switch User</MenubarTrigger>
+            <MenubarContent>
+              {role === "client" ? (
+                <MenubarItem onClick={checkDriver}>Driver</MenubarItem>
+              ) : (
+                <MenubarItem onClick={checkClient}>Client</MenubarItem>
+              )}
+            </MenubarContent>
+          </MenubarMenu>
+        </Menubar>
+      )}
+    </>
   );
 };
 
