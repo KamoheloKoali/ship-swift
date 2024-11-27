@@ -2,7 +2,7 @@
 import React from 'react'
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { useMap } from "react-leaflet"; // Import the useMap hook directly
+import { useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { useAuth } from "@clerk/nextjs";
@@ -144,14 +144,6 @@ const DriverLocation = ({params, job}: Props) => {
   
       setupLocationTracking();
     }, [params.deliveryId]);
-  
-    // if (accuracy && accuracy > 500) {
-    //   return (
-    //     <div className="h-[200px] w-full flex justify-center items-center">
-    //       Low Accuracy: {accuracy} meters
-    //     </div>
-    //   );
-    // }
   
     if (!position) {
       return (
