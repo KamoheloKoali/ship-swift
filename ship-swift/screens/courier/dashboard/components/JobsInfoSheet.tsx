@@ -25,7 +25,7 @@ const JobsInfoSheet: React.FC<JobsInfoSheetProps> = ({
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
         <SheetContent
           side="right"
-          className="bg-white bg-opacity-5 backdrop-blur-sm md:bg-white w-full sm:w-[400px] sm:max-w-full"
+          className="bg-white bg-opacity-5 backdrop-blur-sm md:bg-white w-full  sm:max-w-full"
         >
           <SheetHeader>
             <SheetTitle className="text-white font">Job Details</SheetTitle>

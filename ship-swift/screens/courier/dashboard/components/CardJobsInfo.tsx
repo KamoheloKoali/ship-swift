@@ -119,7 +119,7 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
   );
 
   return (
-    <div className="sm:p-0 md:p-1 mylg:p-4 flex items-center justify-center w-full h-full z-50">
+    <div className="sm:p-0 md:p-1 lg:p-3 flex items-center lg: justify-center w-full h-full z-50">
       <Card className="w-full max-w-lg bg-white shadow-xl rounded-xl overflow-hidden">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">

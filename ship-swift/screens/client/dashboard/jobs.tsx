@@ -184,7 +184,7 @@ export default function MyJobs() {
     <div className="relative flex min-h-screen w-full flex-col bg-gray-50">
       {/* Full-screen loading overlay */}
       {loading && (
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-30 backdrop-blur-md">
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-30 backdrop-blur-lg">
           {/* Animated Delivery Truck */}
           <Truck className="animate-truck" width="100" height="100" />
           <p className="text-lg text-gray-700">____________________</p>
@@ -194,16 +194,14 @@ export default function MyJobs() {
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <div className="flex p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
           <Link href={"/client/job-post"} prefetch={true}>
-            <Button
-              className="mb-4 flex items-center bg-black"
-            >
+            <Button className="mb-4 flex items-center bg-black">
               <PlusCircle className="mr-2 h-4 w-4" />
               <span>New Job</span>
             </Button>
           </Link>
         </div>
-        <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
-          <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
+        <main className="flex flex-row gap-4">
+          <div className="w-full">
             {/* Render the table only when loading is false */}
             <JobsTable
               jobs={jobs}
@@ -214,7 +212,7 @@ export default function MyJobs() {
 
           {/* Display details if a job is selected */}
           {isGettingDrivers ? (
-            <div className="w-full flex flex-col justify-center items-center h-full">
+            <div className="w-full flex z-10 absolute backdrop-blur-lg flex-col justify-center items-center h-full">
               <Truck className="animate-truck" width="100" height="100" />
               <p className="text-lg text-gray-700">____________________</p>
             </div>
