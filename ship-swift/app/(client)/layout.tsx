@@ -5,6 +5,7 @@ import ClientNavBar from "./client/components/ClientNavBar";
 import { getUserRoleById } from "../utils/getUserRole";
 import NotificationButton from "@/screens/notifications/PushNotifications/NotificationButton";
 import { redirect } from "next/navigation";
+import SiteFooter from "@/screens/global/Site-Footer";
 
 export default async function ClientLayout({
   children,
@@ -20,9 +21,10 @@ export default async function ClientLayout({
       <>
         <ClientNavBar />
         {children}
-        <div className="fixed bottom-4 right-4">
+        {/* <div className="fixed bottom-4 right-4">
           <NotificationButton />
-        </div>
+        </div> */}
+        <SiteFooter />
       </>
     </div>
   );

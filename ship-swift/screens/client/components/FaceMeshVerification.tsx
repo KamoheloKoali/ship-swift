@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
+import ToS from "@/screens/courier/registration/ToS-PopUp";
 
 const PhotoCapture: React.FC = () => {
   const router = useRouter();
@@ -14,6 +15,7 @@ const PhotoCapture: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isCameraReady, setIsCameraReady] = useState(false);
+  const [showToS, setShowToS] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -47,7 +49,6 @@ const PhotoCapture: React.FC = () => {
     }
   };
 
-
   // Capture photo from video stream
   const capturePhoto = () => {
     if (videoRef.current?.srcObject) {
@@ -69,7 +70,9 @@ const PhotoCapture: React.FC = () => {
         const dataUrl = canvas.toDataURL("image/png");
         setPhoto(dataUrl);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to capture photo");
+        setError(
+          err instanceof Error ? err.message : "Failed to capture photo"
+        );
         console.error("Photo capture error:", err);
       }
     }
@@ -93,9 +96,10 @@ const PhotoCapture: React.FC = () => {
       const file = new File([blob], `client_${Date.now()}.png`, {
         type: "image/png",
       });
-      await uploadImage(file, "client-photo-rt", userId);
-
-      router.push("/client");
+      const imageUpload = await uploadImage(file, "client-photo-rt", userId);
+      if (imageUpload.url) {
+        setShowToS(true);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to upload photo");
       console.error("Photo upload error:", err);
@@ -123,30 +127,39 @@ const PhotoCapture: React.FC = () => {
   if (!isClient) return null;
 
   return (
-    <div className="photo-capture flex flex-col justify-center items-center sm:p-0 xl:p-4 bg-gray-50 rounded-lg shadow-lg relative sm:w-[90%] lg:w-[50%]">
+    <div className="photo-capture fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-95">
       {error && (
-        <div className="w-full p-3 mb-4 bg-red-100 text-red-700 rounded-lg">
+        <div className="absolute top-4 w-[90%] p-3 bg-red-100 text-red-700 rounded-lg">
           {error}
         </div>
       )}
-      <div className="relative w-full sm:h-full xl:h-[80%] bg-blue-100 rounded-lg overflow-hidden mb-4">
-        <video ref={videoRef} autoPlay className="w-full h-full object-cover" />
-        <button
-          onClick={startCamera}
-          className="absolute top-4 right-4 bg-black text-white px-4 py-2 rounded-lg hover:bg-slate-500 focus:ring focus:ring-white"
-          disabled={isLoading}
-        >
-          Start Camera
-        </button>
+
+      {/* Camera Display */}
+      <div className="relative w-full h-full">
+        <video
+          ref={videoRef}
+          autoPlay
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+
+        {!isCameraReady && (
+          <button
+            onClick={startCamera}
+            className="absolute inset-0 flex items-center justify-center bg-black text-white px-6 py-3 rounded-lg hover:bg-slate-500 focus:ring focus:ring-white z-10"
+            disabled={isLoading}
+          >
+            Tap to take an image of your face
+          </button>
+        )}
       </div>
 
-      <button
-        onClick={capturePhoto}
-        className="bg-slate-500 text-white px-6 py-2 rounded-lg mb-4 w-full max-w-xs hover:bg-black transition duration-700 disabled:opacity-50"
-        disabled={isLoading || !isCameraReady}
-      >
-        Capture Photo
-      </button>
+      {isCameraReady && (
+        <button
+          onClick={capturePhoto}
+          className="absolute bottom-8 w-16 h-16 bg-white rounded-full shadow-md border-4 border-gray-300 hover:scale-105 transition-transform disabled:opacity-50"
+          disabled={isLoading || !isCameraReady}
+        />
+      )}
 
       {photo && (
         <div className="photo-preview flex flex-col items-center gap-4 fixed inset-0 bg-gray-800 bg-opacity-70 backdrop-blur-lg justify-center z-50">
@@ -162,13 +175,14 @@ const PhotoCapture: React.FC = () => {
               uploadPhoto();
               stopCamera();
             }}
-            className="bg-white text-black px-6 py-2 rounded-lg hover:bg-slate-500 transition w-full max-w-xs disabled:opacity-50"
+            className="bg-black text-white px-6 py-2 rounded-lg hover:bg-slate-500 transition w-full max-w-xs disabled:opacity-50"
             disabled={isLoading}
           >
             {isLoading ? "Uploading..." : "Upload Photo"}
           </button>
         </div>
       )}
+      <ToS show={showToS} setShow={setShowToS} role={"client"} />
     </div>
   );
 };

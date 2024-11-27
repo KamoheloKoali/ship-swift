@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
+import ToS from "@/screens/courier/registration/ToS-PopUp";
 import { uploadImage } from "../../registration/utils/Upload";
 
 const PhotoCapture: React.FC = () => {
@@ -14,12 +15,12 @@ const PhotoCapture: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isCameraReady, setIsCameraReady] = useState(false);
+  const [showToS, setShowToS] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Start camera stream
   const startCamera = async () => {
     try {
       setError(null);
@@ -37,7 +38,6 @@ const PhotoCapture: React.FC = () => {
     }
   };
 
-  // Stop camera stream
   const stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
@@ -92,9 +92,11 @@ const PhotoCapture: React.FC = () => {
       const file = new File([blob], `courier_${Date.now()}.png`, {
         type: "image/png",
       });
-      await uploadImage(file, "driver-photo-rt", userId);
+      const imageUpload = await uploadImage(file, "driver-photo-rt", userId);
 
-      router.push("/onboarding/driver/details");
+      if (imageUpload.url) {
+        setShowToS(true);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to upload photo");
       console.error("Photo upload error:", err);
@@ -136,7 +138,6 @@ const PhotoCapture: React.FC = () => {
           className="absolute inset-0 w-full h-full object-cover"
         />
 
-        {/* Centered Start Camera Button */}
         {!isCameraReady && (
           <button
             onClick={startCamera}
@@ -148,7 +149,6 @@ const PhotoCapture: React.FC = () => {
         )}
       </div>
 
-      {/* Capture Button */}
       {isCameraReady && (
         <button
           onClick={capturePhoto}
@@ -157,7 +157,6 @@ const PhotoCapture: React.FC = () => {
         />
       )}
 
-      {/* Photo Preview */}
       {photo && (
         <div className="photo-preview flex flex-col items-center gap-4 fixed inset-0 bg-gray-800 bg-opacity-70 backdrop-blur-lg justify-center z-50">
           <Image
@@ -179,6 +178,9 @@ const PhotoCapture: React.FC = () => {
           </button>
         </div>
       )}
+
+      {/* Shadcn Dialog */}
+      <ToS show={showToS} setShow={setShowToS} role={"driver"} />
     </div>
   );
 };
