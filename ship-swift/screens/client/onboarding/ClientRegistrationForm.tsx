@@ -134,7 +134,7 @@ export default function ClientRegistrationForm() {
         <div className="">
           <ImageUploadCard
             folder="id-document"
-            cardTitle="Identity Document"
+            cardTitle="ID Photo"
             onFileChange={handleFileChange("id-documents")}
             existingImageUrl={existingImages["id-documents"]}
           />

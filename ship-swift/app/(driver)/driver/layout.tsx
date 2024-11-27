@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import Header from "@/screens/courier/dashboard/components/Header";
 import NotificationButton from "@/screens/notifications/PushNotifications/NotificationButton";
-
+import SiteFooter from "@/screens/global/Site-Footer";
 export default async function UserLayout({
   children,
 }: Readonly<{
@@ -15,7 +15,7 @@ export default async function UserLayout({
   if (!userId) {
     redirect("/sign-in");
   }
-
+  // Check role
   const isDriver = await checkDriverRole(userId);
 
   if (!isDriver) {
@@ -27,9 +27,10 @@ export default async function UserLayout({
       {/* Header */}
       <Header />
       {children}
-      <div className="fixed bottom-4 right-4">
+      {/* <div className="fixed bottom-4 right-4">
         <NotificationButton />
-      </div>
+      </div> */}
+      <SiteFooter />
     </div>
   );
 }
