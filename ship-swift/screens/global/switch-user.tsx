@@ -94,7 +94,7 @@ const SwitchUser = () => {
       ) : (
         <Menubar>
           <MenubarMenu>
-            <MenubarTrigger>Switch User</MenubarTrigger>
+            <MenubarTrigger className="w-full">Switch User</MenubarTrigger>
             <MenubarContent>
               {role === "client" ? (
                 <MenubarItem onClick={checkDriver}>Driver</MenubarItem>

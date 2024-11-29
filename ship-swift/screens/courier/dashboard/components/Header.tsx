@@ -180,7 +180,7 @@ export default function Header() {
               />
 
               {/* User Button (Clerk) - Only visible on small screens in Sheet */}
-              <div className="lg:hidden flex justify-between p-3 rounded-sm bg-slate-200">
+              <div className="lg:hidden my-4 flex justify-between p-3 rounded-sm bg-slate-200 hover:bg-slate-300">
                 <p>Account</p>
                 <UserButton />
               </div>
