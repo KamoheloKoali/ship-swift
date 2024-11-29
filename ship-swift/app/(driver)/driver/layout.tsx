@@ -15,6 +15,7 @@ export default async function UserLayout({
   if (!userId) {
     redirect("/sign-in");
   }
+  // Check Role
   const isDriver = await checkDriverRole(userId);
 
   if (!isDriver) {
