@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Logo from "@/public/assets/public/logo.png";
+import Image from "next/image";
 import {
   ArrowRight,
   CheckCircle,
@@ -44,12 +46,16 @@ export default function ShipSwiftLanding() {
       <main className="flex-1 ">
         <section
           className="relative h-screen w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-cover bg-center bg-no-repeat flex justify-center items-center"
-          style={{ backgroundImage: 'url("/assets/public/hero-1.jpeg")' }}
+          style={{ backgroundImage: 'url("/assets/public/hero-1.jpeg")'}}
         >
-          <div
-            className="absolute inset-0 bg-black/60"
-            aria-hidden="true"
-          ></div>
+          <div className="absolute inset-0 bg-black/60 " aria-hidden="true">
+            <h1
+              className={`flex flex-row items-center justify-center z-10 text-4xl mb-12 lg:text-7xl text-blue-500 bg-white/5 p-5 px-6 lg:px-20 rounded-2xl font-bold transform transition-all duration-1000 ease-in-out`}
+            >
+              <Image src={Logo} alt="Ship-Swift Logo" className="w-14 h-14 mr-2" />
+              Ship-Swift
+            </h1>
+          </div>
           <div className="container relative z-10 px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
               <div
@@ -67,13 +73,13 @@ export default function ShipSwiftLanding() {
                   deliveries. Ship Swift - Your Community Delivery Network.
                 </p>
                 <div className="flex gap-2 min-[400px]:flex-row flex-row">
-                <Link href="">
-                  <Button
-                    variant="outline"
-                    className="text-base font-bold bg-white text-black "
-                  >
-                    Learn More
-                  </Button>
+                  <Link href="">
+                    <Button
+                      variant="outline"
+                      className="text-base font-bold bg-white text-black "
+                    >
+                      Learn More
+                    </Button>
                   </Link>
 
                   <Link href="/sign-up">
@@ -82,8 +88,6 @@ export default function ShipSwiftLanding() {
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
-
-                  
                 </div>
               </div>
               <div
@@ -142,7 +146,7 @@ export default function ShipSwiftLanding() {
           </h2>
           <div className="container px-4 md:px-6 flex flex-row items-center justify-center">
             <Tabs defaultValue="sender" className="w-full max-w-4xl mx-auto">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger
                   value="sender"
                   onClick={() => setActiveTab("sender")}
@@ -155,12 +159,12 @@ export default function ShipSwiftLanding() {
                 >
                   For Drivers
                 </TabsTrigger>
-                <TabsTrigger
+                {/* <TabsTrigger
                   value="admin"
                   onClick={() => setActiveTab("admin")}
                 >
                   For Admin
-                </TabsTrigger>
+                </TabsTrigger> */}
               </TabsList>
               <TabsContent value="sender" className="mt-6 space-y-4">
                 <ol className="space-y-4">
