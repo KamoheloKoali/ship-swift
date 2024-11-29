@@ -20,6 +20,7 @@ import {
   AccordionItem,
   AccordionHeader,
 } from "@radix-ui/react-accordion";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 const Jobs = () => {
   const { user } = useUser();
@@ -31,6 +32,7 @@ const Jobs = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isChevronUp, setIsChevronUp] = useState(false);
 
   useEffect(() => {
     const fetchDriverData = async () => {
@@ -95,10 +97,27 @@ const Jobs = () => {
 
         <div className="flex flex-col md:hidden justify-start w-full">
           <CardStatus />
-          <div className="border text-center p-5 bg-muted">
+          <div className="flex justify-center items-center border text-center pt-4 p-3 bg-muted">
             <Accordion type="single" collapsible>
               <AccordionItem value="Schedualed-trips">
-                <AccordionTrigger>My schedual</AccordionTrigger>
+                <AccordionTrigger>
+                  <div className="flex flex-col">
+                    <p>My Scheduled Trips</p>
+                    <p className="flex justify-center">
+                      {isChevronUp ? (
+                        <ChevronUp
+                          className="h-4 w-4"
+                          onClick={() => setIsChevronUp(false)}
+                        />
+                      ) : (
+                        <ChevronDown
+                          className="h-4 w-4"
+                          onClick={() => setIsChevronUp(true)}
+                        />
+                      )}
+                    </p>
+                  </div>
+                </AccordionTrigger>
                 <AccordionContent>
                   <ScheduledTrips />
                 </AccordionContent>
