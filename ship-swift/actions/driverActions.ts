@@ -45,7 +45,7 @@ export const upsertDriver = async (driverData: {
           licensePhotoUrl: driverData.licensePhotoUrl,
         }),
         ...(driverData.vehicleImagesUrls && {
-          photoUrl: driverData.vehicleImagesUrls,
+          vehicleImagesUrls: driverData.vehicleImagesUrls,
         }),
         ...(driverData.licenseNumber && {
           licenseNumber: driverData.licenseNumber,

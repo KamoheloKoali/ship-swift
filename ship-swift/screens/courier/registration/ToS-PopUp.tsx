@@ -31,6 +31,7 @@ const ToS: React.FC<ToSProps> = ({ show, setShow, role }) => {
         try {
           const createRole = await createUserRole({ userId, driver: true });
           if (createRole.driver) {
+            alert("Registration successful!, you will be verified soon");
             router.push("/driver/dashboard/find-jobs");
           }
         } catch (error) {
