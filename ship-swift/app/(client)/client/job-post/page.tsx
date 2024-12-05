@@ -1,27 +1,11 @@
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Calendar } from "@/components/ui/calendar";
 import { useSearchParams } from "next/navigation";
-import { Send, User } from "lucide-react";
+import { Send } from "lucide-react";
 import type { E164Number } from "libphonenumber-js/core";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  ArrowLeft,
-  CalendarIcon,
-  Package,
-  Truck,
-  Box,
-  Forklift,
-  Loader2,
-} from "lucide-react";
+import { ArrowLeft, Package, Truck, Box, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import {
@@ -104,19 +88,6 @@ const packageSizes = [
     icon: Truck,
     price: 450, // Example fixed price
   },
-  // {
-  //   id: 5,
-  //   name: "Freight Packages",
-  //   description:
-  //     "Industrial or commercial packages, often palletized, requiring forklifts or lift gates.",
-  //   dimensions:
-  //     "Typically measured by pallet size (100 x 120 cm, up to 244 cm tall) or crate dimensions.",
-  //   weight: "Generally over 68 kg",
-  //   examples: "Palletized goods, bulk products, industrial supplies",
-  //   vehicles: "Box Trucks, Freight Trucks",
-  //   icon: Forklift,
-  //   price: 100, // Example fixed price
-  // },
 ];
 
 export default function PostJobWizard() {

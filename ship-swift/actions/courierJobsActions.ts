@@ -1,6 +1,6 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
-import { revalidatePath, unstable_cache } from "next/cache";
+import { revalidateTag, unstable_cache } from "next/cache";
 
 const prisma = new PrismaClient();
 
@@ -78,7 +78,7 @@ export const createJob = async (jobData: FormData) => {
     });
 
     // Revalidate the cache for the client dashboard path
-    revalidatePath("/client/dashboard");
+    revalidateTag("courierJobs");
     return { success: true, data: newJob };
   } catch (error: any) {
     console.error("Detailed error creating job:", error); // Log full error message
