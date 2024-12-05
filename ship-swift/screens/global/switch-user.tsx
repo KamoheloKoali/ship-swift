@@ -51,10 +51,8 @@ const SwitchUser = () => {
             client: false,
           });
           router.push("/driver/dashboard/find-jobs");
-          setIsLoading(false);
         } else {
           router.push("/onboarding/driver/registration");
-          setIsLoading(false);
         }
       } catch (error) {
         console.error("Error during driver check/update:", error);
@@ -76,10 +74,8 @@ const SwitchUser = () => {
           });
 
           router.push("/client");
-          setIsLoading(false);
         } else {
           router.push(`/onboarding/client`);
-          setIsLoading(false);
         }
       } catch (error) {
         console.error("Error during client check/update:", error);
