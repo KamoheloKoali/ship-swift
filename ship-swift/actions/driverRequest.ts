@@ -1,5 +1,6 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 
 const prisma = new PrismaClient();
 
@@ -24,15 +25,12 @@ export const createDriverRequest = async (requestData: {
 };
 
 /**
- * Retrieves a specific driver request based on sender and receiver IDs
+ * Helper function to fetch specific driver request data
  * @param senderId ID of the request sender
  * @param receiverId ID of the request receiver
  * @returns Object with success status and request data
  */
-export const getDriverRequest = async (
-  senderId: string,
-  receiverId: string
-) => {
+const fetchDriverRequest = async (senderId: string, receiverId: string) => {
   try {
     const requests = await prisma.driverRequests.findMany({
       where: { senderId: senderId, receiverId: receiverId },
@@ -45,12 +43,31 @@ export const getDriverRequest = async (
 };
 
 /**
- * Retrieves all driver requests for either a sender or receiver
+ * Retrieves cached driver request based on sender and receiver IDs
+ * @param senderId ID of the request sender
+ * @param receiverId ID of the request receiver
+ * @returns Cached object with success status and request data
+ */
+export const getDriverRequest = async (
+  senderId: string,
+  receiverId: string
+) => {
+  const getCachedRequest = unstable_cache(
+    async () => fetchDriverRequest(senderId, receiverId),
+    [`driver-request-${senderId}-${receiverId}`],
+    { tags: ["driverRequest"], revalidate: 3600 }
+  );
+
+  return getCachedRequest();
+};
+
+/**
+ * Helper function to fetch driver requests from database
  * @param senderId Optional ID of the sender (driver)
  * @param receiverId Optional ID of the receiver (client)
  * @returns Object with success status and array of requests
  */
-export const getDriverRequests = async (
+const fetchDriverRequests = async (
   senderId: string = "",
   receiverId: string = ""
 ) => {
@@ -73,6 +90,25 @@ export const getDriverRequests = async (
   } catch (error) {
     return { success: false, error: "Error retrieving driver requests" };
   }
+};
+
+/**
+ * Retrieves cached driver requests for either a sender or receiver
+ * @param senderId Optional ID of the sender (driver)
+ * @param receiverId Optional ID of the receiver (client)
+ * @returns Cached object with success status and array of requests
+ */
+export const getDriverRequests = async (
+  senderId: string = "",
+  receiverId: string = ""
+) => {
+  const getCachedRequests = unstable_cache(
+    async () => fetchDriverRequests(senderId, receiverId),
+    [`driver-requests-${senderId}-${receiverId}`],
+    { tags: ["driverRequests"], revalidate: 3600 }
+  );
+
+  return getCachedRequests();
 };
 
 /**

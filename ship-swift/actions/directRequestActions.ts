@@ -1,5 +1,6 @@
 "use server";
 import { PrismaClient, DirectRequest, Contacts } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 
 const prisma = new PrismaClient();
 
@@ -76,17 +77,16 @@ export const getDirectRequestById = async (
 };
 
 /**
- * Retrieves all DirectRequests associated with a specific driver
- * @param driverId - The ID of the driver
- * @returns Promise containing an array of DirectRequests
+ * Helper function to fetch direct requests for a specific driver
+ * @param driverId The ID of the driver
+ * @returns Promise containing array of DirectRequests with included relations
  */
-export const getDirectRequestsByDriverId = async (
+const fetchDirectRequestsByDriverId = async (
   driverId: string
 ): Promise<DirectRequest[]> => {
   try {
     const directRequests = await prisma.directRequest.findMany({
       where: { driverId, isApproved: false },
-
       include: {
         CourierJob: {
           include: {
@@ -100,6 +100,23 @@ export const getDirectRequestsByDriverId = async (
     console.error("Error fetching direct requests by driver ID:", error);
     throw error;
   }
+};
+
+/**
+ * Retrieves cached direct requests for a specific driver
+ * @param driverId The ID of the driver
+ * @returns Cached Promise containing array of DirectRequests with included relations
+ */
+export const getDirectRequestsByDriverId = async (
+  driverId: string
+): Promise<DirectRequest[]> => {
+  const getCachedRequests = unstable_cache(
+    async () => fetchDirectRequestsByDriverId(driverId),
+    [`driver-direct-requests-${driverId}`],
+    { tags: ["directRequests"], revalidate: 3600 }
+  );
+
+  return getCachedRequests();
 };
 
 /**
@@ -122,11 +139,11 @@ export const getDirectRequestsByClientId = async (
 };
 
 /**
- * Retrieves all DirectRequests associated with a specific courier job
- * @param courierJobId - The ID of the courier job
- * @returns Promise containing an array of DirectRequests
+ * Helper function to fetch direct requests for a specific courier job
+ * @param courierJobId The ID of the courier job
+ * @returns Promise containing array of DirectRequests
  */
-export const getDirectRequestsByCourierJobId = async (
+const fetchDirectRequestsByCourierJobId = async (
   courierJobId: string
 ): Promise<DirectRequest[]> => {
   try {
@@ -138,6 +155,23 @@ export const getDirectRequestsByCourierJobId = async (
     console.error("Error fetching direct requests by courier job ID:", error);
     throw error;
   }
+};
+
+/**
+ * Retrieves cached direct requests for a specific courier job
+ * @param courierJobId The ID of the courier job
+ * @returns Cached Promise containing array of DirectRequests
+ */
+export const getDirectRequestsByCourierJobId = async (
+  courierJobId: string
+): Promise<DirectRequest[]> => {
+  const getCachedDirectRequests = unstable_cache(
+    async () => fetchDirectRequestsByCourierJobId(courierJobId),
+    [`courier-direct-requests-${courierJobId}`],
+    { tags: ["directRequests"], revalidate: 3600 }
+  );
+
+  return getCachedDirectRequests();
 };
 
 /**

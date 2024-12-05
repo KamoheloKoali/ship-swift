@@ -12,20 +12,10 @@
 import Details from "./JobDetails";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import JobsTable from "./JobTables";
 import supabase from "@/app/utils/supabase";
-
-import { Progress } from "@/components/ui/progress";
 import { getAllJobsFiltered } from "@/actions/courierJobsActions";
-import { Loader2, PlusCircle, Truck } from "lucide-react";
+import { PlusCircle, Truck } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import {
   getJobRequestById,
@@ -71,6 +61,7 @@ export default function MyJobs() {
 
     fetchJobs();
   }, []);
+
   const getDriverDetails = async (job: any | undefined) => {
     const jobRequest = await getJobRequestById(job.approvedRequestId);
 
@@ -167,7 +158,6 @@ export default function MyJobs() {
       ) {
         if (job.Id) {
           const driver = await getDriverDetails(job);
-          console.log("driver", driver);
           setDriver(driver);
         }
       }

@@ -1,13 +1,15 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 
 const prisma = new PrismaClient();
+
 /**
- * Checks if a user has a driver role
- * @param driverId - The ID of the user to check
+ * Helper function to fetch and check driver role status
+ * @param driverId The ID of the user to check
  * @returns true if user has driver role, false otherwise
  */
-export const checkDriverRole = async (driverId: string) => {
+const fetchDriverRole = async (driverId: string) => {
   try {
     const driver = await prisma.userRole.findUnique({
       where: {
@@ -22,6 +24,21 @@ export const checkDriverRole = async (driverId: string) => {
     console.error("Error fetching driver role:", error);
     throw error;
   }
+};
+
+/**
+ * Checks if a user has a driver role using cached data
+ * @param driverId The ID of the user to check
+ * @returns Cached boolean indicating if user has driver role
+ */
+export const checkDriverRole = async (driverId: string) => {
+  const getCachedDriverRole = unstable_cache(
+    async () => fetchDriverRole(driverId),
+    [`driver-role-${driverId}`],
+    { tags: ["userRole"], revalidate: 3600 }
+  );
+
+  return getCachedDriverRole();
 };
 
 /**

@@ -7,6 +7,7 @@ import {
   createDriverRequestV1,
   getDriverRequest,
 } from "@/actions/driverRequest";
+import { unstable_cache } from "next/cache";
 
 export type ApplicationStatus =
   | "not_applied"
@@ -24,7 +25,13 @@ interface CheckApplicationResult {
   errorMessage: string | null;
 }
 
-export const checkJobApplication = async (
+/**
+ * Helper function to check job application status
+ * @param userId The ID of the user checking application
+ * @param job The job request being checked
+ * @returns Object with application status and any error messages
+ */
+const fetchJobApplicationStatus = async (
   userId: string | null | undefined,
   job: JobRequest | null
 ): Promise<CheckApplicationResult> => {
@@ -58,6 +65,25 @@ export const checkJobApplication = async (
       errorMessage: "An unexpected error occurred",
     };
   }
+};
+
+/**
+ * Retrieves cached job application status
+ * @param userId The ID of the user checking application
+ * @param job The job request being checked
+ * @returns Cached object with application status and any error messages
+ */
+export const checkJobApplication = async (
+  userId: string | null | undefined,
+  job: JobRequest | null
+): Promise<CheckApplicationResult> => {
+  const getCachedStatus = unstable_cache(
+    async () => fetchJobApplicationStatus(userId, job),
+    [`job-application-${userId}-${job?.Id}`],
+    { tags: ["jobApplication"], revalidate: 3600 }
+  );
+
+  return getCachedStatus();
 };
 
 export const applyForJob = async (
@@ -128,9 +154,6 @@ export async function checkRequest(
   try {
     const isRequested = await getDriverRequest(driverId, clientId);
 
-    // Add more detailed logging to debug the response
-    console.log("Request check response:", isRequested);
-
     if (
       isRequested.success &&
       isRequested.data &&
@@ -168,7 +191,6 @@ export async function messageContact(
   clientId: string,
   driverId: string
 ): Promise<string | undefined> {
-
   try {
     const contactResponse = await getcontact(clientId, driverId);
 

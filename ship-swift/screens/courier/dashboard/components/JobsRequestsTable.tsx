@@ -140,9 +140,9 @@ const JobsRequestsTable: React.FC<JobsRequestsTableProps> = ({
               name={`${job.client.firstName} ${job.client.lastName}`}
               pickUpLocation={job.PickUp || "No pickup location"}
               dropOffLocation={job.DropOff || "No dropoff location"}
-              jobDate={job.collectionDate.toLocaleDateString()}
+              jobDate={new Date(job.collectionDate).toLocaleDateString()}
               amount={`M${job.Budget || "0"}`}
-              postDate={job.dateCreated.toLocaleDateString()}
+              postDate={new Date(job.dateCreated).toLocaleDateString()}
               parcelSize={job.parcelSize || "Not specified"}
               description={job.Description || "No description provided"}
               isSelected={selectedJob?.Id === job.Id}

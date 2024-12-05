@@ -1,6 +1,7 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
 import notifyAboutJob from "./knock";
+import { unstable_cache } from "next/cache";
 
 const prisma = new PrismaClient();
 
@@ -69,11 +70,11 @@ export async function getActiveJobs() {
 }
 
 /**
- * Retrieves all active jobs for a specific driver
+ * Helper function to fetch active jobs for a specific driver
  * @param driverId The unique identifier of the driver
- * @returns Array of active jobs including CourierJob, Driver, and Client relations for the specified driver, or undefined if fetch fails
+ * @returns Array of active jobs including CourierJob, Driver, and Client relations
  */
-export async function getAllActiveJobsByDriverId(driverId: string) {
+const fetchActiveJobsByDriverId = async (driverId: string) => {
   try {
     const jobs = await prisma.activeJobs.findMany({
       where: { driverId: driverId },
@@ -87,6 +88,21 @@ export async function getAllActiveJobsByDriverId(driverId: string) {
   } catch (error) {
     console.error("Error fetching all ActiveJobs by driverId:", error);
   }
+};
+
+/**
+ * Retrieves cached active jobs for a specific driver
+ * @param driverId The unique identifier of the driver
+ * @returns Cached array of active jobs including CourierJob, Driver, and Client relations
+ */
+export async function getAllActiveJobsByDriverId(driverId: string) {
+  const getCachedJobs = unstable_cache(
+    async () => fetchActiveJobsByDriverId(driverId),
+    [`driver-active-jobs-${driverId}`],
+    { tags: ["activeJobs"], revalidate: 3600 }
+  );
+
+  return getCachedJobs();
 }
 
 /**

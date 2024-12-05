@@ -1,6 +1,6 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, unstable_cache } from "next/cache";
 
 const prisma = new PrismaClient();
 
@@ -87,13 +87,13 @@ export const createJob = async (jobData: FormData) => {
 };
 
 /**
- * Retrieves all unclaimed and non-direct courier jobs
- * @returns Object with success status and either jobs array or error message
+ * Helper function to fetch all unclaimed and non-direct courier jobs
+ * @returns Object with success status and jobs array or error message
  */
-export const getAllJobs = async () => {
+const fetchAllJobs = async () => {
   try {
     const jobs = await prisma.courierJobs.findMany({
-      include: { client: true }, // Include client data if needed
+      include: { client: true },
       where: {
         packageStatus: "unclaimed",
         isDirect: false,
@@ -107,16 +107,30 @@ export const getAllJobs = async () => {
 };
 
 /**
- * Retrieves all jobs for a specific client
- * @param clientId The ID of the client
- * @returns Object with success status and either filtered jobs array or error message
+ * Retrieves cached unclaimed and non-direct courier jobs
+ * @returns Cached object with success status and jobs array or error message
  */
-export const getAllJobsFiltered = async (clientId: string) => {
+export const getAllJobs = async () => {
+  const getCachedJobs = unstable_cache(
+    async () => fetchAllJobs(),
+    ["all-unclaimed-jobs"],
+    { tags: ["courierJobs"], revalidate: 3600 }
+  );
+
+  return getCachedJobs();
+};
+
+/**
+ * Helper function to fetch filtered jobs for a specific client
+ * @param clientId The ID of the client
+ * @returns Object with success status and filtered jobs array or error message
+ */
+const fetchFilteredJobs = async (clientId: string) => {
   try {
     const jobs = await prisma.courierJobs.findMany({
       where: { clientId: clientId },
       include: {
-        client: true, // Always include DirectRequest
+        client: true,
         DirectRequest: true,
       },
     });
@@ -125,6 +139,21 @@ export const getAllJobsFiltered = async (clientId: string) => {
     console.error("Error retrieving jobs:", error);
     return { success: false, error: "Error retrieving jobs." };
   }
+};
+
+/**
+ * Retrieves cached jobs for a specific client
+ * @param clientId The ID of the client
+ * @returns Cached object with success status and filtered jobs array or error message
+ */
+export const getAllJobsFiltered = async (clientId: string) => {
+  const getCachedJobs = unstable_cache(
+    async () => fetchFilteredJobs(clientId),
+    [`client-jobs-${clientId}`],
+    { tags: ["courierJobs"], revalidate: 3600 }
+  );
+
+  return getCachedJobs();
 };
 
 /**

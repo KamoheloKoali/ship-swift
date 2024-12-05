@@ -29,7 +29,7 @@ const locationBuffer: {
   timestamp: Date;
 }[] = [];
 
-const BATCH_SIZE = 50; // Number of locations to collect before sending
+const BATCH_SIZE = 500; // Number of locations to collect before sending
 const FLUSH_INTERVAL = 1200000; // Flush every 2 minutes
 
 export default function Header() {
@@ -71,6 +71,7 @@ export default function Header() {
     if (locationBuffer.length === 0) return { success: true };
 
     try {
+      console.log("flushing locations");
       // Create many locations in a single transaction
       const result = await createLocation(locationBuffer);
       // Clear buffer after successful write

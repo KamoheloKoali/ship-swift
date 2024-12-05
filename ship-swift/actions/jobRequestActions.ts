@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { createcontact } from "./contactsActions";
 import { createActiveJob } from "./activeJobsActions";
 import notifyAboutJob from "./knock";
+import { unstable_cache } from "next/cache";
 
 const prisma = new PrismaClient();
 
@@ -93,11 +94,11 @@ export async function getJobRequestByDriverIdAndByCourierJobId(
 }
 
 /**
- * Retrieves a specific job request by its ID
+ * Helper function to fetch job request by ID with related data
  * @param id The ID of the job request
  * @returns The job request with CourierJob and Driver details
  */
-export async function getJobRequestById(id: string) {
+const fetchJobRequestById = async (id: string) => {
   const jobRequest = await prisma.jobRequest.findUnique({
     where: { Id: id },
     include: {
@@ -106,6 +107,21 @@ export async function getJobRequestById(id: string) {
     },
   });
   return jobRequest;
+};
+
+/**
+ * Retrieves cached job request by ID with related details
+ * @param id The ID of the job request
+ * @returns Cached job request with CourierJob and Driver details
+ */
+export async function getJobRequestById(id: string) {
+  const getCachedJobRequest = unstable_cache(
+    async () => fetchJobRequestById(id),
+    [`job-request-${id}`],
+    { tags: ["jobRequest"], revalidate: 3600 }
+  );
+
+  return getCachedJobRequest();
 }
 
 /**
@@ -141,11 +157,11 @@ export async function deleteJobRequest(id: string) {
 }
 
 /**
- * Retrieves all job requests for a specific courier job
+ * Helper function to fetch job requests for a specific courier job
  * @param courierJobId The ID of the courier job
  * @returns Array of job requests with CourierJob and Driver details
  */
-export async function getJobRequestsByCourierJobId(courierJobId: string) {
+const fetchJobRequestsByCourierJobId = async (courierJobId: string) => {
   const jobRequests = await prisma.jobRequest.findMany({
     where: { courierJobId: courierJobId },
     include: {
@@ -153,8 +169,22 @@ export async function getJobRequestsByCourierJobId(courierJobId: string) {
       Driver: true,
     },
   });
-
   return jobRequests;
+};
+
+/**
+ * Retrieves cached job requests for a specific courier job
+ * @param courierJobId The ID of the courier job
+ * @returns Cached array of job requests with CourierJob and Driver details
+ */
+export async function getJobRequestsByCourierJobId(courierJobId: string) {
+  const getCachedJobRequests = unstable_cache(
+    async () => fetchJobRequestsByCourierJobId(courierJobId),
+    [`courier-job-requests-${courierJobId}`],
+    { tags: ["jobRequests"], revalidate: 3600 }
+  );
+
+  return getCachedJobRequests();
 }
 
 /**
@@ -174,11 +204,11 @@ export async function getJobRequestsByDriverId(driverId: string) {
 }
 
 /**
- * Retrieves all unapproved job requests for a specific driver
+ * Helper function to fetch unapproved job requests for a specific driver
  * @param driverId The ID of the driver
  * @returns Array of unapproved job requests with CourierJob, client, and Driver details
  */
-export async function getUnapprovedJobRequests(driverId: string) {
+const fetchUnapprovedJobRequests = async (driverId: string) => {
   const jobRequests = await prisma.jobRequest.findMany({
     where: { driverId: driverId, isApproved: false },
     include: {
@@ -191,6 +221,21 @@ export async function getUnapprovedJobRequests(driverId: string) {
     },
   });
   return jobRequests;
+};
+
+/**
+ * Retrieves cached unapproved job requests for a specific driver
+ * @param driverId The ID of the driver
+ * @returns Cached array of unapproved job requests with full relation details
+ */
+export async function getUnapprovedJobRequests(driverId: string) {
+  const getCachedRequests = unstable_cache(
+    async () => fetchUnapprovedJobRequests(driverId),
+    [`driver-unapproved-requests-${driverId}`],
+    { tags: ["jobRequests"], revalidate: 3600 }
+  );
+
+  return getCachedRequests();
 }
 
 /**

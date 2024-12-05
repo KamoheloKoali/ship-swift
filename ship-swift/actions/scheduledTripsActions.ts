@@ -1,5 +1,6 @@
 "use server";
 import { Prisma, PrismaClient } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 
 const prisma = new PrismaClient();
 /**
@@ -79,11 +80,11 @@ export async function updateScheduledTrip(
 }
 
 /**
- * Retrieves all scheduled trips for a specific driver
+ * Helper function to fetch scheduled trips for a specific driver
  * @param driverId The ID of the driver
  * @returns Array of scheduled trips for the specified driver
  */
-export async function getScheduledTripsByDriverId(driverId: string) {
+const fetchScheduledTripsByDriverId = async (driverId: string) => {
   try {
     const trips = await prisma.scheduledTrips.findMany({
       where: {
@@ -98,6 +99,21 @@ export async function getScheduledTripsByDriverId(driverId: string) {
     console.error("Error fetching scheduled trips:", err);
     throw err;
   }
+};
+
+/**
+ * Retrieves cached scheduled trips for a specific driver
+ * @param driverId The ID of the driver
+ * @returns Cached array of scheduled trips for the specified driver
+ */
+export async function getScheduledTripsByDriverId(driverId: string) {
+  const getCachedTrips = unstable_cache(
+    async () => fetchScheduledTripsByDriverId(driverId),
+    [`driver-scheduled-trips-${driverId}`],
+    { tags: ["scheduledTrips"], revalidate: 3600 }
+  );
+
+  return getCachedTrips();
 }
 
 /**

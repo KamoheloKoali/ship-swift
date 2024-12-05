@@ -1,5 +1,6 @@
 "use server";
 import { Prisma, PrismaClient } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 
 const prisma = new PrismaClient();
 
@@ -96,11 +97,11 @@ export const verifyClient = async (clientId: string) => {
 };
 
 /**
- * Retrieves a client by their ID
- * @param clientId The ID of the client to retrieve
+ * Helper function to fetch client data from database
+ * @param clientId The ID of the client to fetch
  * @returns Object with success status and client data or error message
  */
-export const getClientById = async (clientId: string) => {
+const fetchClientById = async (clientId: string) => {
   try {
     const client = await prisma.clients.findUnique({
       where: { Id: clientId },
@@ -116,16 +117,45 @@ export const getClientById = async (clientId: string) => {
 };
 
 /**
- * Retrieves all clients from the database
+ * Retrieves a cached client by their ID
+ * @param clientId The ID of the client to retrieve
+ * @returns Cached object with success status and client data or error message
+ */
+export const getClientById = async (clientId: string) => {
+  const getCachedClient = unstable_cache(
+    async () => fetchClientById(clientId),
+    [`client-${clientId}`],
+    { tags: ["client"], revalidate: 3600 }
+  );
+
+  return getCachedClient();
+};
+
+/**
+ * Helper function to fetch all clients from database
  * @returns Object with success status and array of all clients or error message
  */
-export const getAllClients = async () => {
-  const clients = await prisma.clients.findMany(); // Remove where clause to get all clients
+const fetchAllClients = async () => {
+  const clients = await prisma.clients.findMany();
   if (clients.length > 0) {
     return { success: true, data: clients };
   } else {
     return { success: false, error: "No clients found" };
   }
+};
+
+/**
+ * Retrieves cached list of all clients
+ * @returns Cached object with success status and array of all clients or error message
+ */
+export const getAllClients = async () => {
+  const getCachedClients = unstable_cache(
+    async () => fetchAllClients(),
+    ["all-clients"],
+    { tags: ["clients"], revalidate: 3600 }
+  );
+
+  return getCachedClients();
 };
 
 /**

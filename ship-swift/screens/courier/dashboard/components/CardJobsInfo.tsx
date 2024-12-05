@@ -6,15 +6,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ApplyButton from "./ApplyButton";
 import RequestButton from "./RequestButton";
 import { MapPin, Calendar, Package, DollarSign, Clock } from "lucide-react";
-import {
-  MapPinnedIcon,
-  MapPinHouse,
-  CalendarClockIcon,
-  TruckIcon,
-  PackageOpen,
-  House,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
 import {
   ApplicationStatus,
@@ -44,7 +35,6 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
   const [applicationStatus, setApplicationStatus] =
     useState<ApplicationStatus>("not_applied");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isRequest, setIsRequest] = useState<boolean>(false);
   const [isRequestLoading, setIsRequestLoading] = useState<boolean>(false);
   const [requestStatus, setRequestStatus] = useState<RequestStatus>({
     isPending: false,
@@ -79,7 +69,6 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
             }
 
             if (requestStatus) {
-              console.log("Setting request status:", requestStatus);
               setRequestStatus(requestStatus);
             }
 

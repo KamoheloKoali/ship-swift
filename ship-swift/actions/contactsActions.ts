@@ -1,5 +1,6 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 
 const prisma = new PrismaClient();
 
@@ -38,7 +39,8 @@ export const createcontact = async (contactData: {
  * @param contactId The unique identifier of the contact
  * @returns Object with success status and contact data or error message
  */
-export const getcontactById = async (contactId: string) => {
+
+const fetchContactById = async (contactId: string) => {
   try {
     const contact = await prisma.contacts.findUnique({
       where: { Id: contactId },
@@ -54,12 +56,28 @@ export const getcontactById = async (contactId: string) => {
 };
 
 /**
- * Retrieves a contact by client and driver IDs
+ * Retrieves a contact by its ID
+ * @param contactId The unique identifier of the contact
+ * @returns Object with success status and contact data or error message
+ */
+
+export const getcontactById = async (contactId: string) => {
+  const getCachedContact = unstable_cache(
+    async () => fetchContactById(contactId),
+    [`contact-${contactId}`],
+    { tags: ["contact"], revalidate: 3600 }
+  );
+
+  return getCachedContact();
+};
+
+/**
+ * Helper function to fetch contact data by client and driver IDs
  * @param clientId The ID of the client
  * @param driverId The ID of the driver
  * @returns Object with success status and contact data or error message
  */
-export const getcontact = async (clientId: string, driverId: string) => {
+const fetchContact = async (clientId: string, driverId: string) => {
   try {
     const contact = await prisma.contacts.findMany({
       where: { clientId: clientId, driverId: driverId },
@@ -72,6 +90,22 @@ export const getcontact = async (clientId: string, driverId: string) => {
   } catch (error) {
     return { success: false, error: "Error retrieving contact" };
   }
+};
+
+/**
+ * Retrieves cached contact by client and driver IDs
+ * @param clientId The ID of the client
+ * @param driverId The ID of the driver
+ * @returns Cached object with success status and contact data or error message
+ */
+export const getcontact = async (clientId: string, driverId: string) => {
+  const getCachedContact = unstable_cache(
+    async () => fetchContact(clientId, driverId),
+    [`contact-${clientId}-${driverId}`],
+    { tags: ["contact"], revalidate: 3600 }
+  );
+
+  return getCachedContact();
 };
 
 /**
@@ -88,23 +122,42 @@ export const getAllcontacts = async () => {
 };
 
 /**
- * Retrieves the first contact matching the driver and client IDs
+ * Helper function to fetch first contact matching driver and client IDs
  * @param driverId The ID of the driver
  * @param clientId The ID of the client
  * @returns Object with success status and contact data or error message
  */
-export const getContactByDriverAndClientId = async (
+const fetchContactByDriverAndClientId = async (
   driverId: string,
   clientId: string
 ) => {
   const contacts = await prisma.contacts.findFirst({
     where: { driverId: driverId, clientId: clientId },
-  }); // Remove where clause to get all contacts
+  });
   if (contacts?.Id) {
     return { success: true, data: contacts };
   } else {
     return { success: false, error: "No contacts found" };
   }
+};
+
+/**
+ * Retrieves cached first contact matching the driver and client IDs
+ * @param driverId The ID of the driver
+ * @param clientId The ID of the client
+ * @returns Cached object with success status and contact data or error message
+ */
+export const getContactByDriverAndClientId = async (
+  driverId: string,
+  clientId: string
+) => {
+  const getCachedContact = unstable_cache(
+    async () => fetchContactByDriverAndClientId(driverId, clientId),
+    [`contact-driver-client-${driverId}-${clientId}`],
+    { tags: ["contact"], revalidate: 3600 }
+  );
+
+  return getCachedContact();
 };
 
 /**

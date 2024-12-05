@@ -1,5 +1,6 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 
 const prisma = new PrismaClient();
 
@@ -44,12 +45,12 @@ export const getClientRequest = async (
 };
 
 /**
- * Retrieves all client requests for either a sender or receiver
+ * Helper function to fetch client requests from database
  * @param senderId Optional ID of the sender to filter requests
  * @param receiverId Optional ID of the receiver to filter requests
  * @returns Object with success status and array of requests if found
  */
-export const getClientRequests = async (
+const fetchClientRequests = async (
   senderId: string = "",
   receiverId: string = ""
 ) => {
@@ -58,7 +59,6 @@ export const getClientRequests = async (
       const requests = await prisma.clientRequests.findMany({
         where: { senderId: senderId },
       });
-
       if (requests.length > 0) return { success: true, data: requests };
     } else {
       const requests = await prisma.clientRequests.findMany({
@@ -69,6 +69,25 @@ export const getClientRequests = async (
   } catch (error) {
     return { success: false, error: "Error retrieving client requests" };
   }
+};
+
+/**
+ * Retrieves cached client requests for either a sender or receiver
+ * @param senderId Optional ID of the sender to filter requests
+ * @param receiverId Optional ID of the receiver to filter requests
+ * @returns Cached object with success status and array of requests if found
+ */
+export const getClientRequests = async (
+  senderId: string = "",
+  receiverId: string = ""
+) => {
+  const getCachedRequests = unstable_cache(
+    async () => fetchClientRequests(senderId, receiverId),
+    [`client-requests-${senderId}-${receiverId}`],
+    { tags: ["clientRequests"], revalidate: 3600 }
+  );
+
+  return getCachedRequests();
 };
 
 /**

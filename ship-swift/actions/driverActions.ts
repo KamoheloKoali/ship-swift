@@ -1,5 +1,6 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 
 const prisma = new PrismaClient();
 
@@ -169,7 +170,7 @@ export const VerifyDriver = async (
  * @param driverId The ID of the driver to fetch
  * @returns Object with success status and either the driver data or error message
  */
-export const getDriverByID = async (driverId: string) => {
+const fetchDriverById = async (driverId: string) => {
   try {
     const driver = await prisma.drivers.findUnique({
       where: {
@@ -188,17 +189,41 @@ export const getDriverByID = async (driverId: string) => {
   }
 };
 
+export const getDriverByID = async (driverId: string) => {
+  const getCachedDriver = unstable_cache(
+    async () => fetchDriverById(driverId),
+    [`driver-${driverId}`],
+    { tags: ["driver"], revalidate: 3600 } // Cache for 1 hour
+  );
+
+  return getCachedDriver();
+};
+
 /**
- * Retrieves all drivers from the database
- * @returns Object with success status and either array of drivers or error message
+ * Helper function to fetch all drivers from database
+ * @returns Object with success status and array of drivers or error message
  */
-export const getAllDrivers = async () => {
+const fetchAllDrivers = async () => {
   const drivers = await prisma.drivers.findMany();
   if (drivers.length > 0) {
     return { success: true, data: drivers };
   } else {
     return { success: false, error: "No clients found" };
   }
+};
+
+/**
+ * Retrieves cached list of all drivers
+ * @returns Cached object with success status and array of drivers or error message
+ */
+export const getAllDrivers = async () => {
+  const getCachedDrivers = unstable_cache(
+    async () => fetchAllDrivers(),
+    ["all-drivers"],
+    { tags: ["drivers"], revalidate: 3600 }
+  );
+
+  return getCachedDrivers();
 };
 
 /**
