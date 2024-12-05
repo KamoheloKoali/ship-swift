@@ -68,10 +68,10 @@ const ChatWrapper = ({ children, conversationId }: Props) => {
               <div className="flex justify-center border-b h-full w-full items-center">
                 <div className="w-[50%] flex flex-row items-center gap-2">
                   <Avatar>
-                    <AvatarImage src={driver?.photoUrl} alt="user photo" />
+                    <AvatarImage src={driver.data?.photoUrl} alt="user photo" />
                   </Avatar>
                   <div className="flex flex-col">
-                    <p className="font-semibold">{`${driver?.firstName} ${driver?.lastName}`}</p>
+                    <p className="font-semibold">{`${driver.data?.firstName} ${driver.data?.lastName}`}</p>
                   </div>
                 </div>
                 <div className="w-[50%] flex justify-between items-center">
@@ -79,8 +79,10 @@ const ChatWrapper = ({ children, conversationId }: Props) => {
                   <div className="flex mr-5">
                     <PhoneCall
                       onClick={() => {
-                        setFullName(`${driver?.firstName} ${driver?.lastName}`);
-                        setCallReceiverId(driver?.Id);
+                        setFullName(
+                          `${driver.data?.firstName} ${driver.data?.lastName}`
+                        );
+                        setCallReceiverId(driver.data?.Id);
                         window.open(`/room/${conversationId}`, "_blank");
                       }}
                       className="cursor-pointer"
