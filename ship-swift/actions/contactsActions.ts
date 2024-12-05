@@ -65,7 +65,7 @@ export const getcontactById = async (contactId: string) => {
   const getCachedContact = unstable_cache(
     async () => fetchContactById(contactId),
     [`contact-${contactId}`],
-    { tags: ["contact"], revalidate: 3600 }
+    { tags: ["contact"], revalidate: 60 }
   );
 
   return getCachedContact();
@@ -102,7 +102,7 @@ export const getcontact = async (clientId: string, driverId: string) => {
   const getCachedContact = unstable_cache(
     async () => fetchContact(clientId, driverId),
     [`contact-${clientId}-${driverId}`],
-    { tags: ["contact"], revalidate: 3600 }
+    { tags: ["contact"], revalidate: 60 }
   );
 
   return getCachedContact();
@@ -154,7 +154,7 @@ export const getContactByDriverAndClientId = async (
   const getCachedContact = unstable_cache(
     async () => fetchContactByDriverAndClientId(driverId, clientId),
     [`contact-driver-client-${driverId}-${clientId}`],
-    { tags: ["contact"], revalidate: 3600 }
+    { tags: ["contact"], revalidate: 60 }
   );
 
   return getCachedContact();

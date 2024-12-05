@@ -125,7 +125,7 @@ export const getClientById = async (clientId: string) => {
   const getCachedClient = unstable_cache(
     async () => fetchClientById(clientId),
     [`client-${clientId}`],
-    { tags: ["client"], revalidate: 3600 }
+    { tags: ["client"], revalidate: 60 }
   );
 
   return getCachedClient();
@@ -152,7 +152,7 @@ export const getAllClients = async () => {
   const getCachedClients = unstable_cache(
     async () => fetchAllClients(),
     ["all-clients"],
-    { tags: ["clients"], revalidate: 3600 }
+    { tags: ["clients"], revalidate: 60 }
   );
 
   return getCachedClients();

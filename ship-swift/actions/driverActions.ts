@@ -193,7 +193,7 @@ export const getDriverByID = async (driverId: string) => {
   const getCachedDriver = unstable_cache(
     async () => fetchDriverById(driverId),
     [`driver-${driverId}`],
-    { tags: ["driver"], revalidate: 3600 } // Cache for 1 hour
+    { tags: ["driver"], revalidate: 60 } // Cache for 1 hour
   );
 
   return getCachedDriver();
@@ -220,7 +220,7 @@ export const getAllDrivers = async () => {
   const getCachedDrivers = unstable_cache(
     async () => fetchAllDrivers(),
     ["all-drivers"],
-    { tags: ["drivers"], revalidate: 3600 }
+    { tags: ["drivers"], revalidate: 60 }
   );
 
   return getCachedDrivers();

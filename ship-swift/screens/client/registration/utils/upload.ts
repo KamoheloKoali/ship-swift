@@ -24,7 +24,7 @@ export async function uploadImage(
     const { data, error } = await supabase.storage
       .from("client-documents")
       .upload(`${folder}/${fileName}`, file, {
-        cacheControl: "3600",
+        cacheControl: "60",
         upsert: true,
       });
 
@@ -69,7 +69,7 @@ export async function uploadPickUpAndDropOffImage(
     const { data, error } = await supabase.storage
       .from("client-documents")
       .upload(`${folder}/${fileName}`, file, {
-        cacheControl: "3600",
+        cacheControl: "60",
         upsert: true,
       });
 

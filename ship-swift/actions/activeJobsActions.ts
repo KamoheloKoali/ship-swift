@@ -99,7 +99,7 @@ export async function getAllActiveJobsByDriverId(driverId: string) {
   const getCachedJobs = unstable_cache(
     async () => fetchActiveJobsByDriverId(driverId),
     [`driver-active-jobs-${driverId}`],
-    { tags: ["activeJobs"], revalidate: 3600 }
+    { tags: ["activeJobs"], revalidate: 60 }
   );
 
   return getCachedJobs();

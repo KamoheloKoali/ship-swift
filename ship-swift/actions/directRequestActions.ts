@@ -113,7 +113,7 @@ export const getDirectRequestsByDriverId = async (
   const getCachedRequests = unstable_cache(
     async () => fetchDirectRequestsByDriverId(driverId),
     [`driver-direct-requests-${driverId}`],
-    { tags: ["directRequests"], revalidate: 3600 }
+    { tags: ["directRequests"], revalidate: 60 }
   );
 
   return getCachedRequests();
@@ -168,7 +168,7 @@ export const getDirectRequestsByCourierJobId = async (
   const getCachedDirectRequests = unstable_cache(
     async () => fetchDirectRequestsByCourierJobId(courierJobId),
     [`courier-direct-requests-${courierJobId}`],
-    { tags: ["directRequests"], revalidate: 3600 }
+    { tags: ["directRequests"], revalidate: 60 }
   );
 
   return getCachedDirectRequests();

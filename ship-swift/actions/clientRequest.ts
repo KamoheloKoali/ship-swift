@@ -84,7 +84,7 @@ export const getClientRequests = async (
   const getCachedRequests = unstable_cache(
     async () => fetchClientRequests(senderId, receiverId),
     [`client-requests-${senderId}-${receiverId}`],
-    { tags: ["clientRequests"], revalidate: 3600 }
+    { tags: ["clientRequests"], revalidate: 60 }
   );
 
   return getCachedRequests();

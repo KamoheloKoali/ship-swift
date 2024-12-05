@@ -55,7 +55,7 @@ export const getDriverRequest = async (
   const getCachedRequest = unstable_cache(
     async () => fetchDriverRequest(senderId, receiverId),
     [`driver-request-${senderId}-${receiverId}`],
-    { tags: ["driverRequest"], revalidate: 3600 }
+    { tags: ["driverRequest"], revalidate: 60 }
   );
 
   return getCachedRequest();
@@ -105,7 +105,7 @@ export const getDriverRequests = async (
   const getCachedRequests = unstable_cache(
     async () => fetchDriverRequests(senderId, receiverId),
     [`driver-requests-${senderId}-${receiverId}`],
-    { tags: ["driverRequests"], revalidate: 3600 }
+    { tags: ["driverRequests"], revalidate: 60 }
   );
 
   return getCachedRequests();

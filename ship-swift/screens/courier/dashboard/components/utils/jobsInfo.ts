@@ -80,7 +80,7 @@ export const checkJobApplication = async (
   const getCachedStatus = unstable_cache(
     async () => fetchJobApplicationStatus(userId, job),
     [`job-application-${userId}-${job?.Id}`],
-    { tags: ["jobApplication"], revalidate: 3600 }
+    { tags: ["jobApplication"], revalidate: 60 }
   );
 
   return getCachedStatus();

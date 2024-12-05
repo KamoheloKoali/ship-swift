@@ -118,7 +118,7 @@ export async function getJobRequestById(id: string) {
   const getCachedJobRequest = unstable_cache(
     async () => fetchJobRequestById(id),
     [`job-request-${id}`],
-    { tags: ["jobRequest"], revalidate: 3600 }
+    { tags: ["jobRequest"], revalidate: 60 }
   );
 
   return getCachedJobRequest();
@@ -181,7 +181,7 @@ export async function getJobRequestsByCourierJobId(courierJobId: string) {
   const getCachedJobRequests = unstable_cache(
     async () => fetchJobRequestsByCourierJobId(courierJobId),
     [`courier-job-requests-${courierJobId}`],
-    { tags: ["jobRequests"], revalidate: 3600 }
+    { tags: ["jobRequests"], revalidate: 60 }
   );
 
   return getCachedJobRequests();
@@ -232,7 +232,7 @@ export async function getUnapprovedJobRequests(driverId: string) {
   const getCachedRequests = unstable_cache(
     async () => fetchUnapprovedJobRequests(driverId),
     [`driver-unapproved-requests-${driverId}`],
-    { tags: ["jobRequests"], revalidate: 3600 }
+    { tags: ["jobRequests"], revalidate: 60 }
   );
 
   return getCachedRequests();

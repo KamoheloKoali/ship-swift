@@ -35,7 +35,7 @@ export const checkDriverRole = async (driverId: string) => {
   const getCachedDriverRole = unstable_cache(
     async () => fetchDriverRole(driverId),
     [`driver-role-${driverId}`],
-    { tags: ["userRole"], revalidate: 3600 }
+    { tags: ["userRole"], revalidate: 60 }
   );
 
   return getCachedDriverRole();

@@ -33,7 +33,7 @@ export async function uploadImage(
     const { data, error } = await supabase.storage
       .from("driver-documents")
       .upload(`${folder}/${fileName}`, file, {
-        cacheControl: "3600",
+        cacheControl: "60",
         upsert: true,
       });
 

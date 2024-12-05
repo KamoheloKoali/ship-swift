@@ -114,7 +114,7 @@ export const getAllJobs = async () => {
   const getCachedJobs = unstable_cache(
     async () => fetchAllJobs(),
     ["all-unclaimed-jobs"],
-    { tags: ["courierJobs"], revalidate: 3600 }
+    { tags: ["courierJobs"], revalidate: 60 }
   );
 
   return getCachedJobs();
@@ -150,7 +150,7 @@ export const getAllJobsFiltered = async (clientId: string) => {
   const getCachedJobs = unstable_cache(
     async () => fetchFilteredJobs(clientId),
     [`client-jobs-${clientId}`],
-    { tags: ["courierJobs"], revalidate: 3600 }
+    { tags: ["courierJobs"], revalidate: 60 }
   );
 
   return getCachedJobs();

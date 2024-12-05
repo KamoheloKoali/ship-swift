@@ -110,7 +110,7 @@ export async function getScheduledTripsByDriverId(driverId: string) {
   const getCachedTrips = unstable_cache(
     async () => fetchScheduledTripsByDriverId(driverId),
     [`driver-scheduled-trips-${driverId}`],
-    { tags: ["scheduledTrips"], revalidate: 3600 }
+    { tags: ["scheduledTrips"], revalidate: 60 }
   );
 
   return getCachedTrips();
