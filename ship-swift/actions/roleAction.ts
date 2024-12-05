@@ -1,5 +1,6 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
@@ -53,6 +54,14 @@ export const updateUserRole = async ({ userId, driver, client }: UserRole) => {
         client,
       },
     });
+    revalidatePath("/driver/dashboard/find-jobs");
+    revalidatePath("/driver/dashboard/my-jobs");
+    revalidatePath("/client/job-post");
+    revalidatePath("/client/browse");
+    revalidatePath("/client/client-profile");
+    revalidatePath("/client/driver-profile");
+    revalidatePath("/client");
+    revalidatePath("/");
     return updatedUserRole;
   } catch (error) {
     console.error("Error updating user role:", error);
