@@ -28,7 +28,7 @@ export const getUserRoleById = async () => {
   const getCachedUserRole = unstable_cache(
     async () => fetchUserRole(user.id),
     [`userRole-${user.id}`],
-    { tags: ["userRole"], revalidate: 3600 } // Cache for 1 hour
+    { tags: ["userRole"], revalidate: false }
   );
 
   return getCachedUserRole();
