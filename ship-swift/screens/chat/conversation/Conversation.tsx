@@ -4,7 +4,7 @@ import supabase from "@/app/utils/supabase";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@clerk/nextjs";
-import { Paperclip, SendHorizontal } from "lucide-react";
+import { Paperclip, Send, SendHorizontal } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -145,10 +145,9 @@ const Conversation = ({
       </div>
       <div className="h-[3%]"></div>
       <div className="w-full h-[2%] flex flex-row gap-2 items-center">
-        <Paperclip />
         <Textarea
           ref={textareaRef}
-          className="w-full resize-none overflow-hidden"
+          className="w-full overflow-hidden h-8"
           placeholder="Enter your message..."
           onInput={handleInput}
           rows={1} // Initial number of rows
@@ -159,7 +158,11 @@ const Conversation = ({
             }
           }}
         />
-        <SendHorizontal onClick={handleSubmit} />
+        {/* <SendHorizontal onClick={handleSubmit} /> */}
+        <Send
+          onClick={handleSubmit}
+          className="cursor-pointer text-green-500"
+        />
       </div>
     </div>
   );
