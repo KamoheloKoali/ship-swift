@@ -63,7 +63,7 @@ const ChatWrapper = ({ children, conversationId }: Props) => {
         </div>
       ) : (
         <div className="h-full w-full flex flex-col gap-4">
-          <div className="w-full h-[8%]">
+          <div className="w-full h-[8%] z-50">
             {userRole?.client ? (
               <div className="flex justify-center border-b h-full w-full items-center">
                 <div className="w-[50%] flex flex-row items-center gap-2">
@@ -91,7 +91,7 @@ const ChatWrapper = ({ children, conversationId }: Props) => {
                 </div>
               </div>
             ) : (
-              <div className="flex justify-center border-b h-full w-full items-center">
+              <div className="flex justify-center border-b h-full w-full items-center z-50">
                 <div className="w-[50%] flex flex-row items-center gap-2">
                   <Avatar>
                     <AvatarImage
