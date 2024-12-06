@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/card";
 import { StatusBadge } from "./JobsTable";
 import MapComponent from "@/screens/global/PickUpDropOffLoc";
-import { formatDate, formatDateNoHrs } from "./utils/jobTable";
+import { formatDateNoHrs } from "./utils/jobTable";
 
 interface JobDetailsProps {
   job: {
@@ -82,6 +82,16 @@ interface JobDetailsProps {
 export default function Details({ job }: JobDetailsProps) {
   function removeCommas(value: string) {
     return String(value).replace(/,/g, "");
+  }
+
+  function formatDate(isoDate: any) {
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(isoDate));
   }
 
   return (

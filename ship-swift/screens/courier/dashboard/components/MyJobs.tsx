@@ -69,6 +69,7 @@ export default function MyJobs() {
       if (jobsResponse && jobsResponse.length > 0) {
         setJobs(jobsResponse);
         setSelectedJob(jobsResponse[0]);
+        console.log("Jobs:", jobsResponse);
       } else {
         setError("No active jobs found");
       }
@@ -179,6 +180,7 @@ export default function MyJobs() {
     setIsProofModalOpen(false);
     setCurrentJobId(null);
   };
+
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-muted/40">
