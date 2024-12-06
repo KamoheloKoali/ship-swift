@@ -180,7 +180,7 @@ export default function Header() {
                 onClose={handleCloseSheet}
               />
 
-              {/* User Button (Clerk) - Only visible on small screens in Sheet */}
+              {/* User Button (Clerk) - Only visible on small screens in the Sheet */}
               <div className="lg:hidden my-4 flex justify-between p-3 rounded-sm bg-slate-200 hover:bg-slate-300">
                 <p>Account</p>
                 <UserButton />
