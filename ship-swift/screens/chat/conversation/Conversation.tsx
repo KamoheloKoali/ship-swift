@@ -103,6 +103,8 @@ const Conversation = ({
       driverId: driverDetails.data?.Id,
     };
 
+    console.log(newMessage);
+
     // Add the new message object to the state so it's rendered in the UI
     setNewMessage((prevMessages) => [...prevMessages, newMessage]);
     // Clear the textarea after successful submission
