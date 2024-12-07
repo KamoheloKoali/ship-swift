@@ -39,7 +39,6 @@ import {
   STATUS_DESCRIPTIONS,
   STATUS_ACTIONS,
   STATUS_STYLES,
-  formatDate,
   filterJobsByStatus,
   capitalizeFirstLetter,
 } from "@/screens/courier/dashboard/components/utils/jobTable";
@@ -153,6 +152,16 @@ const JobsTable: FC<TableProps> = ({
         return <Package className="h-4 w-4" />;
     }
   };
+
+  function formatDate(isoDate: any) {
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(isoDate));
+  }
 
   return (
     <Tabs

@@ -107,6 +107,17 @@ const CardJobsInfo: React.FC<JobsInfoProps> = ({ job, isOpen }) => {
     job.client.lastName
   );
 
+  function formatDate(isoDate: any) {
+    console.log("ISO Date:", isoDate);
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(isoDate));
+  }
+
   return (
     <div className="sm:p-0 md:p-1 lg:p-3 flex items-center lg: justify-center w-full h-full z-50">
       <Card className="w-full max-w-lg bg-white shadow-xl rounded-xl overflow-hidden">
