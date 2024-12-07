@@ -40,8 +40,8 @@ export async function POST(request: Request) {
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/client/payments/success/${jobId}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/client/payments/cancel/${jobId}`,
+      success_url: `https://ship-swift-self.vercel.app/client/payments/success/${jobId}`,
+      cancel_url: `https://ship-swift-self.vercel.app/client/payments/cancel/${jobId}`,
     });
 
     return NextResponse.json({ sessionId: session.id });
