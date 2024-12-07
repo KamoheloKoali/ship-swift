@@ -100,7 +100,7 @@ const Conversation = ({
       senderId: userId || "",
       message: messageText, // Use trimmed message
       clientId: clientDetails.Id,
-      driverId: driverDetails.Id,
+      driverId: driverDetails.data?.Id,
     };
 
     // Add the new message object to the state so it's rendered in the UI
